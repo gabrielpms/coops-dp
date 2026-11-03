@@ -78,3 +78,34 @@ export const squadSchema = z.object({
   members: z.array(z.object({ personId: z.string().uuid(), crown: z.boolean().default(false) })).max(100).default([]),
 });
 export type SquadInput = z.infer<typeof squadSchema>;
+
+// ---------- Administração (M4) ----------
+export const userPatchSchema = z.object({
+  name: text(120).min(1, 'Escreva seu nome').optional(),
+  title: text(120).optional(),
+  phone: text(40).optional(),
+  avatar: avatarSchema.optional(),
+  email: text(200).toLowerCase().regex(EMAIL_RE, 'Coloque um e-mail válido para seguir').optional(),
+  currentPassword: z.string().max(128).optional(), // exigida só quando o e-mail muda
+});
+export const projectDataSchema = z.object({
+  name: text(120).min(1, 'Escreva o nome da empresa'),
+  segment: text(60).min(1, 'Escolha ou escreva o segmento'),
+  indicators: list.default([]),
+  competitors: list.default([]),
+});
+const ids = z.array(z.string().uuid()).max(200).default([]);
+export const leadershipSchema = z.object({
+  name: text(120).min(1, 'Escreva o nome para seguir'),
+  title: text(120).optional().default(''),
+  email: text(200).toLowerCase().regex(EMAIL_RE, 'Coloque um e-mail válido para enviar o convite').optional(),
+  avatar: avatarSchema.optional(),
+  squadIds: ids,
+  memberIds: ids,
+});
+export const categorySchema = z.object({
+  name: text(80).min(1, 'Escreva o nome da categoria'),
+  skills: z.array(text(80).min(1)).min(1, 'Adicione pelo menos uma skill').max(50),
+});
+export const CATEGORY_SUGGESTIONS = ['Pesquisa e descoberta', 'Interação e prototipação', 'Visual e sistemas', 'Escrita e conteúdo', 'Dados e experimentação', 'Negócio e liderança'];
+export const LEADER_TITLES = ['Head de Design', 'Design Manager', 'Design Lead', 'Diretor(a) de Design'];

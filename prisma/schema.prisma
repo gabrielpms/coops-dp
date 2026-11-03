@@ -84,6 +84,7 @@ model Project {
   indicators      KeyIndicator[]
   competitors     Competitor[]
   referenceLinks  ReferenceLink[]
+  leaderships     Leadership[]
   skillCategories SkillCategory[]
   skills          Skill[]
   invites         Invite[]
@@ -152,40 +153,43 @@ model Invite {
 
 // ---------- Time (contadores do hub; telas completas no Marco 2) ----------
 model Squad {
-  id        String            @id @default(uuid())
-  projectId String
-  project   Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  name      String
-  color     String            @default("#B7A6FF")
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
-  deletedAt DateTime?
-  members   SquadMembership[]
+  id          String            @id @default(uuid())
+  projectId   String
+  project     Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name        String
+  color       String            @default("#B7A6FF")
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  deletedAt   DateTime?
+  members     SquadMembership[]
+  leaderships LeadershipSquad[]
 }
 
 model Person {
-  id        String            @id @default(uuid())
+  id        String             @id @default(uuid())
   projectId String
-  project   Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project   Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
   userId    String?
-  user      User?             @relation(fields: [userId], references: [id])
+  user      User?              @relation(fields: [userId], references: [id])
   name      String
   title     String?
   email     String? // e-mail do convite; vincula ao User quando a pessoa cria a conta
   mainSkill String?
   joinedAt  DateTime?
   avatar    Json?
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
   deletedAt DateTime?
   squads    SquadMembership[]
+  leads     Leadership?        @relation("LeaderPerson")
+  reportsTo LeadershipMember[] @relation("ReportsTo")
 }
 
 model SquadMembership {
   squadId  String
-  squad    Squad  @relation(fields: [squadId], references: [id], onDelete: Cascade)
+  squad    Squad   @relation(fields: [squadId], references: [id], onDelete: Cascade)
   personId String
-  person   Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+  person   Person  @relation(fields: [personId], references: [id], onDelete: Cascade)
   crown    Boolean @default(false) // referência (champion) no squad
 
   @@id([squadId, personId])
@@ -216,4 +220,38 @@ model Draft {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, scope, entityId])
+}
+
+// ---------- Administração: lideranças (M4) ----------
+model Leadership {
+  id        String             @id @default(uuid())
+  projectId String
+  project   Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  personId  String             @unique // a pessoa que lidera (carta no Time, convidada como manager)
+  person    Person             @relation("LeaderPerson", fields: [personId], references: [id], onDelete: Cascade)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  deletedAt DateTime?
+  members   LeadershipMember[]
+  squads    LeadershipSquad[]
+
+  @@index([projectId])
+}
+
+model LeadershipMember {
+  leadershipId String
+  leadership   Leadership @relation(fields: [leadershipId], references: [id], onDelete: Cascade)
+  personId     String
+  person       Person     @relation("ReportsTo", fields: [personId], references: [id], onDelete: Cascade)
+
+  @@id([leadershipId, personId])
+}
+
+model LeadershipSquad {
+  leadershipId String
+  leadership   Leadership @relation(fields: [leadershipId], references: [id], onDelete: Cascade)
+  squadId      String
+  squad        Squad      @relation(fields: [squadId], references: [id], onDelete: Cascade)
+
+  @@id([leadershipId, squadId])
 }

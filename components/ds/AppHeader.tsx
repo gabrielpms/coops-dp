@@ -35,6 +35,15 @@ export function AppHeader({ name, email, role, avatar }: { name: string; email: 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '10px 12px 12px', borderBottom: '1px solid #2C2C36', marginBottom: 4 }}>
                 <span style={{ fontSize: 16, fontWeight: 700 }}>{name}</span><span style={{ fontSize: 13, color: '#A3A1AD' }}>{email}</span>
               </div>
+              <a role="menuitem" className="hb-item" href="/admin" style={{ display: 'flex', alignItems: 'center', gap: 12, color: '#F5F2EC', textDecoration: 'none', borderRadius: 14, padding: '10px 12px', minHeight: 48, boxSizing: 'border-box' }}>
+                <span style={{ flex: 'none', width: 36, height: 36, borderRadius: 10, background: '#B7A6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
+                </span>
+                <span style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontSize: 15, fontWeight: 600 }}>{role === 'MANAGER' ? 'Administração' : 'Meus dados'}</span>
+                  <span style={{ fontSize: 12, color: '#A3A1AD' }}>{role === 'MANAGER' ? 'Projetos, lideranças, skills e seus dados' : 'Edite o seu avatar'}</span>
+                </span>
+              </a>
               <button type="button" role="menuitem" className="hb-item" onClick={logout} style={{ display: 'flex', alignItems: 'center', gap: 12, fontFamily: 'inherit', color: '#A3A1AD', background: 'transparent', border: 0, textAlign: 'left', borderRadius: 14, padding: '10px 12px', minHeight: 48, cursor: 'pointer' }}>
                 <span style={{ flex: 'none', width: 36, height: 36, borderRadius: 10, border: '1.5px solid #3A3846', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11" /></svg>

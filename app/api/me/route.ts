@@ -1,20 +1,32 @@
 import { db } from '@/lib/db';
-import { z } from 'zod';
-import { avatarSchema } from '@/lib/validation';
-import { isResponse, json, parse, requireUser } from '@/lib/api/http';
+import { userPatchSchema } from '@/lib/validation';
+import { verifyPassword } from '@/lib/password';
+import { fail, isResponse, json, parse, requireUser } from '@/lib/api/http';
 
 export async function GET() {
   const u = await requireUser();
   if (isResponse(u)) return u;
-  return json({ id: u.id, name: u.name, email: u.email, phone: u.phone, role: u.role, avatar: u.avatar, onboardingStep: u.onboardingStep });
+  return json({ id: u.id, name: u.name, email: u.email, phone: u.phone, title: u.title, role: u.role, avatar: u.avatar, onboardingStep: u.onboardingStep });
 }
 
-const patch = z.object({ name: z.string().trim().min(1).max(120).optional(), phone: z.string().trim().max(40).optional(), avatar: avatarSchema.optional() });
+// Dados do usuário (M4). Trocar o e-mail muda o login, então exige a senha atual e e-mail ainda livre.
 export async function PATCH(req: Request) {
   const u = await requireUser();
   if (isResponse(u)) return u;
-  const body = await parse(req, patch);
+  const body = await parse(req, userPatchSchema);
   if (isResponse(body)) return body;
-  const next = await db.user.update({ where: { id: u.id }, data: body });
-  return json({ id: next.id, name: next.name, avatar: next.avatar });
+  const { currentPassword, email, ...rest } = body;
+  const data: Record<string, unknown> = { ...rest };
+  if (email && email !== u.email) {
+    if (!currentPassword || !verifyPassword(currentPassword, u.passwordHash)) return fail(403, 'Para trocar o e-mail, confirme sua senha atual.');
+    if (await db.user.findUnique({ where: { email } })) return fail(409, 'Esse e-mail já está em uso por outra conta.');
+    data.email = email;
+  }
+  const next = await db.$transaction(async (tx) => {
+    const n = await tx.user.update({ where: { id: u.id }, data });
+    // "As mudanças aparecem em todos os projetos": cartas ligadas a esta conta acompanham
+    await tx.person.updateMany({ where: { userId: u.id }, data: { ...(body.name ? { name: body.name } : {}), ...(body.title !== undefined ? { title: body.title || null } : {}), ...(body.avatar ? { avatar: body.avatar } : {}), ...(data.email ? { email: data.email as string } : {}) } });
+    return n;
+  });
+  return json({ id: next.id, name: next.name, title: next.title, email: next.email, avatar: next.avatar });
 }

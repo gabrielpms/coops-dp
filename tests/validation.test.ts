@@ -44,3 +44,11 @@ describe('time (M5)', () => {
   it('membro: data de entrada só no formato AAAA-MM-DD', () => { expect(memberSchema.parse({ ...m, joinedAt: '2024-03-10' }).joinedAt).toBe('2024-03-10'); expect(() => memberSchema.parse({ ...m, joinedAt: '10/03/2024' })).toThrow(); });
   it('squad: exige nome, cor em hex e ids de pessoa', () => { expect(squadSchema.parse({ name: 'Onboarding' }).color).toBe('#B7A6FF'); expect(() => squadSchema.parse({ name: '' })).toThrow(); expect(() => squadSchema.parse({ name: 'A', color: 'roxo' })).toThrow(); expect(() => squadSchema.parse({ name: 'A', members: [{ personId: 'x' }] })).toThrow(); });
 });
+
+import { categorySchema, leadershipSchema, projectDataSchema, userPatchSchema } from '@/lib/validation';
+describe('administração (M4)', () => {
+  it('usuário: e-mail inválido é recusado e o válido é normalizado', () => { expect(() => userPatchSchema.parse({ email: 'x' })).toThrow(); expect(userPatchSchema.parse({ email: 'A@B.com' }).email).toBe('a@b.com'); });
+  it('dados do projeto: segmento livre e obrigatório', () => { expect(projectDataSchema.parse({ name: 'N', segment: 'Seguros' }).segment).toBe('Seguros'); expect(() => projectDataSchema.parse({ name: 'N', segment: ' ' })).toThrow(); });
+  it('categoria: exige nome e ao menos uma skill', () => { expect(categorySchema.parse({ name: 'C', skills: ['a'] }).skills).toEqual(['a']); expect(() => categorySchema.parse({ name: 'C', skills: [] })).toThrow(); expect(() => categorySchema.parse({ name: '', skills: ['a'] })).toThrow(); });
+  it('liderança: nome obrigatório; ids precisam ser uuid', () => { expect(() => leadershipSchema.parse({ name: ' ' })).toThrow(); expect(() => leadershipSchema.parse({ name: 'A', squadIds: ['x'] })).toThrow(); expect(leadershipSchema.parse({ name: 'A' }).memberIds).toEqual([]); });
+});
