@@ -25,12 +25,12 @@ export function ProjectDeck({ mode, projectId, initial, title, onClose, onSaved 
   const [form, setForm] = useState<ProjectForm>(initial ?? emptyProject());
   const [step, setStep] = useState(0);
   const [errs, setErrs] = useState<{ name?: boolean; segment?: boolean; skills?: boolean; invite?: boolean }>({});
-  const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [typed, setTyped] = useState({ ind: '', con: '', link: '', skill: '', pn: '', pe: '' });
   const [pos, setPos] = useState<'IC' | 'MANAGER'>('IC');
   const loaded = useRef(false);
+  const touched = useRef(false); // a pessoa já mexeu: o rascunho que chegar depois não pode sobrescrever
 
   // ---- Rascunho persistente (PRD 6.2): carrega ao abrir, salva com debounce de 600 ms e ao avançar
   const save = useCallback((f: ProjectForm, s: number) => {
@@ -42,9 +42,9 @@ export function ProjectDeck({ mode, projectId, initial, title, onClose, onSaved 
     fetch(`/api/drafts?scope=${SCOPE}&entityId=${encodeURIComponent(entityId)}`).then((r) => r.json()).then((d) => {
       if (!alive) return;
       const p = d?.draft?.payload as { form?: ProjectForm; step?: number } | undefined;
-      if (p?.form) { setForm({ ...emptyProject(), ...p.form }); setStep(Math.min(LAST, p.step ?? 0)); }
-      loaded.current = true; setReady(true);
-    }).catch(() => { loaded.current = true; setReady(true); });
+      if (p?.form && !touched.current) { setForm({ ...emptyProject(), ...p.form }); setStep(Math.min(LAST, p.step ?? 0)); }
+      loaded.current = true;
+    }).catch(() => { loaded.current = true; });
     return () => { alive = false; };
   }, [entityId]);
 
@@ -59,7 +59,7 @@ export function ProjectDeck({ mode, projectId, initial, title, onClose, onSaved 
   }, [form, save]);
   useEffect(() => () => { if (loaded.current) save(latest.current.form, latest.current.step); }, [save]);
 
-  const set = (patch: Partial<ProjectForm>) => setForm((f) => ({ ...f, ...patch }));
+  const set = (patch: Partial<ProjectForm>) => { touched.current = true; setForm((f) => ({ ...f, ...patch })); };
   const trimmed = (f: ProjectForm) => ({ ...f, name: f.name.trim(), tagline: f.tagline.trim(), strategy: f.strategy.trim() });
 
   const validate = (f: ProjectForm, to: number) => {
@@ -83,6 +83,7 @@ export function ProjectDeck({ mode, projectId, initial, title, onClose, onSaved 
   };
 
   const go = (k: number) => {
+    touched.current = true;
     const target = Math.max(0, k);
     if (target > LAST) { const e = validate(form, 99); if (e) { setErrs(e.flags); setStep(e.at); return; } void submit(); return; }
     const e = validate(form, target);
@@ -229,8 +230,8 @@ export function ProjectDeck({ mode, projectId, initial, title, onClose, onSaved 
   const heading = title ?? (mode === 'edit' ? 'Editar projeto' : 'Novo projeto');
   return (
     <BottomSheet tag={mode === 'edit' ? 'PROJETO · EDITAR' : 'PROJETO · NOVO'} title={heading} onClose={onClose}>
-      {ready ? <QuestionDeck tag={mode === 'edit' ? 'PROJETO · EDITAR' : 'PROJETO · NOVO'} cards={cards} step={step} onGo={go} busy={busy} error={serverError}
-        nextLabel={step === LAST ? (mode === 'edit' ? 'Salvar alterações' : 'Criar projeto') : 'Próxima'} /> : <div style={{ height: 480 }} aria-busy="true" />}
+      <QuestionDeck tag={mode === 'edit' ? 'PROJETO · EDITAR' : 'PROJETO · NOVO'} cards={cards} step={step} onGo={go} busy={busy} error={serverError}
+        nextLabel={step === LAST ? (mode === 'edit' ? 'Salvar alterações' : 'Criar projeto') : 'Próxima'} />
     </BottomSheet>
   );
 }
