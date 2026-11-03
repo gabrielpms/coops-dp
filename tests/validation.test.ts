@@ -52,3 +52,13 @@ describe('administração (M4)', () => {
   it('categoria: exige nome e ao menos uma skill', () => { expect(categorySchema.parse({ name: 'C', skills: ['a'] }).skills).toEqual(['a']); expect(() => categorySchema.parse({ name: 'C', skills: [] })).toThrow(); expect(() => categorySchema.parse({ name: '', skills: ['a'] })).toThrow(); });
   it('liderança: nome obrigatório; ids precisam ser uuid', () => { expect(() => leadershipSchema.parse({ name: ' ' })).toThrow(); expect(() => leadershipSchema.parse({ name: 'A', squadIds: ['x'] })).toThrow(); expect(leadershipSchema.parse({ name: 'A' }).memberIds).toEqual([]); });
 });
+
+import { deliveryImpactSchema, deliverySchema, powerUpSchema, ratingSchema, studySchema, currentCycle } from '@/lib/validation';
+describe('decks da pessoa (M6)', () => {
+  it('entrega: título obrigatório, status padrão e links válidos', () => { expect(deliverySchema.parse({ title: 'A' }).status).toBe('ENTREGUE'); expect(() => deliverySchema.parse({ title: ' ' })).toThrow(); expect(() => deliverySchema.parse({ title: 'A', links: ['x'] })).toThrow(); expect(deliverySchema.parse({ title: 'A', links: ['figma.com/file/1'] }).links).toHaveLength(1); });
+  it('entrega: impacto não pode ser vazio', () => expect(() => deliveryImpactSchema.parse({ impact: ' ' })).toThrow());
+  it('brain gym: tipo conhecido, título e tamanho entre 1 e 60', () => { expect(studySchema.parse({ type: 'LIVRO', title: 'T' }).total).toBe(10); expect(() => studySchema.parse({ type: 'FILME', title: 'T' })).toThrow(); expect(() => studySchema.parse({ type: 'LIVRO', title: 'T', total: 0 })).toThrow(); });
+  it('nota: de 1 a 5', () => { const id = '8d1d6b52-0b0c-4d0c-9a52-3b1b6c6f0a11'; expect(ratingSchema.parse({ skillId: id, selfScore: 5 }).selfScore).toBe(5); expect(() => ratingSchema.parse({ skillId: id, selfScore: 6 })).toThrow(); expect(() => ratingSchema.parse({ skillId: id, managerScore: 0 })).toThrow(); });
+  it('power up: tipo obrigatório e progresso de 0 a 100', () => { expect(powerUpSchema.parse({ type: 'CURSO', name: 'N' }).progress).toBe(0); expect(() => powerUpSchema.parse({ type: 'X', name: 'N' })).toThrow(); expect(() => powerUpSchema.parse({ type: 'CURSO', name: 'N', progress: 101 })).toThrow(); });
+  it('ciclo trimestral', () => { expect(currentCycle(new Date(2026, 10, 3))).toBe('2026-Q4'); expect(currentCycle(new Date(2026, 0, 1))).toBe('2026-Q1'); });
+});

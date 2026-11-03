@@ -109,3 +109,40 @@ export const categorySchema = z.object({
 });
 export const CATEGORY_SUGGESTIONS = ['Pesquisa e descoberta', 'Interação e prototipação', 'Visual e sistemas', 'Escrita e conteúdo', 'Dados e experimentação', 'Negócio e liderança'];
 export const LEADER_TITLES = ['Head de Design', 'Design Manager', 'Design Lead', 'Diretor(a) de Design'];
+
+// ---------- Decks da pessoa (M6) ----------
+export const DELIVERY_STATUS = ['ENTREGUE', 'EM_ANDAMENTO', 'PAUSADA'] as const;
+export const STUDY_TYPES = ['CURSO', 'LIVRO', 'VIDEO', 'ARTIGO', 'PODCAST', 'LINK'] as const;
+export const POWERUP_TYPES = ['MENTORIA', 'CURSO', 'PROJETO'] as const;
+const day = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Data inválida');
+const urlText = text(500).refine((v) => { try { new URL(/^https?:\/\//i.test(v) ? v : `https://${v}`); return /\./.test(v); } catch { return false; } }, 'Esse link não parece válido. Confere e tenta de novo.');
+export const deliverySchema = z.object({
+  title: text(160).min(1, 'Dê um título à entrega para seguir.'),
+  description: text(1000).optional().default(''),
+  initiativeId: z.string().uuid().nullable().optional().default(null),
+  status: z.enum(DELIVERY_STATUS).default('ENTREGUE'),
+  role: text(300).optional().default(''),
+  impact: text(1000).optional().default(''),
+  date: day.optional(),
+  links: z.array(urlText).max(10).default([]),
+});
+export const deliveryImpactSchema = z.object({ impact: text(1000).min(1, 'Escreva o impacto para salvar.') });
+export const studySchema = z.object({
+  type: z.enum(STUDY_TYPES),
+  title: text(200).min(1, 'Dê um título ao conteúdo para seguir.'),
+  url: urlText.optional().or(z.literal('')).default(''),
+  skillId: z.string().uuid().nullable().optional().default(null),
+  total: z.number().int().min(1).max(60).default(10),
+});
+export const studyPatchSchema = z.object({ progress: z.number().int().min(0).max(60).optional(), notes: text(2000).optional() });
+export const ratingSchema = z.object({ skillId: z.string().uuid(), selfScore: z.number().int().min(1).max(5).nullable().optional(), managerScore: z.number().int().min(1).max(5).nullable().optional() });
+export const powerUpSchema = z.object({
+  type: z.enum(POWERUP_TYPES, { message: 'Escolha um tipo para seguir.' }),
+  name: text(160).min(1, 'Preencha para seguir.'),
+  skill: text(80).optional().default(''),
+  frequency: text(60).optional().default(''),
+  progress: z.number().int().min(0).max(100).default(0),
+});
+
+/** Ciclo atual (trimestral por padrão; configurável por projeto é pergunta em aberto do PRD). */
+export const currentCycle = (d = new Date()) => `${d.getFullYear()}-Q${Math.floor(d.getMonth() / 3) + 1}`;

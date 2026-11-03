@@ -50,5 +50,5 @@ await p.reload(); await p.click('[role=tab]:has-text("Todos")'); await p.waitFor
 console.log('carta deixa de ser "convite enviado":', await p.locator('text=CONVITE ENVIADO').count() === 0);
 const st = await p2.evaluate(async (pid) => (await fetch(`/api/projects/${pid}/members`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name: 'X', email: 'x@x.com' }) })).status, id);
 console.log('IC não cria membro (esperado 403):', st);
-await p2.goto(`${BASE}/p/${id}/time`); await p2.waitForURL('**/hub'); console.log('IC não vê a gestão de time: redireciona ao hub');
+await p2.goto(`${BASE}/p/${id}/time`); await p2.waitForURL(/\/pessoas\//); console.log('IC não vê a gestão de time: vai para o próprio perfil');
 console.log('ERROS:', errors.length ? errors : 'nenhum'); await b.close();

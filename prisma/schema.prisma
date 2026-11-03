@@ -136,6 +136,8 @@ model Skill {
   category   SkillCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   name       String
   position   Int            @default(0)
+  ratings    SkillRating[]
+  studyItems StudyItem[]
 }
 
 model Invite {
@@ -166,23 +168,27 @@ model Squad {
 }
 
 model Person {
-  id        String             @id @default(uuid())
-  projectId String
-  project   Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  userId    String?
-  user      User?              @relation(fields: [userId], references: [id])
-  name      String
-  title     String?
-  email     String? // e-mail do convite; vincula ao User quando a pessoa cria a conta
-  mainSkill String?
-  joinedAt  DateTime?
-  avatar    Json?
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
-  deletedAt DateTime?
-  squads    SquadMembership[]
-  leads     Leadership?        @relation("LeaderPerson")
-  reportsTo LeadershipMember[] @relation("ReportsTo")
+  id         String             @id @default(uuid())
+  projectId  String
+  project    Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId     String?
+  user       User?              @relation(fields: [userId], references: [id])
+  name       String
+  title      String?
+  email      String? // e-mail do convite; vincula ao User quando a pessoa cria a conta
+  mainSkill  String?
+  joinedAt   DateTime?
+  avatar     Json?
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+  deletedAt  DateTime?
+  squads     SquadMembership[]
+  leads      Leadership?        @relation("LeaderPerson")
+  powerUps   PowerUp[]
+  deliveries Delivery[]
+  ratings    SkillRating[]
+  studyItems StudyItem[]
+  reportsTo  LeadershipMember[] @relation("ReportsTo")
 }
 
 model SquadMembership {
@@ -196,16 +202,17 @@ model SquadMembership {
 }
 
 model Initiative {
-  id        String           @id @default(uuid())
-  projectId String
-  project   Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  product   String
-  problem   String?
-  need      String?
-  status    InitiativeStatus @default(ABERTA)
-  moment    Int?
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
+  id         String           @id @default(uuid())
+  projectId  String
+  project    Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  product    String
+  problem    String?
+  need       String?
+  status     InitiativeStatus @default(ABERTA)
+  moment     Int?
+  deliveries Delivery[]
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
 }
 
 // ---------- Rascunhos de deck de perguntas (PRD 6.2) ----------
@@ -254,4 +261,102 @@ model LeadershipSquad {
   squad        Squad      @relation(fields: [squadId], references: [id], onDelete: Cascade)
 
   @@id([leadershipId, squadId])
+}
+
+// ---------- Decks da pessoa (M6) ----------
+enum DeliveryStatus {
+  ENTREGUE
+  EM_ANDAMENTO
+  PAUSADA
+}
+
+enum StudyType {
+  CURSO
+  LIVRO
+  VIDEO
+  ARTIGO
+  PODCAST
+  LINK
+}
+
+model PowerUp {
+  id          String    @id @default(uuid())
+  personId    String
+  person      Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  type        String // MENTORIA | CURSO | PROJETO
+  name        String
+  skill       String?
+  frequency   String?
+  progress    Int       @default(0) // 0-100
+  createdById String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@index([personId])
+}
+
+model Delivery {
+  id           String         @id @default(uuid())
+  personId     String
+  person       Person         @relation(fields: [personId], references: [id], onDelete: Cascade)
+  title        String
+  description  String?
+  initiativeId String?
+  initiative   Initiative?    @relation(fields: [initiativeId], references: [id], onDelete: SetNull)
+  status       DeliveryStatus @default(ENTREGUE)
+  role         String?
+  impact       String?
+  date         DateTime       @default(now())
+  createdById  String?
+  updatedById  String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  deletedAt    DateTime?
+  links        DeliveryLink[]
+
+  @@index([personId])
+}
+
+model DeliveryLink {
+  id         String   @id @default(uuid())
+  deliveryId String
+  delivery   Delivery @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+  url        String
+  host       String
+}
+
+model SkillRating {
+  id           String   @id @default(uuid())
+  personId     String
+  person       Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  skillId      String
+  skill        Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  cycle        String // ex.: 2026-Q4
+  selfScore    Int? // 1-5 (autoavaliação)
+  managerScore Int? // 1-5 (só o manager)
+  updatedById  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([personId, skillId, cycle])
+}
+
+model StudyItem {
+  id        String    @id @default(uuid())
+  personId  String
+  person    Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  type      StudyType
+  title     String
+  url       String?
+  skillId   String?
+  skill     Skill?    @relation(fields: [skillId], references: [id], onDelete: SetNull)
+  progress  Int       @default(0) // blocos concluídos
+  total     Int       @default(10)
+  notes     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([personId])
 }

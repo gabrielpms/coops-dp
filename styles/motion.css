@@ -135,3 +135,22 @@
 .ad-av{transition:transform .45s cubic-bezier(.34,1.56,.64,1);transform-origin:50% 100%}
 .ad-hv:hover .ad-av{transform:translateY(-3px) rotate(-4deg)}
 @media (prefers-reduced-motion:reduce){.coops-mban-ring,.coops-mban-ic,.coops-mban-me,.coops-mban-btn,.ad-av{transition:none!important;transform:none!important}}
+
+/* Coops · ícones animados dos decks da pessoa: o gesto roda no hover/foco do card inteiro */
+.di svg *{transform-box:view-box}
+.di-star{transform-origin:32px 32px}
+.coops-card:hover .di-star,.coops-card:focus-visible .di-star{animation:diTw 1.1s ease-in-out infinite}
+@keyframes diTw{0%,100%{transform:scale(1) rotate(0)}40%{transform:scale(1.16) rotate(14deg)}70%{transform:scale(.94) rotate(-8deg)}}
+.di-pg{transform-origin:32px 18px;transition:transform .4s ease}
+.coops-card:hover .di-pg,.coops-card:focus-visible .di-pg{animation:diPage 1.4s ease-in-out infinite}
+@keyframes diPage{0%,100%{transform:skewY(0)}50%{transform:skewY(-7deg)}}
+.di-rk{transform-origin:32px 40px}
+.coops-card:hover .di-rk,.coops-card:focus-visible .di-rk{animation:diRocket 1.2s ease-in-out infinite}
+.di-fl{transform-origin:32px 44px}
+.coops-card:hover .di-fl,.coops-card:focus-visible .di-fl{animation:diFire .3s ease-in-out infinite alternate}
+@keyframes diRocket{0%,100%{transform:rotate(-5deg)}50%{transform:translateY(-3px) rotate(5deg)}}
+@keyframes diFire{from{transform:scaleY(1)}to{transform:scaleY(1.35)}}
+.di-ev{transform-origin:32px 54px}
+.coops-card:hover .di-ev,.coops-card:focus-visible .di-ev{animation:diBob 1.2s ease-in-out infinite}
+@keyframes diBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@media (prefers-reduced-motion:reduce){.di-star,.di-pg,.di-rk,.di-fl,.di-ev{animation:none!important}}

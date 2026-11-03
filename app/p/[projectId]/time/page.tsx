@@ -13,7 +13,11 @@ export default async function TimePage({ params }: { params: Promise<{ projectId
   const { projectId } = await params;
   const u = await currentUser();
   if (!u) redirect('/cadastro');
-  if (u.role !== 'MANAGER') redirect('/hub'); // IC vê só os próprios decks
+  if (u.role !== 'MANAGER') {
+    // IC vê só os próprios decks: cai direto no seu perfil neste projeto
+    const mine = await db.person.findFirst({ where: { projectId, userId: u.id, deletedAt: null }, select: { id: true } });
+    redirect(mine ? `/p/${projectId}/pessoas/${mine.id}` : '/hub');
+  }
   const project = await db.project.findFirst({ where: { id: projectId, ...accessibleWhere(u.id) }, include: { skills: { orderBy: { position: 'asc' } } } });
   if (!project) notFound();
 
