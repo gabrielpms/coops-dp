@@ -20,3 +20,9 @@ html.coops-leaving body::before{opacity:1}
 .coops-wz-card::-webkit-scrollbar-track{margin:18px 0}
 .coops-wz-card>*{flex-shrink:0}
 @media (max-width:900px){.coops-sheet{padding:12px 16px 32px!important;max-height:100%!important;border-radius:24px 24px 0 0!important}}
+/* Landing · telas estreitas: o que é largo demais em fileira é reduzido (PRD §8: 390 px) */
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+@media (max-width:900px){.lp-hero{zoom:.5}.lp-crowd{zoom:.6}.lp-mesa{height:360px!important}}
+@media (max-width:520px){.lp-hero{zoom:.38}.lp-crowd{zoom:.45}}
+@media (max-width:900px){.lp-pill{display:none}}

@@ -17,3 +17,12 @@ describe('hostOf', () => {
   it('extrai o host sem www', () => expect(hostOf('https://www.nubank.com.br/x')).toBe('nubank.com.br'));
   it('aceita link sem protocolo', () => expect(hostOf('figma.com/file')).toBe('figma.com'));
 });
+
+import { wishlistSchema } from '@/lib/validation';
+describe('wishlistSchema (M1)', () => {
+  const ok = { email: 'A@B.com', role: 'Designer IC', consent: true };
+  it('aceita o mínimo e normaliza o e-mail', () => expect(wishlistSchema.parse(ok).email).toBe('a@b.com'));
+  it('exige o aceite de comunicações', () => expect(() => wishlistSchema.parse({ ...ok, consent: false })).toThrow());
+  it('exige e-mail válido', () => expect(() => wishlistSchema.parse({ ...ok, email: 'x' })).toThrow());
+  it('só aceita papéis conhecidos', () => expect(() => wishlistSchema.parse({ ...ok, role: 'CEO' })).toThrow());
+});

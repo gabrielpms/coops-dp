@@ -57,8 +57,12 @@ model WishlistEntry {
   name      String
   role      String
   focus     String?
+  teamSize  String?
   pains     String[]
   channels  String[]
+  beta      Boolean  @default(false)
+  consent   Boolean  @default(false)
+  editToken String? // hash do token guardado no navegador de quem se inscreveu
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

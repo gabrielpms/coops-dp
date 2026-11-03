@@ -40,3 +40,20 @@ export const draftSchema = z.object({ scope: text(80).min(1), entityId: text(80)
 export function hostOf(url: string): string {
   try { return new URL(/^https?:\/\//i.test(url) ? url : `https://${url}`).host.replace(/^www\./, ''); } catch { return url; }
 }
+
+// ---------- Wish list (M1) ----------
+export const WISH_ROLES = ['Designer IC', 'Lead / Manager', 'Head / Diretor(a)', 'Produto / Outro'] as const;
+export const WISH_TEAM_SIZES = ['Só eu', '2 a 5', '6 a 15', '16 a 40', 'Mais de 40'] as const;
+export const WISH_CHANNELS = ['E-mail', 'WhatsApp', 'LinkedIn'] as const;
+export const wishlistSchema = z.object({
+  name: text(120).optional().default(''),
+  email: text(200).toLowerCase().regex(EMAIL_RE, 'Precisamos de um e-mail válido.'),
+  role: z.enum(WISH_ROLES),
+  teamSize: z.enum(WISH_TEAM_SIZES).optional().default('Só eu'),
+  focus: text(120).optional().default(''),
+  pains: z.array(text(120)).max(12).default([]),
+  channels: z.array(z.enum(WISH_CHANNELS)).max(3).default([]),
+  beta: z.boolean().default(false),
+  consent: z.literal(true, { message: 'Marque o aceite de comunicações para entrar na lista.' }),
+});
+export type WishlistInput = z.infer<typeof wishlistSchema>;
