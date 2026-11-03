@@ -18,7 +18,7 @@ export function AppHeader({ name, email, role, avatar }: { name: string; email: 
     return () => { document.removeEventListener('mousedown', away); document.removeEventListener('keydown', esc); };
   }, [open]);
 
-  const logout = async () => { await fetch('/api/auth/logout', { method: 'POST' }); go('/cadastro', { replace: true }); };
+  const logout = async () => { await fetch('/api/auth/logout', { method: 'POST' }); go('/', { replace: true }); };
 
   return (
     <header style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>

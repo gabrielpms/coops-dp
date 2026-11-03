@@ -45,7 +45,7 @@ function Card({ children, style }: { children: ReactNode; style: React.CSSProper
   return <div style={{ position: 'absolute', boxSizing: 'border-box', borderRadius: 18, border: '2px solid #0E0E12', padding: 12, color: '#0E0E12', display: 'flex', flexDirection: 'column', ...style }}>{children}</div>;
 }
 
-export function Landing() {
+export function Landing({ loggedIn = false }: { loggedIn?: boolean }) {
   const [wish, setWish] = useState<WishSeed | undefined>(undefined); // undefined = fechado
   const [hero, setHero] = useState(-1);
   const [moment, setMoment] = useState(-1);
@@ -89,7 +89,7 @@ export function Landing() {
             <span style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.03em' }}>coops.</span>
             <nav aria-label="Principal" style={{ display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center' }}>
               <a href="#produtos" style={navLink}>Como é</a><a href="#ic" style={navLink}>Para ICs</a><a href="#momentos" style={navLink}>Agente</a><a href="#planos" style={navLink}>Para managers</a>
-              <a href="/cadastro" style={navLink}>Entrar</a>
+              <a href={loggedIn ? '/hub' : '/entrar'} style={navLink}>{loggedIn ? 'Abrir meu painel' : 'Entrar'}</a>
               <a href="#lista" onClick={(e) => openWish(e)} style={btnDark}>Entrar na wish list</a>
             </nav>
           </header>

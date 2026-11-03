@@ -10,5 +10,5 @@ export async function GET(req: Request) {
   if (!row || row.usedAt || row.expiresAt < new Date()) return NextResponse.redirect(new URL('/entrar?erro=link', url));
   await db.loginToken.update({ where: { id: row.id }, data: { usedAt: new Date() } });
   await createSession(row.userId);
-  return NextResponse.redirect(new URL('/', url));
+  return NextResponse.redirect(new URL('/hub', url));
 }
