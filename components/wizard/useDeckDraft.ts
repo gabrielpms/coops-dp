@@ -18,11 +18,14 @@ export function useDeckDraft<T>({ scope, entityId, empty, draft, last, onDraftCh
   const latest = useRef({ form, step });
   latest.current = { form, step };
 
+  // a função do pai pode mudar a cada renderização: guardada em ref para não realimentar o salvamento
+  const notify = useRef(onDraftChange);
+  notify.current = onDraftChange;
   const save = useCallback((f: T, s: number) => {
     if (!persist) return;
-    onDraftChange?.({ form: f, step: s });
+    notify.current?.({ form: f, step: s });
     fetch('/api/drafts', { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ scope, entityId, payload: { form: f, step: s } }) }).catch(() => {});
-  }, [scope, entityId, onDraftChange, persist]);
+  }, [scope, entityId, persist]);
 
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => {
@@ -36,6 +39,6 @@ export function useDeckDraft<T>({ scope, entityId, empty, draft, last, onDraftCh
   const set = (patch: Partial<T>) => { touched.current = true; setForm((f) => ({ ...f, ...patch })); };
   const goTo = (k: number) => { touched.current = true; setStep(k); save(latest.current.form, k); };
   /** Depois de concluir: o servidor apaga o rascunho; aqui só impede a regravação ao desmontar. */
-  const done = () => { touched.current = false; clearTimeout(timer.current); onDraftChange?.(null); };
+  const done = () => { touched.current = false; clearTimeout(timer.current); notify.current?.(null); };
   return { form, set, step, setStep, goTo, done };
 }

@@ -62,3 +62,10 @@ describe('decks da pessoa (M6)', () => {
   it('power up: tipo obrigatório e progresso de 0 a 100', () => { expect(powerUpSchema.parse({ type: 'CURSO', name: 'N' }).progress).toBe(0); expect(() => powerUpSchema.parse({ type: 'X', name: 'N' })).toThrow(); expect(() => powerUpSchema.parse({ type: 'CURSO', name: 'N', progress: 101 })).toThrow(); });
   it('ciclo trimestral', () => { expect(currentCycle(new Date(2026, 10, 3))).toBe('2026-Q4'); expect(currentCycle(new Date(2026, 0, 1))).toBe('2026-Q1'); });
 });
+
+import { healthSchema, journeySchema } from '@/lib/validation';
+describe('jornada e saúde (M6)', () => {
+  it('objetivo exige título e sinal', () => { expect(journeySchema.parse({ kind: 'OBJETIVO', title: 'A', signal: 's' }).kind).toBe('OBJETIVO'); expect(() => journeySchema.parse({ kind: 'OBJETIVO', title: 'A' })).toThrow(); });
+  it('foco exige meta maior que o nível de hoje', () => { expect(journeySchema.parse({ kind: 'FOCO', title: 'S', levelFrom: 3, levelTo: 4 }).levelTo).toBe(4); expect(() => journeySchema.parse({ kind: 'FOCO', title: 'S', levelFrom: 4, levelTo: 4 })).toThrow(); expect(() => journeySchema.parse({ kind: 'FOCO', title: 'S' })).toThrow(); });
+  it('check-in exige as 4 notas de 1 a 5', () => { expect(healthSchema.parse({ saude: 1, design: 2, produto: 3, negocio: 5 }).note).toBe(''); expect(() => healthSchema.parse({ saude: 0, design: 2, produto: 3, negocio: 5 })).toThrow(); expect(() => healthSchema.parse({ saude: 1, design: 2, produto: 3 })).toThrow(); });
+});

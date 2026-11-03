@@ -13,13 +13,14 @@ type PU = { id: string; type: string; name: string; skill: string; frequency: st
 const TYPE_LABEL: Record<string, string> = { MENTORIA: 'MENTORIA', CURSO: 'CURSO', PROJETO: 'PROJETO PARALELO' };
 const STUDY_LABEL: Record<string, string> = { CURSO: 'CURSO', LIVRO: 'LIVRO', VIDEO: 'VÍDEO', ARTIGO: 'ARTIGO', PODCAST: 'PODCAST', LINK: 'LINK' };
 
-export function ProfileClient({ user, project, person, isOwn, isManager, powerUps, skillsSummary, studySummary, deliverySummary, draft: d0 }: {
+export function ProfileClient({ user, project, person, isOwn, isManager, powerUps, skillsSummary, studySummary, deliverySummary, journeySummary, healthSummary, draft: d0 }: {
   user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; project: { id: string; name: string; skills: string[] };
   person: { id: string; name: string; title: string; avatar: AvatarConfig | null; mainSkill: string; joinedAt: string | null; squads: { id: string; name: string; color: string }[] };
   isOwn: boolean; isManager: boolean; powerUps: PU[];
   skillsSummary: { total: number; top: { name: string; self: number }[]; avg: number; rated: number };
   studySummary: { total: number; active: number; latest: { title: string; type: string; pct: number } | null };
   deliverySummary: { total: number; delivered: number; paused: number; latest: { title: string } | null };
+  journeySummary: { total: number; goals: number; avg: number; first: string | null }; healthSummary: { avg: number; cycle: string } | null;
   draft: PowerUpDraft | null;
 }) {
   const { refresh } = useCoopsRouter();
@@ -116,13 +117,19 @@ export function ProfileClient({ user, project, person, isOwn, isManager, powerUp
               {head(<DiRocket />, String(deliverySummary.delivered), plural(deliverySummary.delivered, 'ENTREGUE', 'ENTREGUES'))}
               {foot('ENTREGAS', deliverySummary.latest?.title ?? 'Nenhuma entrega ainda', `${deliverySummary.total} ${plural(deliverySummary.total, 'entrega', 'entregas')}${deliverySummary.paused ? ` · ${deliverySummary.paused} ${plural(deliverySummary.paused, 'pausada', 'pausadas')}` : ''}`)}
             </CoopsLink>
-            {([['EVENTOS', 'Check-ins, feedbacks, promoções e méritos', <DiPeople key="e" />, '#B7A6FF'], ['JORNADA', `Para onde ${isOwn ? 'você está' : `${fn} está`} indo`, <DiFlag key="j" />, '#FF8A5B'], ['SAÚDE', 'Check-in de saúde com 4 dimensões', <DiHeart key="s" />, '#A9D8F5']] as [string, string, ReactNode, string][]).map(([k, t, ic, bg]) => (
-              <article key={k} aria-label={`${k} em breve`} style={{ ...cardBase, background: 'transparent', color: '#F5F2EC', border: `2px dashed ${bg}`, boxShadow: 'none', opacity: 0.85 }}>
-                <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', filter: 'invert(1)' }}>{ic}</span>
-                <span style={{ marginTop: 'auto', ...label(11, '0.08em'), color: bg }}>{k} · EM BREVE</span>
-                <span style={{ fontSize: 19, fontWeight: 600, lineHeight: 1.2 }}>{t}</span>
-              </article>
-            ))}
+            <CoopsLink href={`${base}/jornada`} className="coops-card" aria-label="Abrir o deck de Jornada" style={{ ...cardBase, background: '#FF8A5B' }}>
+              {head(<DiFlag />, journeySummary.goals ? `${journeySummary.avg}%` : String(journeySummary.total), journeySummary.goals ? 'DO CICLO' : plural(journeySummary.total, 'CARTA', 'CARTAS'))}
+              {foot('JORNADA', journeySummary.first ?? 'Jornada do ciclo vazia', `${journeySummary.total} ${plural(journeySummary.total, 'carta', 'cartas')} no ciclo`)}
+            </CoopsLink>
+            <CoopsLink href={`${base}/saude`} className="coops-card" aria-label="Abrir o deck de Saúde" style={{ ...cardBase, background: '#A9D8F5' }}>
+              {head(<DiHeart />, healthSummary ? healthSummary.avg.toFixed(1).replace('.', ',') : '—', 'MÉDIA / 5')}
+              {foot('SAÚDE · CHECK-IN', healthSummary ? 'Último check-in' : 'Sem check-in ainda', 'Só a pessoa e o manager veem')}
+            </CoopsLink>
+            <article aria-label="Eventos em breve" style={{ ...cardBase, background: 'transparent', color: '#F5F2EC', border: '2px dashed #B7A6FF', boxShadow: 'none', opacity: 0.85 }}>
+              <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', filter: 'invert(1)' }}><DiPeople /></span>
+              <span style={{ marginTop: 'auto', ...label(11, '0.08em'), color: '#B7A6FF' }}>EVENTOS · EM BREVE</span>
+              <span style={{ fontSize: 19, fontWeight: 600, lineHeight: 1.2 }}>Check-ins, feedbacks, promoções e méritos</span>
+            </article>
           </div>
         </section>
       </div>

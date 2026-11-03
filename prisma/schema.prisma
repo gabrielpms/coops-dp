@@ -188,6 +188,8 @@ model Person {
   deliveries Delivery[]
   ratings    SkillRating[]
   studyItems StudyItem[]
+  journey    JourneyGoal[]
+  health     HealthCheckin[]
   reportsTo  LeadershipMember[] @relation("ReportsTo")
 }
 
@@ -357,6 +359,49 @@ model StudyItem {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+
+  @@index([personId])
+}
+
+// ---------- Jornada e Saúde (M6) ----------
+enum JourneyKind {
+  OBJETIVO
+  FOCO
+}
+
+model JourneyGoal {
+  id          String      @id @default(uuid())
+  personId    String
+  person      Person      @relation(fields: [personId], references: [id], onDelete: Cascade)
+  cycle       String
+  kind        JourneyKind
+  title       String // objetivo: o resultado; foco: a skill
+  why         String?
+  signal      String? // objetivo: o sinal que será acompanhado
+  measure     String? // prazo ou medida
+  levelFrom   Int? // foco: nível de hoje (1-5)
+  levelTo     Int? // foco: meta do ciclo (1-5)
+  practice    String? // foco: como vai praticar
+  progress    Int         @default(0) // 0-5 (5 = sinal atingido)
+  createdById String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  deletedAt   DateTime?
+
+  @@index([personId])
+}
+
+model HealthCheckin {
+  id        String   @id @default(uuid())
+  personId  String
+  person    Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  cycle     String
+  saude     Int
+  design    Int
+  produto   Int
+  negocio   Int
+  note      String?
+  createdAt DateTime @default(now())
 
   @@index([personId])
 }

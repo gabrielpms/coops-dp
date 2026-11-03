@@ -146,3 +146,25 @@ export const powerUpSchema = z.object({
 
 /** Ciclo atual (trimestral por padrão; configurável por projeto é pergunta em aberto do PRD). */
 export const currentCycle = (d = new Date()) => `${d.getFullYear()}-Q${Math.floor(d.getMonth() / 3) + 1}`;
+
+// ---------- Jornada e Saúde (M6) ----------
+export const journeySchema = z.object({
+  kind: z.enum(['OBJETIVO', 'FOCO']),
+  title: text(200).min(1, 'Escreva para seguir.'),
+  why: text(1000).optional().default(''),
+  signal: text(500).optional().default(''),
+  measure: text(200).optional().default(''),
+  levelFrom: z.number().int().min(1).max(5).optional(),
+  levelTo: z.number().int().min(1).max(5).optional(),
+  practice: text(1000).optional().default(''),
+}).refine((v) => v.kind !== 'OBJETIVO' || !!v.signal.trim(), { message: 'Escreva o sinal para seguir.', path: ['signal'] })
+  .refine((v) => v.kind !== 'FOCO' || (v.levelFrom !== undefined && v.levelTo !== undefined && v.levelTo > v.levelFrom), { message: 'A meta precisa ser maior que o nível de hoje.', path: ['levelTo'] });
+export const journeyPatchSchema = z.object({ progress: z.number().int().min(0).max(5) });
+const score = z.number().int().min(1, 'Responda as quatro perguntas').max(5);
+export const healthSchema = z.object({ saude: score, design: score, produto: score, negocio: score, note: text(1000).optional().default('') });
+export const HEALTH_DIMS = [
+  { id: 'saude', title: 'Saúde no período', help: 'Energia, carga e bem-estar nas últimas semanas.', lo: 'Esgotada', hi: 'Com energia', tip: 'Sua saúde está baixa. Quer marcar um papo com o manager sobre carga?' },
+  { id: 'design', title: 'Estratégia do time de design', help: 'Sabe para onde o time de design está indo?', lo: 'Nada claro', hi: 'Muito claro', tip: 'A estratégia de design ficou pouco clara. Posso sugerir ao manager um ritual de alinhamento.' },
+  { id: 'produto', title: 'Estratégia do produto', help: 'Entende as prioridades e o porquê do roadmap?', lo: 'Nada claro', hi: 'Muito claro', tip: 'Que tal pedir ao PM um resumo das prioridades do trimestre?' },
+  { id: 'negocio', title: 'Estratégia de negócio', help: 'Conecta o trabalho às metas da empresa?', lo: 'Nada claro', hi: 'Muito claro', tip: 'A estratégia de negócio está pouco clara. Quer levar isso para o próximo 1:1?' },
+] as const;
