@@ -169,30 +169,31 @@ model Squad {
 }
 
 model Person {
-  id         String             @id @default(uuid())
-  projectId  String
-  project    Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  userId     String?
-  user       User?              @relation(fields: [userId], references: [id])
-  name       String
-  title      String?
-  email      String? // e-mail do convite; vincula ao User quando a pessoa cria a conta
-  mainSkill  String?
-  joinedAt   DateTime?
-  avatar     Json?
-  createdAt  DateTime           @default(now())
-  updatedAt  DateTime           @updatedAt
-  deletedAt  DateTime?
-  squads     SquadMembership[]
-  leads      Leadership?        @relation("LeaderPerson")
-  powerUps   PowerUp[]
-  deliveries Delivery[]
-  ratings    SkillRating[]
-  studyItems StudyItem[]
-  journey    JourneyGoal[]
-  health     HealthCheckin[]
-  reportsTo  LeadershipMember[] @relation("ReportsTo")
-  squadCards SquadCard[]
+  id           String             @id @default(uuid())
+  projectId    String
+  project      Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId       String?
+  user         User?              @relation(fields: [userId], references: [id])
+  name         String
+  title        String?
+  email        String? // e-mail do convite; vincula ao User quando a pessoa cria a conta
+  mainSkill    String?
+  joinedAt     DateTime?
+  avatar       Json?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  deletedAt    DateTime?
+  squads       SquadMembership[]
+  leads        Leadership?        @relation("LeaderPerson")
+  powerUps     PowerUp[]
+  deliveries   Delivery[]
+  ratings      SkillRating[]
+  studyItems   StudyItem[]
+  journey      JourneyGoal[]
+  health       HealthCheckin[]
+  reportsTo    LeadershipMember[] @relation("ReportsTo")
+  squadCards   SquadCard[]
+  personEvents PersonEvent[]
 }
 
 model SquadMembership {
@@ -442,4 +443,42 @@ model SquadCard {
   deletedAt        DateTime?
 
   @@index([squadId, deck])
+}
+
+// ---------- Eventos da pessoa (M6) ----------
+enum EventType {
+  CHECKIN
+  FEEDBACK
+  PROMOCAO
+  MERITO
+  MUDANCA_TIME
+}
+
+model PersonEvent {
+  id          String         @id @default(uuid())
+  personId    String
+  person      Person         @relation(fields: [personId], references: [id], onDelete: Cascade)
+  type        EventType
+  title       String
+  date        DateTime       @default(now())
+  data        Json           @default("{}")
+  archivedAt  DateTime?
+  createdById String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  comments    EventComment[]
+
+  @@index([personId])
+}
+
+model EventComment {
+  id         String      @id @default(uuid())
+  eventId    String
+  event      PersonEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  authorId   String
+  authorName String
+  text       String
+  createdAt  DateTime    @default(now())
+
+  @@index([eventId])
 }

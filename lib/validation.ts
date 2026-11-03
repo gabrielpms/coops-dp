@@ -185,3 +185,17 @@ export const squadCardSchema = z.discriminatedUnion('deck', [
 export type SquadCardInput = z.infer<typeof squadCardSchema>;
 export const cardStatusSchema = z.object({ status: z.enum(['ABERTA', 'ENCERRADA']) });
 export const SQUAD_DECK_SLUGS = { desafios: 'DESAFIO', frentes: 'FRENTE', estrategia: 'ESTRATEGIA', indicadores: 'INDICADOR', alavancas: 'ALAVANCA' } as const;
+
+// ---------- Eventos da pessoa (M6) ----------
+const items = z.array(text(300).min(1)).max(20).default([]);
+const evBase = { title: text(160).min(1, 'Dê um título ao evento para seguir.'), date: day.optional(), body: text(2000).optional().default('') };
+export const eventSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('CHECKIN'), ...evBase, pedidos: items, radar: items, combinados: items, proximo: items }),
+  z.object({ type: z.literal('FEEDBACK'), ...evBase, autor: text(120).optional().default(''), anexos: z.array(text(300).min(1)).max(10).default([]) }),
+  z.object({ type: z.literal('PROMOCAO'), ...evBase, de: text(120).optional().default(''), para: text(120).optional().default(''), msg: text(1000).optional().default('') }),
+  z.object({ type: z.literal('MERITO'), ...evBase, msg: text(1000).optional().default('') }),
+  z.object({ type: z.literal('MUDANCA_TIME'), ...evBase, de: text(120).optional().default(''), para: text(120).optional().default(''), msg: text(1000).optional().default('') }),
+]);
+export type EventInput = z.infer<typeof eventSchema>;
+export const eventCommentSchema = z.object({ text: text(1000).min(1, 'Escreva o comentário para publicar.') });
+export const EVENT_TYPE_LABEL = { CHECKIN: 'Check-in', FEEDBACK: 'Feedback', ENTREGA: 'Entrega', PROMOCAO: 'Promoção', MERITO: 'Mérito', MUDANCA_TIME: 'Mudança de time' } as const;

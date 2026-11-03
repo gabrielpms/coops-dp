@@ -78,3 +78,11 @@ describe('decks do squad (M7)', () => {
   it('tipo desconhecido é recusado', () => expect(() => squadCardSchema.parse({ deck: 'OUTRO', title: 'x' })).toThrow());
   it('splitCard separa colunas e dados', () => { const s = splitCard(squadCardSchema.parse({ deck: 'DESAFIO', title: 'A', complexidade: 4, cenario: 'c' })); expect(s).toMatchObject({ deck: 'DESAFIO', title: 'A', level: 4, championPersonId: null }); expect((s.data as any).cenario).toBe('c'); expect((s.data as any).title).toBeUndefined(); });
 });
+
+import { eventSchema, eventCommentSchema } from '@/lib/validation';
+describe('eventos (M6)', () => {
+  it('check-in: título obrigatório e listas com padrão vazio', () => { const e = eventSchema.parse({ type: 'CHECKIN', title: 'T' }); expect(e.type === 'CHECKIN' && e.pedidos).toEqual([]); expect(() => eventSchema.parse({ type: 'CHECKIN', title: ' ' })).toThrow(); });
+  it('feedback aceita autor e anexos; tipo desconhecido é recusado', () => { expect(eventSchema.parse({ type: 'FEEDBACK', title: 'T', autor: 'A', anexos: ['x.com/a'] }).type).toBe('FEEDBACK'); expect(() => eventSchema.parse({ type: 'ENTREGA', title: 'T' })).toThrow(); });
+  it('data só no formato AAAA-MM-DD', () => { expect(() => eventSchema.parse({ type: 'MERITO', title: 'T', date: '03/11/2026' })).toThrow(); expect(eventSchema.parse({ type: 'MERITO', title: 'T', date: '2026-11-03' }).date).toBe('2026-11-03'); });
+  it('comentário não pode ser vazio', () => { expect(() => eventCommentSchema.parse({ text: ' ' })).toThrow(); expect(eventCommentSchema.parse({ text: 'ok' }).text).toBe('ok'); });
+});
