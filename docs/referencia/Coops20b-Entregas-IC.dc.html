@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Coops · Entregas (IC)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0E12}
+a{color:#B7A6FF}a:hover{color:#8FE3C8}
+@keyframes coopsSheetIn{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes coopsFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes coopsRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.coops-sheet-body{animation:coopsRise 420ms cubic-bezier(.22,1,.36,1) 160ms both}
+@media (prefers-reduced-motion: reduce){[role=dialog],.coops-overlay,.coops-sheet-body{animation:none!important}}
+/* Coops · interações padrão (DS) */
+.coops-m{transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease,border-color .25s ease}
+.coops-m:hover,.coops-m:focus-visible{transform:translateY(-8px) rotate(-1.5deg)!important;box-shadow:8px 8px 0 #4B36B0!important;border-color:#B7A6FF!important;outline:none}
+.coops-m:active{transform:translateY(-2px) scale(.97)!important;box-shadow:3px 3px 0 #4B36B0!important;transition-duration:80ms}
+.coops-av{display:block;line-height:0;transform-origin:50% 90%}
+.coops-m:focus .coops-av,.coops-m:active .coops-av{animation:coopsWave .5s cubic-bezier(.34,1.4,.64,1) 1}
+@keyframes coopsWave{30%{transform:translateY(-12px) rotate(-6deg)}60%{transform:translateY(-6px) rotate(5deg)}100%{transform:none}}
+.coops-pile .coops-front,.coops-card{transition:transform .4s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease}
+.coops-pile .coops-b1,.coops-pile .coops-b2{transition:transform .45s cubic-bezier(.34,1.3,.64,1)}
+.coops-pile:hover .coops-front,.coops-pile .coops-front:focus-visible{transform:translateY(-16px) rotate(-2deg)!important;outline:none}
+.coops-pile:hover .coops-b1{transform:rotate(6deg) translateX(10px)!important}
+.coops-pile:hover .coops-b2{transform:rotate(11deg) translateX(20px)!important}
+.coops-card:hover,.coops-card:focus-visible{transform:translateY(-10px) rotate(-1.5deg)!important;outline:none}
+.coops-pile .coops-front:active,.coops-pile .coops-front:focus,.coops-card:active,.coops-card:focus{animation:coopsPull .55s cubic-bezier(.65,0,.25,1) 1}
+@keyframes coopsPull{0%{transform:translateY(-16px) rotate(-2deg)}50%{transform:translateY(-44px) scale(1.04) rotate(0)}100%{transform:translateY(-16px) rotate(-2deg)}}
+@media (prefers-reduced-motion: reduce){.coops-m,.coops-av,.coops-front,.coops-b1,.coops-b2,.coops-card{transition:none!important;animation:none!important}}
+/* Coops · transição entre páginas */
+body::after{content:"";position:fixed;inset:0;z-index:9999;background:#0E0E12;pointer-events:none;animation:coopsCurtainIn .5s cubic-bezier(.22,1,.36,1) .05s both}
+@keyframes coopsCurtainIn{from{opacity:1}to{opacity:0}}
+body::before{content:"";position:fixed;inset:0;z-index:9998;background:#0E0E12;pointer-events:none;opacity:0;transition:opacity .26s ease}
+html.coops-leaving body::before{opacity:1}
+@media (prefers-reduced-motion: reduce){body::after,body::before{animation:none!important;transition:none!important;opacity:0!important}}
+/* Coops · scroll */
+*{scrollbar-width:thin;scrollbar-color:rgba(127,124,140,.55) transparent}
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-track{background:transparent}
+*::-webkit-scrollbar-thumb{background:rgba(127,124,140,.55);border-radius:999px;border:3px solid transparent;background-clip:padding-box}
+*::-webkit-scrollbar-thumb:hover{background:rgba(183,166,255,.8);background-clip:padding-box;border:3px solid transparent}
+*::-webkit-scrollbar-corner{background:transparent}
+.coops-wz-card{scrollbar-color:rgba(14,14,18,.35) transparent}
+.coops-wz-card::-webkit-scrollbar-thumb{background:rgba(14,14,18,.3);background-clip:padding-box}
+.coops-wz-card::-webkit-scrollbar-thumb:hover{background:rgba(14,14,18,.55);background-clip:padding-box}
+.coops-wz-card::-webkit-scrollbar-track{margin:18px 0}
+.coops-wz-card>*{flex-shrink:0}
+#fb-file:focus-visible + .fb-drop { outline: 3px solid #0E0E12; outline-offset: 3px; }
+.fb-drop:hover { background: rgba(14,14,18,0.06); }
+/* Coops · ícones do deck de eventos (DS) */
+.md-sw{transform-box:view-box!important;transform-origin:32px 4px}.md-st{transform-box:fill-box!important;transform-origin:50% 55%}.md-sp{opacity:0;transform-box:fill-box!important;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .md-sw{animation:mdSw 2s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .md-st{animation:mdSt 2s cubic-bezier(.34,1.5,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .md-sp{animation:mdSp 2s ease-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .md-sp2{animation-delay:.25s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .md-sp3{animation-delay:.5s}
+@keyframes mdSw{0%,100%{transform:rotate(0)}15%{transform:rotate(9deg)}35%{transform:rotate(-7deg)}55%{transform:rotate(4deg)}72%{transform:rotate(-2deg)}85%{transform:rotate(0)}}
+@keyframes mdSt{0%,40%{transform:none}55%{transform:scale(1.25) rotate(72deg)}70%,100%{transform:rotate(72deg)}}
+@keyframes mdSp{0%,45%{opacity:0;transform:scale(.3) rotate(0)}60%{opacity:1;transform:scale(1.15) rotate(45deg)}85%,100%{opacity:0;transform:scale(.6) rotate(90deg)}}
+.cp-bt{transform-box:view-box!important;transform-origin:32px 62px}.cp-ck{transform-box:view-box!important;transform-origin:32px 14px}.cp-fm{opacity:0;transform-box:fill-box!important;transform-origin:50% 100%}.cp-dr{opacity:0;transform-box:fill-box!important;transform-origin:50% 50%}.cp-cf{opacity:0;transform-box:fill-box!important;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .cp-bt{animation:cpBt 2.4s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .cp-ck{animation:cpCk 2.4s cubic-bezier(.3,.7,.4,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .cp-fm{animation:cpFm 2.4s ease-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .cp-dr{animation:cpDr 2.4s cubic-bezier(.2,.8,.4,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .cp-cf{animation:cpCf 2.4s cubic-bezier(.2,.8,.4,1) infinite}
+@keyframes cpBt{0%,4%{transform:none}10%{transform:rotate(-2deg)}15%{transform:rotate(2deg)}20%{transform:rotate(-3deg)}25%{transform:rotate(3deg)}30%{transform:rotate(-1deg)}34%{transform:translateY(3px) rotate(-5deg)}44%{transform:rotate(1deg)}52%,100%{transform:none}}
+@keyframes cpCk{0%,4%{transform:none;opacity:1}12%{transform:translateY(-1px) rotate(-6deg)}20%{transform:translateY(-2px) rotate(6deg)}28%{transform:translateY(-3px) rotate(-4deg)}32%{transform:translateY(-4px)}44%{transform:translate(6px,-30px) rotate(180deg);opacity:1}56%{transform:translate(10px,-38px) rotate(300deg);opacity:0}90%{transform:none;opacity:0}100%{transform:none;opacity:1}}
+@keyframes cpFm{0%,32%{opacity:0;transform:scale(.3)}38%{opacity:1;transform:scale(1.15)}70%{opacity:1;transform:scale(1)}84%,100%{opacity:0;transform:scale(.8)}}
+@keyframes cpDr{0%,32%{opacity:0;transform:translate(0,0) scale(.4)}40%{opacity:1}68%{opacity:1;transform:translate(var(--dx),var(--dy)) scale(1)}80%,100%{opacity:0;transform:translate(var(--dx),calc(var(--dy) + 4px)) scale(.6)}}
+@keyframes cpCf{0%,34%{opacity:0;transform:translate(0,0) rotate(0) scale(.3)}42%{opacity:1}70%{opacity:1;transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(1)}88%,100%{opacity:0;transform:translate(var(--x),calc(var(--y) + 10px)) rotate(var(--r))}}
+.c3-b{transform-box:fill-box;transform-origin:50% 100%}.c3-d{opacity:.3}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .c3-l{animation:c3A 1.6s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .c3-r{animation:c3A 1.6s ease-in-out .8s infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .c3-b{animation:c3B 1.6s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .c3-d{animation:c3D .9s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .c3-d2{animation-delay:.15s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .c3-d3{animation-delay:.3s}
+@keyframes c3A{0%,60%,100%{transform:none}20%{transform:translateY(-4px) rotate(-3deg)}40%{transform:translateY(0)}}
+@keyframes c3B{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes c3D{0%,100%{opacity:.3;transform:none}50%{opacity:1;transform:translateY(-1.5px)}}
+.e3-b{transform-box:view-box!important;transform-origin:32px 56px}.e3-ok{opacity:0;transform-box:fill-box;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .e3-b{animation:e3B 1.8s cubic-bezier(.45,0,.55,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .e3-ok{animation:e3O 1.8s cubic-bezier(.34,1.6,.64,1) infinite}
+@keyframes e3B{0%,100%{transform:none}10%{transform:scaleY(.86) scaleX(1.08)}22%{transform:translateY(-12px) scaleY(1.08) scaleX(.95)}34%{transform:scaleY(.9) scaleX(1.06)}44%{transform:translateY(-7px) scaleY(1.04)}54%{transform:scaleY(.95) scaleX(1.03)}62%{transform:none}}
+@keyframes e3O{0%,50%{opacity:0;transform:scale(.3)}62%,88%{opacity:1;transform:scale(1)}96%,100%{opacity:0}}
+.p-1,.p-2{opacity:0;transform-box:fill-box}.p-1{transform-origin:0 100%}.p-2{transform-origin:100% 100%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .p-1{animation:pB 2s cubic-bezier(.34,1.5,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .p-2{animation:pB 2s cubic-bezier(.34,1.5,.64,1) 1s infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .p-a{animation:pN 2s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .p-b{animation:pN 2s ease-in-out 1s infinite}
+@keyframes pB{0%{opacity:0;transform:scale(.3)}12%,42%{opacity:1;transform:scale(1)}52%,100%{opacity:0;transform:scale(.8)}}
+@keyframes pN{0%,50%,100%{transform:none}15%{transform:translateY(-2px)}30%{transform:translateY(1px)}}
+.hs-l2{opacity:0}.hs-all{transform-box:view-box;transform-origin:32px 37px}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .hs-all{animation:hsShake .45s ease-in-out infinite alternate}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .hs-l2{animation:hsL .9s ease-out infinite}
+@keyframes hsShake{from{transform:translateY(-3px) rotate(-2deg)}to{transform:translateY(3px) rotate(2deg)}}
+@keyframes hsL{0%{opacity:0;transform:translateY(3px)}30%{opacity:1}100%{opacity:0;transform:translateY(-4px)}}
+.bx-poof,.bx-chk{opacity:0}.bx-chk{stroke-dasharray:14;stroke-dashoffset:14}.bx-lid{transform-box:view-box;transform-origin:12px 32px}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .bx-lid{animation:bxLid 1.8s cubic-bezier(.5,0,.5,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .bx-poof{animation:bxPoof 1.8s ease-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .bx-chk{animation:bxChk 1.8s ease infinite}
+@keyframes bxLid{0%,30%{transform:translateY(-12px) rotate(-8deg)}45%{transform:translateY(0) rotate(0)}52%{transform:translateY(-2px)}58%,88%{transform:none}100%{transform:translateY(-12px) rotate(-8deg)}}
+@keyframes bxPoof{0%,44%{opacity:0;transform:scale(.6)}50%{opacity:1;transform:scale(1)}66%,100%{opacity:0;transform:scale(1.2)}}
+@keyframes bxChk{0%,55%{opacity:1;stroke-dashoffset:14}68%,88%{opacity:1;stroke-dashoffset:0}96%,100%{opacity:0;stroke-dashoffset:0}}
+.fb-a,.fb-b,.fb-c{transform-box:fill-box}.fb-a{transform-origin:0% 100%}.fb-b{transform-origin:100% 100%}.fb-c{transform-origin:0% 100%;opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .fb-a{animation:fbA 2.6s cubic-bezier(.34,1.5,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .fb-b{animation:fbB 2.6s cubic-bezier(.34,1.5,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .fb-c{animation:fbC 2.6s cubic-bezier(.34,1.5,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .fb-d{animation:fbD .6s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .fb-d2{animation-delay:.15s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .fb-d3{animation-delay:.3s}
+@keyframes fbA{0%{opacity:0;transform:scale(.2)}8%,62%{opacity:1;transform:scale(1)}72%,100%{opacity:0;transform:scale(.8) translateY(-4px)}}
+@keyframes fbB{0%,22%{opacity:0;transform:scale(.2)}30%,78%{opacity:1;transform:scale(1)}88%,100%{opacity:0;transform:scale(.8) translateY(-4px)}}
+@keyframes fbC{0%,44%{opacity:0;transform:scale(.2)}52%,90%{opacity:1;transform:scale(1)}98%,100%{opacity:0}}
+@keyframes fbD{0%,100%{opacity:.3}50%{opacity:1}}
+.coops-pile svg,.coops-icdemo svg{overflow:visible}
+.ev-hs{transform-box:view-box;transform-origin:32px 34px}.ev-hs-l{opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-hs{animation:evShake .5s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-hs-l{animation:evHsL 1s ease-out infinite}
+@keyframes evShake{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-5px) rotate(-4deg)}}
+@keyframes evHsL{0%{opacity:0;transform:translateY(3px)}30%{opacity:1}100%{opacity:0;transform:translateY(-4px)}}
+.ev-flap{transform-box:fill-box;transform-origin:50% 100%}.ev-tape{opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-flap1{animation:evFlap 2s cubic-bezier(.65,0,.35,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-flap2{animation:evFlap 2s cubic-bezier(.65,0,.35,1) .15s infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-tape{animation:evTape 2s ease infinite}
+@keyframes evFlap{0%,8%{transform:scaleY(1)}35%,80%{transform:scaleY(-.08)}95%,100%{transform:scaleY(1)}}
+@keyframes evTape{0%,40%{opacity:0;transform:scaleX(0)}50%,78%{opacity:1;transform:scaleX(1)}86%,100%{opacity:0}}
+.ev-tape{transform-box:fill-box;transform-origin:50% 50%;fill:rgba(14,14,18,.85)}
+.ev-q{transform-box:fill-box;transform-origin:50% 100%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-bub{animation:evBob 1.2s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-q{animation:evQ 1.2s cubic-bezier(.34,1.6,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-q2{animation-delay:.15s}
+@keyframes evBob{0%,100%{transform:none}50%{transform:translateY(-2px)}}
+@keyframes evQ{0%,60%,100%{transform:none}25%{transform:translateY(-4px) scale(1.15)}}
+.ev-cork{transform-box:fill-box;transform-origin:50% 100%}.ev-fz{opacity:0}.ev-fz *{transform-box:fill-box;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-cork{animation:evCork 1.8s cubic-bezier(.3,.8,.4,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-fz{animation:evFz 1.8s ease-out infinite}
+@keyframes evCork{0%{transform:none;opacity:1}8%{transform:rotate(-8deg)}14%{transform:rotate(8deg)}20%{transform:rotate(-6deg)}26%{transform:none}40%{transform:translate(4px,-22px) rotate(50deg);opacity:1}55%,85%{transform:translate(8px,-34px) rotate(120deg);opacity:0}86%{transform:none;opacity:0}100%{transform:none;opacity:1}}
+@keyframes evFz{0%,26%{opacity:0;transform:translateY(6px) scale(.4)}40%{opacity:1;transform:translateY(-2px) scale(1)}75%{opacity:.9;transform:translateY(-8px) scale(1.1)}90%,100%{opacity:0;transform:translateY(-12px) scale(1.15)}}
+@media (prefers-reduced-motion: reduce){.coops-pile svg *{animation:none!important;transition:none!important}}
+/* Promoção · pulso de brilho percorrendo a borda */
+@property --prA{syntax:'<angle>';inherits:false;initial-value:0deg}
+.ev-promo::after{content:"";position:absolute;inset:-3px;border-radius:inherit;padding:4px;background:conic-gradient(from var(--prA),transparent 0deg 220deg,rgba(255,250,230,.12) 270deg,rgba(255,252,240,.45) 320deg,rgba(255,255,255,.75) 345deg,rgba(255,250,230,.2) 356deg,transparent 360deg);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;filter:drop-shadow(0 0 6px rgba(255,248,220,.6));animation:prGlow 6s linear infinite,prBreath 6s ease-in-out infinite;pointer-events:none;z-index:2}
+@keyframes prGlow{to{--prA:360deg}}
+@keyframes prBreath{0%,100%{opacity:.55}50%{opacity:1}}
+@media (prefers-reduced-motion: reduce){.ev-promo::after{animation:none;opacity:0}}
+/* Coops · Carta em foco (DS) */
+@keyframes coopsFocusIn{from{transform:translate(var(--fdx),var(--fdy)) scale(var(--fs));opacity:.35}to{transform:none;opacity:1}}
+@keyframes coopsFocusOut{from{transform:none;opacity:1}to{transform:translate(var(--fdx),var(--fdy)) scale(var(--fs));opacity:0}}
+.coops-focus{transform-origin:50% 0}
+.coops-focus .coops-fx-body{animation:coopsFadeIn 260ms 200ms ease both}
+.coops-x{transition:background-color .2s ease,color .2s ease,transform .18s cubic-bezier(.34,1.56,.64,1)}
+.coops-x svg{transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.coops-x:hover,.coops-x:focus-visible{background:#0E0E12!important;color:var(--fbg,#F5F2EC)!important}
+.coops-x:hover svg,.coops-x:focus-visible svg{transform:rotate(90deg)}
+.coops-x:active{transform:scale(.88)}
+.coops-x:active svg{transform:rotate(90deg) scale(.9)}
+.coops-x:focus-visible{outline:3px solid #0E0E12;outline-offset:2px}
+.coops-focus button:not(.coops-x):focus-visible,.coops-focus a:focus-visible{outline:3px solid #0E0E12;outline-offset:2px}
+@media (prefers-reduced-motion: reduce){.coops-focus,.coops-focus .coops-fx-body{animation:none!important}.coops-x,.coops-x svg{transition:none!important;transform:none!important}}
+/* Coops · ícone animado do banner do deck do membro */
+.coops-mban svg{overflow:visible}
+.coops-mban svg *{transform-box:fill-box}
+.ic-arm,.ic-w,.ic-ring{transform-box:view-box!important;transform-origin:32px 32px}
+.ic-heart{transform-origin:50% 60%}.ic-ecg{stroke-dasharray:60}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-heart{animation:icBeat 1s ease-in-out infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-ecg{animation:icDraw60 1s ease-in-out infinite}
+@keyframes icBeat{0%,100%{transform:scale(1)}15%{transform:scale(1.14)}30%{transform:scale(.98)}45%{transform:scale(1.08)}}
+@keyframes icDraw60{0%{stroke-dashoffset:60}60%,100%{stroke-dashoffset:0}}
+.ic-peg{transform-origin:50% 100%}.ic-day{fill:none;stroke-width:1.75;opacity:0;transform-origin:50% 50%}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-peg{animation:icPeg 1.2s cubic-bezier(.34,1.6,.64,1) infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-peg2{animation-delay:.1s}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-day{animation:icDay 2.6s cubic-bezier(.34,1.6,.64,1) infinite both}
+@keyframes icDay{0%,3%{opacity:0;transform:scale(.2)}12%,70%{opacity:1;transform:scale(1)}80%,100%{opacity:0;transform:scale(.6)}}
+@keyframes icPeg{0%,60%,100%{transform:none}25%{transform:translateY(-4px)}}
+.ic-star{transform-origin:50% 55%}.ic-shard{opacity:0;transform-origin:50% 50%}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-star{animation:icBurst 1.8s cubic-bezier(.34,1.4,.64,1) infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-shard{animation:icShard 1.8s cubic-bezier(.2,.8,.3,1) infinite}
+@keyframes icBurst{0%{transform:scale(1);opacity:1}18%{transform:scale(1.18) rotate(-8deg);opacity:1}26%{transform:scale(.2);opacity:0}72%{transform:scale(.2);opacity:0}88%{transform:scale(1.1);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes icShard{0%,22%{opacity:0;transform:translate(0,0) scale(.4) rotate(0)}28%{opacity:1}62%{opacity:1;transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--rt))}74%,100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.6) rotate(var(--rt))}}
+.ic-leaf{transform-box:view-box!important;transform-origin:32px 32px;opacity:0}.ic-leafp{fill:rgba(255,255,255,.6)}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-leaf{animation:icLeaf 1.3s cubic-bezier(.45,0,.35,1) infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-leaf2{animation-delay:.45s}
+@keyframes icLeaf{0%{opacity:0;transform:scaleX(1) skewY(0)}6%{opacity:1}40%{transform:scaleX(.15) skewY(-10deg)}75%{opacity:1;transform:scaleX(-1) skewY(0)}85%,100%{opacity:0;transform:scaleX(-1)}}
+.ic-bgx{transform-box:view-box!important;transform-origin:32px 32px}.ic-bgx2,.ic-bgx3{opacity:0}.ic-knob{stroke-width:6}.ic-playt{transform-origin:50% 50%}.ic-wave{transform-origin:50% 50%}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-bgx{animation:icRot 4.2s cubic-bezier(.34,1.3,.64,1) infinite both}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-bgx2{animation-delay:1.4s}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-bgx3{animation-delay:2.8s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-knob{animation:icKnob 1.4s linear 1.4s infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-playt{animation:icPlay .7s ease-in-out infinite alternate}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-wave{animation:icWav .7s ease-in-out infinite alternate}
+@keyframes icRot{0%{opacity:0;transform:translateY(10px) rotate(-10deg) scale(.7)}6%,30%{opacity:1;transform:none}36%,100%{opacity:0;transform:translateY(-10px) rotate(10deg) scale(.7)}}
+@keyframes icKnob{from{transform:translateX(0)}to{transform:translateX(30px)}}
+@keyframes icPlay{to{transform:scale(1.15)}}
+@keyframes icWav{from{opacity:.3;transform:scale(.92)}to{opacity:1;transform:scale(1.04)}}
+.ic-path{stroke-dasharray:70}.ic-jflag,.ic-flag{transform-origin:0% 50%}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-path{animation:icDraw70 1.2s cubic-bezier(.65,0,.25,1) both}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-jflag{animation:icWave .5s ease-in-out .6s infinite}
+@keyframes icDraw70{0%{stroke-dashoffset:70}50%,100%{stroke-dashoffset:0}}
+@keyframes icWave{0%,100%{transform:skewY(0) scaleX(1)}50%{transform:skewY(-12deg) scaleX(.85)}}
+.ic-fire{opacity:0;transform-origin:50% 0%}.ic-tw{opacity:0}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-rocket{animation:icRocket .9s ease-in-out infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fire{animation:icFire .32s ease-in-out infinite alternate}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fire2{animation-duration:.24s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-tw{animation:icTw 1.1s linear infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-tw2{animation-delay:.3s}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-tw3{animation-delay:.55s}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-tw4{animation-delay:.8s}
+@keyframes icFire{from{opacity:.85;transform:translateY(-6px) scaleY(.8) scaleX(1.1)}to{opacity:1;transform:translateY(-6px) scaleY(1.2) scaleX(.9)}}
+@keyframes icTw{0%{opacity:0;transform:translateY(-10px)}20%{opacity:1}80%{opacity:1}100%{opacity:0;transform:translateY(22px)}}
+@keyframes icRocket{0%,100%{transform:translate(0,-6px)}25%{transform:translate(1px,-8px)}50%{transform:translate(0,-10px)}75%{transform:translate(-1px,-8px)}}
+.ic-mount{transition:transform .4s cubic-bezier(.34,1.4,.64,1)}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-flag{animation:icWave .45s ease-in-out infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-mount{transform:translateY(-2px)}
+.ic-fb{transform-origin:0% 50%}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb{animation:icFb 1.4s cubic-bezier(.34,1.5,.64,1) infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb2{animation-delay:.1s}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb3{animation-delay:.2s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb1{--s:.8}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb2{--s:1.3}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb3{--s:2}
+@keyframes icFb{0%,100%{transform:scaleX(1)}40%,60%{transform:scaleX(var(--s))}}
+.ic-sweep{transform-box:view-box!important;transform-origin:32px 32px}.ic-blip{stroke-width:5;opacity:0}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-sweep{animation:icSweep 1.8s linear infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-blip{animation:icBlip 1.8s ease-out infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-ring{animation:icPing 1.8s ease-out infinite}
+@keyframes icSweep{to{transform:rotate(360deg)}}
+@keyframes icBlip{0%,2%{opacity:0}6%{opacity:1}45%,100%{opacity:0}}
+@keyframes icPing{0%,4%,100%{transform:scale(1)}12%{transform:scale(1.05)}}
+.ic-ib{transform-origin:50% 100%}.ic-ib1{--a:1.8;--b:.6}.ic-ib2{--a:.55;--b:1.4}.ic-ib3{--a:1.6;--b:.5}.ic-ib4{--a:.55;--b:1.15}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-ib{animation:icBars 1.6s ease-in-out infinite}
+@keyframes icBars{0%,100%{transform:scaleY(1)}30%{transform:scaleY(var(--a))}65%{transform:scaleY(var(--b))}}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-arm{animation:icSee 1.6s cubic-bezier(.45,0,.55,1) infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-w{animation:icSeeW 1.6s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes icSee{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(14deg)}}
+@keyframes icSeeW{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(14deg) translateY(4px)}}
+@media (prefers-reduced-motion: reduce){.coops-mban svg *{animation:none!important;transition:none!important}}
+/* Coops · banner do deck do membro (DS) · mesmo padrão do squad */
+.coops-mban-ring{transition:transform .8s cubic-bezier(.22,1,.36,1)}
+.coops-mban:hover .coops-mban-ring{transform:scale(1.12) translate(-14px,-10px)}
+.coops-mban-ic{transition:transform .45s cubic-bezier(.34,1.56,.64,1)}
+.coops-mban:hover .coops-mban-ic{transform:rotate(-4deg) scale(1.04)}
+.coops-mban-me{transition:transform .45s cubic-bezier(.34,1.56,.64,1)}
+.coops-mban:hover .coops-mban-me{transform:translateY(-3px) rotate(3deg)}
+.coops-mban-back:hover{color:#0E0E12!important;text-decoration:underline!important}
+.coops-mban-btn{transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.coops-mban-btn:hover{transform:translateY(-2px)}.coops-mban-btn:active{transform:scale(.96)}
+.coops-mban a:focus-visible,.coops-mban button:focus-visible{outline:3px solid #0E0E12;outline-offset:3px}
+@media (prefers-reduced-motion: reduce){.coops-mban-ring,.coops-mban-ic,.coops-mban-me,.coops-mban-btn{transition:none!important;transform:none!important}}
+/* Coops · entrega: impacto depois e links */
+@keyframes evComIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.imp-cta{transition:background 200ms ease,transform 200ms ease}
+.imp-cta:hover{background:rgba(245,242,236,0.45)!important;transform:translateY(-2px)}
+.imp-cta:active{transform:scale(.98)}
+.imp-cta:hover .imp-ic,.imp-cta:focus-visible .imp-ic{animation:impUp .9s ease-in-out infinite}
+@keyframes impUp{0%,100%{transform:translate(0,0)}50%{transform:translate(1px,-2px)}}
+.imp-cta:focus-visible,.ent-link:focus-visible{outline:3px solid #0E0E12;outline-offset:3px}
+.ent-link{transition:transform 160ms ease}.ent-link:hover{transform:translateY(-2px)}
+@media (prefers-reduced-motion:reduce){.imp-ic{animation:none!important}.imp-cta,.ent-link{transition:none}}
+/* Coops · Carta em foco · rolagem organizada (DS) */
+.coops-focus .coops-fx-body{scrollbar-width:thin;scrollbar-color:rgba(14,14,18,.38) transparent}
+.coops-focus .coops-fx-body::-webkit-scrollbar{width:8px}
+.coops-focus .coops-fx-body::-webkit-scrollbar-track{background:transparent;margin:56px 0 64px}
+.coops-focus .coops-fx-body::-webkit-scrollbar-thumb{background:rgba(14,14,18,.32);border-radius:999px}
+.coops-focus .coops-fx-body::-webkit-scrollbar-thumb:hover{background:rgba(14,14,18,.55)}
+.coops-focus .coops-fx-body>:first-child{position:sticky;top:var(--fx-st,0px);z-index:5;background:var(--fbg);padding-bottom:12px;margin-bottom:-12px;box-shadow:0 12px 12px -12px rgba(14,14,18,.28)}
+.coops-focus .coops-fx-foot{position:sticky;bottom:var(--fx-sb,0px);z-index:5;background:var(--fbg);padding-bottom:2px;box-shadow:0 -12px 12px -12px rgba(14,14,18,.28)}
+
+/* Coops · entrega · respiro entre header e descrição */
+.coops-focus .coops-fx-body>:first-child{padding-bottom:20px;margin-bottom:2px;box-shadow:none;border-bottom:1.5px solid rgba(14,14,18,.2)}
+.coops-focus .ent-desc{margin:0;font-size:17px;line-height:1.6;max-width:56ch}
+
+/* Coops · entrega · abrir mesa */
+.mesa-cta{transition:transform 180ms ease}.mesa-cta:hover{transform:translateY(-2px)}.mesa-cta:active{transform:scale(.97)}
+.mesa-cta:focus-visible{outline:3px solid #0E0E12;outline-offset:3px}
+.mesa-cta:hover .mesa-cd,.mesa-cta:focus-visible .mesa-cd{animation:mesaCd .9s ease-in-out infinite}
+@keyframes mesaCd{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@media (prefers-reduced-motion:reduce){.mesa-cta,.mesa-cd{transition:none;animation:none!important}}
+/* Coops · menu da conta (DS) */
+.hb-av{transition:transform .2s ease,box-shadow .2s ease}.hb-av:hover{transform:scale(1.06)}.hb-av:focus-visible{outline:3px solid #B7A6FF;outline-offset:3px}
+.hb-item{transition:background .18s ease}.hb-item:hover,.hb-item:focus-visible{background:#212129;outline:none}
+@keyframes hbPop{from{opacity:0;transform:scale(.9) translateY(-6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.hb-av,.hb-item{transition:none}}
+</style>
+</helmet>
+<div data-fx-root="1" style="position: relative; overflow: hidden; font-family: 'Schibsted Grotesk', system-ui, sans-serif; color: #F5F2EC; background: #0E0E12; min-height: 1300px; box-sizing: border-box; padding: 24px 32px 56px">
+<div style="max-width: 1216px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px">
+
+<header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap">
+<a href="Coops03-Hub.dc.html" style="color: #F5F2EC; text-decoration: none; font-size: 26px; font-weight: 800; letter-spacing: -0.03em">coops<span style="color: #B7A6FF">.</span></a>
+<nav aria-label="Produtos" style="display: flex; gap: 4px; background: #17171D; border: 1px solid #2C2C36; border-radius: 14px; padding: 4px">
+<a href="Coops07-Membro-IC.dc.html" aria-current="page" style="color: #0E0E12; background: #B7A6FF; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 10px; padding: 10px 16px">Meu perfil</a>
+<a href="Coops08-Iniciativa.dc.html" style="color: #A3A1AD; text-decoration: none; font-size: 14px; border-radius: 10px; padding: 10px 16px">Iniciativas</a>
+</nav>
+</div>
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; border: 1px solid #4A4858; border-radius: 999px; padding: 6px 10px">IC</span>
+<div style="position: relative"><button type="button" class="hb-av" onClick="{{acctToggle}}" aria-haspopup="true" aria-expanded="{{acctExp}}" aria-label="Abrir o menu da sua conta" style="display: block; padding: 0; border: 0; background: transparent; border-radius: 50%; cursor: pointer; line-height: 0; box-shadow: {{acctRing}}"><dc-import name="CoopsAvatar" skin="#8D5A3B" hair-style="coque" shirt-style="blazer" bg="#B7A6FF" size="{{ 44 }}" label="Seu avatar" hint-size="44px,44px"></dc-import></button><sc-if value="{{acctOpen}}" hint-placeholder-val="{{ false }}"><div role="menu" aria-label="Sua conta" style="animation: hbPop 260ms cubic-bezier(.34,1.4,.64,1) both; transform-origin: top right; position: absolute; right: 0; top: 56px; z-index: 30; width: 280px; box-sizing: border-box; border-radius: 22px; background: #17171D; border: 1.5px solid #2C2C36; box-shadow: 0 24px 50px rgba(0,0,0,0.55); padding: 10px; display: flex; flex-direction: column; gap: 4px; text-align: left"><div style="display: flex; flex-direction: column; gap: 2px; padding: 10px 12px 12px; border-bottom: 1px solid #2C2C36; margin-bottom: 4px"><span style="font-size: 16px; font-weight: 700; color: #F5F2EC">Joana Reis</span><span style="font-size: 13px; color: #A3A1AD">joana@nimbo.com</span></div><a role="menuitem" class="hb-item" href="Coops07-Membro-IC.dc.html" style="display: flex; align-items: center; gap: 12px; color: #F5F2EC; text-decoration: none; border-radius: 14px; padding: 10px 12px; min-height: 48px; box-sizing: border-box"><span style="flex: none; width: 36px; height: 36px; border-radius: 10px; background: #B7A6FF; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></span><span style="display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 600">Meu perfil</span><span style="font-size: 12px; color: #A3A1AD">Seus decks, skills e jornada</span></span></a><a role="menuitem" class="hb-item" href="Coops21b-Admin-IC.dc.html" style="display: flex; align-items: center; gap: 12px; color: #F5F2EC; text-decoration: none; border-radius: 14px; padding: 10px 12px; min-height: 48px; box-sizing: border-box"><span style="flex: none; width: 36px; height: 36px; border-radius: 10px; background: #B7A6FF; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><circle cx="9" cy="11" r="2.2"></circle><path d="M5.5 16c.8-1.6 2-2.4 3.5-2.4s2.7.8 3.5 2.4M14.5 10h4M14.5 13.5h3"></path></svg></span><span style="display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 600">Meus dados</span><span style="font-size: 12px; color: #A3A1AD">Edite o seu avatar</span></span></a><button type="button" role="menuitem" class="hb-item" onClick="{{acctToggle}}" style="display: flex; align-items: center; gap: 12px; font-family: inherit; color: #A3A1AD; background: transparent; border: 0; text-align: left; border-radius: 14px; padding: 10px 12px; min-height: 48px; cursor: pointer"><span style="flex: none; width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid #3A3846; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11"></path></svg></span><span style="font-size: 15px; font-weight: 600">Sair</span></button></div></sc-if></div>
+</div>
+</header>
+
+<section class="coops-mban" aria-labelledby="mb-title" style="position: relative; border-radius: 28px; border: 2px solid #0E0E12; background: #8FE3C8; color: #0E0E12; padding: 26px 30px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px 28px; overflow: hidden; box-shadow: 0 18px 40px rgba(0,0,0,0.45)">
+<span aria-hidden="true" class="coops-mban-ring" style="position: absolute; right: -70px; bottom: -110px; width: 320px; height: 320px; border-radius: 50%; border: 2px solid rgba(14,14,18,0.18); box-shadow: 0 0 0 44px rgba(14,14,18,0.04); pointer-events: none"></span>
+<div aria-hidden="true" class="coops-mban-ic" style="position: relative; flex: none; width: 116px; height: 116px; box-sizing: border-box; border-radius: 24px; border: 2px solid #0E0E12; background: rgba(245,242,236,0.55); display: flex; align-items: center; justify-content: center"><svg width="84" height="84" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="overflow: visible"><path class="ic-tw" d="M12 10v6M9 13h6"></path><path class="ic-tw ic-tw2" d="M53 26v5M50.5 28.5h5"></path><path class="ic-tw ic-tw3" d="M10 36h.01"></path><path class="ic-tw ic-tw4" d="M55 8h.01"></path><g class="ic-rocket"><path d="M32 6c10 8 14 20 10 34H22C18 26 22 14 32 6z"></path><circle cx="32" cy="24" r="5"></circle><path d="M22 40l-8 10h12M42 40l8 10H38"></path></g><path class="ic-fire" d="M26 42c0 7 3 11 6 19 3-8 6-12 6-19"></path><path class="ic-fire ic-fire2" d="M29.5 42c0 4 1 7 2.5 11 1.5-4 2.5-7 2.5-11"></path></svg></div>
+<div style="position: relative; flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<a href="Coops07-Membro-IC.dc.html" class="coops-mban-back" style="align-self: flex-start; font-size: 14px; color: rgba(14,14,18,0.72); text-decoration: none">← Meu perfil</a>
+<h1 id="mb-title" style="margin: 0; font-size: 52px; font-weight: 800; letter-spacing: -0.035em; line-height: 1">Suas entregas</h1>
+<p style="margin: 0; font-size: 17px; line-height: 1.45; max-width: 640px">O que você entregou nas iniciativas do squad, com o impacto de cada entrega.</p>
+</div>
+<div style="position: relative; flex: 0 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 14px">
+<a href="Coops07-Membro-IC.dc.html" aria-label="Voltar para o seu perfil" class="coops-mban-me" style="flex: none; width: 112px; height: 84px; box-sizing: border-box; border-radius: 18px; background: #5FC4A6; border: 2px solid #0E0E12; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; text-decoration: none; line-height: 0"><dc-import name="CoopsAvatar" skin="#8D5A3B" hair-style="coque" shirt-style="blazer" bg="#5FC4A6" crown="{{ true }}" size="{{ 82 }}" label="Seu avatar" hint-size="82px,82px"></dc-import></a>
+<div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end">
+<button type="button" class="coops-mban-btn" onClick="{{openEw}}" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #F5F2EC; background: #0E0E12; border: 2px solid #0E0E12; border-radius: 12px; min-height: 48px; padding: 0 18px; cursor: pointer">+ Entrega</button>
+</div>
+</div>
+</section>
+
+<div role="tablist" aria-label="Filtrar entregas" style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{filters}}" as="f" hint-placeholder-count="3"><button type="button" role="tab" aria-selected="{{f.sel}}" onClick="{{f.pick}}" style="font-family: inherit; font-weight: {{f.fw}}; font-size: 14px; color: {{f.fg}}; background: {{f.bg}}; border: 1px solid {{f.bd}}; border-radius: 999px; min-height: 44px; padding: 0 16px; cursor: pointer">{{f.label}}</button></sc-for>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 28px">
+<sc-for list="{{cards}}" as="c" hint-placeholder-count="3">
+<button class="coops-card" type="button" onClick="{{c.open}}" aria-label="Abrir entrega: {{c.title}}" style="height: 340px; font-family: inherit; text-align: left; box-sizing: border-box; border-radius: 22px; background: #8FE3C8; color: #0E0E12; border: 2px solid #0E0E12; padding: 20px; display: flex; flex-direction: column; gap: 10px; cursor: pointer; box-shadow: 0 16px 36px rgba(0,0,0,0.45)">
+<span style="width: 100%; display: flex; justify-content: space-between; align-items: flex-start">
+<svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="overflow: visible"><g class="e3-b"><path d="M14 30h36v26H14z" fill="#F5F2EC"></path><path d="M14 30l4-7h28l4 7M32 23v7"></path><path d="M24 42h16"></path></g><g class="e3-ok"><circle cx="52" cy="14" r="8"></circle><path d="M48 14l3 3 5-6"></path></g></svg>
+<span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 44px; font-weight: 600; line-height: 1; letter-spacing: -0.03em">{{c.day}}</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">{{c.month}}</span></span>
+</span>
+<span style="margin-top: auto; width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 8px"><sc-if value="{{c.noImpact}}" hint-placeholder-val="{{ false }}"><span style="flex: none; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.06em; border: 1.5px dashed #0E0E12; border-radius: 999px; padding: 2px 8px">IMPACTO PENDENTE</span></sc-if><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em">ENTREGA · {{c.status}}</span></span>
+<span style="font-size: 21px; font-weight: 600; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden">{{c.title}}</span>
+<sc-if value="{{c.hasDesc}}" hint-placeholder-val="{{ true }}"><span style="font-size: 13.5px; line-height: 1.4; color: rgba(14,14,18,0.75); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">{{c.body}}</span></sc-if>
+<span style="width: 100%; box-sizing: border-box; font-size: 13px; border-top: 1.5px solid #0E0E12; padding-top: 10px">{{c.foot}}</span>
+</button>
+</sc-for>
+</div>
+
+</div>
+
+<sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-label="Fechar" onClick="{{close}}" class="coops-overlay" style="animation: coopsFadeIn 320ms ease both; position: absolute; inset: 0; z-index: 9; border: 0; padding: 0; background: rgba(14,14,18,0.72); backdrop-filter: blur(3px); cursor: pointer"></button>
+<section id="coops-focus" class="coops-focus" role="dialog" aria-modal="true" aria-labelledby="fx-title" style="position: absolute; z-index: 10; left: {{fxS.left}}px; top: {{fxS.top}}px; width: {{fxS.w}}px; max-height: {{fxS.maxH}}px; opacity: {{fxS.op}}; animation: {{fxS.anim}}; --fdx: {{fxS.dx}}px; --fdy: {{fxS.dy}}px; --fs: {{fxS.s}}; --fbg: #8FE3C8; background: #8FE3C8; color: #0E0E12; border: 2px solid #0E0E12; border-radius: 26px; box-shadow: 0 30px 70px rgba(0,0,0,0.6); overflow: hidden; display: flex; flex-direction: column; padding: 22px 26px 26px; box-sizing: border-box">
+<div class="coops-sheet-body coops-fx-body" style="flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; margin-right: -20px; padding-right: 20px; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: rgba(14,14,18,0.68)">SUAS ENTREGAS · {{cur.day}} {{cur.month}}</span>
+<h2 id="fx-title" style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.1">{{cur.title}}</h2>
+</div>
+<button type="button" class="coops-x" aria-label="Fechar" onClick="{{close}}" style="flex: 0 0 44px; height: 44px; border-radius: 14px; background: transparent; border: 1.5px solid #0E0E12; color: #0E0E12; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+</div>
+<p class="ent-desc">{{cur.body}}</p>
+<div style="display: flex; flex-wrap: wrap; gap: 12px">
+<sc-if value="{{cur.hasImpact}}" hint-placeholder-val="{{ true }}"><div style="flex: 1 1 200px; border-radius: 18px; background: rgba(245,242,236,0.55); border: 1.5px solid #0E0E12; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px"><span style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">IMPACTO</span><sc-if value="{{cur.impClosed}}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{impOpen}}" style="font: inherit; font-size: 13px; font-weight: 600; color: #0E0E12; background: none; border: 0; padding: 4px 0; text-decoration: underline; cursor: pointer">Editar</button></sc-if></span><sc-if value="{{cur.impClosed}}" hint-placeholder-val="{{ true }}"><span style="font-size: 15px; line-height: 1.45; font-weight: 600">{{cur.impact}}</span></sc-if></div></sc-if><sc-if value="{{cur.impCta}}" hint-placeholder-val="{{ false }}"><button type="button" class="imp-cta" onClick="{{impOpen}}" style="flex: 1 1 200px; font-family: inherit; text-align: left; color: #0E0E12; border-radius: 18px; background: transparent; border: 2px dashed #0E0E12; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; cursor: pointer"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">IMPACTO · PENDENTE</span><span style="font-size: 15px; line-height: 1.45">Já dá para ver o que mudou? Registre o número ou o sinal concreto.</span><span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; background: #0E0E12; color: #F5F2EC; border-radius: 10px; padding: 8px 12px"><svg class="imp-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F5F2EC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 18l6-6 4 4 6-8"></path><path d="M15 8h5v5"></path></svg>Inserir impacto</span></button></sc-if><sc-if value="{{cur.impEditing}}" hint-placeholder-val="{{ false }}"><div style="flex: 1 1 100%; border-radius: 18px; background: rgba(245,242,236,0.7); border: 2px solid #0E0E12; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; animation: evComIn 280ms cubic-bezier(.22,1,.36,1) both"><label for="imp-in" style="font-family: 'JetBrains Mono', monospace; font-size: 11px">IMPACTO</label><textarea id="imp-in" rows="3" placeholder="Ex.: Reenvio de documento caiu de 31% para 18%" style="font-family: inherit; font-size: 15px; line-height: 1.45; color: #0E0E12; background: rgba(245,242,236,0.8); border: 1.5px solid #0E0E12; border-radius: 12px; padding: 12px; resize: vertical"></textarea><sc-if value="{{cur.impErr}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 14px; font-weight: 600">Escreva o impacto para salvar.</span></sc-if><div style="display: flex; gap: 8px; justify-content: flex-end"><button type="button" onClick="{{impCancel}}" style="font-family: inherit; font-weight: 600; font-size: 14px; border: 1.5px solid #0E0E12; border-radius: 12px; min-height: 44px; padding: 0 16px; cursor: pointer; color: #0E0E12; background: transparent">Cancelar</button><button type="button" onClick="{{impSave}}" style="font-family: inherit; font-weight: 600; font-size: 14px; border: 1.5px solid #0E0E12; border-radius: 12px; min-height: 44px; padding: 0 16px; cursor: pointer; color: #F5F2EC; background: #0E0E12">Salvar impacto</button></div></div></sc-if>
+<div style="flex: 1 1 200px; border-radius: 18px; background: rgba(245,242,236,0.55); border: 1.5px solid #0E0E12; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">SEU PAPEL</span><span style="font-size: 15px; line-height: 1.45">{{cur.role}}</span></div>
+</div>
+<sc-if value="{{cur.hasLinks}}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-direction: column; gap: 8px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">LINKS · {{cur.nLinks}}</span><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{cur.links}}" as="l" hint-placeholder-count="2"><a href="{{l.url}}" target="_blank" rel="noopener" class="ent-link" style="display: inline-flex; align-items: center; gap: 8px; color: #0E0E12; text-decoration: none; font-size: 14px; font-weight: 600; background: rgba(245,242,236,0.55); border: 1.5px solid #0E0E12; border-radius: 12px; padding: 8px 12px; min-height: 44px; box-sizing: border-box"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"></path><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"></path></svg>{{l.host}}<span aria-hidden="true">↗</span></a></sc-for></div></div></sc-if>
+<div style="display: flex; flex-wrap: wrap; gap: 20px; font-size: 14px; border-top: 1.5px solid rgba(14,14,18,0.25); padding-top: 14px"><span><span style="color: rgba(14,14,18,0.68)">Squad </span>{{cur.squad}}</span><span><span style="color: rgba(14,14,18,0.68)">Status </span>{{cur.statusLong}}</span></div>
+<div class="coops-fx-foot" style="display: flex; gap: 10px; flex-wrap: wrap; border-top: 1.5px solid rgba(14,14,18,0.25); padding-top: 16px">
+<a href="{{cur.mesaHref}}" class="mesa-cta" style="flex: 1 1 180px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; box-sizing: border-box; border-radius: 12px; background: #0E0E12; color: #F5F2EC; text-decoration: none; font-weight: 600; font-size: 14px; padding: 0 14px"><svg class="mesa-ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="4" rx="1"></rect><path d="M5 13v7M19 13v7"></path><path class="mesa-cd" d="M9 9V5h6v4"></path></svg>{{cur.mesaLabel}}</a>
+<button type="button" onClick="{{editCur}}" style="flex: 1 1 180px; font-family: inherit; font-weight: 600; font-size: 14px; color: #0E0E12; background: transparent; border: 1.5px solid #0E0E12; border-radius: 12px; min-height: 48px; padding: 0 14px; cursor: pointer">Editar entrega</button>
+</div>
+</div>
+</section>
+</sc-if>
+<sc-if value="{{ewOpen}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-label="Fechar" onClick="{{closeEw}}" class="coops-overlay" style="animation: coopsFadeIn 320ms ease both; position: absolute; inset: 0; z-index: 9; border: 0; padding: 0; background: rgba(14,14,18,0.72); backdrop-filter: blur(3px); cursor: pointer"></button>
+<section role="dialog" aria-modal="true" aria-label="{{ew.titulo}}" style="animation: coopsSheetIn 560ms cubic-bezier(.22,1,.36,1) both; position: absolute; left: 0; right: 0; bottom: 0; top: auto; max-height: calc(100% - 120px); z-index: 10; background: #0E0E12; border-radius: 32px 32px 0 0; border-top: 3px solid #8FE3C8; box-shadow: 0 -30px 80px rgba(0,0,0,0.6); overflow-y: auto; overflow-x: hidden; padding: 12px 32px 40px; box-sizing: border-box">
+<div aria-hidden="true" style="width: 56px; height: 5px; border-radius: 3px; background: #4A4858; margin: 0 auto 14px"></div>
+<div class="coops-sheet-body" style="max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8FE3C8">SUAS ENTREGAS · {{ew.modo}}</span><h2 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.025em">{{ew.titulo}}</h2><span style="font-size: 13px; color: #A3A1AD">Uma pergunta por carta.</span></div>
+<button type="button" class="coops-x" aria-label="Fechar" onClick="{{closeEw}}" style="flex: 0 0 44px; height: 44px; border-radius: 14px; background: #212129; border: 1.5px solid #3A3846; color: #F5F2EC; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+</div>
+<div style="position: relative; height: 500px; margin: 16px 28px 0 0">
+<div class="coops-wz-card" aria-hidden="{{ew.c0.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #8FE3C8; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{ew.c0.t}}; opacity: {{ew.c0.op}}; z-index: {{ew.c0.z}}; pointer-events: {{ew.c0.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>{{ew.kk0}}</span><span>ENTREGA · {{ew.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Qual foi a entrega?</span><span style="font-size: 14px; line-height: 1.45">O título vira o nome da carta no deck. A descrição conta o que foi para o ar.</span><span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; background: rgba(245,242,236,0.7); border: 1.5px solid #0E0E12; border-radius: 999px; padding: 6px 12px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M4 9h16M8 3v4M16 3v4"></path></svg>{{ew.dateLong}} · registrada automaticamente</span><label for="ew-titulo" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; margin-top: 2px">TÍTULO</label><input id="ew-titulo" type="text" aria-label="Título da entrega" placeholder="Ex.: Captura guiada na câmera" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; min-height: 56px"><label for="ew-desc" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; margin-top: 2px">DESCRIÇÃO · OPCIONAL</label><textarea id="ew-desc" rows="3" aria-label="Descrição da entrega" placeholder="Ex.: Nova etapa de captura que orienta o enquadramento do documento" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; resize: none; flex: none"></textarea><sc-if value="{{ew.err}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 14px; font-weight: 600">Dê um título à entrega para seguir.</span></sc-if>
+</div>
+<div class="coops-wz-card" aria-hidden="{{ew.c1.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #F5F2EC; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{ew.c1.t}}; opacity: {{ew.c1.op}}; z-index: {{ew.c1.z}}; pointer-events: {{ew.c1.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>{{ew.kk1}}</span><span>ENTREGA · {{ew.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Ela faz parte de alguma iniciativa?</span><span style="font-size: 14px; line-height: 1.45">Se fizer, a entrega fica ligada à mesa da iniciativa.</span><div role="radiogroup" aria-label="Iniciativa" style="display: flex; flex-direction: column; gap: 8px"><sc-for list="{{ew.inis}}" as="o" hint-placeholder-count="3"><button type="button" role="radio" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="font-family: inherit; font-weight: 600; font-size: 15px; text-align: left; color: {{o.fg}}; background: {{o.bg}}; border: 1.5px solid #0E0E12; border-radius: 14px; min-height: 48px; padding: 10px 16px; cursor: pointer; transition: background 200ms ease, transform 160ms ease">{{o.label}}</button></sc-for></div><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; margin-top: 4px">COMO ELA ESTÁ?</span><div role="radiogroup" aria-label="Status" style="display: flex; gap: 8px; flex-wrap: wrap"><sc-for list="{{ew.sts}}" as="o" hint-placeholder-count="3"><button type="button" role="radio" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="font-family: inherit; font-weight: 600; font-size: 15px; text-align: left; color: {{o.fg}}; background: {{o.bg}}; border: 1.5px solid #0E0E12; border-radius: 14px; min-height: 48px; padding: 10px 16px; cursor: pointer; transition: background 200ms ease, transform 160ms ease">{{o.label}}</button></sc-for></div>
+</div>
+<div class="coops-wz-card" aria-hidden="{{ew.c2.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #F3D36B; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{ew.c2.t}}; opacity: {{ew.c2.op}}; z-index: {{ew.c2.z}}; pointer-events: {{ew.c2.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>{{ew.kk2}}</span><span>ENTREGA · {{ew.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Qual foi o seu papel?</span><span style="font-size: 14px; line-height: 1.45">O que você puxou de ponta a ponta.</span><textarea id="ew-papel" rows="6" aria-label="Seu papel" placeholder="Ex.: Conduzi a pesquisa e desenhei o fluxo com engenharia" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; resize: none"></textarea>
+</div>
+<div class="coops-wz-card" aria-hidden="{{ew.c3.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #F5F2EC; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{ew.c3.t}}; opacity: {{ew.c3.op}}; z-index: {{ew.c3.z}}; pointer-events: {{ew.c3.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>{{ew.kk3}}</span><span>ENTREGA · {{ew.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Quer anexar links?</span><span style="font-size: 14px; line-height: 1.45">Opcional. Figma, documento, PR, dashboard: o que ajuda a contar essa entrega.</span><div style="display: flex; gap: 8px; align-items: stretch"><label for="ew-link" style="position: absolute; left: -9999px">Link</label><input id="ew-link" type="url" inputmode="url" placeholder="Cole um link" onKeyDown="{{ew.linkKey}}" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; min-height: 52px; flex: 1 1 auto"><button type="button" onClick="{{ew.addLink}}" style="font-family: inherit; font-weight: 600; font-size: 14px; border: 1.5px solid #0E0E12; border-radius: 12px; min-height: 44px; padding: 0 16px; cursor: pointer; flex: none; color: #F5F2EC; background: #0E0E12">Adicionar</button></div><sc-if value="{{ew.linkErr}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 14px; font-weight: 600">Esse link não parece válido. Confere e tenta de novo.</span></sc-if><sc-if value="{{ew.noLinks}}" hint-placeholder-val="{{ false }}"><span style="font-size: 14px; color: rgba(14,14,18,0.68)">Nenhum link anexado ainda.</span></sc-if><div style="display: flex; flex-direction: column; gap: 8px"><sc-for list="{{ew.links}}" as="l" hint-placeholder-count="2"><div style="display: flex; align-items: center; gap: 10px; border-radius: 12px; background: rgba(245,242,236,0.7); border: 1.5px solid #0E0E12; padding: 8px 8px 8px 12px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"></path><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"></path></svg><span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">{{l.host}}</span><span style="font-size: 12px; color: rgba(14,14,18,0.68); overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{l.url}}</span></span><button type="button" aria-label="Remover link {{l.host}}" onClick="{{l.remove}}" style="flex: none; width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid #0E0E12; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div></sc-for></div>
+</div>
+<div class="coops-wz-card" aria-hidden="{{ew.c4.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #8FE3C8; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{ew.c4.t}}; opacity: {{ew.c4.op}}; z-index: {{ew.c4.z}}; pointer-events: {{ew.c4.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>{{ew.kk4}}</span><span>ENTREGA · {{ew.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Confere a entrega?</span><span style="font-size: 14px; line-height: 1.45">Ela entra no seu deck de Entregas e aparece para o seu manager.</span><div style="display: flex; flex-direction: column; gap: 8px"><sc-for list="{{ew.sum}}" as="r" hint-placeholder-count="5"><div style="display: flex; flex-direction: column; gap: 2px; border-radius: 12px; background: rgba(245,242,236,0.6); border: 1.5px solid #0E0E12; padding: 10px 12px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.06em">{{r.k}}</span><span style="font-size: 14px; line-height: 1.4">{{r.v}}</span></div></sc-for></div>
+</div>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px">
+<button type="button" onClick="{{ew.prev}}" style="font-family: inherit; font-weight: 600; font-size: 15px; color: #F5F2EC; background: transparent; border: 1.5px solid #4A4858; border-radius: 14px; min-height: 48px; padding: 0 18px; cursor: pointer; opacity: {{ew.prevOp}}">Voltar</button>
+<div style="display: flex; gap: 6px"><sc-for list="{{ew.dots}}" as="d" hint-placeholder-count="6"><button type="button" aria-label="Ir para a pergunta {{d.n}}" onClick="{{d.go}}" style="width: 22px; height: 6px; padding: 0; border: 0; border-radius: 3px; background: {{d.bg}}; cursor: pointer"></button></sc-for></div>
+<button type="button" onClick="{{ew.next}}" style="font-family: inherit; font-weight: 600; font-size: 15px; color: #0E0E12; background: #8FE3C8; border: 2px solid #0E0E12; border-radius: 14px; min-height: 48px; padding: 0 20px; cursor: pointer">{{ew.nextLabel}}</button>
+</div>
+</div>
+</section>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1300}}'>
+class Component extends DCLogic {
+  renderVals() { var o = this.__acctRv() || {}, self = this, m = !!(this.state && this.state.acct); o.acctOpen = m; o.acctExp = m ? 'true' : 'false'; o.acctRing = m ? '0 0 0 2px #0E0E12, 0 0 0 4px #B7A6FF' : 'none'; o.acctToggle = function () { self.setState({ acct: !(self.state && self.state.acct) }); }; return o; }
+  constructor(props) { super(props); this.state = { filter: 'todas', open: null, fx: null, ew: null, extra: [], edits: {}, imp: null }; }
+  __acctRv() {
+    var self = this;
+    var all = [
+      { id: 'd1', day: '14', month: "OUT '26", st: 'ent', title: 'Captura guiada na câmera', ini: 'Abandono no envio do documento', squad: 'Onboarding', body: 'Nova etapa de captura que orienta o enquadramento do documento antes da foto, lançada para toda a base.', impact: 'Reenvio de documento caiu de 31% para 18% na primeira semana.', role: 'Design lead: conduziu a pesquisa, desenhou o fluxo e acompanhou o lançamento com engenharia.', links: [{ url: 'https://www.figma.com/file/captura-guiada', host: 'figma.com' }, { url: 'https://docs.google.com/document/d/teste-de-usabilidade', host: 'docs.google.com' }] },
+      { id: 'd2', day: '27', month: "SET '26", st: 'ent', title: 'Novo fluxo de envio de documento no ar', ini: 'Abandono no envio do documento', squad: 'Onboarding', body: 'Fluxo redesenhado com captura guiada, lançado para toda a base em duas ondas.', impact: '', role: 'Desenhou o fluxo de ponta a ponta e facilitou o workshop de priorização.' },
+      { id: 'd3', day: '02', month: "AGO '26", st: 'pausa', title: 'Checklist de acessibilidade do cadastro', ini: 'Acessibilidade no cadastro', squad: 'Onboarding', body: 'Primeira versão do checklist aplicada em 3 telas do cadastro. A iniciativa foi pausada para priorizar o envio de documento.', impact: '14 problemas de contraste e foco corrigidos nas telas revisadas.', role: 'Montou o checklist e revisou as telas com o time de plataforma.' }
+    ];
+    all = this.state.extra.concat(all).map(function (c) { return Object.assign({}, c, self.state.edits[c.id] || {}); });
+    var ST = { ent: ['ENTREGUE', 'Entregue'], and: ['EM ANDAMENTO', 'Em andamento'], pausa: ['PAUSADA', 'Pausada'] };
+    var f = this.state.filter;
+    var defs = [['todas', 'Todas'], ['ent', 'Entregues'], ['and', 'Em andamento'], ['pausa', 'Pausadas']];
+    var cards = all.filter(function (c) { return f === 'todas' || c.st === f; }).map(function (c) {
+      return Object.assign({}, c, { status: ST[c.st][0], foot: c.ini || 'Sem iniciativa vinculada', hasDesc: !!c.body && c.body !== '—', noImpact: !c.impact, open: function (ev) { self.setState({ open: c.id, fx: fxCap(ev), imp: null }); } });
+    });
+    var c0 = all.filter(function (c) { return c.id === self.state.open; })[0];
+
+    var FXR = this.state.fx;
+    var fxCap = function (ev) { try { var card = ev && ev.currentTarget; card = card && (card.closest('.coops-card') || card); var root = card && card.closest('[data-fx-root]'); if (!card || !root) return null; var r = card.getBoundingClientRect(), R = root.getBoundingClientRect(), sc = (R.width / root.offsetWidth) || 1; return { cx: (r.left + r.width / 2 - R.left) / sc, cy: (r.top - R.top) / sc, cw: r.width / sc, rw: root.offsetWidth, rh: root.offsetHeight, ch: r.height / sc, ready: false }; } catch (e) { return null; } };
+    var fxView = function (W) {
+      var F = FXR || { cx: 640, cy: 160, cw: 260, ch: 340, rw: 1280, rh: 1300, ready: true, h: 0, plain: true };
+      var w = Math.min(W, F.rw - 32), maxH = Math.min(900, F.rh - 48), h = Math.min(F.h || 560, maxH);
+      var top = Math.max(24, Math.min(F.cy + F.ch / 2 - h / 2, F.rh - h - 24));
+      if (!F.ready) setTimeout(function () { var el = document.getElementById('coops-focus'); var cur = self.state.fx; if (el && cur && !cur.ready) self.setState({ fx: Object.assign({}, cur, { h: el.offsetHeight, ready: true }) }); }, 0);
+      return { w: w, left: (F.rw - w) / 2, top: top, maxH: maxH, dx: F.cx - F.rw / 2, dy: F.cy - top, s: (F.cw / w).toFixed(3), op: F.ready ? 1 : 0,
+        anim: F.closing ? 'coopsFocusOut 300ms cubic-bezier(.4,0,1,1) both' : (F.ready ? (F.plain ? 'coopsFadeIn 320ms ease both' : 'coopsFocusIn 560ms cubic-bezier(.22,1,.36,1) both') : 'none') };
+    };
+    var fxS = fxView(620);
+    var INIS = ['Abandono no envio do documento', 'Acessibilidade no cadastro', 'Prova de vida sem fricção'];
+    var STS = [['ent', 'Entregue'], ['and', 'Em andamento'], ['pausa', 'Pausada']];
+    var EF = this.state.ew, ewV = null, IMP = this.state.imp === 'edit' ? 'edit' : null;
+    var val = function (id) { var el = typeof document !== 'undefined' && document.getElementById(id); return el ? el.value.trim() : null; };
+    var FLD = [['titulo', 'ew-titulo'], ['desc', 'ew-desc'], ['papel', 'ew-papel']];
+    var egrab = function () { var o = {}; FLD.forEach(function (q) { var v = val(q[1]); o[q[0]] = v === null ? (self.state.ew[q[0]] || '') : v; }); return o; };
+    var setE = function (p) { self.setState({ ew: Object.assign({}, self.state.ew, p) }); };
+    if (EF) {
+      var etok = String(EF.tok);
+      setTimeout(function () { FLD.forEach(function (q) { var el = document.getElementById(q[1]); if (el && el.getAttribute('data-tok') !== etok) { el.value = EF[q[0]] || ''; el.setAttribute('data-tok', etok); } }); }, 0);
+      var LAST = 4;
+      var addL = function () { var el = document.getElementById('ew-link'), raw = el ? el.value.trim() : ''; if (!raw) { if (el) el.focus(); return; }
+        var u = /^https?:\/\//i.test(raw) ? raw : 'https://' + raw; var host = u.replace(/^https?:\/\//i, '').split(/[\/?#]/)[0].replace(/^www\./i, '');
+        if (!/^[^\s.]+(\.[^\s.]+)+$/.test(host) || /\s/.test(u)) { setE(Object.assign(egrab(), { linkErr: true })); return; }
+        el.value = ''; setE(Object.assign(egrab(), { linkErr: false, links: self.state.ew.links.concat([{ url: u, host: host }]) })); };
+      var ego = function (k) { var g = egrab(); if (k > 0 && !g.titulo) { setE(Object.assign(g, { step: 0, err: true })); return; } setE(Object.assign(g, { step: Math.max(0, Math.min(LAST, k)), err: false })); };
+      ewV = { modo: EF.id ? 'EDITAR ENTREGA' : 'NOVA ENTREGA', titulo: EF.id ? 'Editar entrega' : 'Nova entrega', dateLong: EF.dateLong, dateShort: EF.dateShort, err: !!EF.err,
+        prevOp: EF.step === 0 ? 0.4 : 1, nextLabel: EF.step === LAST ? (EF.id ? 'Salvar alterações' : 'Registrar entrega') : 'Próxima',
+        dots: [0, 1, 2, 3, 4].map(function (k) { return { n: k + 1, bg: k <= EF.step ? '#8FE3C8' : '#2C2C36', go: function () { ego(k); } }; }),
+        inis: INIS.concat(['']).map(function (t) { var on = (EF.ini || '') === t; return { label: t || 'Nenhuma iniciativa', on: on ? 'true' : 'false', bg: on ? '#0E0E12' : 'transparent', fg: on ? '#F5F2EC' : '#0E0E12', pick: function () { setE(Object.assign(egrab(), { ini: t })); } }; }),
+        sts: STS.map(function (x) { var on = EF.st === x[0]; return { label: x[1], on: on ? 'true' : 'false', bg: on ? '#0E0E12' : 'transparent', fg: on ? '#F5F2EC' : '#0E0E12', pick: function () { setE(Object.assign(egrab(), { st: x[0] })); } }; }),
+        sum: [['DATA', EF.dateLong], ['ENTREGA', EF.titulo || '—'], ['DESCRIÇÃO', EF.desc || '—'], ['INICIATIVA', (EF.ini || 'Sem iniciativa vinculada') + ' · ' + ST[EF.st || 'ent'][1]], ['SEU PAPEL', EF.papel || '—'], ['LINKS', EF.links.length ? EF.links.map(function (l) { return l.host; }).join(' · ') : 'Nenhum']].map(function (r) { return { k: r[0], v: r[1] }; }),
+        links: EF.links.map(function (l, ix) { return { url: l.url, host: l.host, remove: function () { setE(Object.assign(egrab(), { links: self.state.ew.links.filter(function (_, z) { return z !== ix; }) })); } }; }),
+        noLinks: !EF.links.length, linkErr: !!EF.linkErr,
+        addLink: function () { addL(); },
+        linkKey: function (ev) { if (ev && ev.key === 'Enter') { ev.preventDefault(); addL(); } },
+        prev: function () { ego(EF.step - 1); },
+        next: function () {
+          if (EF.step < LAST) { ego(EF.step + 1); return; }
+          var f = Object.assign({}, self.state.ew, egrab());
+          var data = { title: f.titulo, ini: f.ini || '', st: f.st || 'ent', body: f.desc || '—', role: f.papel || '—', links: f.links || [] };
+          if (f.id) { var ed = Object.assign({}, self.state.edits); ed[f.id] = Object.assign({}, ed[f.id] || {}, data); self.setState({ edits: ed, ew: null, open: f.id, fx: null }); return; }
+          var d = Object.assign({ id: 'nd' + self.state.extra.length, day: '20', month: "OUT '26", squad: 'Onboarding', impact: '' }, data);
+          self.setState({ extra: [d].concat(self.state.extra), ew: null, filter: 'todas', open: d.id, fx: null });
+        } };
+      for (var i = 0; i <= LAST; i++) {
+        var g2 = i - EF.step;
+        ewV['kk' + i] = i === LAST ? 'RESUMO' : 'PERGUNTA ' + (i + 1) + ' DE ' + LAST + (i === 3 ? ' · OPCIONAL' : '');
+        ewV['c' + i] = g2 < 0 ? { t: 'translate(-118%, 24px) rotate(-12deg)', op: 0, z: 20, pe: 'none', hidden: 'true' }
+          : { t: 'translate(' + (g2 * 16) + 'px, ' + (-g2 * 12) + 'px) rotate(' + (g2 * 3) + 'deg) scale(' + (1 - g2 * 0.03) + ')', op: g2 > 2 ? 0 : 1, z: 10 - g2, pe: g2 === 0 ? 'auto' : 'none', hidden: g2 === 0 ? 'false' : 'true' };
+      }
+    }
+    var emptyEw = { links: [], noLinks: true, linkErr: false, addLink: function () {}, linkKey: function () {}, modo: '', titulo: '', dateLong: '', dateShort: '', err: false, prevOp: 1, nextLabel: '', dots: [], inis: [], sts: [], sum: [], prev: function () {}, next: function () {}, kk0: '', kk1: '', kk2: '', kk3: '', kk4: '' };
+    [0, 1, 2, 3, 4].forEach(function (k) { emptyEw['c' + k] = {}; });
+    var newEw = function (c) { return { tok: Date.now(), step: 0, id: c ? c.id : null, titulo: c ? c.title : '', desc: c ? (c.body === '—' ? '' : c.body) : '', links: c ? (c.links || []).slice() : [], papel: c ? (c.role === '—' ? '' : c.role) : '', ini: c ? c.ini : '', st: c ? c.st : 'ent',
+      dateLong: c ? (c.dateLong || (c.day + ' ' + c.month)) : '20 de outubro de 2026 · terça', dateShort: c ? (c.day + ' ' + c.month) : "20 OUT '26" }; };
+    return {
+      fxS: fxS,
+      ewOpen: !!ewV, ew: ewV || emptyEw,
+      openEw: function () { self.setState({ ew: newEw(null), open: null, fx: null }); },
+      closeEw: function () { self.setState({ ew: null }); },
+      editCur: function () { if (c0) self.setState({ ew: newEw(c0), open: null, fx: null }); },
+      filters: defs.map(function (d) { var on = d[0] === f, n = d[0] === 'todas' ? all.length : all.filter(function (c) { return c.st === d[0]; }).length; return { label: d[1] + ' · ' + n, sel: on ? 'true' : 'false', fw: on ? 600 : 400, fg: on ? '#0E0E12' : '#F5F2EC', bg: on ? '#F5F2EC' : 'transparent', bd: on ? '#F5F2EC' : '#3A3846', pick: function () { self.setState({ filter: d[0] }); } }; }),
+      cards: cards,
+      sheetOpen: !!c0,
+      cur: c0 ? Object.assign({}, c0, { statusLong: ST[c0.st][1], iniLabel: c0.ini || 'Sem iniciativa vinculada', hasIni: !!c0.ini, mesaHref: c0.ini ? 'Coops10-Mesa.dc.html' : 'Coops08-Iniciativa.dc.html', mesaLabel: c0.ini ? 'Abrir mesa da iniciativa' : 'Abrir mesa de iniciativa',
+        hasImpact: !!c0.impact && IMP !== 'edit', impClosed: IMP !== 'edit', impCta: !c0.impact && IMP !== 'edit', impEditing: IMP === 'edit', impErr: IMP === 'err',
+        links: c0.links || [], hasLinks: !!(c0.links && c0.links.length), nLinks: String((c0.links || []).length) }) : { day: '', month: '', title: '', body: '', impact: '', role: '', ini: '', squad: '', statusLong: '', links: [], mesaHref: '#', mesaLabel: '' },
+      impOpen: function () { self.setState({ imp: 'edit' }); setTimeout(function () { var el = document.getElementById('imp-in'); if (el) { el.value = (c0 && c0.impact) || ''; el.focus(); } }, 40); },
+      impCancel: function () { self.setState({ imp: null }); },
+      impSave: function () { var el = document.getElementById('imp-in'), t = el ? el.value.trim() : ''; if (!t) { if (el) el.focus(); return; } var ed = Object.assign({}, self.state.edits); ed[c0.id] = Object.assign({}, ed[c0.id] || {}, { impact: t }); self.setState({ edits: ed, imp: null }); },
+      close: function () { var st = self.state; if (st.fx && !st.fx.closing && st.open) { self.setState({ fx: Object.assign({}, st.fx, { ready: true, closing: true }) }); setTimeout(function () { self.setState({ open: null, fx: null }); }, 290); } else self.setState({ open: null, fx: null }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

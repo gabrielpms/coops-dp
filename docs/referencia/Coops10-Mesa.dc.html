@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Coops · Mesa da iniciativa</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0E12}
+a{color:#B7A6FF}a:hover{color:#D9CFFF}
+@keyframes coopsSheetIn{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes coopsFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes coopsRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.coops-sheet-body{animation:coopsRise 420ms cubic-bezier(.22,1,.36,1) 160ms both}
+@media (prefers-reduced-motion: reduce){[role=dialog],.coops-overlay,.coops-sheet-body{animation:none!important}}
+/* Coops · interações padrão (DS) */
+.coops-m{transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease,border-color .25s ease}
+.coops-m:hover,.coops-m:focus-visible{transform:translateY(-8px) rotate(-1.5deg)!important;box-shadow:8px 8px 0 #4B36B0!important;border-color:#B7A6FF!important;outline:none}
+.coops-m:active{transform:translateY(-2px) scale(.97)!important;box-shadow:3px 3px 0 #4B36B0!important;transition-duration:80ms}
+.coops-av{display:block;line-height:0;transform-origin:50% 90%}
+.coops-m:focus .coops-av,.coops-m:active .coops-av{animation:coopsWave .5s cubic-bezier(.34,1.4,.64,1) 1}
+@keyframes coopsWave{30%{transform:translateY(-12px) rotate(-6deg)}60%{transform:translateY(-6px) rotate(5deg)}100%{transform:none}}
+.coops-pile .coops-front,.coops-card{transition:transform .4s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease}
+.coops-pile .coops-b1,.coops-pile .coops-b2{transition:transform .45s cubic-bezier(.34,1.3,.64,1)}
+.coops-pile:hover .coops-front,.coops-pile .coops-front:focus-visible{transform:translateY(-16px) rotate(-2deg)!important;outline:none}
+.coops-pile:hover .coops-b1{transform:rotate(6deg) translateX(10px)!important}
+.coops-pile:hover .coops-b2{transform:rotate(11deg) translateX(20px)!important}
+.coops-card:hover,.coops-card:focus-visible{transform:translateY(-10px) rotate(-1.5deg)!important;outline:none}
+.coops-pile .coops-front:active,.coops-pile .coops-front:focus,.coops-card:active,.coops-card:focus{animation:coopsPull .55s cubic-bezier(.65,0,.25,1) 1}
+@keyframes coopsPull{0%{transform:translateY(-16px) rotate(-2deg)}50%{transform:translateY(-44px) scale(1.04) rotate(0)}100%{transform:translateY(-16px) rotate(-2deg)}}
+@media (prefers-reduced-motion: reduce){.coops-m,.coops-av,.coops-front,.coops-b1,.coops-b2,.coops-card{transition:none!important;animation:none!important}}
+/* Coops · transição entre páginas */
+body::after{content:"";position:fixed;inset:0;z-index:9999;background:#0E0E12;pointer-events:none;animation:coopsCurtainIn .5s cubic-bezier(.22,1,.36,1) .05s both}
+@keyframes coopsCurtainIn{from{opacity:1}to{opacity:0}}
+body::before{content:"";position:fixed;inset:0;z-index:9998;background:#0E0E12;pointer-events:none;opacity:0;transition:opacity .26s ease}
+html.coops-leaving body::before{opacity:1}
+@media (prefers-reduced-motion: reduce){body::after,body::before{animation:none!important;transition:none!important;opacity:0!important}}
+/* Coops · scroll */
+*{scrollbar-width:thin;scrollbar-color:rgba(127,124,140,.55) transparent}
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-track{background:transparent}
+*::-webkit-scrollbar-thumb{background:rgba(127,124,140,.55);border-radius:999px;border:3px solid transparent;background-clip:padding-box}
+*::-webkit-scrollbar-thumb:hover{background:rgba(183,166,255,.8);background-clip:padding-box;border:3px solid transparent}
+*::-webkit-scrollbar-corner{background:transparent}
+.coops-wz-card{scrollbar-color:rgba(14,14,18,.35) transparent}
+.coops-wz-card::-webkit-scrollbar-thumb{background:rgba(14,14,18,.3);background-clip:padding-box}
+.coops-wz-card::-webkit-scrollbar-thumb:hover{background:rgba(14,14,18,.55);background-clip:padding-box}
+.coops-wz-card::-webkit-scrollbar-track{margin:18px 0}
+.coops-wz-card>*{flex-shrink:0}
+/* Coops · micro-interações dos ícones (DS) · em loop enquanto o card está em foco */
+.coops-pile svg,.coops-card svg,.coops-icdemo svg,.coops-ichov svg{overflow:visible}
+.coops-pile svg *,.coops-card svg *,.coops-icdemo svg *,.coops-ichov svg *{transform-box:fill-box}
+.ic-arm,.ic-w,.ic-ring{transform-box:view-box!important;transform-origin:32px 32px}
+.ic-heart{transform-origin:50% 60%}.ic-ecg{stroke-dasharray:60}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-heart{animation:icBeat 1s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-ecg{animation:icDraw60 1s ease-in-out infinite}
+@keyframes icBeat{0%,100%{transform:scale(1)}15%{transform:scale(1.14)}30%{transform:scale(.98)}45%{transform:scale(1.08)}}
+@keyframes icDraw60{0%{stroke-dashoffset:60}60%,100%{stroke-dashoffset:0}}
+.ic-peg{transform-origin:50% 100%}.ic-day{fill:none;stroke-width:1.75;opacity:0;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-peg{animation:icPeg 1.2s cubic-bezier(.34,1.6,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-peg2{animation-delay:.1s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-day{animation:icDay 2.6s cubic-bezier(.34,1.6,.64,1) infinite both}
+@keyframes icDay{0%,3%{opacity:0;transform:scale(.2)}12%,70%{opacity:1;transform:scale(1)}80%,100%{opacity:0;transform:scale(.6)}}
+@keyframes icPeg{0%,60%,100%{transform:none}25%{transform:translateY(-4px)}}
+.ic-star{transform-origin:50% 55%}.ic-shard{opacity:0;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-star{animation:icBurst 1.8s cubic-bezier(.34,1.4,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-shard{animation:icShard 1.8s cubic-bezier(.2,.8,.3,1) infinite}
+@keyframes icBurst{0%{transform:scale(1);opacity:1}18%{transform:scale(1.18) rotate(-8deg);opacity:1}26%{transform:scale(.2);opacity:0}72%{transform:scale(.2);opacity:0}88%{transform:scale(1.1);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes icShard{0%,22%{opacity:0;transform:translate(0,0) scale(.4) rotate(0)}28%{opacity:1}62%{opacity:1;transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--rt))}74%,100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.6) rotate(var(--rt))}}
+.ic-leaf{transform-box:view-box!important;transform-origin:32px 32px;opacity:0}.ic-leafp{fill:rgba(255,255,255,.6)}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-leaf{animation:icLeaf 1.3s cubic-bezier(.45,0,.35,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-leaf2{animation-delay:.45s}
+@keyframes icLeaf{0%{opacity:0;transform:scaleX(1) skewY(0)}6%{opacity:1}40%{transform:scaleX(.15) skewY(-10deg)}75%{opacity:1;transform:scaleX(-1) skewY(0)}85%,100%{opacity:0;transform:scaleX(-1)}}
+.ic-bgx{transform-box:view-box!important;transform-origin:32px 32px}.ic-bgx2,.ic-bgx3{opacity:0}.ic-knob{stroke-width:6}.ic-playt{transform-origin:50% 50%}.ic-wave{transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-bgx{animation:icRot 4.2s cubic-bezier(.34,1.3,.64,1) infinite both}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-bgx2{animation-delay:1.4s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-bgx3{animation-delay:2.8s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-knob{animation:icKnob 1.4s linear 1.4s infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-playt{animation:icPlay .7s ease-in-out infinite alternate}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-wave{animation:icWav .7s ease-in-out infinite alternate}
+@keyframes icRot{0%{opacity:0;transform:translateY(10px) rotate(-10deg) scale(.7)}6%,30%{opacity:1;transform:none}36%,100%{opacity:0;transform:translateY(-10px) rotate(10deg) scale(.7)}}
+@keyframes icKnob{from{transform:translateX(0)}to{transform:translateX(30px)}}
+@keyframes icPlay{to{transform:scale(1.15)}}
+@keyframes icWav{from{opacity:.3;transform:scale(.92)}to{opacity:1;transform:scale(1.04)}}
+.ic-path{stroke-dasharray:70}.ic-jflag,.ic-flag{transform-origin:0% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-path{animation:icDraw70 1.2s cubic-bezier(.65,0,.25,1) both}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-jflag{animation:icWave .5s ease-in-out .6s infinite}
+@keyframes icDraw70{0%{stroke-dashoffset:70}50%,100%{stroke-dashoffset:0}}
+@keyframes icWave{0%,100%{transform:skewY(0) scaleX(1)}50%{transform:skewY(-12deg) scaleX(.85)}}
+.ic-fire{opacity:0;transform-origin:50% 0%}.ic-tw{opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-rocket{animation:icRocket .9s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-fire{animation:icFire .32s ease-in-out infinite alternate}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-fire2{animation-duration:.24s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-tw{animation:icTw 1.1s linear infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-tw2{animation-delay:.3s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-tw3{animation-delay:.55s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-tw4{animation-delay:.8s}
+@keyframes icFire{from{opacity:.85;transform:translateY(-6px) scaleY(.8) scaleX(1.1)}to{opacity:1;transform:translateY(-6px) scaleY(1.2) scaleX(.9)}}
+@keyframes icTw{0%{opacity:0;transform:translateY(-10px)}20%{opacity:1}80%{opacity:1}100%{opacity:0;transform:translateY(22px)}}
+@keyframes icRocket{0%,100%{transform:translate(0,-6px)}25%{transform:translate(1px,-8px)}50%{transform:translate(0,-10px)}75%{transform:translate(-1px,-8px)}}
+.ic-mount{transition:transform .4s cubic-bezier(.34,1.4,.64,1)}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-flag{animation:icWave .45s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-mount{transform:translateY(-2px)}
+.ic-fb{transform-origin:0% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-fb{animation:icFb 1.4s cubic-bezier(.34,1.5,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-fb2{animation-delay:.1s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-fb3{animation-delay:.2s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-fb1{--s:.8}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-fb2{--s:1.3}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-fb3{--s:2}
+@keyframes icFb{0%,100%{transform:scaleX(1)}40%,60%{transform:scaleX(var(--s))}}
+.ic-sweep{transform-box:view-box!important;transform-origin:32px 32px}.ic-blip{stroke-width:5;opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-sweep{animation:icSweep 1.8s linear infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-blip{animation:icBlip 1.8s ease-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-ring{animation:icPing 1.8s ease-out infinite}
+@keyframes icSweep{to{transform:rotate(360deg)}}
+@keyframes icBlip{0%,2%{opacity:0}6%{opacity:1}45%,100%{opacity:0}}
+@keyframes icPing{0%,4%,100%{transform:scale(1)}12%{transform:scale(1.05)}}
+.ic-ib{transform-origin:50% 100%}.ic-ib1{--a:1.8;--b:.6}.ic-ib2{--a:.55;--b:1.4}.ic-ib3{--a:1.6;--b:.5}.ic-ib4{--a:.55;--b:1.15}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-ib{animation:icBars 1.6s ease-in-out infinite}
+@keyframes icBars{0%,100%{transform:scaleY(1)}30%{transform:scaleY(var(--a))}65%{transform:scaleY(var(--b))}}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-arm{animation:icSee 1.6s cubic-bezier(.45,0,.55,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-w{animation:icSeeW 1.6s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes icSee{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(14deg)}}
+@keyframes icSeeW{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(14deg) translateY(4px)}}
+/* Coops · ícones das ferramentas de iniciativa (DS) */
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-scan{animation:icScan 1.6s ease-in-out infinite}
+@keyframes icScan{0%,100%{transform:translate(0,0)}25%{transform:translate(-4px,-3px)}50%{transform:translate(3px,-5px)}75%{transform:translate(4px,2px)}}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-pa{animation:icNod 1.2s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-pb{animation-delay:.3s}
+@keyframes icNod{0%,60%,100%{transform:none}30%{transform:translateY(-4px)}}
+.ic-ray{opacity:0;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-bulb{animation:icGlow .9s ease-in-out infinite alternate}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-ray{animation:icRay .9s ease-in-out infinite alternate}
+@keyframes icGlow{from{fill:transparent}to{fill:rgba(255,255,255,.65)}}
+@keyframes icRay{from{opacity:.2;transform:scale(.85)}to{opacity:1;transform:scale(1.1)}}
+.ic-hg{transform-box:view-box!important;transform-origin:32px 32px}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-hg{animation:icHg 1.8s cubic-bezier(.65,0,.35,1) infinite}
+@keyframes icHg{0%,40%{transform:rotate(0)}60%,100%{transform:rotate(180deg)}}
+.ic-br{stroke-dasharray:50}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-br{animation:icDraw50 1.4s cubic-bezier(.65,0,.25,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-br2{animation-delay:.15s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-up{animation:icUp 1.4s cubic-bezier(.34,1.6,.64,1) infinite}
+@keyframes icDraw50{0%{stroke-dashoffset:50}50%,100%{stroke-dashoffset:0}}
+@keyframes icUp{0%,45%,100%{transform:none}60%{transform:translateY(-5px)}}
+.ic-zap{transform-origin:50% 50%}.ic-zsp{opacity:0;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-zap{animation:icZap 1.4s steps(1,end) infinite,icZShake .14s linear infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-zsp{animation:icZs .7s ease-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-zsp2{animation-delay:.18s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-zsp3{animation-delay:.36s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-zsp4{animation-delay:.52s}
+@keyframes icZap{0%{fill:transparent}6%{fill:#F5F2EC}11%{fill:transparent}17%,82%{fill:rgba(255,255,255,.55)}88%{fill:#F5F2EC}94%,100%{fill:rgba(255,255,255,.55)}}
+@keyframes icZShake{0%,100%{transform:scale(1.08) rotate(0)}25%{transform:scale(1.08) translate(.6px,-.5px) rotate(2deg)}50%{transform:scale(1.08) translate(-.6px,.5px) rotate(-2deg)}75%{transform:scale(1.08) translate(.5px,.6px)}}
+@keyframes icZs{0%{opacity:0;transform:scale(.3)}30%{opacity:1;transform:scale(1.2)}100%{opacity:0;transform:scale(.6)}}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-m1{animation:icCmp 1.4s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-m2{animation-delay:-.7s}
+@keyframes icCmp{0%,100%{transform:none}50%{transform:translateY(-5px)}}
+.ic-chk{stroke-dasharray:24}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-chk{animation:icDraw24 1.2s cubic-bezier(.65,0,.25,1) infinite}
+@keyframes icDraw24{0%{stroke-dashoffset:24}45%,100%{stroke-dashoffset:0}}
+.ic-needle{transform-box:view-box!important;transform-origin:32px 44px}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-needle{animation:icNeedle 1.6s cubic-bezier(.34,1.4,.64,1) infinite}
+@keyframes icNeedle{0%,100%{transform:rotate(-80deg)}50%{transform:rotate(10deg)}62%{transform:rotate(0)}}
+.ic-ln{stroke-dasharray:30}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-ln{animation:icDraw30b 1.4s ease infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-ln2{animation-delay:.25s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-bub{animation:icBob 1.4s ease-in-out infinite}
+@keyframes icDraw30b{0%{stroke-dashoffset:30}40%,100%{stroke-dashoffset:0}}
+@keyframes icBob{0%,100%{transform:none}50%{transform:translateY(-2px)}}
+.ic-sg1{transform-box:view-box!important;transform-origin:30px 20px}.ic-sg2{transform-box:view-box!important;transform-origin:30px 38px}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-sg1{animation:icSw1 1.4s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-sg2{animation:icSw2 1.4s ease-in-out infinite}
+@keyframes icSw1{0%,100%{transform:rotate(0)}50%{transform:rotate(-9deg)}}
+@keyframes icSw2{0%,100%{transform:rotate(0)}50%{transform:rotate(9deg)}}
+.ic-eb{transform-origin:50% 50%}.ic-esp{opacity:0;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-eb{animation:icEb 1.4s steps(1,end) infinite,icEbShake .14s linear infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-esp{animation:icEsp .7s ease-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-esp2{animation-delay:.18s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-esp3{animation-delay:.36s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-esp4{animation-delay:.52s}
+@keyframes icEb{0%{fill:transparent;filter:none}6%{fill:#F5F2EC;filter:drop-shadow(0 0 6px rgba(255,255,255,.9))}11%{fill:transparent;filter:none}17%{fill:#FFD9C8;filter:drop-shadow(0 0 5px rgba(255,255,255,.7))}23%{fill:transparent;filter:none}28%,82%{fill:#FFD9C8;filter:drop-shadow(0 0 6px rgba(255,255,255,.8))}88%{fill:#F5F2EC;filter:drop-shadow(0 0 8px rgba(255,255,255,.95))}94%,100%{fill:#FFD9C8;filter:drop-shadow(0 0 6px rgba(255,255,255,.8))}}
+@keyframes icEbShake{0%,100%{transform:scale(1.1) rotate(0)}25%{transform:scale(1.1) translate(.6px,-.5px) rotate(2deg)}50%{transform:scale(1.1) translate(-.6px,.5px) rotate(-2deg)}75%{transform:scale(1.1) translate(.5px,.6px) rotate(1deg)}}
+@keyframes icEsp{0%{opacity:0;transform:scale(.3)}30%{opacity:1;transform:scale(1.2)}100%{opacity:0;transform:scale(.6)}}
+.ic-steam{stroke-dasharray:21 21}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-steam{animation:icSteam 1.8s linear infinite both}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-steam2{animation-delay:.6s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-steam3{animation-delay:1.2s}
+@keyframes icSteam{0%{stroke-dashoffset:21;transform:translateY(3px);opacity:1}45%{stroke-dashoffset:0;transform:translateY(0);opacity:1}100%{stroke-dashoffset:-21;transform:translateY(-5px);opacity:.4}}
+.ic-q{transform-origin:50% 50%}.ic-qx{opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-q{animation:icQ 1.6s cubic-bezier(.34,1.6,.64,1) infinite both}
+@keyframes icQ{0%{opacity:0;transform:scale(.3) rotate(-15deg)}14%{opacity:1;transform:scale(1.15) rotate(6deg)}24%,68%{opacity:1;transform:scale(1) rotate(0)}84%,100%{opacity:0;transform:scale(.6)}}
+.ic-glim{transform-origin:50% 50%}.ic-glimx{opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-glim{animation:icGlim 1.4s ease-in-out infinite both}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-orb{animation:icOrb 1.4s ease-in-out infinite alternate}
+@keyframes icGlim{0%,100%{opacity:0;transform:scale(.2) rotate(0)}40%{opacity:1;transform:scale(1.15) rotate(45deg)}60%{opacity:1;transform:scale(1) rotate(60deg)}}
+@keyframes icOrb{from{fill:transparent}to{fill:rgba(255,255,255,.35)}}
+.ic-agent{transform-box:fill-box;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-agent{animation:icTwinkle 1.2s ease-in-out infinite}
+@keyframes icTwinkle{0%,100%{transform:rotate(0) scale(1)}50%{transform:rotate(90deg) scale(1.25)}}
+@media (prefers-reduced-motion: reduce){.coops-pile svg *,.coops-card svg *,.coops-icdemo svg *,.coops-ichov svg *{animation:none!important;transition:none!important}}
+/* Coops · menu da conta (DS) */
+.hb-av{transition:transform .2s ease,box-shadow .2s ease}.hb-av:hover{transform:scale(1.06)}.hb-av:focus-visible{outline:3px solid #B7A6FF;outline-offset:3px}
+.hb-item{transition:background .18s ease}.hb-item:hover,.hb-item:focus-visible{background:#212129;outline:none}
+@keyframes hbPop{from{opacity:0;transform:scale(.9) translateY(-6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.hb-av,.hb-item{transition:none}}
+
+/* Coops · dúvidas resolvidas na carta da iniciativa */
+.ag-hv{transition:transform .35s cubic-bezier(.2,.8,.2,1)}.ag-hv:hover,.ag-hv:focus-visible{transform:translateY(-6px) rotate(-1deg);outline:none}
+.ag-bulb{transform-box:view-box;transform-origin:32px 50px}
+.ag-hv:hover .ag-bulb,.ag-hv:focus-visible .ag-bulb{animation:agBulb 1.6s ease-in-out infinite}
+@keyframes agBulb{0%,100%{transform:rotate(0)}30%{transform:rotate(-5deg)}60%{transform:rotate(4deg)}}
+.ag-ray{opacity:0;stroke-dasharray:4 30}
+.ag-hv:hover .ag-ray,.ag-hv:focus-visible .ag-ray{animation:agRay 1.6s ease-in-out infinite}
+@keyframes agRay{0%,100%{opacity:0}40%,70%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.ag-hv,.ag-bulb,.ag-ray{animation:none!important;transition:none!important}.ag-ray{opacity:1}}
+
+/* Coops · carregamento do agente de momento */
+.an-wrap{animation:coopsFadeIn .35s ease both}
+/* órbita: carta da iniciativa no centro, depois entra na roda */
+.an-stage{position:relative;width:440px;max-width:100%;height:270px;perspective:1000px}
+.an-3d{position:absolute;left:50%;top:52%;width:0;height:0;transform-style:preserve-3d;transform:rotateX(-12deg)}
+.an-ring{position:absolute;left:0;top:0;transform-style:preserve-3d;animation:anSpin 7.0s linear infinite}
+@keyframes anSpin{from{transform:rotateY(0)}to{transform:rotateY(-360deg)}}
+.an-oc,.an-lil{position:absolute;left:-36px;top:-50px;width:72px;height:100px;transform-style:preserve-3d}
+.an-dim,.an-lildim{position:absolute;inset:0;transform-style:preserve-3d}
+.an-dim>.an-f,.an-dim>.an-b{animation:anDim 7.0s linear infinite;animation-delay:inherit}
+@keyframes anDim{0%,100%{filter:brightness(1)}50%{filter:brightness(.62)}}
+.an-f,.an-b{position:absolute;inset:0;box-sizing:border-box;border-radius:11px;border:2px solid #0E0E12;color:#0E0E12;padding:7px;display:flex;flex-direction:column;gap:5px;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 10px 22px rgba(0,0,0,.45)}
+.an-b{transform:rotateY(180deg);background:#2A2240;padding:5px}
+.an-b>span{flex:1;border-radius:7px;border:1.5px solid #B7A6FF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:#F5F2EC;background:repeating-linear-gradient(45deg,transparent 0 6px,rgba(183,166,255,.14) 6px 7px)}
+.an-b em{font-style:normal;color:#B7A6FF}
+.an-lil{animation:anLil 7.0s infinite}
+@keyframes anLil{0%,16%{transform:rotateY(0deg) translateZ(180px) scale(1);animation-timing-function:cubic-bezier(.55,0,.35,1)}30%{transform:rotateY(-180deg) translateZ(150px) scale(1);animation-timing-function:linear}80%{transform:rotateY(-360deg) translateZ(150px) scale(1);animation-timing-function:cubic-bezier(.55,0,.35,1)}92%,100%{transform:rotateY(-360deg) translateZ(180px) scale(1)}}
+.an-lildim>.an-f,.an-lildim>.an-b{animation:anLilDim 7.0s linear infinite}
+@keyframes anLilDim{0%,16%{filter:brightness(1)}30%{filter:brightness(.62)}55%{filter:brightness(.8)}80%,100%{filter:brightness(1)}}
+.an-spark{position:absolute;left:50%;top:52%;margin:-22px 0 0 -22px;z-index:5;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5));animation:anSpk 7.0s cubic-bezier(.45,0,.2,1) infinite}
+@keyframes anSpk{0%,14%{transform:translate(0,-104px) rotate(0) scale(1)}30%{transform:translate(0,-4px) rotate(180deg) scale(1.4)}55%{transform:translate(0,-4px) rotate(360deg) scale(1.2)}78%{transform:translate(0,-4px) rotate(540deg) scale(1.4)}92%,100%{transform:translate(0,-104px) rotate(720deg) scale(1)}}
+.an-spin{animation:anRot .8s linear infinite}@keyframes anRot{to{transform:rotate(360deg)}}
+.an-ok{animation:anPop .4s cubic-bezier(.34,1.56,.64,1) both}@keyframes anPop{from{transform:scale(.3)}to{transform:none}}
+.an-bar{transition:width .8s cubic-bezier(.22,1,.36,1)}
+.an-go{transition:transform .18s cubic-bezier(.34,1.56,.64,1)}.an-go:hover{transform:translateY(-2px)}.an-go:active{transform:scale(.96)}
+.an-cancel:hover{color:#F5F2EC!important;border-color:#4A4858!important}.an-cancel:focus-visible,.an-go:focus-visible{outline:3px solid #8FE3C8;outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.an-ring,.an-dim,.an-lil,.an-lildim,.an-spark,.an-spin,.an-ok,.an-wrap{animation:none!important}.an-bar{transition:none}}
+</style>
+</helmet>
+<div style="position: relative; overflow: hidden; font-family: 'Schibsted Grotesk', system-ui, sans-serif; color: #F5F2EC; background: #0E0E12; min-height: 1100px; box-sizing: border-box; padding: 24px 32px 56px">
+<div style="max-width: 1216px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px">
+
+<header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap">
+<a href="Coops03-Hub.dc.html" style="color: #F5F2EC; text-decoration: none; font-size: 26px; font-weight: 800; letter-spacing: -0.03em">coops<span style="color: #B7A6FF">.</span></a>
+<nav aria-label="Produtos" style="display: flex; gap: 4px; background: #17171D; border: 1px solid #2C2C36; border-radius: 14px; padding: 4px">
+<a href="Coops05-Time.dc.html" style="color: #A3A1AD; text-decoration: none; font-size: 14px; border-radius: 10px; padding: 10px 16px">Time</a>
+<a href="Coops08-Iniciativa.dc.html" aria-current="page" style="color: #0E0E12; background: #B7A6FF; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 10px; padding: 10px 16px">Iniciativas</a>
+</nav>
+</div>
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A3A1AD">{{countLabel}}</span>
+<div style="position: relative"><button type="button" class="hb-av" onClick="{{acctToggle}}" aria-haspopup="true" aria-expanded="{{acctExp}}" aria-label="Abrir o menu da sua conta" style="display: block; padding: 0; border: 0; background: transparent; border-radius: 50%; cursor: pointer; line-height: 0; box-shadow: {{acctRing}}"><dc-import name="CoopsAvatar" skin="#E0B08A" hair-style="longo" shirt-style="blazer" bg="#F3D36B" size="{{ 44 }}" label="Seu avatar" hint-size="44px,44px"></dc-import></button><sc-if value="{{acctOpen}}" hint-placeholder-val="{{ false }}"><div role="menu" aria-label="Sua conta" style="animation: hbPop 260ms cubic-bezier(.34,1.4,.64,1) both; transform-origin: top right; position: absolute; right: 0; top: 56px; z-index: 30; width: 280px; box-sizing: border-box; border-radius: 22px; background: #17171D; border: 1.5px solid #2C2C36; box-shadow: 0 24px 50px rgba(0,0,0,0.55); padding: 10px; display: flex; flex-direction: column; gap: 4px; text-align: left"><div style="display: flex; flex-direction: column; gap: 2px; padding: 10px 12px 12px; border-bottom: 1px solid #2C2C36; margin-bottom: 4px"><span style="font-size: 16px; font-weight: 700; color: #F5F2EC">Marina Lopes</span><span style="font-size: 13px; color: #A3A1AD">marina@nimbo.com</span></div><a role="menuitem" class="hb-item" href="Coops21-Admin.dc.html" style="display: flex; align-items: center; gap: 12px; color: #F5F2EC; text-decoration: none; border-radius: 14px; padding: 10px 12px; min-height: 48px; box-sizing: border-box"><span style="flex: none; width: 36px; height: 36px; border-radius: 10px; background: #B7A6FF; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></span><span style="display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 600">Administração</span><span style="font-size: 12px; color: #A3A1AD">Projetos, lideranças, skills e seus dados</span></span></a><button type="button" role="menuitem" class="hb-item" onClick="{{acctToggle}}" style="display: flex; align-items: center; gap: 12px; font-family: inherit; color: #A3A1AD; background: transparent; border: 0; text-align: left; border-radius: 14px; padding: 10px 12px; min-height: 48px; cursor: pointer"><span style="flex: none; width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid #3A3846; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11"></path></svg></span><span style="font-size: 15px; font-weight: 600">Sair</span></button></div></sc-if></div>
+</div>
+</header>
+
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: #B7A6FF">MESA DA INICIATIVA 07</span>
+<h1 style="margin: 0; font-size: 44px; font-weight: 800; letter-spacing: -0.035em; line-height: 1">Dê profundidade com cartas de contexto</h1>
+</div>
+<sc-if value="{{notDone}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center">
+<button type="button" onClick="{{openFinish}}" style="font-family: inherit; font-weight: 600; font-size: 15px; color: #F5F2EC; background: transparent; border: 1.5px solid #4A4858; border-radius: 14px; min-height: 52px; padding: 0 20px; cursor: pointer">Finalizar iniciativa</button>
+<button type="button" class="coops-ichov an-go" onClick="{{startAn}}" style="font-family: inherit; border: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; min-height: 52px; color: #0E0E12; background: #8FE3C8; font-weight: 600; font-size: 15px; border-radius: 14px; padding: 0 20px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ic-agent" d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"></path></svg>Identificar o momento</button>
+</div>
+</sc-if>
+<sc-if value="{{done}}" hint-placeholder-val="{{ false }}">
+<a href="Coops07-Membro-IC.dc.html" style="display: inline-flex; align-items: center; gap: 10px; min-height: 52px; color: #0E0E12; background: #F5F2EC; text-decoration: none; font-weight: 600; font-size: 15px; border-radius: 14px; padding: 0 20px">Ver no meu perfil</a>
+</sc-if>
+</div>
+
+<sc-if value="{{done}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="border-radius: 20px; background: #8FE3C8; color: #0E0E12; border: 2px solid #0E0E12; padding: 16px 20px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m7 12 3.5 3.5L17 9"></path></svg>
+<span style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 700; font-size: 17px">Iniciativa finalizada · {{outcomeLabel}}</span><span style="font-size: 14px">Registrada no perfil de Joana Reis, no deck de iniciativas. A mesa fica disponível para consulta.</span></span>
+<button type="button" onClick="{{reopen}}" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #0E0E12; background: transparent; border: 1.5px solid #0E0E12; border-radius: 12px; min-height: 44px; padding: 0 14px; cursor: pointer">Reabrir</button>
+</div>
+</sc-if>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); grid-auto-flow: dense; gap: 14px">
+
+<button class="coops-ichov" type="button" onClick="{{openMain}}" style="font-family: inherit; text-align: left; cursor: pointer; grid-column: span 2; grid-row: span 2; min-height: 434px; margin: 0 12px 12px 0; box-sizing: border-box; text-decoration: none; border-radius: 30px; background: #B7A6FF; color: #0E0E12; border: 2px solid #0E0E12; padding: 24px; display: flex; flex-direction: column; gap: 14px; box-shadow: 12px 12px 0 #4B36B0">
+<div style="display: flex; justify-content: space-between; align-items: flex-start">
+<svg width="60" height="60" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ic-tw" d="M12 10v6M9 13h6"></path><path class="ic-tw ic-tw2" d="M53 26v5M50.5 28.5h5"></path><path class="ic-tw ic-tw3" d="M10 36h.01"></path><path class="ic-tw ic-tw4" d="M55 8h.01"></path><g class="ic-rocket"><path d="M32 6c10 8 14 20 10 34H22C18 26 22 14 32 6z"></path><circle cx="32" cy="24" r="5"></circle><path d="M22 40l-8 10h12M42 40l8 10H38"></path></g><path class="ic-fire" d="M26 42c0 7 3 11 6 19 3-8 6-12 6-19"></path><path class="ic-fire ic-fire2" d="M29.5 42c0 4 1 7 2.5 11 1.5-4 2.5-7 2.5-11"></path></svg>
+<span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 44px; font-weight: 600; line-height: 1">07</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">INICIATIVA</span></span>
+</div>
+<sc-if value="{{done}}" hint-placeholder-val="{{ false }}"><span style="align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #F5F2EC; background: #0E0E12; border-radius: 999px; padding: 4px 10px; transform: rotate(-3deg)">FINALIZADA · {{outcomeShort}}</span></sc-if>
+<span style="margin-top: auto; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em">O PROBLEMA</span>
+<span style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.12">Pessoas abandonam a abertura de conta no envio do documento.</span>
+<span style="font-size: 13px; text-decoration: underline">Ver detalhes</span>
+</button>
+
+<div style="display: contents">
+<sc-for list="{{cards}}" as="c" hint-placeholder-count="9">
+<sc-if value="{{c.filled}}" hint-placeholder-val="{{ false }}">
+<button class="coops-card" type="button" onClick="{{c.open}}" style="font-family: inherit; text-align: left; min-height: 210px; box-sizing: border-box; border-radius: 22px; background: #F5F2EC; color: #0E0E12; border: 0; padding: 16px; display: flex; flex-direction: column; gap: 8px; cursor: pointer">
+<span style="display: flex; justify-content: space-between; width: 100%; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #4B36B0"><span>{{c.tag}}</span><span>{{c.n}}</span></span>
+<span style="font-size: 17px; font-weight: 600; line-height: 1.2">{{c.q}}</span>
+<span style="font-size: 13px; line-height: 1.45; color: #4A4858">{{c.a}}</span>
+</button>
+</sc-if>
+<sc-if value="{{c.empty}}" hint-placeholder-val="{{ true }}">
+<button class="coops-card" type="button" onClick="{{c.open}}" style="font-family: inherit; text-align: left; min-height: 210px; box-sizing: border-box; border-radius: 22px; background: transparent; color: #F5F2EC; border: 1.5px dashed #4A4858; padding: 16px; display: flex; flex-direction: column; gap: 8px; cursor: pointer">
+<span style="display: flex; justify-content: space-between; width: 100%; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A1AD"><span>OPCIONAL</span><span>{{c.n}}</span></span>
+<span style="font-size: 17px; font-weight: 600; line-height: 1.2">{{c.q}}</span>
+<span style="margin-top: auto; width: 40px; height: 40px; border-radius: 12px; border: 1.5px solid #4A4858; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></span>
+</button>
+</sc-if>
+</sc-for>
+</div>
+</div>
+</div>
+
+<sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-label="Fechar carta" onClick="{{close}}" class="coops-overlay" style="animation: coopsFadeIn 320ms ease both; position: absolute; inset: 0; z-index: 9; border: 0; padding: 0; background: rgba(14,14,18,0.72); backdrop-filter: blur(3px); cursor: pointer"></button>
+<section role="dialog" aria-modal="true" aria-labelledby="sheet-title" style="animation: coopsSheetIn 560ms cubic-bezier(.22,1,.36,1) both; position: absolute; left: 0; right: 0; bottom: 0; top: 260px; z-index: 10; background: #0E0E12; border-radius: 32px 32px 0 0; border-top: 3px solid {{sh.accent}}; box-shadow: 0 -30px 80px rgba(0,0,0,0.6); overflow-y: auto; padding: 12px 32px 40px; box-sizing: border-box">
+<div aria-hidden="true" style="width: 56px; height: 5px; border-radius: 3px; background: #4A4858; margin: 0 auto 14px"></div>
+<div class="coops-sheet-body" style="max-width: 1216px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+<article aria-hidden="true" style="flex: 0 0 240px; height: 320px; box-sizing: border-box; border-radius: 24px; background: {{sh.cardBg}}; color: #0E0E12; border: {{sh.cardBorder}}; padding: 20px; display: flex; flex-direction: column; gap: 10px">
+<span style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px"><span>{{sh.tag}}</span><span>{{sh.n}}</span></span>
+<span style="margin-top: auto; font-size: 21px; font-weight: 700; line-height: 1.2; color: {{sh.cardFg}}">{{sh.q}}</span>
+</article>
+<div style="flex: 1 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: {{sh.accent}}">{{sh.kicker}}</span>
+<h2 id="sheet-title" style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.1">{{sh.q}}</h2>
+</div>
+<button type="button" aria-label="Fechar" onClick="{{close}}" style="flex: 0 0 44px; height: 44px; border-radius: 14px; background: #212129; border: 1.5px solid #3A3846; color: #F5F2EC; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+</div>
+<sc-if value="{{sh.isMain}}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px">
+<div style="border-radius: 18px; background: #17171D; border: 1px solid #2C2C36; padding: 16px; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A1AD">PRODUTO</span><span style="font-weight: 600">Abertura de conta no app</span></div>
+<div style="border-radius: 18px; background: #17171D; border: 1px solid #2C2C36; padding: 16px; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A1AD">NECESSIDADE</span><span style="font-weight: 600">Conta sem burocracia, pelo celular</span></div>
+<div style="border-radius: 18px; background: #17171D; border: 1px solid #2C2C36; padding: 16px; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A1AD">CONTEXTO NA MESA</span><span style="font-weight: 600">{{countText}}</span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid #2C2C36; padding-top: 16px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: #8FE3C8">DÚVIDAS RESOLVIDAS COM O AGENTE · 2</span><div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px"><div class="ag-hv" tabindex="0" style="height: 300px; box-sizing: border-box; border-radius: 22px; background: #B7A6FF; color: #0E0E12; border: 2px solid #0E0E12; padding: 18px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 16px 36px rgba(0,0,0,0.45)"><span style="width: 100%; display: flex; justify-content: space-between; align-items: flex-start"><svg width="48" height="48" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="overflow: visible"><g class="ag-bulb"><path d="M24 40c-5-3-8-8-8-14a16 16 0 0 1 32 0c0 6-3 11-8 14v5H24z"></path><path d="M25 50h14M27 55h10"></path><path d="M28 32l4 4 4-4"></path></g><path class="ag-ray" d="M32 3v4M9 10l3 3M55 10l-3 3M5 26h4M55 26h4"></path></svg><span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 40px; font-weight: 600; line-height: 1; letter-spacing: -0.03em">04</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-top: 6px">CONTEXTO</span></span></span><span style="margin-top: auto; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em">RESOLVIDO COM O AGENTE</span><span style="font-size: 18px; font-weight: 600; line-height: 1.25">O abandono acontece no envio da foto do documento.</span><span style="width: 100%; box-sizing: border-box; font-size: 13px; line-height: 1.4; border-top: 1.5px solid #0E0E12; padding-top: 10px">Era no envio da foto ou na validação? Você: “No envio da foto”</span></div><div class="ag-hv" tabindex="0" style="height: 300px; box-sizing: border-box; border-radius: 22px; background: #B7A6FF; color: #0E0E12; border: 2px solid #0E0E12; padding: 18px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 16px 36px rgba(0,0,0,0.45)"><span style="width: 100%; display: flex; justify-content: space-between; align-items: flex-start"><svg width="48" height="48" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="overflow: visible"><g class="ag-bulb"><path d="M24 40c-5-3-8-8-8-14a16 16 0 0 1 32 0c0 6-3 11-8 14v5H24z"></path><path d="M25 50h14M27 55h10"></path><path d="M28 32l4 4 4-4"></path></g><path class="ag-ray" d="M32 3v4M9 10l3 3M55 10l-3 3M5 26h4M55 26h4"></path></svg><span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 40px; font-weight: 600; line-height: 1; letter-spacing: -0.03em">05</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-top: 6px">CONTEXTO</span></span></span><span style="margin-top: auto; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em">RESOLVIDO COM O AGENTE</span><span style="font-size: 18px; font-weight: 600; line-height: 1.25">Quem mais abandona é quem está abrindo a primeira conta.</span><span style="width: 100%; box-sizing: border-box; font-size: 13px; line-height: 1.4; border-top: 1.5px solid #0E0E12; padding-top: 10px">Primeira conta ou quem já tem outro banco? Você: “Quem abre a primeira conta”</span></div></div></div>
+<a href="Coops09-Agente.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; min-height: 48px; color: #0E0E12; background: #F5F2EC; text-decoration: none; font-weight: 600; font-size: 15px; border-radius: 12px; padding: 0 18px">Revisar com o agente</a>
+</sc-if>
+<sc-if value="{{sh.isCtx}}" hint-placeholder-val="{{ true }}">
+<label for="ctx-answer" style="font-size: 14px; color: #A3A1AD">{{sh.prompt}}</label>
+<textarea id="ctx-answer" rows="5" value="{{draft}}" onChange="{{onDraft}}" placeholder="Escreva com suas palavras. Links e números ajudam o agente." style="font-family: inherit; font-size: 16px; line-height: 1.5; color: #F5F2EC; background: #17171D; border: 1.5px solid #2C2C36; border-radius: 12px; padding: 14px; resize: vertical"></textarea>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<button type="button" style="font-family: inherit; font-size: 14px; color: #F5F2EC; background: transparent; border: 1.5px dashed #4A4858; border-radius: 12px; min-height: 44px; padding: 0 14px; cursor: pointer">+ Anexar arquivo</button>
+<button type="button" style="font-family: inherit; font-size: 14px; color: #F5F2EC; background: transparent; border: 1.5px dashed #4A4858; border-radius: 12px; min-height: 44px; padding: 0 14px; cursor: pointer">+ Link</button>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; border-top: 1px solid #2C2C36; padding-top: 16px">
+<button type="button" onClick="{{save}}" style="font-family: inherit; font-weight: 600; font-size: 15px; color: #0E0E12; background: #B7A6FF; border: 0; border-radius: 12px; min-height: 48px; padding: 0 18px; cursor: pointer">{{sh.saveLabel}}</button>
+<sc-if value="{{sh.filled}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{remove}}" style="font-family: inherit; font-size: 15px; color: #F5F2EC; background: transparent; border: 1.5px solid #4A4858; border-radius: 12px; min-height: 48px; padding: 0 18px; cursor: pointer">Tirar da mesa</button></sc-if>
+</div>
+</sc-if>
+</div>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{finishOpen}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-label="Fechar" onClick="{{close}}" class="coops-overlay" style="animation: coopsFadeIn 320ms ease both; position: absolute; inset: 0; z-index: 9; border: 0; padding: 0; background: rgba(14,14,18,0.72); backdrop-filter: blur(3px); cursor: pointer"></button>
+<section role="dialog" aria-modal="true" aria-labelledby="fin-title" style="animation: coopsSheetIn 560ms cubic-bezier(.22,1,.36,1) both; position: absolute; left: 0; right: 0; bottom: 0; top: 160px; z-index: 10; background: #0E0E12; border-radius: 32px 32px 0 0; border-top: 3px solid #8FE3C8; box-shadow: 0 -30px 80px rgba(0,0,0,0.6); overflow-y: auto; padding: 12px 32px 40px; box-sizing: border-box">
+<div aria-hidden="true" style="width: 56px; height: 5px; border-radius: 3px; background: #4A4858; margin: 0 auto 14px"></div>
+<div class="coops-sheet-body" style="max-width: 1216px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A3A1AD">INICIATIVA 07 › FINALIZAR</span>
+<h2 id="fin-title" style="margin: 0; font-size: 34px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.1">Como essa iniciativa terminou?</h2>
+</div>
+<button type="button" aria-label="Fechar" onClick="{{close}}" style="flex: 0 0 44px; height: 44px; border-radius: 14px; background: #212129; border: 1.5px solid #3A3846; color: #F5F2EC; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+<div style="flex: 0 0 260px; display: flex; flex-direction: column; gap: 10px">
+<article class="coops-ichov" aria-hidden="true" style="height: 340px; box-sizing: border-box; border-radius: 24px; background: #B7A6FF; color: #0E0E12; border: 2px solid #0E0E12; padding: 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 16px 36px rgba(0,0,0,0.45)">
+<span style="display: flex; justify-content: space-between; align-items: flex-start"><svg width="52" height="52" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path class="ic-tw" d="M12 10v6M9 13h6"></path><path class="ic-tw ic-tw2" d="M53 26v5M50.5 28.5h5"></path><path class="ic-tw ic-tw3" d="M10 36h.01"></path><path class="ic-tw ic-tw4" d="M55 8h.01"></path><g class="ic-rocket"><path d="M32 6c10 8 14 20 10 34H22C18 26 22 14 32 6z"></path><circle cx="32" cy="24" r="5"></circle><path d="M22 40l-8 10h12M42 40l8 10H38"></path></g><path class="ic-fire" d="M26 42c0 7 3 11 6 19 3-8 6-12 6-19"></path><path class="ic-fire ic-fire2" d="M29.5 42c0 4 1 7 2.5 11 1.5-4 2.5-7 2.5-11"></path></svg><span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 40px; font-weight: 600; line-height: 1">07</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">OUT '26</span></span></span>
+<span style="margin-top: auto; align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #F5F2EC; background: #0E0E12; border-radius: 999px; padding: 4px 10px">{{outcomePreview}}</span>
+<span style="font-size: 20px; font-weight: 700; line-height: 1.15">Pessoas abandonam a abertura de conta no envio do documento.</span>
+<span style="font-size: 12px; border-top: 1.5px solid #0E0E12; padding-top: 8px">INICIATIVAS · JOANA REIS</span>
+</article>
+<span style="font-size: 13px; color: #A3A1AD; text-align: center">Assim a carta entra no perfil</span>
+</div>
+<div style="flex: 1 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+<fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+<legend style="font-size: 14px; color: #A3A1AD; margin-bottom: 10px">Resultado</legend>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{outcomes}}" as="o" hint-placeholder-count="3">
+<button type="button" onClick="{{o.pick}}" aria-pressed="{{o.pressed}}" style="font-family: inherit; text-align: left; flex: 1 1 160px; border-radius: 16px; background: {{o.bg}}; color: {{o.fg}}; border: 1.5px solid {{o.border}}; padding: 14px; display: flex; flex-direction: column; gap: 4px; cursor: pointer; min-height: 72px"><span style="font-weight: 700">{{o.label}}</span><span style="font-size: 13px; opacity: 0.8">{{o.hint}}</span></button>
+</sc-for>
+</div>
+</fieldset>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="fin-sum" style="font-size: 14px; color: #A3A1AD">O que foi entregue ou decidido</label><textarea id="fin-sum" rows="3" style="font-family: inherit; font-size: 16px; line-height: 1.5; color: #F5F2EC; background: #17171D; border: 1.5px solid #2C2C36; border-radius: 12px; padding: 12px 14px; resize: vertical">Captura automática com guia na câmera, lançada para toda a base.</textarea></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="fin-res" style="font-size: 14px; color: #A3A1AD">Resultado nas métricas</label><input id="fin-res" type="text" placeholder="Ex.: conclusão da etapa de documento passou de [X] para [Y]" style="font-family: inherit; font-size: 16px; color: #F5F2EC; background: #17171D; border: 1.5px solid #2C2C36; border-radius: 12px; min-height: 48px; padding: 0 14px"></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="fin-learn" style="font-size: 14px; color: #A3A1AD">Aprendizados</label><textarea id="fin-learn" rows="2" placeholder="O que você levaria para a próxima iniciativa" style="font-family: inherit; font-size: 16px; line-height: 1.5; color: #F5F2EC; background: #17171D; border: 1.5px solid #2C2C36; border-radius: 12px; padding: 12px 14px; resize: vertical"></textarea></div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 14px; color: #A3A1AD">Vai junto para o perfil</span>
+<span style="display: flex; flex-wrap: wrap; gap: 6px"><span style="font-size: 13px; font-weight: 600; color: #0E0E12; background: #F5F2EC; border-radius: 999px; padding: 6px 12px">{{keptCount}} cartas da mesa</span><span style="font-size: 13px; font-weight: 600; color: #0E0E12; background: #F5F2EC; border-radius: 999px; padding: 6px 12px">Deck de resposta: 4 alternativas</span><span style="font-size: 13px; font-weight: 600; color: #0E0E12; background: #F3D36B; border-radius: 999px; padding: 6px 12px">Skills: Pesquisa, Interação</span></span>
+</div>
+<label style="display: flex; gap: 12px; align-items: center; font-size: 15px; cursor: pointer"><input type="checkbox" checked style="width: 22px; height: 22px; accent-color: #8FE3C8">Também registrar como entrega de destaque no deck de eventos</label>
+<div style="display: flex; gap: 8px; flex-wrap: wrap; border-top: 1px solid #2C2C36; padding-top: 16px">
+<button type="button" onClick="{{finish}}" style="font-family: inherit; font-weight: 600; font-size: 15px; color: #0E0E12; background: #8FE3C8; border: 0; border-radius: 12px; min-height: 48px; padding: 0 20px; cursor: pointer">Finalizar e registrar no perfil</button>
+<button type="button" onClick="{{close}}" style="font-family: inherit; font-size: 15px; color: #F5F2EC; background: transparent; border: 1.5px solid #4A4858; border-radius: 12px; min-height: 48px; padding: 0 20px; cursor: pointer">Cancelar</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</sc-if>
+<sc-if value="{{anOpen}}" hint-placeholder-val="{{ false }}">
+<div role="dialog" aria-modal="true" aria-labelledby="an-title" aria-describedby="an-steps" class="an-wrap" style="position: fixed; inset: 0; z-index: 60; background: rgba(14,14,18,0.94); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box">
+<div style="width: min(720px, 100%); display: flex; flex-direction: column; align-items: center; gap: 28px; text-align: center">
+<div class="an-stage" aria-hidden="true"><div class="an-3d"><div class="an-ring"><span class="an-oc" style="transform: rotateY(0deg) translateZ(150px)"><span class="an-dim" style="animation-delay: -7.00s"><span class="an-f" style="background: #F5F2EC"><b style="font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: 0.08em; font-weight: 500">USUÁRIOS</b><span style="margin-top: auto; display: flex; flex-direction: column; gap: 4px"><i style="display: block; height: 3px; border-radius: 2px; background: rgba(14,14,18,0.28); width: 80%"></i><i style="display: block; height: 3px; border-radius: 2px; background: rgba(14,14,18,0.28); width: 62%"></i><i style="display: block; height: 3px; border-radius: 2px; background: rgba(14,14,18,0.28); width: 72%"></i></span></span><span class="an-b"><span>c<em>.</em></span></span></span></span><span class="an-oc" style="transform: rotateY(72deg) translateZ(150px)"><span class="an-dim" style="animation-delay: -5.60s"><span class="an-f" style="background: #F5F2EC"><b style="font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: 0.08em; font-weight: 500">DADOS</b><span style="margin-top: auto; display: flex; flex-direction: column; gap: 4px"><i style="display: block; height: 3px; border-radius: 2px; background: rgba(14,14,18,0.28); width: 80%"></i><i style="display: block; height: 3px; border-radius: 2px; background: rgba(14,14,18,0.28); width: 62%"></i><i style="display: block; height: 3px; border-radius: 2px; background: rgba(14,14,18,0.28); width: 72%"></i></span></span><span class="an-b"><span>c<em>.</em></span></span></span></span><span class="an-oc" style="transform: rotateY(144deg) translateZ(150px)"><span class="an-dim" style="animation-delay: -4.20s"><span class="an-f" style="background: #F5F2EC"><b style="font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: 0.08em; font-weight: 500">REGRAS</b><span style="margin-top: auto; display: flex; flex-direction: column; gap: 4px"><i style="display: block; height: 3px; border-radius: 2px; background: rgba(14,14,18,0.28); width: 80%"></i><i style="display: block; height: 3px; border-radius: 2px; background: rgba(14,14,18,0.28); width: 62%"></i><i style="display: block; height: 3px; border-radius: 2px; background: rgba(14,14,18,0.28); width: 72%"></i></span></span><span class="an-b"><span>c<em>.</em></span></span></span></span><span class="an-oc" style="transform: rotateY(216deg) translateZ(150px)"><span class="an-dim" style="animation-delay: -2.80s"><span class="an-f" style="background: #F5F2EC"><b style="font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: 0.08em; font-weight: 500">PROTÓTIPO</b><span style="margin-top: auto; display: flex; flex-direction: column; gap: 4px"><i style="display: block; height: 3px; border-radius: 2px; background: rgba(14,14,18,0.28); width: 80%"></i><i style="display: block; height: 3px; border-radius: 2px; background: rgba(14,14,18,0.28); width: 62%"></i><i style="display: block; height: 3px; border-radius: 2px; background: rgba(14,14,18,0.28); width: 72%"></i></span></span><span class="an-b"><span>c<em>.</em></span></span></span></span></div><span class="an-lil"><span class="an-lildim"><span class="an-f" style="background: #B7A6FF"><b style="font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: 0.08em; font-weight: 500">INICIATIVA 07</b><svg width="22" height="22" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" style="margin: 4px auto 0; display: block"><path d="M32 6c10 8 14 20 10 34H22C18 26 22 14 32 6z"></path><circle cx="32" cy="24" r="5"></circle><path d="M22 40l-8 10h12M42 40l8 10H38"></path></svg><span style="margin-top: auto; display: flex; flex-direction: column; gap: 4px"><i style="display: block; height: 3px; border-radius: 2px; background: rgba(14,14,18,0.28); width: 72%"></i><i style="display: block; height: 3px; border-radius: 2px; background: rgba(14,14,18,0.28); width: 50%"></i></span></span><span class="an-b"><span>c<em>.</em></span></span></span></span></div><span class="an-spark"><svg width="44" height="44" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M32 8c2.4 14 7.6 19.2 21.6 21.6C39.6 32 34.4 37.2 32 51.2 29.6 37.2 24.4 32 10.4 29.6 24.4 27.2 29.6 22 32 8z" fill="#8FE3C8"></path></svg></span></div>
+<div style="display: flex; flex-direction: column; gap: 8px; align-items: center"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: #8FE3C8">AGENTE DE MOMENTO · ANALISANDO</span><h2 id="an-title" style="margin: 0; font-size: 40px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; color: #F5F2EC">Identificando o momento da iniciativa</h2><p style="margin: 0; font-size: 16px; color: #A3A1AD; max-width: 520px">O agente lê a mesa inteira e compara com os momentos do processo antes de sugerir as ferramentas.</p></div>
+<div style="width: 100%; max-width: 520px; height: 8px; border-radius: 999px; background: #212129; border: 1px solid #2C2C36; overflow: hidden" role="progressbar" aria-label="Progresso da análise" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{anPct}}"><div class="an-bar" style="height: 100%; width: {{anPct}}%; background: #8FE3C8; border-radius: 999px"></div></div>
+<ol id="an-steps" aria-live="polite" style="list-style: none; margin: 0; padding: 0; width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 8px; text-align: left"><sc-for list="{{anSteps}}" as="st" hint-placeholder-count="4"><li style="display: flex; align-items: center; gap: 12px; border-radius: 14px; border: 1px solid {{st.bd}}; background: {{st.bg}}; padding: 10px 14px; color: {{st.fg}}; transition: background .3s ease, border-color .3s ease, color .3s ease"><sc-if value="{{st.done}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" class="an-ok" style="flex: none; width: 24px; height: 24px; border-radius: 50%; background: #8FE3C8; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></sc-if><sc-if value="{{st.active}}" hint-placeholder-val="{{ true }}"><span aria-hidden="true" class="an-spin" style="flex: none; width: 24px; height: 24px; border-radius: 50%; border: 3px solid #2C2C36; border-top-color: #8FE3C8; box-sizing: border-box"></span></sc-if><sc-if value="{{st.wait}}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="flex: none; width: 24px; height: 24px; border-radius: 50%; border: 1.5px dashed #4A4858; box-sizing: border-box"></span></sc-if><span style="font-size: 15px; font-weight: {{st.fw}}">{{st.t}}</span><span class="an-sr" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{st.sr}}</span></li></sc-for></ol>
+<a id="an-next" class="coops-card" href="Coops11-Momento.dc.html" tabindex="-1" aria-hidden="true" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Abrir o resultado</a><button type="button" onClick="{{cancelAn}}" class="an-cancel" style="font-family: inherit; font-size: 14px; font-weight: 600; color: #A3A1AD; background: transparent; border: 1.5px solid #3A3846; border-radius: 12px; min-height: 44px; padding: 0 18px; cursor: pointer">Cancelar</button>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1100}}'>
+var OUTCOMES = [['entregue', 'Entregue', 'Foi para produção'], ['pausada', 'Pausada', 'Pode voltar depois'], ['cancelada', 'Cancelada', 'Não vai seguir']];
+class Component extends DCLogic {
+  renderVals() { var o = Object.assign(this.__acctRv() || {}, this.__an()), self = this, m = !!(this.state && this.state.acct); o.acctOpen = m; o.acctExp = m ? 'true' : 'false'; o.acctRing = m ? '0 0 0 2px #0E0E12, 0 0 0 4px #B7A6FF' : 'none'; o.acctToggle = function () { self.setState({ acct: !(self.state && self.state.acct) }); }; return o; }
+  constructor(props) {
+    super(props);
+    this.state = { filled: { usuarios: true, metricas: true, regras: true, prototipo: true }, answers: {}, sheet: null, draft: '', done: false, outcome: 'entregue', an: false, anStep: 0 };
+  }
+  __an() {
+    var self = this, S = this.state, LOOP = false;
+    var count = Object.keys(S.filled || {}).length;
+    var STEPS = ['Lendo a carta da iniciativa e ' + count + ' cartas de contexto', 'Conferindo as 2 dúvidas resolvidas com o agente', 'Comparando com os momentos do processo', 'Separando as ferramentas para esse momento'];
+    var step = S.anStep || 0;
+    if (S.an && typeof window !== 'undefined' && self.__anT == null) {
+      self.__anT = setTimeout(function () { self.__anT = null; if (!self.state.an) return;
+        var nx = (self.state.anStep || 0) + 1;
+        if (nx <= STEPS.length) { self.setState({ anStep: nx }); return; }
+        if (LOOP) { self.setState({ anStep: 0 }); return; }
+        var go = document.getElementById('an-next');
+        if (go) go.click();
+      }, step >= STEPS.length ? 700 : 1100);
+    }
+    return {
+      anOpen: !!S.an, anPct: Math.round(Math.min(step, STEPS.length) / STEPS.length * 100),
+      anSteps: STEPS.map(function (t, i) { var done = i < step, act = i === step; return { t: t, done: done, active: act, wait: !done && !act, fw: act ? 700 : 500,
+        fg: done ? '#F5F2EC' : act ? '#0E0E12' : '#A3A1AD', bg: done ? '#17171D' : act ? '#8FE3C8' : 'transparent', bd: done ? '#2C2C36' : act ? '#8FE3C8' : '#2C2C36', sr: done ? '(concluído)' : act ? '(em andamento)' : '(na fila)' }; }),
+      startAn: function () { if (self.__anT) { clearTimeout(self.__anT); self.__anT = null; } self.setState({ an: true, anStep: 0, sheet: null }); },
+      cancelAn: function () { if (self.__anT) { clearTimeout(self.__anT); self.__anT = null; } self.setState({ an: false, anStep: 0 }); }
+    };
+  }
+  __acctRv() {
+    var self = this;
+    var defs = [
+      { id: 'impacto', tag: 'NEGÓCIO', q: 'Qual o impacto para o negócio?', a: 'Mais contas abertas por mês com o mesmo investimento em aquisição.' },
+      { id: 'objetivo', tag: 'NEGÓCIO', q: 'Qual o objetivo e a expectativa?', a: 'Reduzir o abandono no envio de documento neste trimestre.' },
+      { id: 'usuarios', tag: 'USUÁRIOS', q: 'Quem são os usuários?', a: 'Pessoas abrindo a primeira conta digital, pelo celular.' },
+      { id: 'metricas', tag: 'DADOS', q: 'Quais métricas temos?', a: 'Funil por etapa do cadastro e tempo até a conta aprovada.' },
+      { id: 'sabemos', tag: 'USUÁRIOS', q: 'O que sabemos dos usuários?', a: 'Tickets citam dificuldade em fotografar o documento.' },
+      { id: 'regras', tag: 'REGRAS', q: 'Quais são as regras de negócio?', a: 'Documento com foto obrigatório; selfie para validar identidade.' },
+      { id: 'refs', tag: 'REFERÊNCIAS', q: 'Quais referências visuais temos?', a: 'Capturas de dois fluxos do setor com leitura automática.' },
+      { id: 'passado', tag: 'HISTÓRICO', q: 'Já tentamos algo parecido?', a: 'Em 2025 testamos dicas na câmera; resultado não registrado.' },
+      { id: 'prototipo', tag: 'PROTÓTIPO', q: 'Temos fluxo ou protótipo?', a: 'Fluxo atual no Figma, 7 telas.' }
+    ];
+    var f = this.state.filled;
+    var ans = this.state.answers;
+    var count = 0;
+    var cards = defs.map(function (d, i) {
+      var on = !!f[d.id];
+      if (on) count++;
+      var a = ans[d.id] != null ? ans[d.id] : d.a;
+      return Object.assign({}, d, {
+        a: a,
+        n: (i + 1 < 10 ? '0' : '') + (i + 1),
+        filled: on,
+        empty: !on,
+        open: function () { self.setState({ sheet: d.id, draft: on ? a : '' }); }
+      });
+    });
+    var sid = this.state.sheet;
+    var cur = cards.filter(function (c) { return c.id === sid; })[0];
+    var sh;
+    if (sid === 'main') {
+      sh = { isMain: true, isCtx: false, accent: '#B7A6FF', cardBg: '#B7A6FF', cardFg: '#0E0E12', cardBorder: '2px solid #0E0E12', tag: 'INICIATIVA', n: '07', kicker: 'CARTA DA INICIATIVA', q: 'Pessoas abandonam a abertura de conta no envio do documento.', prompt: '', saveLabel: '', filled: false };
+    } else if (cur) {
+      sh = { isMain: false, isCtx: true, accent: cur.filled ? '#F5F2EC' : '#B7A6FF', cardBg: cur.filled ? '#F5F2EC' : 'transparent', cardFg: cur.filled ? '#0E0E12' : '#F5F2EC', cardBorder: cur.filled ? '0' : '2px dashed #4A4858', tag: cur.filled ? cur.tag : 'OPCIONAL', n: cur.n, kicker: (cur.filled ? 'CARTA DE CONTEXTO · ' : 'NOVA CARTA DE CONTEXTO · ') + cur.tag, q: cur.q, prompt: cur.filled ? 'Resposta na mesa' : 'Sua resposta', saveLabel: cur.filled ? 'Salvar alterações' : 'Adicionar à mesa', filled: cur.filled };
+    } else {
+      sh = { isMain: false, isCtx: false, accent: '#B7A6FF', cardBg: '#B7A6FF', cardFg: '#0E0E12', cardBorder: '0', tag: '', n: '', kicker: '', q: '', prompt: '', saveLabel: '', filled: false };
+    }
+    return {
+      cards: cards,
+      countLabel: count + ' DE 9 CARTAS DE CONTEXTO',
+      countText: count + ' de 9 cartas',
+      sheetOpen: !!sid && sid !== 'finish',
+      finishOpen: sid === 'finish',
+      done: !!self.state.done,
+      notDone: !self.state.done,
+      keptCount: count,
+      outcomes: OUTCOMES.map(function (o) { var on = o[0] === self.state.outcome; return { label: o[1], hint: o[2], pressed: on ? 'true' : 'false', bg: on ? '#8FE3C8' : '#17171D', fg: on ? '#0E0E12' : '#F5F2EC', border: on ? '#8FE3C8' : '#2C2C36', pick: function () { self.setState({ outcome: o[0] }); } }; }),
+      outcomeLabel: (OUTCOMES.filter(function (o) { return o[0] === self.state.outcome; })[0] || OUTCOMES[0])[1],
+      outcomeShort: (OUTCOMES.filter(function (o) { return o[0] === self.state.outcome; })[0] || OUTCOMES[0])[1].toUpperCase(),
+      outcomePreview: (OUTCOMES.filter(function (o) { return o[0] === self.state.outcome; })[0] || OUTCOMES[0])[1].toUpperCase(),
+      openFinish: function () { self.setState({ sheet: 'finish' }); },
+      finish: function () { self.setState({ sheet: null, done: true }); },
+      reopen: function () { self.setState({ done: false }); },
+      sh: sh,
+      draft: this.state.draft,
+      onDraft: function (e) { self.setState({ draft: e.target.value }); },
+      openMain: function () { self.setState({ sheet: 'main' }); },
+      close: function () { self.setState({ sheet: null }); },
+      save: function () {
+        if (!cur) return;
+        var nf = Object.assign({}, self.state.filled); nf[cur.id] = true;
+        var na = Object.assign({}, self.state.answers); na[cur.id] = self.state.draft || cur.a;
+        self.setState({ filled: nf, answers: na, sheet: null });
+      },
+      remove: function () {
+        if (!cur) return;
+        var nf = Object.assign({}, self.state.filled); delete nf[cur.id];
+        self.setState({ filled: nf, sheet: null });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

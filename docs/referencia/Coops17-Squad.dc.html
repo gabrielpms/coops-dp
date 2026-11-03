@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Coops · Card do time</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0E12}
+a{color:#B7A6FF}a:hover{color:#D9CFFF}
+@keyframes coopsSheetIn{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes coopsFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes coopsRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.coops-sheet-body{animation:coopsRise 420ms cubic-bezier(.22,1,.36,1) 160ms both}
+@media (prefers-reduced-motion: reduce){[role=dialog],.coops-overlay,.coops-sheet-body{animation:none!important}}
+/* Coops · interações padrão (DS) */
+.coops-m{transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease,border-color .25s ease}
+.coops-m:hover,.coops-m:focus-visible{transform:translateY(-8px) rotate(-1.5deg)!important;box-shadow:8px 8px 0 #4B36B0!important;border-color:#B7A6FF!important;outline:none}
+.coops-m:active{transform:translateY(-2px) scale(.97)!important;box-shadow:3px 3px 0 #4B36B0!important;transition-duration:80ms}
+.coops-av{display:block;line-height:0;transform-origin:50% 90%}
+.coops-m:focus .coops-av,.coops-m:active .coops-av{animation:coopsWave .5s cubic-bezier(.34,1.4,.64,1) 1}
+@keyframes coopsWave{30%{transform:translateY(-12px) rotate(-6deg)}60%{transform:translateY(-6px) rotate(5deg)}100%{transform:none}}
+.coops-pile .coops-front,.coops-card{transition:transform .4s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease}
+.coops-pile .coops-b1,.coops-pile .coops-b2{transition:transform .45s cubic-bezier(.34,1.3,.64,1)}
+.coops-pile:hover .coops-front,.coops-pile .coops-front:focus-visible{transform:translateY(-16px) rotate(-2deg)!important;outline:none}
+.coops-pile:hover .coops-b1{transform:rotate(6deg) translateX(10px)!important}
+.coops-pile:hover .coops-b2{transform:rotate(11deg) translateX(20px)!important}
+.coops-card:hover,.coops-card:focus-visible{transform:translateY(-10px) rotate(-1.5deg)!important;outline:none}
+.coops-pile .coops-front:active,.coops-pile .coops-front:focus,.coops-card:active,.coops-card:focus{animation:coopsPull .55s cubic-bezier(.65,0,.25,1) 1}
+@keyframes coopsPull{0%{transform:translateY(-16px) rotate(-2deg)}50%{transform:translateY(-44px) scale(1.04) rotate(0)}100%{transform:translateY(-16px) rotate(-2deg)}}
+.coops-m.coops-go{animation:coopsPress .5s cubic-bezier(.2,.8,.2,1) 1}
+.coops-m.coops-go .coops-av{animation:coopsWave .5s cubic-bezier(.34,1.4,.64,1) 1}
+@keyframes coopsPress{0%{transform:translateY(-8px) rotate(-1.5deg)}25%{transform:translateY(-2px) scale(.97)}100%{transform:translateY(-8px) rotate(-1.5deg)}}
+.coops-front.coops-go,.coops-card.coops-go{animation:coopsPull .55s cubic-bezier(.65,0,.25,1) 1}
+@media (prefers-reduced-motion: reduce){.coops-m,.coops-av,.coops-front,.coops-b1,.coops-b2,.coops-card{transition:none!important;animation:none!important}}
+/* Coops · transição entre páginas */
+body::after{content:"";position:fixed;inset:0;z-index:9999;background:#0E0E12;pointer-events:none;animation:coopsCurtainIn .5s cubic-bezier(.22,1,.36,1) .05s both}
+@keyframes coopsCurtainIn{from{opacity:1}to{opacity:0}}
+body::before{content:"";position:fixed;inset:0;z-index:9998;background:#0E0E12;pointer-events:none;opacity:0;transition:opacity .26s ease}
+html.coops-leaving body::before{opacity:1}
+@media (prefers-reduced-motion: reduce){body::after,body::before{animation:none!important;transition:none!important;opacity:0!important}}
+/* Coops · scroll */
+*{scrollbar-width:thin;scrollbar-color:rgba(127,124,140,.55) transparent}
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-track{background:transparent}
+*::-webkit-scrollbar-thumb{background:rgba(127,124,140,.55);border-radius:999px;border:3px solid transparent;background-clip:padding-box}
+*::-webkit-scrollbar-thumb:hover{background:rgba(183,166,255,.8);background-clip:padding-box;border:3px solid transparent}
+*::-webkit-scrollbar-corner{background:transparent}
+.coops-wz-card{scrollbar-color:rgba(14,14,18,.35) transparent}
+.coops-wz-card::-webkit-scrollbar-thumb{background:rgba(14,14,18,.3);background-clip:padding-box}
+.coops-wz-card::-webkit-scrollbar-thumb:hover{background:rgba(14,14,18,.55);background-clip:padding-box}
+.coops-wz-card::-webkit-scrollbar-track{margin:18px 0}
+.coops-wz-card>*{flex-shrink:0}
+/* Frame 17 · hero animado no hover */
+.h17-ring{transition:transform .9s cubic-bezier(.22,1,.36,1)}
+.h17:hover .h17-ring{transform:scale(1.18) translate(14px,14px)}
+.h17:hover .h17-ring2{transform:scale(1.12) translate(-14px,-10px)}
+.h17-top{transition:transform .6s cubic-bezier(.34,1.3,.64,1)}
+.h17:hover .h17-top{transform:translateY(-4px)}
+.h17-card{transition:transform .55s cubic-bezier(.34,1.5,.64,1) var(--d)}
+.h17:hover .h17-card{transform:translate(var(--x),-16px) rotate(calc(var(--r) * 1.7))!important}
+.h17:hover .h17-av{animation:h17Bob 1.8s ease-in-out infinite}
+.h17:hover .h17-av2{animation-delay:.25s}
+.h17:hover .h17-av3{animation-delay:.5s}
+@keyframes h17Bob{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-12px) rotate(-4deg)}60%{transform:translateY(-4px) rotate(3deg)}}
+.h17 h1{transition:letter-spacing .5s ease}
+.h17:hover h1{letter-spacing:-0.03em}
+@media (prefers-reduced-motion: reduce){.h17 *{animation:none!important;transition:none!important}}
+/* Coops · micro-interações dos ícones (DS) · em loop enquanto o card está em foco */
+.coops-pile svg,.coops-card svg,.coops-icdemo svg{overflow:visible}
+.coops-pile svg *,.coops-card svg *,.coops-icdemo svg *{transform-box:fill-box}
+.ic-arm,.ic-w,.ic-ring{transform-box:view-box!important;transform-origin:32px 32px}
+.ic-heart{transform-origin:50% 60%}.ic-ecg{stroke-dasharray:60}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-heart{animation:icBeat 1s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-ecg{animation:icDraw60 1s ease-in-out infinite}
+@keyframes icBeat{0%,100%{transform:scale(1)}15%{transform:scale(1.14)}30%{transform:scale(.98)}45%{transform:scale(1.08)}}
+@keyframes icDraw60{0%{stroke-dashoffset:60}60%,100%{stroke-dashoffset:0}}
+.ic-peg{transform-origin:50% 100%}.ic-day{fill:none;stroke-width:1.75;opacity:0;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-peg{animation:icPeg 1.2s cubic-bezier(.34,1.6,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-peg2{animation-delay:.1s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-day{animation:icDay 2.6s cubic-bezier(.34,1.6,.64,1) infinite both}
+@keyframes icDay{0%,3%{opacity:0;transform:scale(.2)}12%,70%{opacity:1;transform:scale(1)}80%,100%{opacity:0;transform:scale(.6)}}
+@keyframes icPeg{0%,60%,100%{transform:none}25%{transform:translateY(-4px)}}
+.ic-star{transform-origin:50% 55%}.ic-shard{opacity:0;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-star{animation:icBurst 1.8s cubic-bezier(.34,1.4,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-shard{animation:icShard 1.8s cubic-bezier(.2,.8,.3,1) infinite}
+@keyframes icBurst{0%{transform:scale(1);opacity:1}18%{transform:scale(1.18) rotate(-8deg);opacity:1}26%{transform:scale(.2);opacity:0}72%{transform:scale(.2);opacity:0}88%{transform:scale(1.1);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes icShard{0%,22%{opacity:0;transform:translate(0,0) scale(.4) rotate(0)}28%{opacity:1}62%{opacity:1;transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--rt))}74%,100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.6) rotate(var(--rt))}}
+.ic-leaf{transform-box:view-box!important;transform-origin:32px 32px;opacity:0}.ic-leafp{fill:rgba(255,255,255,.6)}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-leaf{animation:icLeaf 1.3s cubic-bezier(.45,0,.35,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-leaf2{animation-delay:.45s}
+@keyframes icLeaf{0%{opacity:0;transform:scaleX(1) skewY(0)}6%{opacity:1}40%{transform:scaleX(.15) skewY(-10deg)}75%{opacity:1;transform:scaleX(-1) skewY(0)}85%,100%{opacity:0;transform:scaleX(-1)}}
+.ic-bgx{transform-box:view-box!important;transform-origin:32px 32px}.ic-bgx2,.ic-bgx3{opacity:0}.ic-knob{stroke-width:6}.ic-playt{transform-origin:50% 50%}.ic-wave{transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-bgx{animation:icRot 4.2s cubic-bezier(.34,1.3,.64,1) infinite both}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-bgx2{animation-delay:1.4s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-bgx3{animation-delay:2.8s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-knob{animation:icKnob 1.4s linear 1.4s infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-playt{animation:icPlay .7s ease-in-out infinite alternate}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-wave{animation:icWav .7s ease-in-out infinite alternate}
+@keyframes icRot{0%{opacity:0;transform:translateY(10px) rotate(-10deg) scale(.7)}6%,30%{opacity:1;transform:none}36%,100%{opacity:0;transform:translateY(-10px) rotate(10deg) scale(.7)}}
+@keyframes icKnob{from{transform:translateX(0)}to{transform:translateX(30px)}}
+@keyframes icPlay{to{transform:scale(1.15)}}
+@keyframes icWav{from{opacity:.3;transform:scale(.92)}to{opacity:1;transform:scale(1.04)}}
+.ic-path{stroke-dasharray:70}.ic-jflag,.ic-flag{transform-origin:0% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-path{animation:icDraw70 1.2s cubic-bezier(.65,0,.25,1) both}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-jflag{animation:icWave .5s ease-in-out .6s infinite}
+@keyframes icDraw70{0%{stroke-dashoffset:70}50%,100%{stroke-dashoffset:0}}
+@keyframes icWave{0%,100%{transform:skewY(0) scaleX(1)}50%{transform:skewY(-12deg) scaleX(.85)}}
+.ic-fire{opacity:0;transform-origin:50% 0%}.ic-tw{opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-rocket{animation:icRocket .9s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-fire{animation:icFire .32s ease-in-out infinite alternate}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-fire2{animation-duration:.24s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-tw{animation:icTw 1.1s linear infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-tw2{animation-delay:.3s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-tw3{animation-delay:.55s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-tw4{animation-delay:.8s}
+@keyframes icFire{from{opacity:.85;transform:translateY(-6px) scaleY(.8) scaleX(1.1)}to{opacity:1;transform:translateY(-6px) scaleY(1.2) scaleX(.9)}}
+@keyframes icTw{0%{opacity:0;transform:translateY(-10px)}20%{opacity:1}80%{opacity:1}100%{opacity:0;transform:translateY(22px)}}
+@keyframes icRocket{0%,100%{transform:translate(0,-6px)}25%{transform:translate(1px,-8px)}50%{transform:translate(0,-10px)}75%{transform:translate(-1px,-8px)}}
+.ic-mount{transition:transform .4s cubic-bezier(.34,1.4,.64,1)}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-flag{animation:icWave .45s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-mount{transform:translateY(-2px)}
+.ic-fb{transform-origin:0% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-fb{animation:icFb 1.4s cubic-bezier(.34,1.5,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-fb2{animation-delay:.1s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-fb3{animation-delay:.2s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-fb1{--s:.8}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-fb2{--s:1.3}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-fb3{--s:2}
+@keyframes icFb{0%,100%{transform:scaleX(1)}40%,60%{transform:scaleX(var(--s))}}
+.ic-sweep{transform-box:view-box!important;transform-origin:32px 32px}.ic-blip{stroke-width:5;opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-sweep{animation:icSweep 1.8s linear infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-blip{animation:icBlip 1.8s ease-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-ring{animation:icPing 1.8s ease-out infinite}
+@keyframes icSweep{to{transform:rotate(360deg)}}
+@keyframes icBlip{0%,2%{opacity:0}6%{opacity:1}45%,100%{opacity:0}}
+@keyframes icPing{0%,4%,100%{transform:scale(1)}12%{transform:scale(1.05)}}
+.ic-ib{transform-origin:50% 100%}.ic-ib1{--a:1.8;--b:.6}.ic-ib2{--a:.55;--b:1.4}.ic-ib3{--a:1.6;--b:.5}.ic-ib4{--a:.55;--b:1.15}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-ib{animation:icBars 1.6s ease-in-out infinite}
+@keyframes icBars{0%,100%{transform:scaleY(1)}30%{transform:scaleY(var(--a))}65%{transform:scaleY(var(--b))}}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-arm{animation:icSee 1.6s cubic-bezier(.45,0,.55,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-w{animation:icSeeW 1.6s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes icSee{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(14deg)}}
+@keyframes icSeeW{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(14deg) translateY(4px)}}
+@media (prefers-reduced-motion: reduce){.coops-pile svg *,.coops-card svg *,.coops-icdemo svg *{animation:none!important;transition:none!important}}
+/* Coops · menu da conta (DS) */
+.hb-av{transition:transform .2s ease,box-shadow .2s ease}.hb-av:hover{transform:scale(1.06)}.hb-av:focus-visible{outline:3px solid #B7A6FF;outline-offset:3px}
+.hb-item{transition:background .18s ease}.hb-item:hover,.hb-item:focus-visible{background:#212129;outline:none}
+@keyframes hbPop{from{opacity:0;transform:scale(.9) translateY(-6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.hb-av,.hb-item{transition:none}}
+</style>
+</helmet>
+<div style="position: relative; font-family: 'Schibsted Grotesk', system-ui, sans-serif; color: #F5F2EC; background: #0E0E12; min-height: 1800px; box-sizing: border-box; padding: 24px 32px 56px; overflow: hidden">
+<div style="max-width: 1216px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px">
+
+<header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap">
+<a href="Coops03-Hub.dc.html" style="color: #F5F2EC; text-decoration: none; font-size: 26px; font-weight: 800; letter-spacing: -0.03em">coops<span style="color: #B7A6FF">.</span></a>
+<span style="font-size: 14px; color: #A3A1AD; border: 1px solid #2C2C36; border-radius: 999px; padding: 8px 12px">Nimbo Pay</span>
+<nav aria-label="Produtos" style="display: flex; gap: 4px; background: #17171D; border: 1px solid #2C2C36; border-radius: 14px; padding: 4px">
+<a href="Coops05-Time.dc.html" aria-current="page" style="color: #0E0E12; background: #B7A6FF; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 10px; padding: 10px 16px">Time</a>
+<a href="Coops08-Iniciativa.dc.html" style="color: #A3A1AD; text-decoration: none; font-size: 14px; border-radius: 10px; padding: 10px 16px">Iniciativas</a>
+</nav>
+</div>
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #0E0E12; background: #B7A6FF; border-radius: 999px; padding: 6px 10px">MANAGER</span>
+<div style="position: relative"><button type="button" class="hb-av" onClick="{{acctToggle}}" aria-haspopup="true" aria-expanded="{{acctExp}}" aria-label="Abrir o menu da sua conta" style="display: block; padding: 0; border: 0; background: transparent; border-radius: 50%; cursor: pointer; line-height: 0; box-shadow: {{acctRing}}"><dc-import name="CoopsAvatar" skin="#E0B08A" hair-style="longo" shirt-style="blazer" bg="#F3D36B" size="{{ 44 }}" label="Seu avatar" hint-size="44px,44px"></dc-import></button><sc-if value="{{acctOpen}}" hint-placeholder-val="{{ false }}"><div role="menu" aria-label="Sua conta" style="animation: hbPop 260ms cubic-bezier(.34,1.4,.64,1) both; transform-origin: top right; position: absolute; right: 0; top: 56px; z-index: 30; width: 280px; box-sizing: border-box; border-radius: 22px; background: #17171D; border: 1.5px solid #2C2C36; box-shadow: 0 24px 50px rgba(0,0,0,0.55); padding: 10px; display: flex; flex-direction: column; gap: 4px; text-align: left"><div style="display: flex; flex-direction: column; gap: 2px; padding: 10px 12px 12px; border-bottom: 1px solid #2C2C36; margin-bottom: 4px"><span style="font-size: 16px; font-weight: 700; color: #F5F2EC">Marina Lopes</span><span style="font-size: 13px; color: #A3A1AD">marina@nimbo.com</span></div><a role="menuitem" class="hb-item" href="Coops21-Admin.dc.html" style="display: flex; align-items: center; gap: 12px; color: #F5F2EC; text-decoration: none; border-radius: 14px; padding: 10px 12px; min-height: 48px; box-sizing: border-box"><span style="flex: none; width: 36px; height: 36px; border-radius: 10px; background: #B7A6FF; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></span><span style="display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 600">Administração</span><span style="font-size: 12px; color: #A3A1AD">Projetos, lideranças, skills e seus dados</span></span></a><button type="button" role="menuitem" class="hb-item" onClick="{{acctToggle}}" style="display: flex; align-items: center; gap: 12px; font-family: inherit; color: #A3A1AD; background: transparent; border: 0; text-align: left; border-radius: 14px; padding: 10px 12px; min-height: 48px; cursor: pointer"><span style="flex: none; width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid #3A3846; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11"></path></svg></span><span style="font-size: 15px; font-weight: 600">Sair</span></button></div></sc-if></div>
+</div>
+</header>
+
+<a href="Coops05-Time.dc.html" style="font-size: 14px; color: #A3A1AD; text-decoration: none">← Seu time</a>
+
+<section class="h17" style="position: relative; overflow: hidden; border-radius: 36px; background: #B7A6FF; color: #0E0E12; border: 2px solid #0E0E12; padding: 44px 28px 32px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px">
+<div class="h17-ring" aria-hidden="true" style="position: absolute; left: -60px; top: -60px; width: 220px; height: 220px; border-radius: 50%; border: 1.5px solid rgba(14,14,18,0.25)"></div>
+<div class="h17-ring h17-ring2" aria-hidden="true" style="position: absolute; right: -80px; bottom: -90px; width: 280px; height: 280px; border-radius: 50%; border: 1.5px solid rgba(14,14,18,0.25)"></div>
+<span style="position: relative; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em">MESA DO TIME · SQUAD</span>
+<div style="position: relative; margin-top: 8px"><div aria-hidden="true" style="position: relative; width: 380px; height: 372px; flex: none;"><span style="position: absolute; left: 48px; top: 82px; width: 285px; height: 285px; box-sizing: border-box; border-radius: 50%; background: #8B74F2; border: 2px solid #0E0E12"></span><span class="h17-top" style="position: absolute; left: 48px; top: 68px; width: 285px; height: 285px; box-sizing: border-box; border-radius: 50%; background: #F5F2EC; border: 2px solid #0E0E12"></span><div class="h17-av h17-av1" style="position: absolute; left: 10px; top: 78px; z-index: 2; line-height: 0; border-radius: 50%; border: 2px solid #0E0E12; box-shadow: 0 8px 0 #4B36B0"><dc-import name="CoopsAvatar" skin="#F2D3BC" hair-style="chanel" shirt-style="clara" bg="#F5A9D6" size="{{ 95 }}" label="" hint-size="95px,95px"></dc-import></div><div class="h17-av h17-av2" style="position: absolute; left: 135px; top: -2px; z-index: 2; line-height: 0; border-radius: 50%; border: 2px solid #0E0E12; box-shadow: 0 8px 0 #4B36B0"><dc-import name="CoopsAvatar" skin="#8D5A3B" hair-style="careca" shirt-style="clara" facial-hair="barba" crown="{{ true }}" bg="#8FE3C8" size="{{ 110 }}" label="" hint-size="110px,110px"></dc-import></div><div class="h17-av h17-av3" style="position: absolute; left: 275px; top: 78px; z-index: 2; line-height: 0; border-radius: 50%; border: 2px solid #0E0E12; box-shadow: 0 8px 0 #4B36B0"><dc-import name="CoopsAvatar" skin="#E0B08A" hair-style="longo" bg="#F3D36B" size="{{ 95 }}" label="" hint-size="95px,95px"></dc-import></div><span class="h17-card" style="--r: -16deg; --x: -20px; --d: 0ms; position: absolute; left: 72px; top: 218px; z-index: 1; width: 49px; height: 65px; box-sizing: border-box; border-radius: 10px; background: #FF8A5B; border: 2px solid #0E0E12; transform: rotate(var(--r))"></span><span class="h17-card" style="--r: -8deg; --x: -10px; --d: 40ms; position: absolute; left: 118px; top: 218px; z-index: 1; width: 49px; height: 65px; box-sizing: border-box; border-radius: 10px; background: #F5A9D6; border: 2px solid #0E0E12; transform: rotate(var(--r))"></span><span class="h17-card" style="--r: 0deg; --x: 0px; --d: 80ms; position: absolute; left: 164px; top: 218px; z-index: 1; width: 49px; height: 65px; box-sizing: border-box; border-radius: 10px; background: #B7A6FF; border: 2px solid #0E0E12; transform: rotate(var(--r))"></span><span class="h17-card" style="--r: 8deg; --x: 10px; --d: 120ms; position: absolute; left: 210px; top: 218px; z-index: 1; width: 49px; height: 65px; box-sizing: border-box; border-radius: 10px; background: #F3D36B; border: 2px solid #0E0E12; transform: rotate(var(--r))"></span><span class="h17-card" style="--r: 16deg; --x: 20px; --d: 160ms; position: absolute; left: 256px; top: 218px; z-index: 1; width: 49px; height: 65px; box-sizing: border-box; border-radius: 10px; background: #C9F0B8; border: 2px solid #0E0E12; transform: rotate(var(--r))"></span></div></div>
+<h1 style="position: relative; margin: 10px 0 0; font-size: 56px; font-weight: 800; letter-spacing: -0.04em; line-height: 1">Squad Pagamentos</h1>
+<span style="position: relative; font-size: 18px; max-width: 560px">Pix, cartão e tarifas. Fazer o dinheiro andar sem a pessoa precisar pensar.</span>
+<div style="position: relative; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 4px">
+<span style="font-size: 14px; font-weight: 600; color: #F5F2EC; background: #0E0E12; border-radius: 999px; padding: 8px 14px">2 designers · 1 manager</span>
+<span style="font-size: 14px; font-weight: 600; color: #0E0E12; background: #F5F2EC; border: 1.5px solid #0E0E12; border-radius: 999px; padding: 7px 14px">Ciclo Q4 · semana 6 de 12</span>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px"><h2 style="margin: 0; font-size: 24px; font-weight: 700">Decks do squad</h2><span style="font-size: 14px; color: #A3A1AD">Escolha um deck para ver as cartas</span></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 28px">
+<sc-for list="{{decks}}" as="d" hint-placeholder-count="5">
+<div class="coops-pile" style="position: relative; height: 380px">
+<div class="coops-b2" aria-hidden="true" style="position: absolute; left: 22px; top: 0; right: 0; height: 340px; border-radius: 22px; background: {{d.b2}}; border: 2px solid #0E0E12; transform: rotate(5deg)"></div>
+<div class="coops-b1" aria-hidden="true" style="position: absolute; left: 12px; top: 10px; right: 10px; height: 340px; border-radius: 22px; background: {{d.b1}}; border: 2px solid #0E0E12; transform: rotate(2.5deg)"></div>
+<a class="coops-front" href="{{d.href}}" style="position: absolute; left: 0; top: 24px; right: 22px; height: 340px; box-sizing: border-box; border-radius: 22px; background: {{d.bg}}; color: #0E0E12; text-decoration: none; border: 2px solid #0E0E12; padding: 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 16px 36px rgba(0,0,0,0.45)">
+<div style="display: flex; justify-content: space-between; align-items: flex-start"><svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><sc-for list="{{d.parts}}" as="pt" hint-placeholder-count="3"><path class="{{pt.c}}" d="{{pt.d}}"></path></sc-for></svg><span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 44px; font-weight: 600; line-height: 1">{{d.count}}</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-top: 6px">{{d.countLabel}}</span></span></div>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; margin-top: auto">{{d.upper}}</span>
+<span style="font-size: 21px; font-weight: 600; line-height: 1.2">{{d.sub}}</span>
+<span style="font-size: 13px; border-top: 1.5px solid #0E0E12; padding-top: 10px">{{d.foot}}</span>
+</a>
+</div>
+</sc-for>
+</div>
+</section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1800}}'>
+class Component extends DCLogic {
+  renderVals() { var o = this.__acctRv() || {}, self = this, m = !!(this.state && this.state.acct); o.acctOpen = m; o.acctExp = m ? 'true' : 'false'; o.acctRing = m ? '0 0 0 2px #0E0E12, 0 0 0 4px #B7A6FF' : 'none'; o.acctToggle = function () { self.setState({ acct: !(self.state && self.state.acct) }); }; return o; }
+  __acctRv() {
+    if (typeof window !== 'undefined' && !window.__coopsNav) { window.__coopsNav = true; window.addEventListener('click', function (ev) { var a = ev.target && ev.target.closest ? ev.target.closest('a.coops-m, a.coops-front, a.coops-card') : null; if (!a) return; var h = a.getAttribute('href') || ''; if (!h || h.charAt(0) === '#') return; if (a.getAttribute('data-coops-go') === '1') { a.removeAttribute('data-coops-go'); return; } ev.preventDefault(); ev.stopImmediatePropagation(); a.classList.remove('coops-go'); void a.offsetWidth; a.classList.add('coops-go'); var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; setTimeout(function () { document.documentElement.classList.add('coops-leaving'); }, reduce ? 0 : 330); setTimeout(function () { a.classList.remove('coops-go'); a.setAttribute('data-coops-go', '1'); a.click(); setTimeout(function () { document.documentElement.classList.remove('coops-leaving'); }, 1200); }, reduce ? 0 : 600); }, true); }
+
+    var D = [
+      { id: 'desafios', title: 'Desafios de time', sub: 'O que trava o squad agora', foot: '1 de alto impacto · 2 abertos', count: '03', bg: '#FF8A5B', b1: '#E06A3C', b2: '#B84F26', icon: 'M8 50 26 16l10 18 6-8 14 24zM26 16v-8l8 3-8 3' },
+      { id: 'frentes', title: 'Frentes de trabalho', sub: 'Onde o squad está jogando as cartas', foot: '2 em descoberta · 1 em construção', count: '03', bg: '#F5A9D6', b1: '#D987B8', b2: '#B0668F', icon: 'M8 14h48v10H8zM8 30h32v10H8zM8 46h20v10H8z' },
+      { id: 'estrategia', title: 'Estratégia de time', sub: 'Para onde o squad está indo', foot: '2 estratégias · foco no H1', count: '02', bg: '#B7A6FF', b1: '#8B74F2', b2: '#4B36B0', icon: 'M32 6a26 26 0 1 0 0 52a26 26 0 1 0 0-52zM32 18a14 14 0 1 0 0 28a14 14 0 1 0 0-28zM32 30v4M32 32 52 12' },
+      { id: 'indicadores', title: 'Indicadores de sucesso', sub: 'Como o squad sabe que está indo bem', foot: '3 ativos · 1 encerrado', count: '04', bg: '#F3D36B', b1: '#D9B84B', b2: '#B8962F', icon: 'M8 56h48M14 48V34M26 48V24M38 48V30M50 48V12' },
+      { id: 'saude', title: 'Saúde do time', sub: 'Como o squad está se sentindo', foot: 'Média de 2 pessoas · 4 perguntas', count: '3,1', countLabel: 'MÉDIA DO TIME', bg: '#A9D8F5', b1: '#7FB8DD', b2: '#4F8DB3', icon: '' },
+      { id: 'alavancas', title: 'Alavancas de time', sub: 'O que acelera o squad', foot: '1 implementada · 1 em teste', count: '04', bg: '#C9F0B8', b1: '#9FD68A', b2: '#74B35E', icon: 'M6 42 58 22M26 34l-7 16h14zM48 8h10v12H48z' }
+    ];
+    var ICP = {"desafios": [["ic-mount", "M8 50 26 16l10 18 6-8 14 24z"], ["", "M26 16v-8"], ["ic-flag", "M26 8l8 3-8 3"]], "frentes": [["ic-fb ic-fb1", "M8 14h48v10H8z"], ["ic-fb ic-fb2", "M8 30h32v10H8z"], ["ic-fb ic-fb3", "M8 46h20v10H8z"]], "estrategia": [["ic-ring", "M32 6a26 26 0 1 0 0 52a26 26 0 1 0 0-52zM32 18a14 14 0 1 0 0 28a14 14 0 1 0 0-28z"], ["ic-sweep", "M32 32 49 15"], ["ic-blip", "M43 22h.01"], ["", "M32 32h.01"]], "indicadores": [["", "M8 56h48"], ["ic-ib ic-ib1", "M14 48V34"], ["ic-ib ic-ib2", "M26 48V24"], ["ic-ib ic-ib3", "M38 48V30"], ["ic-ib ic-ib4", "M50 48V12"]], "saude": [["ic-heart", "M32 54S8 40 8 24a12 12 0 0 1 24-4 12 12 0 0 1 24 4c0 16-24 30-24 30z"], ["ic-ecg", "M14 30h10l4-8 6 16 4-8h12"]], "alavancas": [["", "M26 34l-7 16h14z"], ["ic-arm", "M6 42 58 22"], ["ic-w", "M48 8h10v12H48z"]]};
+    return {
+      decks: D.map(function (d) { return Object.assign({}, d, { parts: (ICP[d.id] || []).map(function (p) { return { c: p[0], d: p[1] }; }), upper: d.title.toUpperCase(), href: { desafios: 'Coops18a-Squad-Desafios.dc.html', frentes: 'Coops18b-Squad-Frentes.dc.html', estrategia: 'Coops18c-Squad-Estrategia.dc.html', indicadores: 'Coops18d-Squad-Indicadores.dc.html', alavancas: 'Coops18e-Squad-Alavancas.dc.html', saude: 'Coops18f-Squad-Saude.dc.html' }[d.id], countLabel: d.countLabel || 'CARTAS' }); })
+    };
+  }
+}
+</script>
+</body>
+</html>

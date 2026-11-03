@@ -1,0 +1,542 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Caminho1-Campanha.dc.html": {
+      "expand": "fill",
+      "h": 1040,
+      "page": "forja",
+      "title": "Caminho 1 · Campanha (mapa de missões)",
+      "w": 1280,
+      "x": 0,
+      "y": 1400
+    },
+    "Caminho2-Ficha.dc.html": {
+      "expand": "fill",
+      "h": 1040,
+      "page": "forja",
+      "title": "Caminho 2 · Ficha de personagem",
+      "w": 1280,
+      "x": 1360,
+      "y": 1400
+    },
+    "Caminho3-Deck-v2.dc.html": {
+      "expand": "fill",
+      "h": 1040,
+      "is_interactive": true,
+      "page": "forja",
+      "title": "Caminho 3 v2 · Demanda + mesa + alavancas",
+      "w": 1280,
+      "x": 4080,
+      "y": 1400
+    },
+    "Caminho3-Deck.dc.html": {
+      "expand": "fill",
+      "h": 1040,
+      "page": "forja",
+      "title": "Caminho 3 · Deck de cartas",
+      "w": 1280,
+      "x": 2720,
+      "y": 1400
+    },
+    "Caminho4-Mentor.dc.html": {
+      "expand": "fill",
+      "h": 1040,
+      "page": "forja",
+      "title": "Caminho 4 · Mentor companheiro",
+      "w": 1280,
+      "x": 0,
+      "y": 2560
+    },
+    "Caminho5-Arena.dc.html": {
+      "expand": "fill",
+      "h": 1040,
+      "page": "forja",
+      "title": "Caminho 5 · Arena de revisão",
+      "w": 1280,
+      "x": 1360,
+      "y": 2560
+    },
+    "Coops01f-Landing-WishList.dc.html": {
+      "expand": "fill",
+      "h": 4300,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "01f · Landing com wish list",
+      "w": 1280,
+      "x": 10880,
+      "y": 0
+    },
+    "Coops02-Cadastro.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "02 · Cadastro",
+      "w": 1280,
+      "x": 1360,
+      "y": 0
+    },
+    "Coops03-Hub.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "03 · Hub de projetos",
+      "w": 1280,
+      "x": 2720,
+      "y": 0
+    },
+    "Coops04-Projeto.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "04 · Novo projeto (deck de perguntas)",
+      "w": 1280,
+      "x": 4080,
+      "y": 0
+    },
+    "Coops05-Time.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "05 · Time (manager)",
+      "w": 1280,
+      "x": 0,
+      "y": 4800
+    },
+    "Coops06-Membro.dc.html": {
+      "expand": "fill",
+      "h": 2050,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "06 · Membro (manager)",
+      "w": 1280,
+      "x": 1360,
+      "y": 4800
+    },
+    "Coops07-Membro-IC.dc.html": {
+      "expand": "fill",
+      "h": 1600,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "07 · Meu perfil (IC)",
+      "w": 1280,
+      "x": 2720,
+      "y": 4800
+    },
+    "Coops08-Iniciativa.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "08 · Iniciativas (deck)",
+      "w": 1280,
+      "x": 0,
+      "y": 7800
+    },
+    "Coops09-Agente.dc.html": {
+      "expand": "fill",
+      "h": 1440,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "09 · Agente confirma entendimento",
+      "w": 1280,
+      "x": 1360,
+      "y": 7800
+    },
+    "Coops10-Mesa.dc.html": {
+      "expand": "fill",
+      "h": 1100,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "10 · Mesa da iniciativa",
+      "w": 1280,
+      "x": 2720,
+      "y": 7800
+    },
+    "Coops11-Momento.dc.html": {
+      "expand": "fill",
+      "h": 1700,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "11 · Momento + deck de ferramentas",
+      "w": 1280,
+      "x": 4080,
+      "y": 7800
+    },
+    "Coops12-Deck-Eventos.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "12 · Deck aberto · Eventos",
+      "w": 1280,
+      "x": 4080,
+      "y": 4800
+    },
+    "Coops13-Skills.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "13 · Autoavaliação de skills",
+      "w": 1280,
+      "x": 5440,
+      "y": 4800
+    },
+    "Coops14-BrainGym.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "14 · Deck aberto · Brain gym",
+      "w": 1280,
+      "x": 6800,
+      "y": 4800
+    },
+    "Coops15-Jornada.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "15 · Deck aberto · Jornada",
+      "w": 1280,
+      "x": 8160,
+      "y": 4800
+    },
+    "Coops16-Vazios.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "16 · Estados vazios",
+      "w": 1280,
+      "x": 9520,
+      "y": 4800
+    },
+    "Coops17-Squad.dc.html": {
+      "expand": "fill",
+      "h": 1800,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "17 · Card do time (squad)",
+      "w": 1280,
+      "x": 10880,
+      "y": 4800
+    },
+    "Coops18a-Squad-Desafios.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "18a · Deck do squad · Desafios de time",
+      "w": 1280,
+      "x": 12240,
+      "y": 4800
+    },
+    "Coops18b-Squad-Frentes.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "18b · Deck do squad · Frentes de trabalho",
+      "w": 1280,
+      "x": 13600,
+      "y": 4800
+    },
+    "Coops18c-Squad-Estrategia.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "18c · Deck do squad · Estratégia de time",
+      "w": 1280,
+      "x": 14960,
+      "y": 4800
+    },
+    "Coops18d-Squad-Indicadores.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "18d · Deck do squad · Indicadores de sucesso",
+      "w": 1280,
+      "x": 16320,
+      "y": 4800
+    },
+    "Coops18e-Squad-Alavancas.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "18e · Deck do squad · Alavancas de time",
+      "w": 1280,
+      "x": 17680,
+      "y": 4800
+    },
+    "Coops18f-Squad-Saude.dc.html": {
+      "expand": "fill",
+      "h": 1150,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "18f · Deck do squad · Saúde do time",
+      "w": 1280,
+      "x": 24480,
+      "y": 4800
+    },
+    "Coops19-Saude.dc.html": {
+      "expand": "fill",
+      "h": 1150,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "19 · Deck aberto · Saúde (IC)",
+      "w": 1280,
+      "x": 19040,
+      "y": 4800
+    },
+    "Coops19b-Saude-Manager.dc.html": {
+      "expand": "fill",
+      "h": 1150,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "19b · Deck aberto · Saúde (manager)",
+      "w": 1280,
+      "x": 20400,
+      "y": 4800
+    },
+    "Coops20-Entregas.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "20 · Deck aberto · Entregas (manager)",
+      "w": 1280,
+      "x": 21760,
+      "y": 4800
+    },
+    "Coops20b-Entregas-IC.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "20b · Deck aberto · Entregas (IC)",
+      "w": 1280,
+      "x": 23120,
+      "y": 4800
+    },
+    "Coops21-Admin.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "21 · Administração",
+      "w": 1280,
+      "x": 12240,
+      "y": 0
+    },
+    "CoopsAvatar.dc.html": {
+      "h": 160,
+      "page": "ds",
+      "title": "Componente · Avatar",
+      "w": 160,
+      "x": 2720,
+      "y": 0
+    },
+    "CoopsDS-Avatares-v2.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "page": "ds",
+      "title": "DS · Avatares lote 2 (20 variações)",
+      "w": 1280,
+      "x": 4080,
+      "y": 280
+    },
+    "CoopsDS-Avatares.dc.html": {
+      "expand": "fill",
+      "h": 1100,
+      "is_interactive": true,
+      "page": "ds",
+      "title": "DS · Biblioteca de avatares",
+      "w": 1280,
+      "x": 2720,
+      "y": 280
+    },
+    "CoopsDS-Componentes.dc.html": {
+      "expand": "fill",
+      "h": 8000,
+      "page": "ds",
+      "title": "DS · Componentes e cartas",
+      "w": 1280,
+      "x": 1360,
+      "y": 0
+    },
+    "CoopsDS-Fundamentos.dc.html": {
+      "expand": "fill",
+      "h": 2950,
+      "page": "ds",
+      "title": "DS · Fundamentos",
+      "w": 1280,
+      "x": 0,
+      "y": 0
+    },
+    "Main.dc.html": {
+      "expand": "fill",
+      "h": 1040,
+      "page": "forja",
+      "title": "Entrada · diagnóstico de maturidade",
+      "w": 1280,
+      "x": 0,
+      "y": 0
+    },
+    "Coops21b-Admin-IC.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "21b · Meus dados (IC)",
+      "w": 1280,
+      "x": 13600,
+      "y": 0
+    },
+    "Coops10b-Analise.dc.html": {
+      "expand": "fill",
+      "h": 1100,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "10b · Agente analisando o momento",
+      "w": 1280,
+      "x": 2720,
+      "y": 9040
+    },
+    "Coops02b-PrimeiroAcesso.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "is_interactive": true,
+      "page": "coops",
+      "title": "02b · Primeiro acesso · primeiro projeto",
+      "w": 1280,
+      "x": 1360,
+      "y": 1000
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-16T15:00:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "page": "coops",
+    "view": "canvas"
+  },
+  "notes": {
+    "c2": {
+      "kind": "title1",
+      "maxW": 8000,
+      "page": "coops",
+      "text": "Gestão de time · cada pessoa é um conjunto de decks",
+      "w": 240,
+      "x": 0,
+      "y": 4500
+    },
+    "c3": {
+      "kind": "title1",
+      "maxW": 5360,
+      "page": "coops",
+      "text": "Desenvolvimento de iniciativa · a mesa de cartas",
+      "w": 240,
+      "x": 0,
+      "y": 7500
+    },
+    "d1": {
+      "kind": "title1",
+      "maxW": 5360,
+      "page": "ds",
+      "text": "Coops DS · roxo claro sobre preto",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "t1": {
+      "kind": "title1",
+      "maxW": 1280,
+      "page": "forja",
+      "text": "Entrada comum: a demanda chega e ganha um nível",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "t2": {
+      "kind": "title1",
+      "maxW": 5360,
+      "page": "forja",
+      "text": "5 caminhos de experiência para subir a maturidade",
+      "w": 240,
+      "x": 0,
+      "y": 1100
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Caminho1-Campanha.dc.html",
+    "Caminho2-Ficha.dc.html",
+    "Caminho3-Deck.dc.html",
+    "Caminho3-Deck-v2.dc.html",
+    "Caminho4-Mentor.dc.html",
+    "Caminho5-Arena.dc.html",
+    "CoopsAvatar.dc.html",
+    "CoopsDS-Avatares.dc.html",
+    "CoopsDS-Avatares-v2.dc.html",
+    "CoopsDS-Fundamentos.dc.html",
+    "CoopsDS-Componentes.dc.html",
+    "Coops01f-Landing-WishList.dc.html",
+    "Coops02-Cadastro.dc.html",
+    "Coops02b-PrimeiroAcesso.dc.html",
+    "Coops03-Hub.dc.html",
+    "Coops04-Projeto.dc.html",
+    "Coops05-Time.dc.html",
+    "Coops06-Membro.dc.html",
+    "Coops07-Membro-IC.dc.html",
+    "Coops19-Saude.dc.html",
+    "Coops19b-Saude-Manager.dc.html",
+    "Coops20-Entregas.dc.html",
+    "Coops20b-Entregas-IC.dc.html",
+    "Coops12-Deck-Eventos.dc.html",
+    "Coops13-Skills.dc.html",
+    "Coops14-BrainGym.dc.html",
+    "Coops15-Jornada.dc.html",
+    "Coops16-Vazios.dc.html",
+    "Coops17-Squad.dc.html",
+    "Coops18a-Squad-Desafios.dc.html",
+    "Coops18b-Squad-Frentes.dc.html",
+    "Coops18c-Squad-Estrategia.dc.html",
+    "Coops18d-Squad-Indicadores.dc.html",
+    "Coops18e-Squad-Alavancas.dc.html",
+    "Coops18f-Squad-Saude.dc.html",
+    "Coops08-Iniciativa.dc.html",
+    "Coops09-Agente.dc.html",
+    "Coops10-Mesa.dc.html",
+    "Coops10b-Analise.dc.html",
+    "Coops11-Momento.dc.html",
+    "Coops21-Admin.dc.html",
+    "Coops21b-Admin-IC.dc.html"
+  ],
+  "pages": [
+    {
+      "id": "coops",
+      "name": "Coops · Fluxo"
+    },
+    {
+      "id": "ds",
+      "name": "Coops · Design System"
+    },
+    {
+      "id": "forja",
+      "name": "Exploração inicial"
+    }
+  ],
+  "title": "Forja — maturidade de demandas"
+}

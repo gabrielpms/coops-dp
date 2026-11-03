@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Coops DS · 20 variações de avatar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0E12}
+a{color:#B7A6FF}a:hover{color:#D9CFFF}
+</style>
+</helmet>
+<div style="font-family: 'Schibsted Grotesk', system-ui, sans-serif; color: #F5F2EC; background: #0E0E12; min-height: 1300px; box-sizing: border-box; padding: 56px 40px 64px">
+<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px">
+
+<header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: #B7A6FF">COOPS DS · AVATARES · LOTE 2</span>
+<h1 style="margin: 0; font-size: 48px; font-weight: 800; letter-spacing: -0.03em; line-height: 1">20 novas variações</h1>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-size: 56px; font-weight: 600; letter-spacing: -0.04em; line-height: 1">{{total}}</span>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A3A1AD">COMBINAÇÕES NA BIBLIOTECA</span>
+</div>
+</header>
+
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span style="font-size: 13px; color: #0E0E12; background: #B7A6FF; border-radius: 999px; padding: 7px 12px; font-weight: 600">Novos cabelos · black power, afro curto, tranças, dreads, rabo de cavalo, ondulado, topete</span>
+<span style="font-size: 13px; border: 1px solid #4A4858; border-radius: 999px; padding: 7px 12px">Barba cheia e cavanhaque</span>
+<span style="font-size: 13px; border: 1px solid #4A4858; border-radius: 999px; padding: 7px 12px">Óculos redondo ou quadrado</span>
+<span style="font-size: 13px; border: 1px solid #4A4858; border-radius: 999px; padding: 7px 12px">Brincos e cílios</span>
+<span style="font-size: 13px; border: 1px solid #4A4858; border-radius: 999px; padding: 7px 12px">Gola alta e camisa social</span>
+</div>
+
+<div role="group" aria-label="Modo de cor" style="display: inline-flex; gap: 4px; background: #17171D; border: 1px solid #2C2C36; border-radius: 14px; padding: 4px; align-self: flex-start">
+<sc-if value="{{toneOn}}" hint-placeholder-val="{{ true }}">
+<button type="button" aria-pressed="true" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #0E0E12; background: #B7A6FF; border: 0; border-radius: 10px; min-height: 40px; padding: 0 16px; cursor: pointer">Com tom de pele</button>
+<button type="button" aria-pressed="false" onClick="{{toggle}}" style="font-family: inherit; font-size: 14px; color: #A3A1AD; background: transparent; border: 0; border-radius: 10px; min-height: 40px; padding: 0 16px; cursor: pointer">Preto e branco</button>
+</sc-if>
+<sc-if value="{{toneOff}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-pressed="false" onClick="{{toggle}}" style="font-family: inherit; font-size: 14px; color: #A3A1AD; background: transparent; border: 0; border-radius: 10px; min-height: 40px; padding: 0 16px; cursor: pointer">Com tom de pele</button>
+<button type="button" aria-pressed="true" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #0E0E12; background: #B7A6FF; border: 0; border-radius: 10px; min-height: 40px; padding: 0 16px; cursor: pointer">Preto e branco</button>
+</sc-if>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px">
+<sc-for list="{{avatars}}" as="a" hint-placeholder-count="20">
+<div style="border-radius: 22px; background: #17171D; border: 1px solid #2C2C36; padding: 18px 14px 14px; display: flex; flex-direction: column; align-items: center; gap: 12px">
+<dc-import name="CoopsAvatar" skin="{{a.skin}}" hair-style="{{a.hair}}" shirt-style="{{a.shirt}}" facial-hair="{{a.fh}}" glasses="{{a.glasses}}" glasses-shape="{{a.gs}}" earrings="{{a.earrings}}" lashes="{{a.lashes}}" bg="{{a.bg}}" size="{{ 132 }}" label="{{a.label}}" hint-size="132px,132px"></dc-import>
+<div style="width: 100%; display: flex; justify-content: space-between; align-items: baseline; gap: 8px">
+<span style="font-size: 14px; font-weight: 600; line-height: 1.25">{{a.label}}</span>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A1AD">#{{a.code}}</span>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1300}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { tone: true }; }
+  renderVals() {
+    var self = this;
+    var tone = this.state.tone;
+    var defs = [
+      ['blackpower', 'preta', 'nenhum', false, 'redondo', false, false, '#8D5A3B', '#F3D36B', 'Black power'],
+      ['blackpower', 'camisa', 'barba-cheia', true, 'quadrado', false, false, '#5A3825', '#B7A6FF', 'Black power, barba e óculos'],
+      ['blackpower', 'gola-alta', 'nenhum', false, 'redondo', true, true, '#8D5A3B', '#F5A9D6', 'Menina black power'],
+      ['blackpower', 'listrada', 'nenhum', true, 'redondo', true, true, '#C68B5E', '#8FE3C8', 'Menina black power com óculos'],
+      ['afro-curto', 'clara', 'cavanhaque', false, 'redondo', false, false, '#5A3825', '#FF8A5B', 'Afro curto e cavanhaque'],
+      ['afro-curto', 'blazer', 'nenhum', false, 'redondo', true, true, '#8D5A3B', '#B7A6FF', 'Menina afro curto'],
+      ['careca', 'camisa', 'barba-cheia', true, 'quadrado', false, false, '#E0B08A', '#F2F1EE', 'Careca, barba e óculos'],
+      ['careca', 'gola-alta', 'barba', false, 'redondo', false, false, '#5A3825', '#F3D36B', 'Careca com barba'],
+      ['careca', 'preta', 'nenhum', true, 'redondo', false, false, '#FFFFFF', '#F5A9D6', 'Careca com óculos'],
+      ['curto', 'listrada', 'barba', true, 'redondo', false, false, '#F2D3BC', '#8FE3C8', 'Óculos e barba'],
+      ['cacheado', 'preta', 'barba-cheia', true, 'quadrado', false, false, '#C68B5E', '#FF8A5B', 'Cacheado, óculos e barba'],
+      ['chanel', 'clara', 'nenhum', true, 'redondo', false, true, '#FFFFFF', '#B7A6FF', 'Menina com óculos'],
+      ['longo', 'blazer', 'nenhum', true, 'quadrado', true, true, '#E0B08A', '#F3D36B', 'Menina com óculos quadrados'],
+      ['rabo', 'camisa', 'nenhum', true, 'redondo', false, true, '#F2D3BC', '#8FE3C8', 'Rabo de cavalo e óculos'],
+      ['trancas', 'clara', 'nenhum', false, 'redondo', true, true, '#5A3825', '#F5A9D6', 'Tranças'],
+      ['dreads', 'preta', 'barba', false, 'redondo', false, false, '#8D5A3B', '#F3D36B', 'Dreads com barba'],
+      ['topete', 'camisa', 'bigode', false, 'redondo', false, false, '#FFFFFF', '#FF8A5B', 'Topete e bigode'],
+      ['ondulado', 'gola-alta', 'nenhum', false, 'redondo', true, true, '#C68B5E', '#B7A6FF', 'Ondulado'],
+      ['coque', 'listrada', 'nenhum', true, 'redondo', false, true, '#F2D3BC', '#F2F1EE', 'Coque com óculos'],
+      ['rabo', 'blazer', 'nenhum', false, 'redondo', true, true, '#8D5A3B', '#8FE3C8', 'Rabo de cavalo']
+    ];
+    var avatars = defs.map(function (d, i) {
+      return {
+        hair: d[0], shirt: d[1], fh: d[2], glasses: d[3], gs: d[4], earrings: d[5], lashes: d[6],
+        skin: tone ? d[7] : '#FFFFFF',
+        bg: tone ? d[8] : '#F2F1EE',
+        label: d[9],
+        code: String(25 + i).padStart(3, '0')
+      };
+    });
+    return {
+      avatars: avatars,
+      total: (6 * 13 * 6 * 5 * 3).toLocaleString('pt-BR'),
+      toneOn: tone,
+      toneOff: !tone,
+      toggle: function () { self.setState({ tone: !self.state.tone }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

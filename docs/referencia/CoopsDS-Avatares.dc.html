@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Coops DS · Biblioteca de avatares</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0E12}
+a{color:#B7A6FF}a:hover{color:#D9CFFF}
+</style>
+</helmet>
+<div style="font-family: 'Schibsted Grotesk', system-ui, sans-serif; color: #F5F2EC; background: #0E0E12; min-height: 1100px; box-sizing: border-box; padding: 56px 40px 64px">
+<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px">
+
+<header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: #B7A6FF">COOPS DS · BIBLIOTECA DE AVATARES</span>
+<h1 style="margin: 0; font-size: 48px; font-weight: 800; letter-spacing: -0.03em; line-height: 1">Traço fino, cabelo chapado</h1>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-size: 56px; font-weight: 600; letter-spacing: -0.04em; line-height: 1">{{total}}</span>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A3A1AD">COMBINAÇÕES POSSÍVEIS</span>
+</div>
+</header>
+
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<span style="font-size: 13px; border: 1px solid #4A4858; border-radius: 999px; padding: 7px 12px">5 tons de pele</span>
+<span style="font-size: 13px; border: 1px solid #4A4858; border-radius: 999px; padding: 7px 12px">6 cabelos · curto, cacheado, chanel, longo, coque, careca</span>
+<span style="font-size: 13px; border: 1px solid #4A4858; border-radius: 999px; padding: 7px 12px">4 roupas · clara, preta, listrada, blazer</span>
+<span style="font-size: 13px; border: 1px solid #4A4858; border-radius: 999px; padding: 7px 12px">3 rostos · sem pelos, bigode, barba</span>
+<span style="font-size: 13px; border: 1px solid #4A4858; border-radius: 999px; padding: 7px 12px">óculos sim/não</span>
+<span style="font-size: 13px; border: 1px solid #4A4858; border-radius: 999px; padding: 7px 12px">5 fundos</span>
+</div>
+
+<div role="group" aria-label="Modo de cor" style="display: inline-flex; gap: 4px; background: #17171D; border: 1px solid #2C2C36; border-radius: 14px; padding: 4px; align-self: flex-start">
+<sc-if value="{{toneOn}}" hint-placeholder-val="{{ true }}">
+<button type="button" aria-pressed="true" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #0E0E12; background: #B7A6FF; border: 0; border-radius: 10px; min-height: 40px; padding: 0 16px; cursor: pointer">Com tom de pele</button>
+<button type="button" aria-pressed="false" onClick="{{toggle}}" style="font-family: inherit; font-size: 14px; color: #A3A1AD; background: transparent; border: 0; border-radius: 10px; min-height: 40px; padding: 0 16px; cursor: pointer">Preto e branco</button>
+</sc-if>
+<sc-if value="{{toneOff}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-pressed="false" onClick="{{toggle}}" style="font-family: inherit; font-size: 14px; color: #A3A1AD; background: transparent; border: 0; border-radius: 10px; min-height: 40px; padding: 0 16px; cursor: pointer">Com tom de pele</button>
+<button type="button" aria-pressed="true" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #0E0E12; background: #B7A6FF; border: 0; border-radius: 10px; min-height: 40px; padding: 0 16px; cursor: pointer">Preto e branco</button>
+</sc-if>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px">
+<sc-for list="{{avatars}}" as="a" hint-placeholder-count="24">
+<div style="border-radius: 22px; background: #17171D; border: 1px solid #2C2C36; padding: 16px 12px 12px; display: flex; flex-direction: column; align-items: center; gap: 10px">
+<dc-import name="CoopsAvatar" skin="{{a.skin}}" hair-style="{{a.hair}}" shirt-style="{{a.shirt}}" facial-hair="{{a.fh}}" glasses="{{a.glasses}}" bg="{{a.bg}}" size="{{ 112 }}" label="{{a.label}}" hint-size="112px,112px"></dc-import>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A1AD">#{{a.code}}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { tone: true }; }
+  renderVals() {
+    var self = this;
+    var skins = ['#FFFFFF', '#F2D3BC', '#E0B08A', '#C68B5E', '#8D5A3B'];
+    var hairs = ['curto', 'cacheado', 'chanel', 'longo', 'coque', 'careca'];
+    var shirts = ['clara', 'preta', 'listrada', 'blazer'];
+    var fhs = ['nenhum', 'bigode', 'barba'];
+    var bgs = ['#F2F1EE', '#B7A6FF', '#F3D36B', '#F5A9D6', '#FF8A5B', '#8FE3C8'];
+    var list = [];
+    for (var i = 0; i < 24; i++) {
+      var hair = hairs[i % 6];
+      var fem = hair === 'chanel' || hair === 'longo' || hair === 'coque';
+      var fh = fem ? 'nenhum' : fhs[Math.floor(i / 6) % 3];
+      list.push({
+        skin: this.state.tone ? skins[(i * 3 + Math.floor(i / 5)) % 5] : '#FFFFFF',
+        hair: hair,
+        shirt: shirts[(i + Math.floor(i / 6)) % 4],
+        fh: fh,
+        glasses: i % 5 === 1 || i % 7 === 3,
+        bg: this.state.tone ? bgs[(i * 2 + 1) % 6] : '#F2F1EE',
+        code: (i < 9 ? '00' : '0') + (i + 1),
+        label: 'Avatar ' + (i + 1)
+      });
+    }
+    return {
+      avatars: list,
+      total: String(skins.length * hairs.length * shirts.length * fhs.length * 2),
+      toneOn: this.state.tone,
+      toneOff: !this.state.tone,
+      toggle: function () { self.setState({ tone: !self.state.tone }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

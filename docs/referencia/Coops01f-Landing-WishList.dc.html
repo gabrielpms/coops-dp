@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Coops · Landing wish list</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0E12}
+a{color:#B7A6FF}a:hover{color:#D9CFFF}
+@keyframes coopsSheetIn{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes coopsFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes coopsRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.coops-sheet-body{animation:coopsRise 420ms cubic-bezier(.22,1,.36,1) 160ms both}
+@media (prefers-reduced-motion: reduce){[role=dialog],.coops-overlay,.coops-sheet-body{animation:none!important}}
+</style>
+</helmet>
+<div id="wl-root" style="position: relative; font-family: 'Schibsted Grotesk', system-ui, sans-serif; color: #F5F2EC; background: #0E0E12; min-height: 4300px; overflow: hidden">
+
+<section style="background: #B7A6FF; color: #0E0E12; border-bottom: 2px solid #0E0E12; padding: 24px 32px 0; overflow: hidden">
+<div style="max-width: 1216px; margin: 0 auto; display: flex; flex-direction: column; gap: 48px">
+<header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.03em">coops.</span>
+<nav aria-label="Principal" style="display: flex; flex-wrap: wrap; gap: 4px; align-items: center">
+<a href="#produtos" style="color: #0E0E12; text-decoration: none; font-size: 15px; padding: 12px 14px">Como é</a>
+<a href="#ic" style="color: #0E0E12; text-decoration: none; font-size: 15px; padding: 12px 14px">Para ICs</a>
+<a href="#momentos" style="color: #0E0E12; text-decoration: none; font-size: 15px; padding: 12px 14px">Agente</a>
+<a href="#planos" style="color: #0E0E12; text-decoration: none; font-size: 15px; padding: 12px 14px">Para managers</a>
+<a href="#lista" onClick="{{openWl}}" style="color: #F5F2EC; background: #0E0E12; text-decoration: none; font-weight: 600; font-size: 15px; border-radius: 14px; padding: 0 20px; display: inline-flex; align-items: center; min-height: 48px; box-sizing: border-box">Entrar na wish list</a>
+</nav>
+</header>
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-end; margin-top: 40px">
+<h1 style="flex: 1 1 640px; margin: 0; font-size: 120px; font-weight: 800; letter-spacing: -0.05em; line-height: 0.88">Your design companion.</h1>
+<div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 12px">
+<p style="margin: 0; font-size: 18px; line-height: 1.55">Gestão de time e amadurecimento de iniciativas, para quem lidera e para quem faz design. Tudo é deck e carta. Estamos abrindo em ondas: entre na wish list.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<a href="#lista" onClick="{{openWl}}" style="color: #F5F2EC; background: #0E0E12; text-decoration: none; font-weight: 600; font-size: 15px; border-radius: 14px; padding: 0 20px; display: inline-flex; align-items: center; min-height: 48px; box-sizing: border-box">Quero acesso antecipado</a>
+<a href="#produtos" style="color: #0E0E12; text-decoration: none; font-weight: 600; font-size: 15px; border-radius: 14px; padding: 0 20px; border: 2px solid #0E0E12; display: inline-flex; align-items: center; min-height: 48px; box-sizing: border-box">Ver como é</a>
+</div>
+</div>
+</div>
+<div aria-hidden="true" style="position: relative; margin-top: 81px; display: flex; justify-content: center; align-items: flex-end; flex-wrap: nowrap">
+<span style="position: absolute; left: 2%; top: 30px; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; background: #F5F2EC; border: 2px solid #0E0E12; border-radius: 999px; padding: 8px 14px; transform: rotate(-8deg)">SEM PLANILHA</span>
+<span style="position: absolute; right: 2%; top: 60px; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: #F5F2EC; background: #0E0E12; border-radius: 999px; padding: 8px 14px; transform: rotate(7deg)">COM AGENTE</span>
+<sc-for list="{{hero}}" as="p" hint-placeholder-count="5">
+<div onMouseEnter="{{p.enter}}" onMouseLeave="{{heroLeave}}" style="display: flex; flex-direction: column; align-items: center; gap: 8px; position: relative; z-index: {{p.z}}; opacity: {{p.op}}; transition: opacity 260ms ease; cursor: default">
+<span style="width: {{p.cw}}; height: {{p.ch}}; box-sizing: border-box; border-radius: 14px; background: {{p.card.bg}}; border: 2px solid #0E0E12; transform: {{p.ct}}; padding: 10px; display: flex; flex-direction: column; gap: 4px; text-align: left; box-shadow: {{p.cs}}; transition: transform 320ms cubic-bezier(.34,1.4,.64,1), box-shadow 320ms ease, background-color 240ms ease">
+<span style="display: flex; flex-direction: column; gap: 4px; flex: 1; opacity: {{p.fo}}; transform: {{p.ft}}; transition: opacity 180ms ease, transform 180ms ease">
+<svg width="24" height="24" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="{{p.card.icon}}"></path></svg>
+<span style="margin-top: auto; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.06em">{{p.card.label}}</span>
+<span style="font-size: 13px; font-weight: 700; line-height: 1.1">{{p.card.text}}</span>
+</span>
+</span>
+<span style="width: 0; height: {{p.line}}; border-left: 2px dashed #0E0E12"></span>
+<div style="transform: {{p.at}}; transform-origin: bottom center; transition: transform 320ms cubic-bezier(.34,1.4,.64,1)"><dc-import name="CoopsAvatar" skin="{{p.a.skin}}" hair-style="{{p.a.hair}}" shirt-style="{{p.a.shirt}}" facial-hair="{{p.a.fh}}" glasses="{{p.a.gl}}" glasses-shape="{{p.a.gs}}" earrings="{{p.a.ea}}" lashes="{{p.a.la}}" crown="{{p.a.cr}}" bg="{{p.a.bg}}" size="{{p.size}}" label="" hint-size="170px,170px"></dc-import></div>
+</div>
+</sc-for>
+</div>
+</div>
+</section>
+
+<div aria-hidden="true" style="background: #0E0E12; border-bottom: 2px solid #2C2C36; padding: 16px 0; display: flex; gap: 32px; justify-content: center; flex-wrap: nowrap; white-space: nowrap; font-family: 'JetBrains Mono', monospace; font-size: 14px; letter-spacing: 0.08em">
+<span style="color: #B7A6FF">CHECK-IN ✦</span><span style="color: #F3D36B">SKILLS ✦</span><span style="color: #F5A9D6">BRAIN GYM ✦</span><span style="color: #FF8A5B">JORNADA ✦</span><span style="color: #8FE3C8">AGENTE ✦</span><span style="color: #F5F2EC">INICIATIVA ✦</span><span style="color: #B7A6FF">CHAMPION ✦</span><span style="color: #F3D36B">POWER UP ✦</span>
+</div>
+
+<div style="padding: 0 32px">
+<div style="max-width: 1216px; margin: 0 auto; display: flex; flex-direction: column; gap: 96px; padding-top: 96px">
+
+<section id="produtos" style="border-radius: 32px; background: #17171D; border: 1px solid #2C2C36; padding: 48px; display: flex; flex-wrap: wrap; gap: 32px; align-items: center">
+<div style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 16px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: #B7A6FF">TUDO EM CIMA DA MESA</span>
+<h2 style="margin: 0; font-size: 64px; font-weight: 800; letter-spacing: -0.035em; line-height: 1">Seu time e suas iniciativas, em cima da mesa.</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.55; color: #D6D3DD">Pessoas viram cartas, desenvolvimento vira deck e cada iniciativa ganha um agente que joga junto com você.</p>
+<a href="#momentos" style="align-self: flex-start; font-weight: 600; font-size: 16px">Ver como funciona →</a>
+</div>
+<div onMouseEnter="{{mesaEnter}}" onMouseLeave="{{mesaLeave}}" style="flex: 1 1 480px; min-width: 0; height: 450px; overflow: visible">
+<div aria-hidden="true" style="position: relative; height: 560px; width: 100%; transform: scale(0.8); transform-origin: top center">
+<div style="position: absolute; left: 6%; right: 6%; top: 70px; bottom: 70px; border-radius: 32px; background: #241E3A; border: 2px solid #3A3160; box-shadow: inset 0 0 0 10px #1C1730"></div>
+<div style="position: absolute; left: 20%; top: 120px; width: 150px; height: 200px; box-sizing: border-box; border-radius: 18px; background: #B7A6FF; border: 2px solid #0E0E12; padding: 12px; color: #0E0E12; z-index: {{mc.z1}}; transform: translate({{mc.x1}}px, {{mc.y1}}px) rotate({{mc.r1}}deg); transition: transform 700ms cubic-bezier(.65,0,.25,1) 0ms; display: flex; flex-direction: column; box-shadow: 0 12px 24px rgba(0,0,0,0.4)">
+<svg width="40" height="40" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="20" cy="22" r="7"></circle><circle cx="44" cy="22" r="7"></circle><path d="M6 50c1-9 7-14 14-14s13 5 14 14M30 50c1-9 7-14 14-14s13 5 14 14"></path></svg>
+<span style="margin-top: auto; font-size: 15px; font-weight: 700; line-height: 1.15">{{mc.c1}}</span>
+</div>
+<div style="position: absolute; left: 41%; top: 150px; width: 150px; height: 200px; box-sizing: border-box; border-radius: 18px; background: #F3D36B; border: 2px solid #0E0E12; padding: 12px; color: #0E0E12; z-index: {{mc.z2}}; transform: translate({{mc.x2}}px, {{mc.y2}}px) rotate({{mc.r2}}deg); transition: transform 700ms cubic-bezier(.65,0,.25,1) 40ms; display: flex; flex-direction: column; box-shadow: 0 12px 24px rgba(0,0,0,0.4)">
+<svg width="40" height="40" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6l7 15 16 2-12 11 3 16-14-8-14 8 3-16L9 23l16-2z"></path></svg>
+<span style="margin-top: auto; font-size: 15px; font-weight: 700; line-height: 1.15">{{mc.c2}}</span>
+</div>
+<div style="position: absolute; right: 16%; top: 110px; width: 150px; height: 200px; box-sizing: border-box; border-radius: 18px; background: #F5A9D6; border: 2px solid #0E0E12; padding: 12px; color: #0E0E12; z-index: {{mc.z3}}; transform: translate({{mc.x3}}px, {{mc.y3}}px) rotate({{mc.r3}}deg); transition: transform 700ms cubic-bezier(.65,0,.25,1) 80ms; display: flex; flex-direction: column; box-shadow: 0 12px 24px rgba(0,0,0,0.4)">
+<svg width="40" height="40" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14h16a4 4 0 0 1 4 4v36a4 4 0 0 0-4-4H12zM52 14H36a4 4 0 0 0-4 4v36a4 4 0 0 1 4-4h16z"></path></svg>
+<span style="margin-top: auto; font-size: 15px; font-weight: 700; line-height: 1.15">{{mc.c3}}</span>
+</div>
+<div style="position: absolute; left: 30%; top: 290px; width: 210px; height: 150px; box-sizing: border-box; border-radius: 18px; background: #F5F2EC; border: 2px solid #0E0E12; padding: 14px; color: #0E0E12; z-index: {{mc.z4}}; transform: translate({{mc.x4}}px, {{mc.y4}}px) rotate({{mc.r4}}deg); transition: transform 700ms cubic-bezier(.65,0,.25,1) 120ms; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 16px 30px rgba(0,0,0,0.45)">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #4B36B0">{{mc.k4}}</span>
+<span style="font-size: 16px; font-weight: 700; line-height: 1.2">{{mc.c4}}</span>
+</div>
+<div style="position: absolute; right: 18%; top: 300px; width: 120px; height: 160px; box-sizing: border-box; border-radius: 18px; background: #FF8A5B; border: 2px solid #0E0E12; padding: 12px; color: #0E0E12; z-index: {{mc.z5}}; transform: translate({{mc.x5}}px, {{mc.y5}}px) rotate({{mc.r5}}deg); transition: transform 700ms cubic-bezier(.65,0,.25,1) 160ms; display: flex; flex-direction: column">
+<svg width="36" height="36" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 54c10 0 10-14 20-14s8-14 18-14"></path><path d="M46 26V8l10 5-10 5"></path></svg>
+<span style="margin-top: auto; font-size: 14px; font-weight: 700">{{mc.c5}}</span>
+</div>
+<div style="position: absolute; left: 2%; top: 20px; z-index: 5; opacity: {{mc.fo}}; transform: {{mc.ft}}; transition: opacity 320ms ease 0ms, transform 380ms cubic-bezier(.2,.8,.2,1) 0ms"><dc-import name="CoopsAvatar" skin="{{mc.a0.skin}}" hair-style="{{mc.a0.hair}}" shirt-style="{{mc.a0.shirt}}" facial-hair="{{mc.a0.fh}}" glasses="{{mc.a0.gl}}" lashes="{{mc.a0.la}}" earrings="{{mc.a0.ea}}" crown="{{mc.a0.cr}}" bg="{{mc.a0.bg}}" size="{{ 104 }}" label="Pessoa do time" hint-size="104px,104px"></dc-import></div>
+<div style="position: absolute; right: 2%; top: 30px; z-index: 5; opacity: {{mc.fo}}; transform: {{mc.ft}}; transition: opacity 320ms ease 70ms, transform 380ms cubic-bezier(.2,.8,.2,1) 70ms"><dc-import name="CoopsAvatar" skin="{{mc.a1.skin}}" hair-style="{{mc.a1.hair}}" shirt-style="{{mc.a1.shirt}}" facial-hair="{{mc.a1.fh}}" glasses="{{mc.a1.gl}}" lashes="{{mc.a1.la}}" earrings="{{mc.a1.ea}}" crown="{{mc.a1.cr}}" bg="{{mc.a1.bg}}" size="{{ 96 }}" label="Pessoa do time" hint-size="96px,96px"></dc-import></div>
+<div style="position: absolute; left: 4%; bottom: 10px; z-index: 5; opacity: {{mc.fo}}; transform: {{mc.ft}}; transition: opacity 320ms ease 140ms, transform 380ms cubic-bezier(.2,.8,.2,1) 140ms"><dc-import name="CoopsAvatar" skin="{{mc.a2.skin}}" hair-style="{{mc.a2.hair}}" shirt-style="{{mc.a2.shirt}}" facial-hair="{{mc.a2.fh}}" glasses="{{mc.a2.gl}}" lashes="{{mc.a2.la}}" earrings="{{mc.a2.ea}}" crown="{{mc.a2.cr}}" bg="{{mc.a2.bg}}" size="{{ 96 }}" label="Pessoa do time" hint-size="96px,96px"></dc-import></div>
+<div style="position: absolute; right: 4%; bottom: 0; z-index: 5; opacity: {{mc.fo}}; transform: {{mc.ft}}; transition: opacity 320ms ease 210ms, transform 380ms cubic-bezier(.2,.8,.2,1) 210ms"><dc-import name="CoopsAvatar" skin="{{mc.a3.skin}}" hair-style="{{mc.a3.hair}}" shirt-style="{{mc.a3.shirt}}" facial-hair="{{mc.a3.fh}}" glasses="{{mc.a3.gl}}" lashes="{{mc.a3.la}}" earrings="{{mc.a3.ea}}" crown="{{mc.a3.cr}}" bg="{{mc.a3.bg}}" size="{{ 104 }}" label="Pessoa do time" hint-size="104px,104px"></dc-import></div>
+<div style="position: absolute; left: 50%; bottom: 0; z-index: 6; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 10px">
+<svg width="84" height="84" viewBox="0 0 100 100"><path d="M50 6 60 38 94 50 60 62 50 94 40 62 6 50 40 38z" fill="#8FE3C8" stroke="#0E0E12" stroke-width="3" stroke-linejoin="round"></path><circle cx="44" cy="48" r="3.5" fill="#0E0E12"></circle><circle cx="56" cy="48" r="3.5" fill="#0E0E12"></circle><path d="M44 57c4 3 8 3 12 0" fill="none" stroke="#0E0E12" stroke-width="3" stroke-linecap="round"></path></svg>
+<span style="margin-bottom: 40px; max-width: 170px; font-size: 13px; line-height: 1.3; color: #0E0E12; background: #F5F2EC; border: 2px solid #0E0E12; border-radius: 14px 14px 14px 4px; padding: 8px 10px">{{mc.bubble}}</span>
+</div>
+</div>
+</div>
+</section>
+
+<section id="ic" style="border-radius: 32px; background: #F5F2EC; color: #0E0E12; border: 2px solid #0E0E12; padding: 48px; display: flex; flex-wrap: wrap-reverse; gap: 56px; align-items: center">
+<div style="flex: 1 1 400px; display: flex; flex-direction: column; gap: 16px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: #4B36B0">PARA ICS</span>
+<h2 style="margin: 0; font-size: 64px; font-weight: 800; letter-spacing: -0.035em; line-height: 1">Sua coroa, seus power ups.</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.55; color: #3A3846">Registre suas entregas, acompanhe o que está estudando e veja seu objetivo do ciclo. Quando vira referência em algo, ganha a coroa de champion.</p>
+<ul style="margin: 4px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 16px">
+<li style="display: flex; gap: 12px; align-items: center"><span style="width: 12px; height: 16px; border-radius: 3px; background: #B7A6FF; border: 1.5px solid #0E0E12"></span>Feedbacks e entregas registrados antes de esquecer</li>
+<li style="display: flex; gap: 12px; align-items: center"><span style="width: 12px; height: 16px; border-radius: 3px; background: #F5A9D6; border: 1.5px solid #0E0E12"></span>Estudos com progresso em blocos</li>
+<li style="display: flex; gap: 12px; align-items: center"><span style="width: 12px; height: 16px; border-radius: 3px; background: #FF8A5B; border: 1.5px solid #0E0E12"></span>Objetivo do ciclo combinado com o manager</li>
+</ul>
+</div>
+<div aria-hidden="true" onMouseEnter="{{icEnter}}" onMouseLeave="{{icLeave}}" style="flex: 1 1 460px; min-width: 0; height: 440px; border-radius: 32px; background: #B7A6FF; border: 2px solid #0E0E12; position: relative; overflow: hidden">
+<div style="position: absolute; left: 50%; bottom: -10px; transform: {{ic.avatar}}; transform-origin: 50% 100%; transition: transform 320ms cubic-bezier(.2,.8,.2,1)"><dc-import name="CoopsAvatar" skin="#C68B5E" hair-style="trancas" shirt-style="clara" earrings="{{ true }}" lashes="{{ true }}" crown="{{ true }}" bg="#D9CFFF" size="{{ 300 }}" label="" hint-size="300px,300px"></dc-import></div>
+<div style="position: absolute; left: 30px; top: 40px; display: flex; align-items: center; gap: 10px; background: #8FE3C8; border: 2px solid #0E0E12; border-radius: 16px; padding: 10px 14px; transform: {{ic.s1}}; transition: transform 320ms cubic-bezier(.2,.8,.2,1)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"></path></svg><span style="font-weight: 700; font-size: 14px">Curso de pesquisa</span></div>
+<div style="position: absolute; right: 30px; top: 70px; display: flex; align-items: center; gap: 10px; background: #8FE3C8; border: 2px solid #0E0E12; border-radius: 16px; padding: 10px 14px; transform: {{ic.s2}}; transition: transform 320ms cubic-bezier(.2,.8,.2,1)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"></path></svg><span style="font-weight: 700; font-size: 14px">Mentoria quinzenal</span></div>
+<div style="position: absolute; right: 50px; bottom: 60px; background: #F3D36B; border: 2px solid #0E0E12; border-radius: 16px; padding: 10px 14px; transform: {{ic.s3}}; transition: transform 320ms cubic-bezier(.2,.8,.2,1); font-weight: 700; font-size: 14px">Champion de pesquisa</div>
+</div>
+</section>
+
+<section id="momentos" style="display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: #8FE3C8">O AGENTE</span>
+<h2 style="margin: 0; font-size: 64px; font-weight: 800; letter-spacing: -0.035em; line-height: 1; max-width: 720px">Do problema à decisão, uma carta de cada vez.</h2>
+</div>
+<p style="margin: 0; max-width: 360px; font-size: 18px; line-height: 1.55; color: #D6D3DD">O agente percebe em que momento sua iniciativa está e entrega o deck de ferramentas certo.</p>
+</div>
+<ol style="list-style: none; margin: 0; padding: 40px 0 16px; display: flex; gap: 0; flex-wrap: wrap; justify-content: center">
+<sc-for list="{{moments}}" as="m" hint-placeholder-count="5">
+<li onMouseEnter="{{m.enter}}" onMouseLeave="{{m.leave}}" style="flex: 0 0 200px; height: 280px; box-sizing: border-box; border-radius: 22px; background: {{m.bg}}; color: #0E0E12; border: 2px solid #0E0E12; padding: 18px; display: flex; flex-direction: column; margin-right: {{m.mr}}; position: relative; z-index: {{m.z}}; transform: {{m.transform}}; box-shadow: {{m.shadow}}; transition: transform 220ms ease, box-shadow 220ms ease; cursor: default">
+<svg width="48" height="48" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{m.icon}}"></path></svg>
+<span style="margin-top: auto; font-size: 40px; font-weight: 600; letter-spacing: -0.03em; line-height: 1">{{m.n}}</span>
+<span style="margin-top: 6px; font-size: 18px; font-weight: 600; line-height: 1.2">{{m.title}}</span>
+</li>
+</sc-for>
+</ol>
+<p style="margin: 24px 0 0; text-align: center; font-size: 15px; color: #A3A1AD">Em cada momento, o agente distribui as cartas certas: heurísticas, benchmark, métricas, roteiro de teste e mais.</p>
+</section>
+
+<section id="planos" style="display: flex; flex-wrap: wrap; gap: 16px">
+<article onMouseEnter="{{teamEnter}}" onMouseLeave="{{teamLeave}}" style="transform: {{pl.teamA}}; box-shadow: {{pl.teamS}}; transition: transform 420ms cubic-bezier(.2,.8,.2,1), box-shadow 420ms ease; flex: 1 1 480px; min-height: 440px; box-sizing: border-box; border-radius: 32px; background: #F5F2EC; color: #0E0E12; border: 2px solid #0E0E12; padding: 40px; display: flex; flex-direction: column; gap: 16px; position: relative; overflow: hidden">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: #4B36B0">COOPS · TEAM</span>
+<h3 style="margin: 0; font-size: 40px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.05; max-width: 330px">Team management doesn’t need to be a spreadsheet.</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.55; color: #3A3846; max-width: 280px">Cada pessoa vira uma carta com quatro decks de desenvolvimento.</p>
+<a href="#lista" onClick="{{pickTeam}}" style="margin-top: auto; align-self: flex-start; position: relative; z-index: 5; display: inline-flex; align-items: center; min-height: 48px; box-sizing: border-box; color: #F5F2EC; background: #0E0E12; text-decoration: none; font-weight: 600; font-size: 15px; border-radius: 14px; padding: 0 20px">Para managers</a>
+<div aria-hidden="true">
+<div style="position: absolute; right: 190px; bottom: -30px; z-index: 1; width: 128px; height: 176px; box-sizing: border-box; border-radius: 16px; background: #17171D; border: 2px solid #0E0E12; overflow: hidden; transform: {{pl.t1}}; transition: transform 420ms cubic-bezier(.2,.8,.2,1); box-shadow: 0 12px 24px rgba(14,14,18,0.25)">
+<div style="background: #FF8A5B; padding: 8px 8px 0; display: flex; justify-content: center; border-bottom: 2px solid #0E0E12"><dc-import name="CoopsAvatar" skin="#F2D3BC" hair-style="cacheado" shirt-style="preta" glasses="{{ true }}" bg="#FF8A5B"  size="{{ 92 }}" label="" hint-size="92px,92px"></dc-import></div>
+<div style="padding: 10px; display: flex; flex-direction: column; gap: 6px"><span style="height: 6px; width: 70%; border-radius: 3px; background: #F5F2EC"></span><span style="height: 6px; width: 45%; border-radius: 3px; background: #4A4858"></span></div>
+</div>
+<div style="position: absolute; right: 20px; bottom: -24px; z-index: 2; width: 128px; height: 176px; box-sizing: border-box; border-radius: 16px; background: #17171D; border: 2px solid #0E0E12; overflow: hidden; transform: {{pl.t2}}; transition: transform 420ms cubic-bezier(.2,.8,.2,1) 60ms; box-shadow: 0 12px 24px rgba(14,14,18,0.25)">
+<div style="background: #8FE3C8; padding: 8px 8px 0; display: flex; justify-content: center; border-bottom: 2px solid #0E0E12"><dc-import name="CoopsAvatar" skin="#5A3825" hair-style="careca" facial-hair="barba" bg="#8FE3C8"  size="{{ 92 }}" label="" hint-size="92px,92px"></dc-import></div>
+<div style="padding: 10px; display: flex; flex-direction: column; gap: 6px"><span style="height: 6px; width: 70%; border-radius: 3px; background: #F5F2EC"></span><span style="height: 6px; width: 45%; border-radius: 3px; background: #4A4858"></span></div>
+</div>
+<div style="position: absolute; right: 100px; bottom: 10px; z-index: 3; width: 128px; height: 176px; box-sizing: border-box; border-radius: 16px; background: #17171D; border: 2px solid #0E0E12; overflow: hidden; transform: {{pl.t3}}; transition: transform 420ms cubic-bezier(.2,.8,.2,1) 30ms; box-shadow: 0 12px 24px rgba(14,14,18,0.25)">
+<div style="background: #B7A6FF; padding: 8px 8px 0; display: flex; justify-content: center; border-bottom: 2px solid #0E0E12"><dc-import name="CoopsAvatar" skin="#8D5A3B" hair-style="coque" shirt-style="blazer" bg="#B7A6FF" crown="{{ true }}" size="{{ 92 }}" label="" hint-size="92px,92px"></dc-import></div>
+<div style="padding: 10px; display: flex; flex-direction: column; gap: 6px"><span style="height: 6px; width: 70%; border-radius: 3px; background: #F5F2EC"></span><span style="height: 6px; width: 45%; border-radius: 3px; background: #4A4858"></span></div>
+</div>
+</div>
+</article>
+<article onMouseEnter="{{iniEnter}}" onMouseLeave="{{iniLeave}}" style="transform: {{pl.iniA}}; box-shadow: {{pl.iniS}}; transition: transform 420ms cubic-bezier(.2,.8,.2,1), box-shadow 420ms ease; flex: 1 1 480px; min-height: 440px; box-sizing: border-box; border-radius: 32px; background: #B7A6FF; color: #0E0E12; border: 2px solid #0E0E12; padding: 40px; display: flex; flex-direction: column; gap: 16px; position: relative; overflow: hidden">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em">COOPS · INITIATIVES</span>
+<h3 style="margin: 0; font-size: 40px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.05; max-width: 330px">Product sense is complex, but doesn’t need to be hard.</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.55; max-width: 280px">Um agente que entrega as ferramentas certas para cada momento.</p>
+<a href="#lista" onClick="{{pickIni}}" style="margin-top: auto; align-self: flex-start; position: relative; z-index: 5; display: inline-flex; align-items: center; min-height: 48px; box-sizing: border-box; color: #F5F2EC; background: #0E0E12; text-decoration: none; font-weight: 600; font-size: 15px; border-radius: 14px; padding: 0 20px">Para quem faz design</a>
+<div aria-hidden="true">
+<div style="position: absolute; right: 150px; bottom: -24px; width: 140px; height: 190px; box-sizing: border-box; border-radius: 16px; background: #F3D36B; border: 2px solid #0E0E12; padding: 12px; transform: {{pl.i1}}; transition: transform 420ms cubic-bezier(.2,.8,.2,1) 60ms"><svg width="34" height="34" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14h20v36H8zM36 14h20v36H36zM12 22h12M40 22h12"></path></svg></div>
+<div style="position: absolute; right: 30px; bottom: -10px; z-index: 2; width: 150px; height: 200px; box-sizing: border-box; border-radius: 16px; background: #F5F2EC; border: 2px solid #0E0E12; padding: 12px; transform: {{pl.i2}}; transition: transform 420ms cubic-bezier(.2,.8,.2,1); display: flex; flex-direction: column; box-shadow: 0 12px 24px rgba(14,14,18,0.25)"><svg width="34" height="34" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6c10 8 14 20 10 34H22C18 26 22 14 32 6z"></path><circle cx="32" cy="24" r="5"></circle><path d="M22 40l-8 10h12M42 40l8 10H38"></path></svg><span style="margin-top: auto; font-size: 14px; font-weight: 700; line-height: 1.2">Pessoas desistem no envio do documento</span></div>
+<svg style="position: absolute; right: 24px; top: 40px; z-index: 3; transform: {{pl.ag}}; transition: transform 520ms cubic-bezier(.34,1.56,.64,1)" width="110" height="110" viewBox="0 0 100 100"><path d="M50 6 60 38 94 50 60 62 50 94 40 62 6 50 40 38z" fill="#8FE3C8" stroke="#0E0E12" stroke-width="3" stroke-linejoin="round"></path><circle cx="44" cy="48" r="3.5" fill="#0E0E12"></circle><circle cx="56" cy="48" r="3.5" fill="#0E0E12"></circle><path d="M44 57c4 3 8 3 12 0" fill="none" stroke="#0E0E12" stroke-width="3" stroke-linecap="round"></path></svg>
+</div>
+</article>
+</section>
+
+<section style="border-radius: 32px; background: #17171D; border: 1px solid #2C2C36; padding: 48px 48px 0; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; overflow: hidden">
+<h2 style="margin: 0; font-size: 64px; font-weight: 800; letter-spacing: -0.035em; line-height: 1">Puxe uma cadeira.</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.55; color: #D6D3DD">A mesa está pronta para o seu time.</p>
+<a href="#lista" onClick="{{openWl}}" style="color: #0E0E12; background: #B7A6FF; text-decoration: none; font-weight: 600; font-size: 15px; border-radius: 14px; padding: 0 20px; display: inline-flex; align-items: center; min-height: 48px; box-sizing: border-box">Entrar na wish list</a>
+<div aria-hidden="true" style="display: flex; align-items: flex-end; justify-content: center; margin-top: 32px; flex-wrap: nowrap">
+<div onMouseEnter="{{crowd.e0}}" onMouseLeave="{{crowdLeave}}" style="transform: {{crowd.t0}}; opacity: {{crowd.o0}}; transform-origin: bottom center; transition: transform 300ms cubic-bezier(.34,1.4,.64,1), opacity 300ms ease; position: relative; z-index: {{crowd.z0}}"><dc-import name="CoopsAvatar" skin="#F2D3BC" hair-style="ondulado" earrings="{{ true }}" lashes="{{ true }}" bg="#F5A9D6" size="{{ 110 }}" label="" hint-size="110px,110px"></dc-import></div>
+<div onMouseEnter="{{crowd.e1}}" onMouseLeave="{{crowdLeave}}" style="transform: {{crowd.t1}}; opacity: {{crowd.o1}}; transform-origin: bottom center; transition: transform 300ms cubic-bezier(.34,1.4,.64,1), opacity 300ms ease; position: relative; z-index: {{crowd.z1}}"><dc-import name="CoopsAvatar" skin="#5A3825" hair-style="dreads" facial-hair="barba" bg="#F3D36B" size="{{ 130 }}" label="" hint-size="130px,130px"></dc-import></div>
+<div onMouseEnter="{{crowd.e2}}" onMouseLeave="{{crowdLeave}}" style="transform: {{crowd.t2}}; opacity: {{crowd.o2}}; transform-origin: bottom center; transition: transform 300ms cubic-bezier(.34,1.4,.64,1), opacity 300ms ease; position: relative; z-index: {{crowd.z2}}"><dc-import name="CoopsAvatar" skin="#8D5A3B" hair-style="blackpower" glasses="{{ true }}" lashes="{{ true }}" bg="#B7A6FF" crown="{{ true }}" size="{{ 150 }}" label="" hint-size="150px,150px"></dc-import></div>
+<div onMouseEnter="{{crowd.e3}}" onMouseLeave="{{crowdLeave}}" style="transform: {{crowd.t3}}; opacity: {{crowd.o3}}; transform-origin: bottom center; transition: transform 300ms cubic-bezier(.34,1.4,.64,1), opacity 300ms ease; position: relative; z-index: {{crowd.z3}}"><dc-import name="CoopsAvatar" skin="#EBC9A0" hair-style="chanel" glasses="{{ true }}" glasses-shape="quadrado" bg="#8FE3C8" size="{{ 130 }}" label="" hint-size="130px,130px"></dc-import></div>
+<div onMouseEnter="{{crowd.e4}}" onMouseLeave="{{crowdLeave}}" style="transform: {{crowd.t4}}; opacity: {{crowd.o4}}; transform-origin: bottom center; transition: transform 300ms cubic-bezier(.34,1.4,.64,1), opacity 300ms ease; position: relative; z-index: {{crowd.z4}}"><dc-import name="CoopsAvatar" skin="#C68B5E" hair-style="cacheado" shirt-style="listrada" bg="#FF8A5B" size="{{ 110 }}" label="" hint-size="110px,110px"></dc-import></div>
+</div>
+</section>
+
+<footer style="border-top: 1px solid #2C2C36; padding: 32px 0 48px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px">
+<span style="font-size: 22px; font-weight: 800; letter-spacing: -0.03em">coops<span style="color: #B7A6FF">.</span></span>
+<nav aria-label="Rodapé" style="display: flex; flex-wrap: wrap; gap: 4px"><a href="#produtos" style="color: #A3A1AD; text-decoration: none; font-size: 14px; padding: 10px 12px">Como é</a><a href="#ic" style="color: #A3A1AD; text-decoration: none; font-size: 14px; padding: 10px 12px">Para ICs</a><a href="#planos" style="color: #A3A1AD; text-decoration: none; font-size: 14px; padding: 10px 12px">Para managers</a><a href="#lista" onClick="{{openWl}}" style="color: #A3A1AD; text-decoration: none; font-size: 14px; padding: 10px 12px">Wish list</a></nav>
+<span style="font-size: 14px; color: #A3A1AD">your design companion</span>
+</footer>
+</div>
+</div>
+<sc-if value="{{wlOpen}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-label="Fechar wish list" onClick="{{closeWl}}" class="coops-overlay" style="animation: coopsFadeIn 320ms ease both; position: absolute; inset: 0; z-index: 30; border: 0; padding: 0; background: rgba(14,14,18,0.72); backdrop-filter: blur(3px); cursor: pointer"></button>
+<section id="lista" role="dialog" aria-modal="true" aria-label="Wish list" style="animation: coopsSheetIn 560ms cubic-bezier(.22,1,.36,1) both; position: absolute; left: 0; right: 0; top: {{wlTop}}; z-index: 31; background: #0E0E12; border-radius: 32px 32px 0 0; border-top: 3px solid #B7A6FF; box-shadow: 0 -30px 80px rgba(0,0,0,0.6); padding: 0 32px 48px; box-sizing: border-box; height: {{wlH}}; overflow-y: auto; overscroll-behavior: contain">
+<div style="position: sticky; top: 0; z-index: 2; background: #0E0E12; margin: 0 -32px; padding: 12px 32px 12px; border-bottom: 1px solid #1E1E25">
+<div aria-hidden="true" style="width: 56px; height: 5px; border-radius: 3px; background: #4A4858; margin: 0 auto 10px"></div>
+<div style="max-width: 1216px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: #B7A6FF">WISH LIST · ACESSO EM ONDAS</span><button type="button" aria-label="Fechar" onClick="{{closeWl}}" style="width: 44px; height: 44px; border-radius: 14px; background: #212129; border: 1.5px solid #3A3846; color: #F5F2EC; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div>
+</div>
+<div class="coops-sheet-body" style="max-width: 1216px; margin: 0 auto; padding-top: 24px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<h2 style="margin: 0; font-size: 48px; font-weight: 800; letter-spacing: -0.035em; line-height: 1">Entre na wish list.</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.55; color: #D6D3DD; max-width: 640px">Estamos montando a mesa. Entre na lista para ganhar acesso antecipado e acompanhar cada etapa do lançamento.</p>
+<ol aria-label="Etapas de abertura" style="list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: row; flex-wrap: wrap; gap: 12px">
+<li style="flex: 1 1 240px; display: flex; gap: 14px; align-items: center; padding: 16px; border-radius: 14px; background: #212129; border: 1px solid #2C2C36"><span style="width: 32px; height: 32px; flex: none; border-radius: 10px; background: #B7A6FF; color: #0E0E12; display: inline-flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700">01</span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Beta fechado</span><span style="font-size: 13px; color: #A3A1AD">Primeiras mesas, com times escolhidos a dedo.</span></span></li>
+<li style="flex: 1 1 240px; display: flex; gap: 14px; align-items: center; padding: 16px; border-radius: 14px; background: #212129; border: 1px solid #2C2C36"><span style="width: 32px; height: 32px; flex: none; border-radius: 10px; background: #F3D36B; color: #0E0E12; display: inline-flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700">02</span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Beta aberto</span><span style="font-size: 13px; color: #A3A1AD">Novas ondas a cada mês, por ordem da lista.</span></span></li>
+<li style="flex: 1 1 240px; display: flex; gap: 14px; align-items: center; padding: 16px; border-radius: 14px; background: #212129; border: 1px solid #2C2C36"><span style="width: 32px; height: 32px; flex: none; border-radius: 10px; background: #8FE3C8; color: #0E0E12; display: inline-flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700">03</span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Lançamento</span><span style="font-size: 13px; color: #A3A1AD">Quem está na lista entra antes e com power up.</span></span></li>
+</ol>
+</div>
+<div style="min-width: 0; border-radius: 22px; background: #141419; padding: 4px 32px 28px; box-sizing: border-box">
+<sc-if value="{{wl.formOn}}" hint-placeholder-val="true">
+<div role="form" aria-label="Wish list" style="display: flex; flex-direction: column">
+<div style="display: flex; flex-wrap: wrap; gap: 20px 40px; padding: 28px 0; border-bottom: 1px solid #23232B;">
+<div style="flex: 0 1 220px; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #B7A6FF">01</span><span style="font-size: 18px; font-weight: 700">Sobre você</span><span style="font-size: 13px; line-height: 1.5; color: #A3A1AD">Para saber quem está chegando à mesa.</span></div>
+<div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px"><div style="display: flex; flex-direction: column; gap: 8px"><label for="wl-nome" style="font-size: 13px; color: #A3A1AD">Nome</label><input id="wl-nome" type="text" autocomplete="name" placeholder="Como te chamamos?" style="font-family: inherit; font-size: 15px; color: #F5F2EC; background: #0E0E12; border: 1.5px solid #2C2C36; border-radius: 10px; min-height: 48px; padding: 0 14px; box-sizing: border-box; width: 100%"></div><div style="display: flex; flex-direction: column; gap: 8px"><label for="wl-email" style="font-size: 13px; color: #A3A1AD">E-mail de trabalho</label><input id="wl-email" type="email" autocomplete="email" placeholder="voce@empresa.com" required aria-required="true" style="font-family: inherit; font-size: 15px; color: #F5F2EC; background: #0E0E12; border: 1.5px solid #2C2C36; border-radius: 10px; min-height: 48px; padding: 0 14px; box-sizing: border-box; width: 100%; border-color: {{wl.emailBd}}"></div></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; align-items: end"><div style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px"><span style="font-size: 13px; color: #A3A1AD">Seu papel</span><div style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{wlRoles}}" as="c" hint-placeholder-count="4"><button type="button" onClick="{{c.click}}" aria-pressed="{{c.on}}" style="display: inline-flex; align-items: center; min-height: 38px; box-sizing: border-box; padding: 0 14px; border-radius: 999px; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; background: {{c.bg}}; color: {{c.fg}}; border: 1px solid {{c.bd}}; transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease">{{c.label}}</button></sc-for></div></div></div>
+<div style="display: flex; flex-direction: column; gap: 8px; max-width: 280px"><label for="wl-time" style="font-size: 13px; color: #A3A1AD">Tamanho do time de design</label><select id="wl-time" style="font-family: inherit; font-size: 15px; color: #F5F2EC; background: #0E0E12; border: 1.5px solid #2C2C36; border-radius: 10px; min-height: 48px; padding: 0 14px; box-sizing: border-box; width: 100%; padding: 0 12px"><option>Só eu</option><option>2 a 5</option><option>6 a 15</option><option>16 a 40</option><option>Mais de 40</option></select></div>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 20px 40px; padding: 28px 0; border-bottom: 1px solid #23232B;">
+<div style="flex: 0 1 220px; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #B7A6FF">02</span><span style="font-size: 18px; font-weight: 700">Seu interesse</span><span style="font-size: 13px; line-height: 1.5; color: #A3A1AD">Opções pensadas para {{wl.roleShort}}. Mudam conforme o papel.</span></div>
+<div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 13px; color: #A3A1AD">O que mais te interessou?</span><div style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{wlFocus}}" as="c" hint-placeholder-count="4"><button type="button" onClick="{{c.click}}" aria-pressed="{{c.on}}" style="display: inline-flex; align-items: center; min-height: 38px; box-sizing: border-box; padding: 0 14px; border-radius: 999px; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; background: {{c.bg}}; color: {{c.fg}}; border: 1px solid {{c.bd}}; transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease">{{c.label}}</button></sc-for></div></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 13px; color: #A3A1AD">O que mais pesa hoje? <span style="color: #6E6C78">Quantos quiser</span></span><div style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{wlPains}}" as="c" hint-placeholder-count="4"><button type="button" onClick="{{c.click}}" aria-pressed="{{c.on}}" style="display: inline-flex; align-items: center; min-height: 38px; box-sizing: border-box; padding: 0 14px; border-radius: 999px; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; background: {{c.bg}}; color: {{c.fg}}; border: 1px solid {{c.bd}}; transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease">{{c.label}}</button></sc-for></div></div>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 20px 40px; padding: 28px 0;">
+<div style="flex: 0 1 220px; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #B7A6FF">03</span><span style="font-size: 18px; font-weight: 700">Novidades</span><span style="font-size: 13px; line-height: 1.5; color: #A3A1AD">Só o andamento do lançamento, sem spam.</span></div>
+<div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 13px; color: #A3A1AD">Onde prefere receber o andamento?</span><div style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{wlCh}}" as="c" hint-placeholder-count="4"><button type="button" onClick="{{c.click}}" aria-pressed="{{c.on}}" style="display: inline-flex; align-items: center; min-height: 38px; box-sizing: border-box; padding: 0 14px; border-radius: 999px; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; background: {{c.bg}}; color: {{c.fg}}; border: 1px solid {{c.bd}}; transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease">{{c.label}}</button></sc-for></div></div>
+<div style="display: flex; flex-direction: column; gap: 12px"><label style="display: flex; gap: 12px; align-items: flex-start; font-size: 14px; line-height: 1.45; color: #D6D3DD; cursor: pointer"><input type="checkbox" checked="{{wl.beta}}" onChange="{{wlBeta}}" style="width: 18px; height: 18px; margin: 1px 0 0; flex: none; accent-color: #B7A6FF">Topo testar o beta e conversar 30 min com o time.</label><label style="display: flex; gap: 12px; align-items: flex-start; font-size: 14px; line-height: 1.45; color: #D6D3DD; cursor: pointer"><input type="checkbox" checked="{{wl.consent}}" onChange="{{wlConsent}}" aria-required="true" style="width: 18px; height: 18px; margin: 1px 0 0; flex: none; accent-color: #B7A6FF">Aceito receber comunicações sobre o lançamento. Dá para sair quando quiser.</label></div>
+</div>
+</div>
+<sc-if value="{{wl.err}}" hint-placeholder-val="false"><p role="alert" style="margin: 0 0 12px; font-size: 14px; color: #FF8A5B">{{wl.errMsg}}</p></sc-if>
+<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: flex-end; padding-top: 20px; border-top: 1px solid #23232B">
+<span style="font-size: 13px; color: #6E6C78; margin-right: auto">Leva menos de 1 minuto.</span>
+<button type="button" onClick="{{closeWl}}" style="display: inline-flex; align-items: center; min-height: 48px; box-sizing: border-box; padding: 0 18px; border-radius: 14px; border: 1.5px solid #3A3846; background: transparent; color: #F5F2EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Agora não</button>
+<button type="button" onClick="{{wlSubmit}}" style="display: inline-flex; align-items: center; min-height: 48px; box-sizing: border-box; padding: 0 22px; border-radius: 14px; border: 0; background: #B7A6FF; color: #0E0E12; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Entrar na wish list</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{wl.sent}}" hint-placeholder-val="false">
+<div role="status" style="display: flex; flex-direction: column; gap: 18px; align-items: flex-start; padding-top: 28px">
+<svg width="84" height="84" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 6 60 38 94 50 60 62 50 94 40 62 6 50 40 38z" fill="#8FE3C8" stroke="#0E0E12" stroke-width="3" stroke-linejoin="round"></path><circle cx="44" cy="48" r="3.5" fill="#0E0E12"></circle><circle cx="56" cy="48" r="3.5" fill="#0E0E12"></circle><path d="M44 57c4 3 8 3 12 0" fill="none" stroke="#0E0E12" stroke-width="3" stroke-linecap="round"></path></svg>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: #8FE3C8">VOCÊ ESTÁ NA LISTA</span>
+<h3 style="margin: 0; font-size: 40px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.05">Cadeira reservada{{wl.nameSuffix}}.</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.55; color: #D6D3DD">Vamos mandar o andamento por {{wl.chText}}. Quando a sua onda abrir, você recebe o convite primeiro.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 8px 12px; border-radius: 999px; background: #212129; border: 1px solid #2C2C36">{{wl.roleText}}</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 8px 12px; border-radius: 999px; background: #212129; border: 1px solid #2C2C36">{{wl.focusText}}</span><sc-if value="{{wl.beta}}" hint-placeholder-val="true"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 8px 12px; border-radius: 999px; background: #B7A6FF; color: #0E0E12">BETA TESTER</span></sc-if></div>
+<div style="width: 100%; box-sizing: border-box; border-radius: 14px; background: #212129; border: 1px solid #2C2C36; padding: 16px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between">
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Suba na fila</span><span style="font-size: 13px; color: #A3A1AD">Cada pessoa do seu time que entrar adianta sua onda.</span></span>
+<button type="button" onClick="{{wlCopy}}" style="display: inline-flex; align-items: center; min-height: 44px; box-sizing: border-box; padding: 0 18px; border-radius: 14px; border: 1.5px solid #F5F2EC; background: transparent; color: #F5F2EC; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{wl.copyText}}</button>
+</div>
+<button type="button" onClick="{{wlReset}}" style="background: none; border: 0; padding: 8px 0; color: #B7A6FF; font-family: inherit; font-size: 14px; cursor: pointer">Editar minhas respostas</button>
+</div>
+</sc-if>
+</div>
+</div>
+</div>
+</section>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":4300}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { hover: -1, ic: false, mesa: 0, fade: false, team: false, ini: false, crowd: -1, heroH: -1, heroK: 0, heroF: false, wlOpen: false, wlTop: 0, wl: { role: 1, focus: 2, pains: [], ch: [0], beta: true, consent: false, sent: false, err: '', name: '', copied: false } }; }
+  componentWillUnmount() { if (this._esc) document.removeEventListener('keydown', this._esc); if (this._mt) clearInterval(this._mt); if (this._ft) clearTimeout(this._ft); if (this._ht) clearInterval(this._ht); if (this._hf) clearTimeout(this._hf); }
+  renderVals() {
+    var self = this;
+    var defs = [
+      { n: '01', title: 'Entendimento do desafio', bg: '#F5F2EC', rot: -6, y: 16, icon: 'M28 10a18 18 0 1 0 0 36a18 18 0 1 0 0-36zM41 41l13 13' },
+      { n: '02', title: 'Soft prepare', bg: '#F5A9D6', rot: -3, y: 4, icon: 'M32 8a16 16 0 0 0-10 28c3 3 4 6 4 10h12c0-4 1-7 4-10A16 16 0 0 0 32 8zM26 52h12M28 58h8' },
+      { n: '03', title: 'Explore the solutions', bg: '#B7A6FF', rot: 0, y: -8, icon: 'M16 54V42c0-8 16-8 16-16V10M48 54V42c0-8-16-8-16-16M26 16l6-6 6 6' },
+      { n: '04', title: 'Risk mitigation', bg: '#8FE3C8', rot: 3, y: 4, icon: 'M32 6 10 14v16c0 14 10 24 22 28 12-4 22-14 22-28V14zM22 32l7 7 13-14' },
+      { n: '05', title: 'Articulando decisões', bg: '#FF8A5B', rot: 6, y: 16, icon: 'M8 14h48v28H28l-12 10V42H8zM18 26h28M18 34h18' }
+    ];
+    var h = this.state.hover;
+    var ic = this.state.ic;
+    var A = function (skin, hair, shirt, fh, gl, la, ea, cr, bg) { return { skin: skin, hair: hair, shirt: shirt, fh: fh, gl: gl, la: la, ea: ea, cr: cr, bg: bg }; };
+    var SETS = [
+      { c1: 'Check-in de outubro', c2: 'Facilitação · 4', c3: 'Livro · 40%', k4: 'INICIATIVA 07', c4: 'Pessoas desistem no envio do documento', c5: 'Jornada Q4', bubble: 'Essa carta pede mais contexto. Quer ajuda?', rot: [-12, 4, 14, -3, -9], pos: [[0,0],[0,0],[0,0],[0,0],[0,0]], zs: [1,2,1,3,2],
+        av: [A('#8D5A3B', 'blackpower', 'gola-alta', 'nenhum', false, true, true, true, '#B7A6FF'), A('#F2D3BC', 'cacheado', 'listrada', 'nenhum', true, false, false, false, '#F3D36B'), A('#E0B08A', 'careca', 'camisa', 'barba-cheia', true, false, false, false, '#FF8A5B'), A('#C68B5E', 'chanel', 'blazer', 'nenhum', false, true, false, false, '#F5A9D6')] },
+      { c1: 'Feedback do review', c2: 'Pesquisa · 5', c3: 'Vídeo · 100%', k4: 'INICIATIVA 05', c4: 'Tarifas pouco claras antes do Pix', c5: 'Sinais 2/3', bubble: 'Quer gerar 4 alternativas de fluxo?', rot: [-6, 9, 8, 2, -14], pos: [[126,30],[-126,-30],[-10,40],[50,-14],[-60,-24]], zs: [2,1,1,2,3],
+        av: [A('#5A3825', 'dreads', 'preta', 'barba', false, false, false, false, '#8FE3C8'), A('#EBC9A0', 'longo', 'blazer', 'nenhum', true, true, true, true, '#B7A6FF'), A('#FFFFFF', 'topete', 'camisa', 'bigode', false, false, false, false, '#F5A9D6'), A('#8D5A3B', 'afro-curto', 'clara', 'nenhum', false, true, true, false, '#F3D36B')] },
+      { c1: 'Entrega no ar', c2: 'Visual · 3', c3: 'Curso · 70%', k4: 'INICIATIVA 03', c4: 'Cartão virtual pouco usado', c5: 'Objetivo Q1', bubble: 'Sua iniciativa está em Risk mitigation.', rot: [-16, 0, 18, -6, -4], pos: [[230,-10],[14,-44],[-236,14],[-70,4],[24,-8]], zs: [1,2,2,3,1],
+        av: [A('#C68B5E', 'trancas', 'clara', 'nenhum', false, true, true, false, '#FF8A5B'), A('#5A3825', 'careca', 'gola-alta', 'cavanhaque', true, false, false, true, '#B7A6FF'), A('#F2D3BC', 'rabo', 'listrada', 'nenhum', true, true, false, false, '#8FE3C8'), A('#E0B08A', 'curto', 'preta', 'barba', false, false, false, false, '#F3D36B')] }
+    ];
+    var cur = SETS[this.state.mesa % SETS.length];
+    var mc = { c1: cur.c1, c2: cur.c2, c3: cur.c3, k4: cur.k4, c4: cur.c4, c5: cur.c5, bubble: cur.bubble, r1: cur.rot[0], r2: cur.rot[1], r3: cur.rot[2], r4: cur.rot[3], r5: cur.rot[4], x1: cur.pos[0][0], y1: cur.pos[0][1], x2: cur.pos[1][0], y2: cur.pos[1][1], x3: cur.pos[2][0], y3: cur.pos[2][1], x4: cur.pos[3][0], y4: cur.pos[3][1], x5: cur.pos[4][0], y5: cur.pos[4][1], z1: cur.zs[0], z2: cur.zs[1], z3: cur.zs[2], z4: cur.zs[3], z5: cur.zs[4], a0: cur.av[0], a1: cur.av[1], a2: cur.av[2], a3: cur.av[3], fo: this.state.fade ? 0 : 1, ft: this.state.fade ? 'translateY(8px) scale(0.94)' : 'translateY(0) scale(1)' };
+    var step = function () {
+      self.setState({ fade: true });
+      self._ft = setTimeout(function () { self._ft = null; self.setState({ mesa: self.state.mesa + 1, fade: false }); }, 560);
+    };
+    var tm = this.state.team, ini = this.state.ini, cw = this.state.crowd;
+    var crowd = {};
+    [0, 1, 2, 3, 4].forEach(function (i) {
+      var on = cw === i;
+      crowd['t' + i] = on ? 'translateY(-14px) scale(1.08)' : 'none';
+      crowd['o' + i] = cw === -1 || on ? 1 : 0.55;
+      crowd['z' + i] = on ? 2 : 1;
+      crowd['e' + i] = function () { self.setState({ crowd: i }); };
+    });
+    var IC = {
+      ev: 'M20 22m-7 0a7 7 0 1 0 14 0a7 7 0 1 0-14 0M44 22m-7 0a7 7 0 1 0 14 0a7 7 0 1 0-14 0M6 50c1-9 7-14 14-14s13 5 14 14M30 50c1-9 7-14 14-14s13 5 14 14',
+      sk: 'M32 6l7 15 16 2-12 11 3 16-14-8-14 8 3-16L9 23l16-2z',
+      ch: 'M8 50 12 18l14 14 6-18 6 18 14-14 4 32z',
+      bg: 'M12 14h16a4 4 0 0 1 4 4v36a4 4 0 0 0-4-4H12zM52 14H36a4 4 0 0 0-4 4v36a4 4 0 0 1 4-4h16z',
+      jo: 'M8 54c10 0 10-14 20-14s8-14 18-14M46 26V8l10 5-10 5',
+      ag: 'M32 6l6 20 20 6-20 6-6 20-6-20-20-6 20-6z'
+    };
+    var K = function (bg, icon, label, text) { return { bg: bg, icon: icon, label: label, text: text }; };
+    var P = function (skin, hair, shirt, fh, gl, gs, ea, la, cr, bg) { return { skin: skin, hair: hair, shirt: shirt, fh: fh, gl: gl, gs: gs, ea: ea, la: la, cr: cr, bg: bg }; };
+    var HERO = [
+      { size: 160, cw: '128px', ch: '96px', rot: -8, line: '40px', a: P('#F2D3BC', 'ondulado', 'listrada', 'nenhum', false, 'redondo', true, true, false, '#D9CFFF'),
+        cards: [K('#F5F2EC', IC.ev, 'EVENTOS', 'Ritmo bom'), K('#F3D36B', IC.sk, 'SKILLS', 'Escrita 3 → 4'), K('#8FE3C8', IC.ag, 'AGENTE', 'Check-in pronto'), K('#F5A9D6', IC.bg, 'BRAIN GYM', 'Podcast · 2 ep.')] },
+      { size: 170, cw: '128px', ch: '96px', rot: 6, line: '80px', a: P('#5A3825', 'dreads', 'preta', 'barba', false, 'redondo', false, false, false, '#D9CFFF'),
+        cards: [K('#F3D36B', IC.sk, 'SKILLS', 'Facilitação 4/5'), K('#FF8A5B', IC.jo, 'JORNADA', 'Meta: liderar squad'), K('#F5F2EC', IC.ev, 'EVENTOS', 'Feedback recebido'), K('#B7A6FF', IC.ch, 'POWER UP', 'Mentoria +1')] },
+      { size: 220, cw: '140px', ch: '104px', rot: -4, line: '20px', a: P('#8D5A3B', 'blackpower', 'gola-alta', 'nenhum', false, 'redondo', true, true, true, '#F3D36B'),
+        cards: [K('#8FE3C8', IC.ch, 'CHAMPION', 'Pesquisa'), K('#F3D36B', IC.sk, 'SKILLS', 'Estratégia 5/5'), K('#F5F2EC', IC.ev, 'EVENTOS', 'Talk interna'), K('#FF8A5B', IC.jo, 'JORNADA', 'Ciclo fechado')] },
+      { size: 170, cw: '128px', ch: '96px', rot: 8, line: '64px', a: P('#FFFFFF', 'topete', 'camisa', 'nenhum', true, 'redondo', false, false, false, '#D9CFFF'),
+        cards: [K('#F5A9D6', IC.bg, 'BRAIN GYM', 'Livro · 60%'), K('#8FE3C8', IC.ag, 'AGENTE', '3 cartas novas'), K('#F3D36B', IC.sk, 'SKILLS', 'Craft 3/5'), K('#F5F2EC', IC.ev, 'EVENTOS', '1:1 amanhã')] },
+      { size: 160, cw: '128px', ch: '96px', rot: -6, line: '36px', a: P('#EBC9A0', 'chanel', 'blazer', 'nenhum', true, 'quadrado', false, true, false, '#D9CFFF'),
+        cards: [K('#FF8A5B', IC.jo, 'JORNADA', 'Objetivo Q4'), K('#F5A9D6', IC.bg, 'BRAIN GYM', 'Curso · 80%'), K('#B7A6FF', IC.ch, 'POWER UP', 'Pix redesenhado'), K('#F3D36B', IC.sk, 'SKILLS', 'Descoberta 4/5')] }
+    ];
+    var hh = this.state.heroH, hk = this.state.heroK, hf = this.state.heroF;
+    var hero = HERO.map(function (d, i) {
+      var on = hh === i;
+      return {
+        a: d.a, size: d.size, cw: d.cw, ch: d.ch, line: d.line,
+        card: on ? d.cards[hk % d.cards.length] : d.cards[0],
+        z: on ? 3 : 1,
+        op: hh === -1 || on ? 1 : 0.5,
+        ct: on ? 'translateY(-14px) rotate(0deg) scale(1.1)' : 'rotate(' + d.rot + 'deg)',
+        cs: on ? '0 18px 32px rgba(14,14,18,0.3)' : '0 8px 18px rgba(14,14,18,0.18)',
+        at: on ? 'translateY(-10px) scale(1.06)' : 'none',
+        fo: on && hf ? 0 : 1,
+        ft: on && hf ? 'translateY(6px)' : 'none',
+        enter: function () {
+          if (self._ht) clearInterval(self._ht);
+          if (self._hf) { clearTimeout(self._hf); self._hf = null; }
+          self.setState({ heroH: i, heroK: 0, heroF: false });
+          var swap = function () {
+            self.setState({ heroF: true });
+            self._hf = setTimeout(function () { self._hf = null; self.setState({ heroK: self.state.heroK + 1, heroF: false }); }, 180);
+          };
+          self._hf = setTimeout(function () {
+            swap();
+            self._ht = setInterval(swap, 1200);
+          }, 400);
+        }
+      };
+    });
+    var W = this.state.wl;
+    var openWl = function (e, patch) {
+      if (e && e.preventDefault) e.preventDefault();
+      var root = document.getElementById('wl-root');
+      var top = 0, h = 640;
+      try {
+        if (root) {
+          var rr = root.getBoundingClientRect();
+          var vh = window.innerHeight || document.documentElement.clientHeight || 800;
+          var visTop = Math.max(0, -rr.top);
+          var visBot = Math.min(rr.height, vh - rr.top);
+          var vis = visBot - visTop;
+          if (vis > 200 && vis < 1600) {
+            h = Math.max(360, Math.min(760, vis - 56));
+            top = visBot - h;
+          } else {
+            var el = e && e.currentTarget;
+            var y = el ? el.getBoundingClientRect().top - rr.top : 0;
+            h = 720;
+            top = Math.max(0, Math.min(y - 120, root.offsetHeight - h));
+          }
+        }
+      } catch (x) {}
+      if (!isFinite(top)) top = 0;
+      if (!isFinite(h)) h = 640;
+      if (!self._esc) {
+        self._esc = function (ev) { if (ev.key === 'Escape') { self.setState({ wlOpen: false }); document.removeEventListener('keydown', self._esc); self._esc = null; } };
+        document.addEventListener('keydown', self._esc);
+      }
+      var st = { wlOpen: true, wlTop: Math.round(top), wlH: Math.round(h) };
+      if (patch) st.wl = Object.assign({}, self.state.wl, patch);
+      self.setState(st);
+    };
+    var setW = function (patch) { self.setState({ wl: Object.assign({}, self.state.wl, patch) }); };
+    var ROLES = ['Designer IC', 'Lead / Manager', 'Head / Diretor(a)', 'Produto / Outro'];
+    var BY_ROLE = [
+      { short: 'quem faz design',
+        focus: ['Agente de iniciativas', 'Meu perfil e skills', 'Brain gym e estudos', 'Tudo'],
+        pains: ['Entender o problema antes de desenhar', 'Defender decisões de design', 'Saber em que evoluir', 'Feedback que chega tarde', 'Mostrar meu impacto', 'Organizar meus estudos'] },
+      { short: 'lead e manager',
+        focus: ['Gestão do time em cartas', 'Agente de iniciativas', 'Os dois'],
+        pains: ['Acompanhar PDI', 'Feedback e 1:1', 'Saúde do time', 'Amadurecer demandas do squad', 'Onboarding de pessoas', 'Distribuir frentes de trabalho'] },
+      { short: 'head e direção',
+        focus: ['Visão de vários times', 'Estratégia e indicadores', 'Desenvolvimento de líderes', 'Tudo'],
+        pains: ['Mostrar impacto do design', 'Padronizar práticas entre squads', 'Planejar skills e headcount', 'Conectar design à estratégia', 'Saúde dos times', 'Desenvolver líderes'] },
+      { short: 'produto e outras áreas',
+        focus: ['Agente de iniciativas', 'Colaborar com designers', 'Entender o processo de design'],
+        pains: ['Demandas chegam mal definidas', 'Alinhar com design mais cedo', 'Saber o momento de cada iniciativa', 'Medir resultado das entregas'] }
+    ];
+    var RS = BY_ROLE[W.role];
+    var FOCUS = RS.focus;
+    var PAINS = RS.pains;
+    var CH = ['E-mail', 'WhatsApp', 'LinkedIn'];
+    var chip = function (on, label, click) { return { label: label, on: on ? 'true' : 'false', bg: on ? '#B7A6FF' : 'transparent', fg: on ? '#0E0E12' : '#D6D3DD', bd: on ? '#B7A6FF' : '#2C2C36', click: click }; };
+    var toggle = function (arr, i) { return arr.indexOf(i) >= 0 ? arr.filter(function (x) { return x !== i; }) : arr.concat([i]); };
+    var chText = W.ch.length ? W.ch.map(function (i) { return CH[i]; }).join(' e ').toLowerCase().replace('whatsapp', 'WhatsApp').replace('linkedin', 'LinkedIn') : 'e-mail';
+    return {
+      wl: {
+        formOn: !W.sent, sent: W.sent, beta: W.beta, consent: W.consent,
+        err: !!W.err, errMsg: W.err, emailBd: W.err === 'Precisamos de um e-mail válido.' ? '#FF8A5B' : '#2C2C36',
+        nameSuffix: W.name ? ', ' + W.name : '',
+        chText: chText, roleText: ROLES[W.role].toUpperCase(), focusText: (FOCUS[W.focus] || FOCUS[0]).toUpperCase(), roleShort: RS.short,
+        copyText: W.copied ? 'Link copiado' : 'Copiar convite'
+      },
+      wlRoles: ROLES.map(function (l, i) { return chip(W.role === i, l, function () { if (self.state.wl.role !== i) setW({ role: i, focus: 0, pains: [] }); }); }),
+      wlFocus: FOCUS.map(function (l, i) { return chip(W.focus === i, l, function () { setW({ focus: i }); }); }),
+      wlPains: PAINS.map(function (l, i) { return chip(W.pains.indexOf(i) >= 0, l, function () { setW({ pains: toggle(self.state.wl.pains, i) }); }); }),
+      wlCh: CH.map(function (l, i) { return chip(W.ch.indexOf(i) >= 0, l, function () { setW({ ch: toggle(self.state.wl.ch, i) }); }); }),
+      wlBeta: function () { setW({ beta: !self.state.wl.beta }); },
+      wlConsent: function () { setW({ consent: !self.state.wl.consent, err: '' }); },
+      wlSubmit: function (e) {
+        if (e && e.preventDefault) e.preventDefault();
+        var em = document.getElementById('wl-email');
+        var nm = document.getElementById('wl-nome');
+        var email = em ? em.value.trim() : '';
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setW({ err: 'Precisamos de um e-mail válido.' }); if (em) em.focus(); return; }
+        if (!self.state.wl.consent) { setW({ err: 'Marque o aceite de comunicações para entrar na lista.' }); return; }
+        setW({ err: '', sent: true, name: nm && nm.value.trim() ? nm.value.trim().split(' ')[0] : '' });
+      },
+      wlCopy: function () {
+        try { if (navigator.clipboard) navigator.clipboard.writeText('https://coops.design/lista?convite=time'); } catch (x) {}
+        setW({ copied: true });
+      },
+      wlReset: function () { setW({ sent: false, copied: false }); },
+      wlOpen: this.state.wlOpen,
+      wlTop: this.state.wlTop + 'px',
+      wlH: (this.state.wlH || 640) + 'px',
+      openWl: openWl,
+      closeWl: function () { if (self._esc) { document.removeEventListener('keydown', self._esc); self._esc = null; } self.setState({ wlOpen: false }); },
+      pickTeam: function (e) { openWl(e, { focus: 0, role: 1, pains: [] }); },
+      pickIni: function (e) { openWl(e, { focus: 0, role: 0, pains: [] }); },
+      hero: hero,
+      heroLeave: function () {
+        if (self._ht) { clearInterval(self._ht); self._ht = null; }
+        if (self._hf) { clearTimeout(self._hf); self._hf = null; }
+        self.setState({ heroH: -1, heroK: 0, heroF: false });
+      },
+      crowd: crowd,
+      crowdLeave: function () { self.setState({ crowd: -1 }); },
+      pl: {
+        teamA: tm ? 'translateY(-6px)' : 'none',
+        teamS: tm ? '0 24px 48px rgba(0,0,0,0.45)' : 'none',
+        t1: tm ? 'translate(-34px, -36px) rotate(-17deg)' : 'rotate(-10deg)',
+        t2: tm ? 'translate(16px, -40px) rotate(15deg)' : 'rotate(8deg)',
+        t3: tm ? 'translateY(-52px) rotate(0deg) scale(1.06)' : 'rotate(-1deg)',
+        iniA: ini ? 'translateY(-6px)' : 'none',
+        iniS: ini ? '0 24px 48px rgba(0,0,0,0.45)' : 'none',
+        i1: ini ? 'translate(-36px, -40px) rotate(-18deg)' : 'rotate(-10deg)',
+        i2: ini ? 'translate(-6px, -46px) rotate(1deg) scale(1.05)' : 'rotate(6deg)',
+        ag: ini ? 'translate(-14px, 10px) rotate(24deg) scale(1.12)' : 'none'
+      },
+      teamEnter: function () { self.setState({ team: true }); },
+      teamLeave: function () { self.setState({ team: false }); },
+      iniEnter: function () { self.setState({ ini: true }); },
+      iniLeave: function () { self.setState({ ini: false }); },
+      mc: mc,
+      mesaEnter: function () {
+        if (self._mt) return;
+        step();
+        self._mt = setInterval(step, 1800);
+      },
+      mesaLeave: function () { if (self._mt) { clearInterval(self._mt); self._mt = null; } },
+      ic: {
+        avatar: ic ? 'translateX(-50%) translateY(-10px) scale(1.05)' : 'translateX(-50%)',
+        s1: ic ? 'translate(-10px, -8px) rotate(-12deg)' : 'rotate(-6deg)',
+        s2: ic ? 'translate(10px, -10px) rotate(11deg)' : 'rotate(5deg)',
+        s3: ic ? 'translate(8px, 6px) rotate(-9deg) scale(1.06)' : 'rotate(-4deg)'
+      },
+      icEnter: function () { self.setState({ ic: true }); },
+      icLeave: function () { self.setState({ ic: false }); },
+      moments: defs.map(function (d, i) {
+        var on = i === h;
+        var baseZ = i === 2 ? 2 : (i === 3 ? 1 : 0);
+        return Object.assign({}, d, {
+          mr: i < defs.length - 1 ? '-16px' : '0',
+          z: on ? 10 : baseZ,
+          transform: on ? 'translateY(-36px) rotate(0deg) scale(1.1)' : 'rotate(' + d.rot + 'deg) translateY(' + d.y + 'px)',
+          shadow: on ? '0 28px 56px rgba(0,0,0,0.6), 0 0 0 3px #F5F2EC' : (i === 2 ? '0 20px 40px rgba(0,0,0,0.5)' : 'none'),
+          enter: function () { self.setState({ hover: i }); },
+          leave: function () { if (self.state.hover === i) self.setState({ hover: -1 }); }
+        });
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

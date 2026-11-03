@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Coops · Deck do squad</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0E12}
+a{color:#B7A6FF}a:hover{color:#D9CFFF}
+@keyframes coopsSheetIn{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes coopsFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes coopsRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.coops-sheet-body{animation:coopsRise 420ms cubic-bezier(.22,1,.36,1) 160ms both}
+@media (prefers-reduced-motion: reduce){[role=dialog],.coops-overlay,.coops-sheet-body{animation:none!important}}
+/* Coops · transição entre páginas */
+body::after{content:"";position:fixed;inset:0;z-index:9999;background:#0E0E12;pointer-events:none;animation:coopsCurtainIn .5s cubic-bezier(.22,1,.36,1) .05s both}
+@keyframes coopsCurtainIn{from{opacity:1}to{opacity:0}}
+body::before{content:"";position:fixed;inset:0;z-index:9998;background:#0E0E12;pointer-events:none;opacity:0;transition:opacity .26s ease}
+html.coops-leaving body::before{opacity:1}
+@media (prefers-reduced-motion: reduce){body::after,body::before{animation:none!important;transition:none!important;opacity:0!important}}
+/* Coops · scroll */
+*{scrollbar-width:thin;scrollbar-color:rgba(127,124,140,.55) transparent}
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-track{background:transparent}
+*::-webkit-scrollbar-thumb{background:rgba(127,124,140,.55);border-radius:999px;border:3px solid transparent;background-clip:padding-box}
+*::-webkit-scrollbar-thumb:hover{background:rgba(183,166,255,.8);background-clip:padding-box;border:3px solid transparent}
+*::-webkit-scrollbar-corner{background:transparent}
+.coops-wz-card{scrollbar-color:rgba(14,14,18,.35) transparent}
+.coops-wz-card::-webkit-scrollbar-thumb{background:rgba(14,14,18,.3);background-clip:padding-box}
+.coops-wz-card::-webkit-scrollbar-thumb:hover{background:rgba(14,14,18,.55);background-clip:padding-box}
+.coops-wz-card::-webkit-scrollbar-track{margin:18px 0}
+.coops-wz-card>*{flex-shrink:0}
+/* Coops · menu da conta (DS) */
+.hb-av{transition:transform .2s ease,box-shadow .2s ease}.hb-av:hover{transform:scale(1.06)}.hb-av:focus-visible{outline:3px solid #B7A6FF;outline-offset:3px}
+.hb-item{transition:background .18s ease}.hb-item:hover,.hb-item:focus-visible{background:#212129;outline:none}
+@keyframes hbPop{from{opacity:0;transform:scale(.9) translateY(-6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.hb-av,.hb-item{transition:none}}
+</style>
+</helmet>
+<div style="position: relative; font-family: 'Schibsted Grotesk', system-ui, sans-serif; color: #F5F2EC; background: #0E0E12; min-height: 1300px; box-sizing: border-box; padding: 24px 32px 56px; overflow: hidden">
+<div style="max-width: 1216px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px">
+
+<header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap">
+<a href="Coops03-Hub.dc.html" style="color: #F5F2EC; text-decoration: none; font-size: 26px; font-weight: 800; letter-spacing: -0.03em">coops<span style="color: #B7A6FF">.</span></a>
+<span style="font-size: 14px; color: #A3A1AD; border: 1px solid #2C2C36; border-radius: 999px; padding: 8px 12px">Nimbo Pay</span>
+<nav aria-label="Produtos" style="display: flex; gap: 4px; background: #17171D; border: 1px solid #2C2C36; border-radius: 14px; padding: 4px">
+<a href="Coops05-Time.dc.html" aria-current="page" style="color: #0E0E12; background: #B7A6FF; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 10px; padding: 10px 16px">Time</a>
+<a href="Coops08-Iniciativa.dc.html" style="color: #A3A1AD; text-decoration: none; font-size: 14px; border-radius: 10px; padding: 10px 16px">Iniciativas</a>
+</nav>
+</div>
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #0E0E12; background: #B7A6FF; border-radius: 999px; padding: 6px 10px">MANAGER</span>
+<div style="position: relative"><button type="button" class="hb-av" onClick="{{acctToggle}}" aria-haspopup="true" aria-expanded="{{acctExp}}" aria-label="Abrir o menu da sua conta" style="display: block; padding: 0; border: 0; background: transparent; border-radius: 50%; cursor: pointer; line-height: 0; box-shadow: {{acctRing}}"><dc-import name="CoopsAvatar" skin="#E0B08A" hair-style="longo" shirt-style="blazer" bg="#F3D36B" size="{{ 44 }}" label="Seu avatar" hint-size="44px,44px"></dc-import></button><sc-if value="{{acctOpen}}" hint-placeholder-val="{{ false }}"><div role="menu" aria-label="Sua conta" style="animation: hbPop 260ms cubic-bezier(.34,1.4,.64,1) both; transform-origin: top right; position: absolute; right: 0; top: 56px; z-index: 30; width: 280px; box-sizing: border-box; border-radius: 22px; background: #17171D; border: 1.5px solid #2C2C36; box-shadow: 0 24px 50px rgba(0,0,0,0.55); padding: 10px; display: flex; flex-direction: column; gap: 4px; text-align: left"><div style="display: flex; flex-direction: column; gap: 2px; padding: 10px 12px 12px; border-bottom: 1px solid #2C2C36; margin-bottom: 4px"><span style="font-size: 16px; font-weight: 700; color: #F5F2EC">Marina Lopes</span><span style="font-size: 13px; color: #A3A1AD">marina@nimbo.com</span></div><a role="menuitem" class="hb-item" href="Coops21-Admin.dc.html" style="display: flex; align-items: center; gap: 12px; color: #F5F2EC; text-decoration: none; border-radius: 14px; padding: 10px 12px; min-height: 48px; box-sizing: border-box"><span style="flex: none; width: 36px; height: 36px; border-radius: 10px; background: #B7A6FF; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></span><span style="display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 600">Administração</span><span style="font-size: 12px; color: #A3A1AD">Projetos, lideranças, skills e seus dados</span></span></a><button type="button" role="menuitem" class="hb-item" onClick="{{acctToggle}}" style="display: flex; align-items: center; gap: 12px; font-family: inherit; color: #A3A1AD; background: transparent; border: 0; text-align: left; border-radius: 14px; padding: 10px 12px; min-height: 48px; cursor: pointer"><span style="flex: none; width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid #3A3846; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11"></path></svg></span><span style="font-size: 15px; font-weight: 600">Sair</span></button></div></sc-if></div>
+</div>
+</header>
+
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px">
+<div style="display: flex; align-items: center; gap: 16px">
+<a href="Coops17-Squad.dc.html" aria-label="Voltar para Squad Pagamentos" style="width: 64px; height: 64px; flex: none; border-radius: 18px; background: #B7A6FF; border: 2px solid #0E0E12; display: flex; align-items: center; justify-content: center"><svg width="40" height="40" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="32" cy="20" r="8"></circle><path d="M18 50c1-10 7-16 14-16s13 6 14 16"></path><circle cx="13" cy="26" r="5.5"></circle><path d="M4 48c0-7 4-11 9-11 2.5 0 4.6.9 6 2.6"></path><circle cx="51" cy="26" r="5.5"></circle><path d="M60 48c0-7-4-11-9-11-2.5 0-4.6.9-6 2.6"></path><path d="M6 56h52"></path></svg></a>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<a href="Coops17-Squad.dc.html" style="font-size: 14px; color: #A3A1AD; text-decoration: none">← Squad Pagamentos</a>
+<h1 style="margin: 0; font-size: 44px; font-weight: 800; letter-spacing: -0.035em; line-height: 1">Deck de {{cd.lower}}</h1>
+</div>
+</div>
+<button type="button" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #0E0E12; background: #B7A6FF; border: 0; border-radius: 12px; min-height: 48px; padding: 0 16px; cursor: pointer">+ {{cd.add}}</button>
+</div>
+
+<div role="tablist" aria-label="Decks do squad" style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="4">
+<button type="button" role="tab" aria-selected="{{t.sel}}" onClick="{{t.pick}}" style="font-family: inherit; font-weight: {{t.fw}}; font-size: 14px; color: {{t.fg}}; background: {{t.bg}}; border: 1px solid {{t.bd}}; border-radius: 999px; min-height: 44px; padding: 0 16px; cursor: pointer">{{t.label}}</button>
+</sc-for>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 28px">
+<sc-for list="{{cd.cards}}" as="c" hint-placeholder-count="3">
+<button type="button" onClick="{{c.open}}" aria-label="Abrir {{c.title}}" style="height: 340px; font-family: inherit; text-align: left; box-sizing: border-box; border-radius: 22px; background: {{cd.bg}}; color: #0E0E12; border: 2px solid #0E0E12; padding: 20px; display: flex; flex-direction: column; gap: 10px; cursor: pointer; box-shadow: 0 16px 36px rgba(0,0,0,0.45)">
+<span style="width: 100%; display: flex; justify-content: space-between; align-items: flex-start">
+<svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{cd.icon}}"></path></svg>
+<span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 44px; font-weight: 600; line-height: 1; letter-spacing: -0.03em">{{c.big}}</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">{{c.bigLabel}}</span></span>
+</span>
+<span style="margin-top: auto; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em">{{cd.upper}} · {{c.tag}}</span>
+<span style="font-size: 21px; font-weight: 600; line-height: 1.2">{{c.title}}</span>
+<span style="width: 100%; box-sizing: border-box; font-size: 13px; border-top: 1.5px solid #0E0E12; padding-top: 10px">{{c.meta}}</span>
+</button>
+</sc-for>
+</div>
+
+</div>
+
+<sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-label="Fechar" onClick="{{close}}" class="coops-overlay" style="animation: coopsFadeIn 320ms ease both; position: absolute; inset: 0; z-index: 9; border: 0; padding: 0; background: rgba(14,14,18,0.72); backdrop-filter: blur(3px); cursor: pointer"></button>
+<section role="dialog" aria-modal="true" aria-labelledby="sq-sheet-title" style="animation: coopsSheetIn 560ms cubic-bezier(.22,1,.36,1) both; position: absolute; left: 0; right: 0; bottom: 0; top: 300px; z-index: 10; background: #0E0E12; border-radius: 32px 32px 0 0; border-top: 3px solid {{cur.bg}}; box-shadow: 0 -30px 80px rgba(0,0,0,0.6); overflow-y: auto; padding: 12px 32px 40px; box-sizing: border-box">
+<div aria-hidden="true" style="width: 56px; height: 5px; border-radius: 3px; background: #4A4858; margin: 0 auto 14px"></div>
+<div class="coops-sheet-body" style="max-width: 1216px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A3A1AD">CARD DO TIME › {{cur.deck}}</span>
+<h2 id="sq-sheet-title" style="margin: 0; font-size: 34px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.1">{{cur.title}}</h2>
+<span style="font-size: 16px; line-height: 1.5; color: #D6D3DD; max-width: 720px">{{cur.desc}}</span>
+</div>
+<button type="button" aria-label="Fechar" onClick="{{close}}" style="flex: 0 0 44px; height: 44px; border-radius: 14px; background: #212129; border: 1.5px solid #3A3846; color: #F5F2EC; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start">
+<div style="flex: 1 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A3A1AD">DETALHES</span>
+<sc-for list="{{cur.fields}}" as="f" hint-placeholder-count="4">
+<div style="display: flex; gap: 14px; justify-content: space-between; align-items: center; border-radius: 14px; background: #17171D; border: 1px solid #2C2C36; padding: 14px 16px"><span style="font-size: 14px; color: #A3A1AD">{{f.k}}</span><span style="font-size: 15px; font-weight: 600; text-align: right">{{f.v}}</span></div>
+</sc-for>
+</div>
+<div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+<div style="border-radius: 18px; background: {{cur.bg}}; color: #0E0E12; border: 2px solid #0E0E12; padding: 16px; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">PRÓXIMO PASSO</span><span style="font-size: 16px; font-weight: 600; line-height: 1.4">{{cur.next}}</span></div>
+<div style="border-radius: 18px; background: #17171D; border: 1px solid #2C2C36; padding: 16px; display: flex; gap: 12px; align-items: flex-start"><svg width="36" height="36" viewBox="0 0 100 100" aria-hidden="true" style="flex: none"><path d="M50 6 60 38 94 50 60 62 50 94 40 62 6 50 40 38z" fill="#8FE3C8" stroke="#0E0E12" stroke-width="3" stroke-linejoin="round"></path><circle cx="44" cy="48" r="3.5" fill="#0E0E12"></circle><circle cx="56" cy="48" r="3.5" fill="#0E0E12"></circle></svg><span style="display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #8FE3C8">AGENTE</span><span style="font-size: 15px; line-height: 1.45">{{cur.agent}}</span></span></div>
+<div style="display: flex; flex-wrap: nowrap; gap: 10px">
+<button type="button" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #F5F2EC; background: transparent; border: 1.5px solid #4A4858; border-radius: 14px; min-height: 48px; padding: 0 18px; cursor: pointer">Editar</button>
+<sc-if value="{{cur.ext}}" hint-placeholder-val="{{ true }}"><a href="{{cur.ctaHref}}" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; min-height: 48px; box-sizing: border-box; padding: 0 18px; border-radius: 14px; background: #B7A6FF; color: #0E0E12; text-decoration: none; font-weight: 600; font-size: 14px">{{cur.cta}}</a></sc-if><sc-if value="{{cur.int}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{cur.go}}" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; min-height: 48px; box-sizing: border-box; padding: 0 18px; border-radius: 14px; background: #B7A6FF; color: #0E0E12; border: 0; font-family: inherit; font-weight: 600; font-size: 14px; cursor: pointer">{{cur.cta}}</button></sc-if>
+</div>
+</div>
+</div>
+</div>
+</section>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1300}}'>
+class Component extends DCLogic {
+  renderVals() { var o = this.__acctRv() || {}, self = this, m = !!(this.state && this.state.acct); o.acctOpen = m; o.acctExp = m ? 'true' : 'false'; o.acctRing = m ? '0 0 0 2px #0E0E12, 0 0 0 4px #B7A6FF' : 'none'; o.acctToggle = function () { self.setState({ acct: !(self.state && self.state.acct) }); }; return o; }
+  constructor(props) {
+    super(props);
+    var ids = ['desafios', 'frentes', 'estrategia', 'indicadores'];
+    var h = '';
+    try { h = (window.location.hash || '').replace('#', ''); } catch (x) {}
+    var k = ids.indexOf(h);
+    this.state = { deck: k >= 0 ? k : 0, open: null };
+  }
+  __acctRv() {
+    var self = this;
+    var DECKS = [
+      { id: 'desafios', title: 'Desafios de time', sub: 'O que trava o squad agora', add: 'Desafio', bg: '#FF8A5B',
+        icon: 'M8 50 26 16l10 18 6-8 14 24zM26 16v-8l8 3-8 3',
+        cards: [
+          { tag: 'ALTO IMPACTO', title: 'Conversão do Pix caiu 8% no último mês', meta: 'Desde setembro · dono: Caio', desc: 'A queda começou depois da mudança de tarifas. Pessoas abandonam antes de confirmar o valor.', fields: [['Impacto', 'Alto · receita'], ['Desde', 'Setembro'], ['Dono', 'Caio Souza'], ['Status', 'Investigando']], next: 'Cruzar dados de abandono com as sessões gravadas do checkout.', agent: 'Esse desafio parece uma iniciativa em Entendimento do desafio. Quer abrir uma mesa?', cta: 'Virar iniciativa', href: 'Coops08-Iniciativa.dc.html' },
+          { tag: 'MÉDIO', title: 'Checkout fora do design system', meta: '14 componentes duplicados', desc: 'O fluxo de cartão usa componentes antigos que não seguem o DS, o que atrasa cada entrega.', fields: [['Impacto', 'Médio · velocidade'], ['Desde', 'Q2'], ['Dono', 'Aiko Tanaka'], ['Status', 'Mapeado']], next: 'Priorizar os 5 componentes mais usados com o time de plataforma.', agent: 'A Aiko tem Visual e sistemas 3/5. Pode ser um bom power up para ela liderar.', cta: 'Virar iniciativa', href: 'Coops08-Iniciativa.dc.html' },
+          { tag: 'BAIXO', title: 'Pouca pesquisa com lojistas', meta: '1 conversa no ciclo', desc: 'O squad conhece bem a pessoa pagadora, mas quase não ouve quem recebe.', fields: [['Impacto', 'Baixo · agora'], ['Desde', 'Q3'], ['Dono', 'Você'], ['Status', 'Aberto']], next: 'Agendar 3 conversas com lojistas até o fim do mês.', agent: 'O Caio é champion de Pesquisa. Ele pode puxar o roteiro.', cta: 'Virar iniciativa', href: 'Coops08-Iniciativa.dc.html' }
+        ] },
+      { id: 'frentes', title: 'Frentes de trabalho', sub: 'Onde o squad está jogando as cartas', add: 'Frente', bg: '#F5A9D6',
+        icon: 'M8 14h48v10H8zM8 30h32v10H8zM8 46h20v10H8z',
+        cards: [
+          { tag: 'DISCOVERY', title: 'Checkout Pix 2.0', meta: 'Caio e Aiko · 60%', pct: 60, desc: 'Redesenho do fluxo de Pix com valor e tarifa claros antes da confirmação.', fields: [['Momento', 'Explore the solutions'], ['Pessoas', 'Caio, Aiko'], ['Prazo', '15 de novembro'], ['Iniciativa', 'INICIATIVA 05']], next: 'Testar as 4 alternativas de fluxo com 6 pessoas.', agent: 'Essa frente está ligada à mesa da Iniciativa 05. Tem 2 cartas de contexto novas.', cta: 'Abrir mesa', href: 'Coops10-Mesa.dc.html' },
+          { tag: 'DELIVERY', title: 'Cartão virtual', meta: 'Aiko · 30%', pct: 30, desc: 'Entrada do cartão virtual na home e no fluxo de compra online.', fields: [['Momento', 'Risk mitigation'], ['Pessoas', 'Aiko'], ['Prazo', '30 de novembro'], ['Iniciativa', 'INICIATIVA 03']], next: 'Revisar casos de erro com engenharia.', agent: 'Vale checar acessibilidade antes do handoff. Tenho um checklist pronto.', cta: 'Abrir mesa', href: 'Coops10-Mesa.dc.html' },
+          { tag: 'CONTÍNUA', title: 'Saúde do design system', meta: 'Time todo · 45%', pct: 45, desc: 'Migração gradual dos componentes do checkout para o DS.', fields: [['Momento', 'Contínuo'], ['Pessoas', 'Time todo'], ['Prazo', 'Ciclo Q4'], ['Iniciativa', 'Sem mesa']], next: 'Fechar a migração dos botões e campos.', agent: 'Posso transformar isso em uma iniciativa com momentos e ferramentas.', cta: 'Criar iniciativa', href: 'Coops08-Iniciativa.dc.html' }
+        ] },
+      { id: 'estrategia', title: 'Estratégia de time', sub: 'Para onde o squad está indo', add: 'Pilar', bg: '#B7A6FF',
+        icon: 'M32 6a26 26 0 1 0 0 52a26 26 0 1 0 0-52zM32 18a14 14 0 1 0 0 28a14 14 0 1 0 0-28zM32 30v4M32 32 52 12',
+        cards: [
+          { tag: 'MISSÃO', title: 'Pagar sem pensar', meta: 'Revisada no início do Q4', desc: 'Toda pessoa entende quanto vai pagar, quando e por quê, antes de confirmar.', fields: [['Horizonte', 'Q4 e Q1'], ['Revisão', 'Início de cada ciclo'], ['Ligada a', 'OKR da empresa · Confiança'], ['Dono', 'Você']], next: 'Apresentar a missão no próximo ritual do squad.', agent: 'Todas as 3 frentes conversam com essa missão. Ótimo sinal.', cta: 'Ver frentes', href: '#frentes' },
+          { tag: 'PILAR 1', title: 'Clareza antes da confirmação', meta: '2 frentes ligadas', desc: 'Valor, tarifa e prazo sempre visíveis antes do botão final.', fields: [['Frentes', 'Checkout Pix 2.0, Cartão virtual'], ['Indicador', 'Conversão do Pix'], ['Dono', 'Caio'], ['Status', 'Em andamento']], next: 'Definir padrão de resumo do pagamento no DS.', agent: 'Esse pilar puxa o indicador de conversão. Vale acompanhar semanalmente.', cta: 'Ver indicadores', href: '#indicadores' },
+          { tag: 'PILAR 2', title: 'Menos telas, mais contexto', meta: '1 frente ligada', desc: 'Reduzir passos sem esconder informação importante.', fields: [['Frentes', 'Checkout Pix 2.0'], ['Indicador', 'Tempo até pagar'], ['Dono', 'Aiko'], ['Status', 'Começando']], next: 'Mapear os passos atuais do fluxo de cartão.', agent: 'Um benchmark de 3 apps pode ajudar aqui. Quer o deck de ferramentas?', cta: 'Ver indicadores', href: '#indicadores' }
+        ] },
+      { id: 'indicadores', title: 'Indicadores de sucesso', sub: 'Como o squad sabe que está indo bem', add: 'Indicador', bg: '#F3D36B',
+        icon: 'M8 56h48M14 48V34M26 48V24M38 48V30M50 48V12',
+        cards: [
+          { tag: 'META 80%', num: '72%', title: 'Conversão do Pix', meta: 'Era 80% em agosto', pct: 90, desc: 'Pessoas que iniciam e concluem um Pix no mesmo fluxo.', fields: [['Atual', '72%'], ['Meta', '80% até dezembro'], ['Fonte', 'Analytics · semanal'], ['Pilar', 'Clareza antes da confirmação']], next: 'Comparar a variação depois do teste das alternativas.', agent: 'Caiu 8 pontos em 4 semanas. Quer ligar ao desafio aberto?', cta: 'Ver desafio', href: '#desafios' },
+          { tag: 'META 50', num: '41', title: 'NPS do checkout', meta: '+3 no ciclo', pct: 82, desc: 'Nota de recomendação coletada logo depois do pagamento.', fields: [['Atual', '41'], ['Meta', '50 até março'], ['Fonte', 'Pesquisa in-app · mensal'], ['Pilar', 'Pagar sem pensar']], next: 'Ler os 30 comentários mais recentes com o time.', agent: 'Os comentários citam tarifa 12 vezes. Posso agrupar por tema.', cta: 'Ver frentes', href: '#frentes' },
+          { tag: 'META 85%', num: '64%', title: 'Adoção do design system', meta: 'No checkout', pct: 75, desc: 'Percentual de componentes do checkout que vêm do DS.', fields: [['Atual', '64%'], ['Meta', '85% até dezembro'], ['Fonte', 'Figma · quinzenal'], ['Pilar', 'Menos telas, mais contexto']], next: 'Atualizar depois da migração dos campos.', agent: 'Puxei esse número do Figma. Atualizo sozinho a cada 15 dias.', cta: 'Ver frentes', href: '#frentes' }
+        ] }
+    ];
+    var di = this.state.deck, d = DECKS[di], o = this.state.open;
+    var ids = DECKS.map(function (x) { return x.id; });
+    var cur = null;
+    var cards = d.cards.map(function (c, ci) {
+      if (o === ci) {
+        var internal = c.href.charAt(0) === '#';
+        cur = { deck: d.title.toUpperCase(), bg: d.bg, title: c.title, desc: c.desc, next: c.next, agent: c.agent, cta: c.cta, ctaHref: c.href,
+          ext: !internal, int: internal,
+          go: function () { var k = ids.indexOf(c.href.slice(1)); self.setState({ deck: k >= 0 ? k : di, open: null }); },
+          fields: c.fields.map(function (f) { return { k: f[0], v: f[1] }; }) };
+      }
+      return {
+        tag: c.tag, title: c.title, meta: c.meta,
+        big: c.num || String(ci + 1).padStart(2, '0'),
+        bigLabel: c.num ? 'ATUAL' : 'CARTA',
+        open: function () { self.setState({ open: ci }); }
+      };
+    });
+    var short = { desafios: 'desafios', frentes: 'frentes de trabalho', estrategia: 'estratégia', indicadores: 'indicadores' };
+    return {
+      cd: { lower: short[d.id], upper: d.title.toUpperCase(), add: d.add, bg: d.bg, icon: d.icon, cards: cards },
+      tabs: DECKS.map(function (x, i) {
+        var on = i === di;
+        return { label: x.title + ' · ' + x.cards.length, sel: on ? 'true' : 'false', fw: on ? 600 : 400, fg: on ? '#0E0E12' : '#F5F2EC', bg: on ? x.bg : 'transparent', bd: on ? x.bg : '#4A4858',
+          pick: function () { self.setState({ deck: i, open: null }); } };
+      }),
+      sheetOpen: !!cur,
+      cur: cur || { deck: '', bg: '#B7A6FF', title: '', desc: '', next: '', agent: '', cta: '', ctaHref: '#', ext: true, int: false, go: function () {}, fields: [] },
+      close: function () { self.setState({ open: null }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

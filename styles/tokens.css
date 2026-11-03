@@ -1,0 +1,7 @@
+:root{
+  --lilac-100:#EEE9FF;--lilac-200:#D9CFFF;--lilac-300:#B7A6FF;--lilac-500:#8B74F2;--lilac-700:#4B36B0;
+  --ink-900:#0E0E12;--ink-800:#17171D;--ink-700:#212129;--ink-600:#2C2C36;--ink-400:#4A4858;--ink-300:#A3A1AD;--paper:#F5F2EC;
+  --deck-skills:#F3D36B;--deck-brain:#F5A9D6;--deck-jornada:#FF8A5B;--deck-agente:#8FE3C8;--deck-saude:#A9D8F5;--deck-alavancas:#C9F0B8;
+  --r-input:10px;--r-button:14px;--r-card:22px;--r-card-lg:26px;--r-sheet:32px;
+  --font-text:'Schibsted Grotesk',system-ui,sans-serif;--font-mono:'JetBrains Mono',monospace;
+}

@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Coops · Deck Brain gym</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0E12}
+a{color:#B7A6FF}a:hover{color:#D9CFFF}
+@keyframes coopsSheetIn{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes coopsFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes coopsRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.coops-sheet-body{animation:coopsRise 420ms cubic-bezier(.22,1,.36,1) 160ms both}
+@media (prefers-reduced-motion: reduce){[role=dialog],.coops-overlay,.coops-sheet-body{animation:none!important}}
+/* Coops · interações padrão (DS) */
+.coops-m{transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease,border-color .25s ease}
+.coops-m:hover,.coops-m:focus-visible{transform:translateY(-8px) rotate(-1.5deg)!important;box-shadow:8px 8px 0 #4B36B0!important;border-color:#B7A6FF!important;outline:none}
+.coops-m:active{transform:translateY(-2px) scale(.97)!important;box-shadow:3px 3px 0 #4B36B0!important;transition-duration:80ms}
+.coops-av{display:block;line-height:0;transform-origin:50% 90%}
+.coops-m:focus .coops-av,.coops-m:active .coops-av{animation:coopsWave .5s cubic-bezier(.34,1.4,.64,1) 1}
+@keyframes coopsWave{30%{transform:translateY(-12px) rotate(-6deg)}60%{transform:translateY(-6px) rotate(5deg)}100%{transform:none}}
+.coops-pile .coops-front,.coops-card{transition:transform .4s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease}
+.coops-pile .coops-b1,.coops-pile .coops-b2{transition:transform .45s cubic-bezier(.34,1.3,.64,1)}
+.coops-pile:hover .coops-front,.coops-pile .coops-front:focus-visible{transform:translateY(-16px) rotate(-2deg)!important;outline:none}
+.coops-pile:hover .coops-b1{transform:rotate(6deg) translateX(10px)!important}
+.coops-pile:hover .coops-b2{transform:rotate(11deg) translateX(20px)!important}
+.coops-card:hover,.coops-card:focus-visible{transform:translateY(-10px) rotate(-1.5deg)!important;outline:none}
+.coops-pile .coops-front:active,.coops-pile .coops-front:focus,.coops-card:active,.coops-card:focus{animation:coopsPull .55s cubic-bezier(.65,0,.25,1) 1}
+@keyframes coopsPull{0%{transform:translateY(-16px) rotate(-2deg)}50%{transform:translateY(-44px) scale(1.04) rotate(0)}100%{transform:translateY(-16px) rotate(-2deg)}}
+@media (prefers-reduced-motion: reduce){.coops-m,.coops-av,.coops-front,.coops-b1,.coops-b2,.coops-card{transition:none!important;animation:none!important}}
+/* Coops · transição entre páginas */
+body::after{content:"";position:fixed;inset:0;z-index:9999;background:#0E0E12;pointer-events:none;animation:coopsCurtainIn .5s cubic-bezier(.22,1,.36,1) .05s both}
+@keyframes coopsCurtainIn{from{opacity:1}to{opacity:0}}
+body::before{content:"";position:fixed;inset:0;z-index:9998;background:#0E0E12;pointer-events:none;opacity:0;transition:opacity .26s ease}
+html.coops-leaving body::before{opacity:1}
+@media (prefers-reduced-motion: reduce){body::after,body::before{animation:none!important;transition:none!important;opacity:0!important}}
+/* Coops · scroll */
+*{scrollbar-width:thin;scrollbar-color:rgba(127,124,140,.55) transparent}
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-track{background:transparent}
+*::-webkit-scrollbar-thumb{background:rgba(127,124,140,.55);border-radius:999px;border:3px solid transparent;background-clip:padding-box}
+*::-webkit-scrollbar-thumb:hover{background:rgba(183,166,255,.8);background-clip:padding-box;border:3px solid transparent}
+*::-webkit-scrollbar-corner{background:transparent}
+.coops-wz-card{scrollbar-color:rgba(14,14,18,.35) transparent}
+.coops-wz-card::-webkit-scrollbar-thumb{background:rgba(14,14,18,.3);background-clip:padding-box}
+.coops-wz-card::-webkit-scrollbar-thumb:hover{background:rgba(14,14,18,.55);background-clip:padding-box}
+.coops-wz-card::-webkit-scrollbar-track{margin:18px 0}
+.coops-wz-card>*{flex-shrink:0}
+/* Coops · ícone animado do banner do deck do membro */
+.coops-mban svg{overflow:visible}
+.coops-mban svg *{transform-box:fill-box}
+.ic-arm,.ic-w,.ic-ring{transform-box:view-box!important;transform-origin:32px 32px}
+.ic-heart{transform-origin:50% 60%}.ic-ecg{stroke-dasharray:60}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-heart{animation:icBeat 1s ease-in-out infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-ecg{animation:icDraw60 1s ease-in-out infinite}
+@keyframes icBeat{0%,100%{transform:scale(1)}15%{transform:scale(1.14)}30%{transform:scale(.98)}45%{transform:scale(1.08)}}
+@keyframes icDraw60{0%{stroke-dashoffset:60}60%,100%{stroke-dashoffset:0}}
+.ic-peg{transform-origin:50% 100%}.ic-day{fill:none;stroke-width:1.75;opacity:0;transform-origin:50% 50%}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-peg{animation:icPeg 1.2s cubic-bezier(.34,1.6,.64,1) infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-peg2{animation-delay:.1s}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-day{animation:icDay 2.6s cubic-bezier(.34,1.6,.64,1) infinite both}
+@keyframes icDay{0%,3%{opacity:0;transform:scale(.2)}12%,70%{opacity:1;transform:scale(1)}80%,100%{opacity:0;transform:scale(.6)}}
+@keyframes icPeg{0%,60%,100%{transform:none}25%{transform:translateY(-4px)}}
+.ic-star{transform-origin:50% 55%}.ic-shard{opacity:0;transform-origin:50% 50%}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-star{animation:icBurst 1.8s cubic-bezier(.34,1.4,.64,1) infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-shard{animation:icShard 1.8s cubic-bezier(.2,.8,.3,1) infinite}
+@keyframes icBurst{0%{transform:scale(1);opacity:1}18%{transform:scale(1.18) rotate(-8deg);opacity:1}26%{transform:scale(.2);opacity:0}72%{transform:scale(.2);opacity:0}88%{transform:scale(1.1);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes icShard{0%,22%{opacity:0;transform:translate(0,0) scale(.4) rotate(0)}28%{opacity:1}62%{opacity:1;transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--rt))}74%,100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.6) rotate(var(--rt))}}
+.ic-leaf{transform-box:view-box!important;transform-origin:32px 32px;opacity:0}.ic-leafp{fill:rgba(255,255,255,.6)}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-leaf{animation:icLeaf 1.3s cubic-bezier(.45,0,.35,1) infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-leaf2{animation-delay:.45s}
+@keyframes icLeaf{0%{opacity:0;transform:scaleX(1) skewY(0)}6%{opacity:1}40%{transform:scaleX(.15) skewY(-10deg)}75%{opacity:1;transform:scaleX(-1) skewY(0)}85%,100%{opacity:0;transform:scaleX(-1)}}
+.ic-bgx{transform-box:view-box!important;transform-origin:32px 32px}.ic-bgx2,.ic-bgx3{opacity:0}.ic-knob{stroke-width:6}.ic-playt{transform-origin:50% 50%}.ic-wave{transform-origin:50% 50%}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-bgx{animation:icRot 4.2s cubic-bezier(.34,1.3,.64,1) infinite both}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-bgx2{animation-delay:1.4s}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-bgx3{animation-delay:2.8s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-knob{animation:icKnob 1.4s linear 1.4s infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-playt{animation:icPlay .7s ease-in-out infinite alternate}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-wave{animation:icWav .7s ease-in-out infinite alternate}
+@keyframes icRot{0%{opacity:0;transform:translateY(10px) rotate(-10deg) scale(.7)}6%,30%{opacity:1;transform:none}36%,100%{opacity:0;transform:translateY(-10px) rotate(10deg) scale(.7)}}
+@keyframes icKnob{from{transform:translateX(0)}to{transform:translateX(30px)}}
+@keyframes icPlay{to{transform:scale(1.15)}}
+@keyframes icWav{from{opacity:.3;transform:scale(.92)}to{opacity:1;transform:scale(1.04)}}
+.ic-path{stroke-dasharray:70}.ic-jflag,.ic-flag{transform-origin:0% 50%}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-path{animation:icDraw70 1.2s cubic-bezier(.65,0,.25,1) both}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-jflag{animation:icWave .5s ease-in-out .6s infinite}
+@keyframes icDraw70{0%{stroke-dashoffset:70}50%,100%{stroke-dashoffset:0}}
+@keyframes icWave{0%,100%{transform:skewY(0) scaleX(1)}50%{transform:skewY(-12deg) scaleX(.85)}}
+.ic-fire{opacity:0;transform-origin:50% 0%}.ic-tw{opacity:0}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-rocket{animation:icRocket .9s ease-in-out infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fire{animation:icFire .32s ease-in-out infinite alternate}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fire2{animation-duration:.24s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-tw{animation:icTw 1.1s linear infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-tw2{animation-delay:.3s}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-tw3{animation-delay:.55s}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-tw4{animation-delay:.8s}
+@keyframes icFire{from{opacity:.85;transform:translateY(-6px) scaleY(.8) scaleX(1.1)}to{opacity:1;transform:translateY(-6px) scaleY(1.2) scaleX(.9)}}
+@keyframes icTw{0%{opacity:0;transform:translateY(-10px)}20%{opacity:1}80%{opacity:1}100%{opacity:0;transform:translateY(22px)}}
+@keyframes icRocket{0%,100%{transform:translate(0,-6px)}25%{transform:translate(1px,-8px)}50%{transform:translate(0,-10px)}75%{transform:translate(-1px,-8px)}}
+.ic-mount{transition:transform .4s cubic-bezier(.34,1.4,.64,1)}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-flag{animation:icWave .45s ease-in-out infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-mount{transform:translateY(-2px)}
+.ic-fb{transform-origin:0% 50%}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb{animation:icFb 1.4s cubic-bezier(.34,1.5,.64,1) infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb2{animation-delay:.1s}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb3{animation-delay:.2s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb1{--s:.8}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb2{--s:1.3}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb3{--s:2}
+@keyframes icFb{0%,100%{transform:scaleX(1)}40%,60%{transform:scaleX(var(--s))}}
+.ic-sweep{transform-box:view-box!important;transform-origin:32px 32px}.ic-blip{stroke-width:5;opacity:0}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-sweep{animation:icSweep 1.8s linear infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-blip{animation:icBlip 1.8s ease-out infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-ring{animation:icPing 1.8s ease-out infinite}
+@keyframes icSweep{to{transform:rotate(360deg)}}
+@keyframes icBlip{0%,2%{opacity:0}6%{opacity:1}45%,100%{opacity:0}}
+@keyframes icPing{0%,4%,100%{transform:scale(1)}12%{transform:scale(1.05)}}
+.ic-ib{transform-origin:50% 100%}.ic-ib1{--a:1.8;--b:.6}.ic-ib2{--a:.55;--b:1.4}.ic-ib3{--a:1.6;--b:.5}.ic-ib4{--a:.55;--b:1.15}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-ib{animation:icBars 1.6s ease-in-out infinite}
+@keyframes icBars{0%,100%{transform:scaleY(1)}30%{transform:scaleY(var(--a))}65%{transform:scaleY(var(--b))}}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-arm{animation:icSee 1.6s cubic-bezier(.45,0,.55,1) infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-w{animation:icSeeW 1.6s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes icSee{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(14deg)}}
+@keyframes icSeeW{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(14deg) translateY(4px)}}
+@media (prefers-reduced-motion: reduce){.coops-mban svg *{animation:none!important;transition:none!important}}
+/* Coops · banner do deck do membro (DS) · mesmo padrão do squad */
+.coops-mban-ring{transition:transform .8s cubic-bezier(.22,1,.36,1)}
+.coops-mban:hover .coops-mban-ring{transform:scale(1.12) translate(-14px,-10px)}
+.coops-mban-ic{transition:transform .45s cubic-bezier(.34,1.56,.64,1)}
+.coops-mban:hover .coops-mban-ic{transform:rotate(-4deg) scale(1.04)}
+.coops-mban-me{transition:transform .45s cubic-bezier(.34,1.56,.64,1)}
+.coops-mban:hover .coops-mban-me{transform:translateY(-3px) rotate(3deg)}
+.coops-mban-back:hover{color:#0E0E12!important;text-decoration:underline!important}
+.coops-mban-btn{transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.coops-mban-btn:hover{transform:translateY(-2px)}.coops-mban-btn:active{transform:scale(.96)}
+.coops-mban a:focus-visible,.coops-mban button:focus-visible{outline:3px solid #0E0E12;outline-offset:3px}
+@media (prefers-reduced-motion: reduce){.coops-mban-ring,.coops-mban-ic,.coops-mban-me,.coops-mban-btn{transition:none!important;transform:none!important}}
+/* Coops · Carta em foco (DS) */
+@keyframes coopsFocusIn{from{transform:translate(var(--fdx),var(--fdy)) scale(var(--fs));opacity:.35}to{transform:none;opacity:1}}
+@keyframes coopsFocusOut{from{transform:none;opacity:1}to{transform:translate(var(--fdx),var(--fdy)) scale(var(--fs));opacity:0}}
+.coops-focus{transform-origin:50% 0}
+.coops-focus .coops-fx-body{animation:coopsFadeIn 260ms 200ms ease both}
+.coops-x{transition:background-color .2s ease,color .2s ease,transform .18s cubic-bezier(.34,1.56,.64,1)}
+.coops-x svg{transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.coops-x:hover,.coops-x:focus-visible{background:#0E0E12!important;color:var(--fbg,#F5F2EC)!important}
+.coops-x:hover svg,.coops-x:focus-visible svg{transform:rotate(90deg)}
+.coops-x:active{transform:scale(.88)}
+.coops-x:active svg{transform:rotate(90deg) scale(.9)}
+.coops-x:focus-visible{outline:3px solid #0E0E12;outline-offset:2px}
+.coops-focus button:not(.coops-x):focus-visible,.coops-focus a:focus-visible{outline:3px solid #0E0E12;outline-offset:2px}
+@media (prefers-reduced-motion: reduce){.coops-focus,.coops-focus .coops-fx-body{animation:none!important}.coops-x,.coops-x svg{transition:none!important;transform:none!important}}
+/* Frame 14 · progresso interativo direto na carta */
+.bg-blk{transition:transform .18s cubic-bezier(.34,1.56,.64,1),background-color .16s ease}
+.bg-blk:hover{transform:translateY(-3px)}.bg-blk:active{transform:scale(.9)}
+.bg-step{transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.bg-step:hover{transform:translateY(-2px)}.bg-step:active{transform:scale(.92)}
+.bg-blk:focus-visible,.bg-step:focus-visible{outline:3px solid #0E0E12;outline-offset:2px}
+@media (prefers-reduced-motion: reduce){.bg-blk,.bg-step{transition:none!important;transform:none!important}}
+/* Coops · Carta em foco · rolagem organizada (DS) */
+.coops-focus .coops-fx-body{scrollbar-width:thin;scrollbar-color:rgba(14,14,18,.38) transparent}
+.coops-focus .coops-fx-body::-webkit-scrollbar{width:8px}
+.coops-focus .coops-fx-body::-webkit-scrollbar-track{background:transparent;margin:56px 0 64px}
+.coops-focus .coops-fx-body::-webkit-scrollbar-thumb{background:rgba(14,14,18,.32);border-radius:999px}
+.coops-focus .coops-fx-body::-webkit-scrollbar-thumb:hover{background:rgba(14,14,18,.55)}
+.coops-focus .coops-fx-body>:first-child{position:sticky;top:var(--fx-st,0px);z-index:5;background:var(--fbg);padding-bottom:12px;margin-bottom:-12px;box-shadow:0 12px 12px -12px rgba(14,14,18,.28)}
+.coops-focus .coops-fx-foot{position:sticky;bottom:var(--fx-sb,0px);z-index:5;background:var(--fbg);padding-bottom:2px;box-shadow:0 -12px 12px -12px rgba(14,14,18,.28)}
+
+/* Coops · ícones de estudo (brain gym · DS) */
+.bgi *{transform-box:fill-box}
+.coops-card:is(:hover,:focus-within) .bgi-pg{animation:bgiPg 1.8s cubic-bezier(.45,0,.55,1) infinite}
+.bgi-pg{transform-origin:0 50%}
+@keyframes bgiPg{0%,15%{transform:scaleX(1)}50%{transform:scaleX(-1)}50.01%,100%{transform:scaleX(-1);opacity:0}}
+.coops-card:is(:hover,:focus-within) .bgi-ln{animation:bgiBlink 1.8s steps(1) infinite}
+@keyframes bgiBlink{0%,49%{opacity:1}50%,100%{opacity:.35}}
+.bgi-play{transform-origin:50% 50%}
+.coops-card:is(:hover,:focus-within) .bgi-play{animation:bgiPlay 1s ease-in-out infinite}
+@keyframes bgiPlay{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+.bgi-bar{stroke-dasharray:40;stroke-dashoffset:40}
+.coops-card:is(:hover,:focus-within) .bgi-bar{animation:bgiBar 2.4s linear infinite}
+@keyframes bgiBar{to{stroke-dashoffset:0}}
+.coops-card:is(:hover,:focus-within) .bgi-dot{animation:bgiDot 2.4s linear infinite}
+@keyframes bgiDot{to{transform:translateX(40px)}}
+.bgi-w{stroke-dasharray:24;stroke-dashoffset:0}
+.coops-card:is(:hover,:focus-within) .bgi-w{animation:bgiW 2.4s ease infinite}
+.coops-card:is(:hover,:focus-within) .bgi-w2{animation-delay:.25s}.coops-card:is(:hover,:focus-within) .bgi-w3{animation-delay:.5s}.coops-card:is(:hover,:focus-within) .bgi-w4{animation-delay:.75s}
+@keyframes bgiW{0%{stroke-dashoffset:24}30%,85%{stroke-dashoffset:0}100%{stroke-dashoffset:0;opacity:0}}
+.bgi-cap{transform-origin:50% 100%}
+.coops-card:is(:hover,:focus-within) .bgi-cap{animation:bgiCap 1.6s cubic-bezier(.34,1.4,.64,1) infinite}
+@keyframes bgiCap{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-6px) rotate(-6deg)}55%{transform:translateY(0) rotate(0)}}
+.bgi-ts{transform-origin:50% 0}
+.coops-card:is(:hover,:focus-within) .bgi-ts{animation:bgiTs .8s ease-in-out infinite alternate}
+@keyframes bgiTs{from{transform:rotate(14deg)}to{transform:rotate(-14deg)}}
+.coops-card:is(:hover,:focus-within) .bgi-l1{animation:bgiL1 1.6s cubic-bezier(.45,0,.55,1) infinite}
+.coops-card:is(:hover,:focus-within) .bgi-l2{animation:bgiL2 1.6s cubic-bezier(.45,0,.55,1) infinite}
+.coops-card:is(:hover,:focus-within) .bgi-mid{animation:bgiMid 1.6s ease infinite}
+.bgi-sp{opacity:0;transform-origin:50% 50%}
+.coops-card:is(:hover,:focus-within) .bgi-sp{animation:bgiSp 1.6s ease infinite}
+@keyframes bgiL1{0%,100%{transform:translate(0,0)}40%,55%{transform:translate(-4px,4px)}}
+@keyframes bgiL2{0%,100%{transform:translate(0,0)}40%,55%{transform:translate(4px,-4px)}}
+@keyframes bgiMid{0%,30%{opacity:1}40%,60%{opacity:0}75%,100%{opacity:1}}
+@keyframes bgiSp{0%,70%{opacity:0;transform:scale(.6)}80%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.bgi *{animation:none!important}}
+
+/* Coops · ícone de estudo · podcast */
+.bgi-wv{opacity:.35;transform-origin:50% 50%}
+.coops-card:is(:hover,:focus-within) .bgi-wv{animation:bgiWv 1.2s ease-out infinite}
+.coops-card:is(:hover,:focus-within) .bgi-wv2{animation-delay:.25s}
+@keyframes bgiWv{0%{opacity:0;transform:scale(.85)}35%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.12)}}
+.bgi-mic{transform-origin:50% 100%}
+.coops-card:is(:hover,:focus-within) .bgi-mic{animation:bgiMic .6s ease-in-out infinite alternate}
+@keyframes bgiMic{from{transform:translateY(0)}to{transform:translateY(-2px)}}
+@media (prefers-reduced-motion:reduce){.bgi-wv,.bgi-mic{animation:none!important;opacity:1}}
+
+/* Coops · seleção de tipo em cartas (DS) */
+.ev-opt{transition:transform .35s cubic-bezier(.34,1.56,.64,1),box-shadow .3s ease}
+.ev-opt:hover,.ev-opt:focus-visible{transform:translateY(-6px) rotate(-1.5deg)!important;box-shadow:6px 6px 0 #B0507F}
+.ev-opt:focus-visible{outline:3px solid #F5F2EC;outline-offset:3px}
+@media (prefers-reduced-motion: reduce){.ev-opt{transition:none!important;transform:none!important}}
+/* Coops · menu da conta (DS) */
+.hb-av{transition:transform .2s ease,box-shadow .2s ease}.hb-av:hover{transform:scale(1.06)}.hb-av:focus-visible{outline:3px solid #B7A6FF;outline-offset:3px}
+.hb-item{transition:background .18s ease}.hb-item:hover,.hb-item:focus-visible{background:#212129;outline:none}
+@keyframes hbPop{from{opacity:0;transform:scale(.9) translateY(-6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.hb-av,.hb-item{transition:none}}
+</style>
+</helmet>
+<div data-fx-root="1" style="position: relative; overflow: hidden; font-family: 'Schibsted Grotesk', system-ui, sans-serif; color: #F5F2EC; background: #0E0E12; min-height: 1300px; box-sizing: border-box; padding: 24px 32px 56px">
+<div style="max-width: 1216px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px">
+
+<header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap">
+<a href="Coops03-Hub.dc.html" style="color: #F5F2EC; text-decoration: none; font-size: 26px; font-weight: 800; letter-spacing: -0.03em">coops<span style="color: #B7A6FF">.</span></a>
+<nav aria-label="Produtos" style="display: flex; gap: 4px; background: #17171D; border: 1px solid #2C2C36; border-radius: 14px; padding: 4px">
+<a href="Coops07-Membro-IC.dc.html" aria-current="page" style="color: #0E0E12; background: #B7A6FF; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 10px; padding: 10px 16px">Meu perfil</a>
+<a href="Coops08-Iniciativa.dc.html" style="color: #A3A1AD; text-decoration: none; font-size: 14px; border-radius: 10px; padding: 10px 16px">Iniciativas</a>
+</nav>
+</div>
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; border: 1px solid #4A4858; border-radius: 999px; padding: 6px 10px">IC</span>
+<div style="position: relative"><button type="button" class="hb-av" onClick="{{acctToggle}}" aria-haspopup="true" aria-expanded="{{acctExp}}" aria-label="Abrir o menu da sua conta" style="display: block; padding: 0; border: 0; background: transparent; border-radius: 50%; cursor: pointer; line-height: 0; box-shadow: {{acctRing}}"><dc-import name="CoopsAvatar" skin="#8D5A3B" hair-style="coque" shirt-style="blazer" bg="#B7A6FF" size="{{ 44 }}" label="Seu avatar" hint-size="44px,44px"></dc-import></button><sc-if value="{{acctOpen}}" hint-placeholder-val="{{ false }}"><div role="menu" aria-label="Sua conta" style="animation: hbPop 260ms cubic-bezier(.34,1.4,.64,1) both; transform-origin: top right; position: absolute; right: 0; top: 56px; z-index: 30; width: 280px; box-sizing: border-box; border-radius: 22px; background: #17171D; border: 1.5px solid #2C2C36; box-shadow: 0 24px 50px rgba(0,0,0,0.55); padding: 10px; display: flex; flex-direction: column; gap: 4px; text-align: left"><div style="display: flex; flex-direction: column; gap: 2px; padding: 10px 12px 12px; border-bottom: 1px solid #2C2C36; margin-bottom: 4px"><span style="font-size: 16px; font-weight: 700; color: #F5F2EC">Joana Reis</span><span style="font-size: 13px; color: #A3A1AD">joana@nimbo.com</span></div><a role="menuitem" class="hb-item" href="Coops07-Membro-IC.dc.html" style="display: flex; align-items: center; gap: 12px; color: #F5F2EC; text-decoration: none; border-radius: 14px; padding: 10px 12px; min-height: 48px; box-sizing: border-box"><span style="flex: none; width: 36px; height: 36px; border-radius: 10px; background: #B7A6FF; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></span><span style="display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 600">Meu perfil</span><span style="font-size: 12px; color: #A3A1AD">Seus decks, skills e jornada</span></span></a><a role="menuitem" class="hb-item" href="Coops21b-Admin-IC.dc.html" style="display: flex; align-items: center; gap: 12px; color: #F5F2EC; text-decoration: none; border-radius: 14px; padding: 10px 12px; min-height: 48px; box-sizing: border-box"><span style="flex: none; width: 36px; height: 36px; border-radius: 10px; background: #B7A6FF; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><circle cx="9" cy="11" r="2.2"></circle><path d="M5.5 16c.8-1.6 2-2.4 3.5-2.4s2.7.8 3.5 2.4M14.5 10h4M14.5 13.5h3"></path></svg></span><span style="display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 600">Meus dados</span><span style="font-size: 12px; color: #A3A1AD">Edite o seu avatar</span></span></a><button type="button" role="menuitem" class="hb-item" onClick="{{acctToggle}}" style="display: flex; align-items: center; gap: 12px; font-family: inherit; color: #A3A1AD; background: transparent; border: 0; text-align: left; border-radius: 14px; padding: 10px 12px; min-height: 48px; cursor: pointer"><span style="flex: none; width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid #3A3846; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11"></path></svg></span><span style="font-size: 15px; font-weight: 600">Sair</span></button></div></sc-if></div>
+</div>
+</header>
+
+<section class="coops-mban" aria-labelledby="mb-title" style="position: relative; border-radius: 28px; border: 2px solid #0E0E12; background: #F5A9D6; color: #0E0E12; padding: 26px 30px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px 28px; overflow: hidden; box-shadow: 0 18px 40px rgba(0,0,0,0.45)">
+<span aria-hidden="true" class="coops-mban-ring" style="position: absolute; right: -70px; bottom: -110px; width: 320px; height: 320px; border-radius: 50%; border: 2px solid rgba(14,14,18,0.18); box-shadow: 0 0 0 44px rgba(14,14,18,0.04); pointer-events: none"></span>
+<div aria-hidden="true" class="coops-mban-ic" style="position: relative; flex: none; width: 116px; height: 116px; box-sizing: border-box; border-radius: 24px; border: 2px solid #0E0E12; background: rgba(245,242,236,0.55); display: flex; align-items: center; justify-content: center"><svg width="84" height="84" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="overflow: visible"><g class="ic-bgx ic-bgx1"><path d="M12 14h16a4 4 0 0 1 4 4v36a4 4 0 0 0-4-4H12zM17 24h9M17 31h9"></path><path d="M52 14H36a4 4 0 0 0-4 4v36a4 4 0 0 1 4-4h16z"></path><path d="M38 24h9M38 31h9"></path><g class="ic-leaf"><path class="ic-leafp" d="M52 14H36a4 4 0 0 0-4 4v36a4 4 0 0 1 4-4h16z"></path><path d="M38 24h9M38 31h9"></path></g><g class="ic-leaf ic-leaf2"><path class="ic-leafp" d="M52 14H36a4 4 0 0 0-4 4v36a4 4 0 0 1 4-4h16z"></path></g></g><g class="ic-bgx ic-bgx2"><rect x="8" y="12" width="48" height="34" rx="6"></rect><path class="ic-playt" d="M28 22v14l12-7z"></path><path d="M8 54h48"></path><path class="ic-knob" d="M20 54h.01"></path></g><g class="ic-bgx ic-bgx3"><path d="M26 10a6 6 0 0 1 12 0v18a6 6 0 0 1-12 0z"></path><path d="M18 26a14 14 0 0 0 28 0M32 40v12M24 54h16"></path><path class="ic-wave" d="M11 16a22 22 0 0 0 0 20M53 16a22 22 0 0 1 0 20"></path></g></svg></div>
+<div style="position: relative; flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<a href="Coops07-Membro-IC.dc.html" class="coops-mban-back" style="align-self: flex-start; font-size: 14px; color: rgba(14,14,18,0.72); text-decoration: none">← Meu perfil</a>
+<h1 id="mb-title" style="margin: 0; font-size: 52px; font-weight: 800; letter-spacing: -0.035em; line-height: 1">O que você está estudando</h1>
+<p style="margin: 0; font-size: 17px; line-height: 1.45; max-width: 640px">Livros, vídeos, artigos, cursos e podcasts que você está usando para crescer.</p>
+
+</div>
+<div style="position: relative; flex: 0 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 14px">
+<a href="Coops07-Membro-IC.dc.html" aria-label="Voltar para o seu perfil" class="coops-mban-me" style="flex: none; width: 112px; height: 84px; box-sizing: border-box; border-radius: 18px; background: #D987B8; border: 2px solid #0E0E12; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; text-decoration: none; line-height: 0"><dc-import name="CoopsAvatar" skin="#8D5A3B" hair-style="coque" shirt-style="blazer" bg="#D987B8" crown="{{ true }}" size="{{ 82 }}" label="Seu avatar" hint-size="82px,82px"></dc-import></a>
+<div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end">
+<button type="button" class="coops-mban-btn" onClick="{{openNew}}" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #F5F2EC; background: #0E0E12; border: 2px solid #0E0E12; border-radius: 12px; min-height: 48px; padding: 0 16px; cursor: pointer">+ Conteúdo</button>
+</div>
+</div>
+</section>
+
+<div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start">
+<div style="flex: 999 1 560px; min-width: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px">
+<sc-for list="{{items}}" as="it" hint-placeholder-count="4">
+<article class="coops-card" style="border-radius: 24px; background: #F5A9D6; color: #0E0E12; border: 2px solid #0E0E12; padding: 18px; display: flex; flex-direction: column; gap: 12px; min-height: 340px; box-sizing: border-box">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px">
+<span class="bgi-wrap" style="flex: none; width: 56px; height: 56px; line-height: 0"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">{{it.typeLabel}}</span><sc-if value="{{it.icLivro}}" hint-placeholder-val="{{ true }}"><svg class="bgi" width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="overflow: visible"><path d="M32 18c-6-4-14-5-22-4v34c8-1 16 0 22 4"/><path d="M32 18c6-4 14-5 22-4v34c-8-1-16 0-22 4"/><path d="M32 18v34"/><path class="bgi-pg" d="M32 18c5-3.5 12-4.5 19-3.8v33.6c-7-.7-14 .3-19 4z" fill="#F5A9D6"/><path class="bgi-ln" d="M16 24h10M16 30h10M16 36h8"/></svg></sc-if><sc-if value="{{it.icVideo}}" hint-placeholder-val="{{ false }}"><svg class="bgi" width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="overflow: visible"><rect x="8" y="12" width="48" height="34" rx="5"/><path class="bgi-play" d="M28 22v14l11-7z" fill="#F5A9D6"/><path d="M12 54h40" stroke-opacity=".35"/><path class="bgi-bar" d="M12 54h40"/><circle class="bgi-dot" cx="12" cy="54" r="2.5" fill="#0E0E12"/></svg></sc-if><sc-if value="{{it.icArtigo}}" hint-placeholder-val="{{ false }}"><svg class="bgi" width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="overflow: visible"><path d="M16 8h22l12 12v36H16z" fill="#F5A9D6"/><path d="M38 8v12h12"/><path class="bgi-w bgi-w1" d="M22 28h20"/><path class="bgi-w bgi-w2" d="M22 35h22"/><path class="bgi-w bgi-w3" d="M22 42h16"/><path class="bgi-w bgi-w4" d="M22 49h10"/></svg></sc-if><sc-if value="{{it.icCurso}}" hint-placeholder-val="{{ false }}"><svg class="bgi" width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="overflow: visible"><g class="bgi-cap"><path d="M6 26l26-12 26 12-26 12z" fill="#F5A9D6"/><path d="M16 31v10c0 4 7 8 16 8s16-4 16-8V31"/><g class="bgi-ts"><path d="M52 28v14"/><path d="M50 42h4l1 6h-6z" fill="#0E0E12"/></g></g></svg></sc-if><sc-if value="{{it.icLink}}" hint-placeholder-val="{{ false }}"><svg class="bgi" width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="overflow: visible"><g class="bgi-l1"><path d="M28 36l-6 6a7 7 0 0 1-10-10l8-8a7 7 0 0 1 10 0"/></g><g class="bgi-l2"><path d="M36 28l6-6a7 7 0 0 1 10 10l-8 8a7 7 0 0 1-10 0"/></g><path class="bgi-mid" d="M26 38l12-12"/><path class="bgi-sp" d="M20 16l-2-4M14 22l-4-2M44 48l2 4M50 42l4 2"/></svg></sc-if><sc-if value="{{it.icPodcast}}" hint-placeholder-val="{{ false }}"><svg class="bgi" width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="overflow: visible"><path class="bgi-wv bgi-wv1" d="M15 16c-3.5 4.5-3.5 11.5 0 16"/><path class="bgi-wv bgi-wv2" d="M9 11c-6.5 7.5-6.5 18.5 0 26"/><path class="bgi-wv bgi-wv1" d="M49 16c3.5 4.5 3.5 11.5 0 16"/><path class="bgi-wv bgi-wv2" d="M55 11c6.5 7.5 6.5 18.5 0 26"/><g class="bgi-mic"><rect x="24" y="6" width="16" height="28" rx="8" fill="#F5A9D6"/><path d="M24 17h5M24 23h5M35 17h5M35 23h5"/></g><path d="M18 28c0 8 6.3 14 14 14s14-6 14-14"/><path d="M32 42v10M23 54h18"/></svg></sc-if></span>
+<span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 38px; font-weight: 600; line-height: 1; letter-spacing: -0.03em">{{it.pct}}</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px">{{it.status}}</span></span>
+</div>
+<button type="button" onClick="{{it.open}}" aria-label="Abrir {{it.title}}" style="font-family: inherit; text-align: left; background: transparent; border: 0; color: #0E0E12; padding: 0; display: flex; flex-direction: column; gap: 6px; cursor: pointer; margin-top: auto">
+<span style="display: flex; align-items: center; gap: 6px; font-size: 21px; font-weight: 700; line-height: 1.15">{{it.title}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="m9 6 6 6-6 6"></path></svg></span>
+<span style="font-size: 13px; line-height: 1.45; opacity: 0.85">{{it.meta}}</span>
+</button>
+<div role="group" aria-label="Progresso de {{it.title}}" style="display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 3px">
+<sc-for list="{{it.blocks}}" as="b" hint-placeholder-count="10"><button type="button" class="bg-blk" aria-label="{{b.label}}" onClick="{{b.pick}}" style="height: 30px; padding: 0; border-radius: 6px; background: {{b.fill}}; border: 2px solid #0E0E12; cursor: pointer"></button></sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; border-top: 1.5px solid #0E0E12; padding-top: 10px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">{{it.stepLabel}}</span>
+<span style="display: flex; gap: 6px">
+<button type="button" class="bg-step" aria-label="Diminuir progresso de {{it.title}}" onClick="{{it.dec}}" style="width: 40px; height: 40px; border-radius: 11px; background: transparent; border: 2px solid #0E0E12; color: #0E0E12; font-family: inherit; font-size: 18px; font-weight: 600; cursor: pointer">−</button>
+<button type="button" class="bg-step" aria-label="Aumentar progresso de {{it.title}}" onClick="{{it.inc}}" style="width: 40px; height: 40px; border-radius: 11px; background: #0E0E12; border: 2px solid #0E0E12; color: #F5A9D6; font-family: inherit; font-size: 18px; font-weight: 600; cursor: pointer">+</button>
+</span>
+</div>
+</article>
+</sc-for>
+</div>
+
+
+</div>
+</div>
+
+<sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-label="Fechar carta" onClick="{{close}}" class="coops-overlay" style="animation: coopsFadeIn 320ms ease both; position: absolute; inset: 0; z-index: 9; border: 0; padding: 0; background: rgba(14,14,18,0.72); backdrop-filter: blur(3px); cursor: pointer"></button>
+<section id="coops-focus" class="coops-focus" role="dialog" aria-modal="true" aria-labelledby="sheet-title" style="position: absolute; z-index: 10; left: {{fxS.left}}px; top: {{fxS.top}}px; width: {{fxS.w}}px; max-height: {{fxS.maxH}}px; opacity: {{fxS.op}}; animation: {{fxS.anim}}; --fdx: {{fxS.dx}}px; --fdy: {{fxS.dy}}px; --fs: {{fxS.s}}; --fbg: #F5A9D6; background: #F5A9D6; color: #0E0E12; border: 2px solid #0E0E12; border-radius: 26px; box-shadow: 0 30px 70px rgba(0,0,0,0.6); overflow: hidden; display: flex; flex-direction: column; padding: 22px 26px 26px; box-sizing: border-box">
+<div class="coops-sheet-body coops-fx-body" style="flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; margin-right: -20px; padding-right: 20px; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: rgba(14,14,18,0.68)">BRAIN GYM › {{cur.type}}</span>
+<h2 id="sheet-title" style="margin: 0; font-size: 34px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.1">{{cur.title}}</h2>
+<span style="font-size: 15px; color: #0E0E12">{{cur.meta}}</span>
+</div>
+<button type="button" class="coops-x" aria-label="Fechar" onClick="{{close}}" style="flex: 0 0 44px; height: 44px; border-radius: 14px; background: transparent; border: 1.5px solid #0E0E12; color: #0E0E12; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start">
+<div style="flex: 1 1 420px; min-width: 0; border-radius: 24px; background: #F5A9D6; color: #0E0E12; border: 2px solid #0E0E12; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px">PROGRESSO</span><span style="font-size: 36px; font-weight: 600; line-height: 1">{{cur.pct}}</span></div>
+<div role="group" aria-label="Progresso de {{cur.title}}" style="display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px">
+<sc-for list="{{cur.blocks}}" as="b" hint-placeholder-count="10">
+<button type="button" aria-label="{{b.label}}" onClick="{{b.pick}}" style="height: 30px; padding: 0; border-radius: 7px; background: {{b.fill}}; border: 2px solid #0E0E12; cursor: pointer"></button>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px">{{cur.stepLabel}}</span>
+<span style="display: flex; gap: 6px">
+<button type="button" aria-label="Diminuir progresso" onClick="{{cur.dec}}" style="width: 44px; height: 44px; border-radius: 12px; background: transparent; border: 2px solid #0E0E12; color: #0E0E12; font-size: 20px; font-weight: 600; cursor: pointer">−</button>
+<button type="button" aria-label="Aumentar progresso" onClick="{{cur.inc}}" style="width: 44px; height: 44px; border-radius: 12px; background: #0E0E12; border: 2px solid #0E0E12; color: #F5A9D6; font-size: 20px; font-weight: 600; cursor: pointer">+</button>
+</span>
+</div>
+</div>
+<div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-wrap: wrap; gap: 20px; font-size: 14px"><span><span style="color: rgba(14,14,18,0.68)">Skill </span>{{cur.skillTxt}}</span><span><span style="color: rgba(14,14,18,0.68)">Link </span><a href="#" style="color: #0E0E12; text-decoration: underline; font-weight: 600">abrir conteúdo</a></span></div>
+<label for="bg-notes" style="font-size: 14px; color: rgba(14,14,18,0.68)">Anotações</label>
+<textarea id="bg-notes" rows="4" style="font-family: inherit; font-size: 15px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.55); border: 1.5px solid #2C2C36; border-radius: 12px; padding: 12px; resize: vertical"></textarea>
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<button type="button" onClick="{{close}}" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #F5F2EC; background: #0E0E12; border: 2px solid #0E0E12; border-radius: 12px; min-height: 48px; padding: 0 18px; cursor: pointer">Salvar</button>
+<button type="button" style="font-family: inherit; font-size: 14px; color: #0E0E12; background: transparent; border: 1.5px solid #0E0E12; border-radius: 12px; min-height: 48px; padding: 0 18px; cursor: pointer">Remover do deck</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{pkOpen}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-label="Fechar" onClick="{{closePk}}" class="coops-overlay" style="animation: coopsFadeIn 320ms ease both; position: absolute; inset: 0; z-index: 9; border: 0; padding: 0; background: rgba(14,14,18,0.72); backdrop-filter: blur(3px); cursor: pointer"></button>
+<section role="dialog" aria-modal="true" aria-labelledby="pk-title" style="animation: coopsSheetIn 560ms cubic-bezier(.22,1,.36,1) both; position: absolute; left: 0; right: 0; bottom: 0; top: auto; max-height: calc(100% - 120px); z-index: 10; background: #0E0E12; border-radius: 32px 32px 0 0; border-top: 3px solid #F5A9D6; box-shadow: 0 -30px 80px rgba(0,0,0,0.6); overflow-y: auto; overflow-x: hidden; padding: 12px 32px 40px; box-sizing: border-box">
+<div aria-hidden="true" style="width: 56px; height: 5px; border-radius: 3px; background: #4A4858; margin: 0 auto 14px"></div>
+<div class="coops-sheet-body" style="max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #F5A9D6">BRAIN GYM · NOVO CONTEÚDO</span><h2 id="pk-title" style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.025em">O que você vai estudar?</h2><span style="font-size: 13px; color: #A3A1AD">Escolha uma carta. Depois vêm as perguntas, uma por carta.</span></div>
+<button type="button" class="coops-x" aria-label="Fechar" onClick="{{closePk}}" style="flex: 0 0 44px; height: 44px; border-radius: 14px; background: #212129; border: 1.5px solid #3A3846; color: #F5F2EC; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px"><button type="button" class="coops-card ev-opt" onClick="{{pk_Livro}}" style="font-family: inherit; text-align: left; box-sizing: border-box; border-radius: 20px; background: #F5A9D6; color: #0E0E12; border: 2px solid #0E0E12; padding: 16px; min-height: 176px; display: flex; flex-direction: column; gap: 8px; cursor: pointer"><svg class="bgi" width="48" height="48" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="overflow: visible"><path d="M32 18c-6-4-14-5-22-4v34c8-1 16 0 22 4"/><path d="M32 18c6-4 14-5 22-4v34c-8-1-16 0-22 4"/><path d="M32 18v34"/><path class="bgi-pg" d="M32 18c5-3.5 12-4.5 19-3.8v33.6c-7-.7-14 .3-19 4z" fill="#F5A9D6"/><path class="bgi-ln" d="M16 24h10M16 30h10M16 36h8"/></svg><span style="margin-top: auto; font-size: 18px; font-weight: 700; line-height: 1.15">Livro</span><span style="font-size: 13px; line-height: 1.4">Um livro que você está lendo, capítulo a capítulo.</span></button><button type="button" class="coops-card ev-opt" onClick="{{pk_Video}}" style="font-family: inherit; text-align: left; box-sizing: border-box; border-radius: 20px; background: #F5A9D6; color: #0E0E12; border: 2px solid #0E0E12; padding: 16px; min-height: 176px; display: flex; flex-direction: column; gap: 8px; cursor: pointer"><svg class="bgi" width="48" height="48" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="overflow: visible"><rect x="8" y="12" width="48" height="34" rx="5"/><path class="bgi-play" d="M28 22v14l11-7z" fill="#F5A9D6"/><path d="M12 54h40" stroke-opacity=".35"/><path class="bgi-bar" d="M12 54h40"/><circle class="bgi-dot" cx="12" cy="54" r="2.5" fill="#0E0E12"/></svg><span style="margin-top: auto; font-size: 18px; font-weight: 700; line-height: 1.15">Vídeo</span><span style="font-size: 13px; line-height: 1.4">Palestra, aula gravada ou vídeo de referência.</span></button><button type="button" class="coops-card ev-opt" onClick="{{pk_Artigo}}" style="font-family: inherit; text-align: left; box-sizing: border-box; border-radius: 20px; background: #F5A9D6; color: #0E0E12; border: 2px solid #0E0E12; padding: 16px; min-height: 176px; display: flex; flex-direction: column; gap: 8px; cursor: pointer"><svg class="bgi" width="48" height="48" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="overflow: visible"><path d="M16 8h22l12 12v36H16z" fill="#F5A9D6"/><path d="M38 8v12h12"/><path class="bgi-w bgi-w1" d="M22 28h20"/><path class="bgi-w bgi-w2" d="M22 35h22"/><path class="bgi-w bgi-w3" d="M22 42h16"/><path class="bgi-w bgi-w4" d="M22 49h10"/></svg><span style="margin-top: auto; font-size: 18px; font-weight: 700; line-height: 1.15">Artigo</span><span style="font-size: 13px; line-height: 1.4">Um texto ou estudo para ler com calma.</span></button><button type="button" class="coops-card ev-opt" onClick="{{pk_Curso}}" style="font-family: inherit; text-align: left; box-sizing: border-box; border-radius: 20px; background: #F5A9D6; color: #0E0E12; border: 2px solid #0E0E12; padding: 16px; min-height: 176px; display: flex; flex-direction: column; gap: 8px; cursor: pointer"><svg class="bgi" width="48" height="48" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="overflow: visible"><g class="bgi-cap"><path d="M6 26l26-12 26 12-26 12z" fill="#F5A9D6"/><path d="M16 31v10c0 4 7 8 16 8s16-4 16-8V31"/><g class="bgi-ts"><path d="M52 28v14"/><path d="M50 42h4l1 6h-6z" fill="#0E0E12"/></g></g></svg><span style="margin-top: auto; font-size: 18px; font-weight: 700; line-height: 1.15">Curso</span><span style="font-size: 13px; line-height: 1.4">Curso ou power up com módulos.</span></button><button type="button" class="coops-card ev-opt" onClick="{{pk_Podcast}}" style="font-family: inherit; text-align: left; box-sizing: border-box; border-radius: 20px; background: #F5A9D6; color: #0E0E12; border: 2px solid #0E0E12; padding: 16px; min-height: 176px; display: flex; flex-direction: column; gap: 8px; cursor: pointer"><svg class="bgi" width="48" height="48" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="overflow: visible"><path class="bgi-wv bgi-wv1" d="M15 16c-3.5 4.5-3.5 11.5 0 16"/><path class="bgi-wv bgi-wv2" d="M9 11c-6.5 7.5-6.5 18.5 0 26"/><path class="bgi-wv bgi-wv1" d="M49 16c3.5 4.5 3.5 11.5 0 16"/><path class="bgi-wv bgi-wv2" d="M55 11c6.5 7.5 6.5 18.5 0 26"/><g class="bgi-mic"><rect x="24" y="6" width="16" height="28" rx="8" fill="#F5A9D6"/><path d="M24 17h5M24 23h5M35 17h5M35 23h5"/></g><path d="M18 28c0 8 6.3 14 14 14s14-6 14-14"/><path d="M32 42v10M23 54h18"/></svg><span style="margin-top: auto; font-size: 18px; font-weight: 700; line-height: 1.15">Podcast</span><span style="font-size: 13px; line-height: 1.4">Episódios para ouvir no seu ritmo.</span></button><button type="button" class="coops-card ev-opt" onClick="{{pk_Link}}" style="font-family: inherit; text-align: left; box-sizing: border-box; border-radius: 20px; background: #F5A9D6; color: #0E0E12; border: 2px solid #0E0E12; padding: 16px; min-height: 176px; display: flex; flex-direction: column; gap: 8px; cursor: pointer"><svg class="bgi" width="48" height="48" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="overflow: visible"><g class="bgi-l1"><path d="M28 36l-6 6a7 7 0 0 1-10-10l8-8a7 7 0 0 1 10 0"/></g><g class="bgi-l2"><path d="M36 28l6-6a7 7 0 0 1 10 10l-8 8a7 7 0 0 1-10 0"/></g><path class="bgi-mid" d="M26 38l12-12"/><path class="bgi-sp" d="M20 16l-2-4M14 22l-4-2M44 48l2 4M50 42l4 2"/></svg><span style="margin-top: auto; font-size: 18px; font-weight: 700; line-height: 1.15">Link</span><span style="font-size: 13px; line-height: 1.4">Qualquer outro material que você quer guardar.</span></button></div>
+</div>
+</section>
+</sc-if>
+<sc-if value="{{newOpen}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-label="Fechar" onClick="{{closeNew}}" class="coops-overlay" style="animation: coopsFadeIn 320ms ease both; position: absolute; inset: 0; z-index: 9; border: 0; padding: 0; background: rgba(14,14,18,0.72); backdrop-filter: blur(3px); cursor: pointer"></button>
+<section role="dialog" aria-modal="true" aria-labelledby="new-title" style="animation: coopsSheetIn 560ms cubic-bezier(.22,1,.36,1) both; position: absolute; left: 0; right: 0; bottom: 0; top: auto; max-height: calc(100% - 120px); z-index: 10; background: #0E0E12; border-radius: 32px 32px 0 0; border-top: 3px solid #F5A9D6; box-shadow: 0 -30px 80px rgba(0,0,0,0.6); overflow-y: auto; overflow-x: hidden; padding: 12px 32px 40px; box-sizing: border-box">
+<div aria-hidden="true" style="width: 56px; height: 5px; border-radius: 3px; background: #4A4858; margin: 0 auto 14px"></div>
+<div class="coops-sheet-body" style="max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #F5A9D6">BRAIN GYM · NOVO CONTEÚDO · {{nw.typeUp}}</span><h2 id="new-title" style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.025em">{{nw.titulo}}</h2><span style="font-size: 13px; color: #A3A1AD">Uma pergunta por carta. <button type="button" onClick="{{backToPk}}" style="font: inherit; color: #F5A9D6; background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer">Trocar o tipo</button></span></div>
+<button type="button" class="coops-x" aria-label="Fechar" onClick="{{closeNew}}" style="flex: 0 0 44px; height: 44px; border-radius: 14px; background: #212129; border: 1.5px solid #3A3846; color: #F5F2EC; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+</div>
+<div style="position: relative; height: 440px; margin: 16px 28px 0 0">
+<div class="coops-wz-card" aria-hidden="{{nw.c0.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #F5F2EC; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{nw.c0.t}}; opacity: {{nw.c0.op}}; z-index: {{nw.c0.z}}; pointer-events: {{nw.c0.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>{{nw.kk0}}</span><span>BRAIN GYM · {{nw.typeUp}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">{{nw.q1}}</span><span style="font-size: 14px; line-height: 1.45">Vira o título da carta no deck.</span><input id="nw-titulo" type="text" aria-label="Título do conteúdo" placeholder="{{nw.ph1}}" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; min-height: 56px"><sc-if value="{{nw.err}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 14px; font-weight: 600">Dê um título ao conteúdo para seguir.</span></sc-if><label for="nw-meta" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; margin-top: 4px">TAMANHO · OPCIONAL</label><input id="nw-meta" type="text" placeholder="{{nw.ph1b}}" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; min-height: 52px">
+</div>
+<div class="coops-wz-card" aria-hidden="{{nw.c1.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #F3D36B; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{nw.c1.t}}; opacity: {{nw.c1.op}}; z-index: {{nw.c1.z}}; pointer-events: {{nw.c1.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>{{nw.kk1}}</span><span>BRAIN GYM · {{nw.typeUp}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Quer completar a carta?</span><span style="font-size: 14px; line-height: 1.45">Tudo aqui é opcional. Dá para pular e adicionar depois.</span><label for="nw-link" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em">LINK</label><input id="nw-link" type="url" inputmode="url" placeholder="Cole um link" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; min-height: 56px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; margin-top: 6px">LIGADO A UMA SKILL</span><div role="radiogroup" aria-label="Skill" style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{nw.skills}}" as="o" hint-placeholder-count="3"><button type="button" role="radio" aria-checked="{{o.on}}" onClick="{{o.pick}}" style="font-family: inherit; font-weight: 600; font-size: 15px; text-align: left; color: {{o.fg}}; background: {{o.bg}}; border: 1.5px solid #0E0E12; border-radius: 14px; min-height: 48px; padding: 10px 16px; cursor: pointer; transition: background 200ms ease, transform 160ms ease">{{o.label}}</button></sc-for></div>
+</div>
+<div class="coops-wz-card" aria-hidden="{{nw.c2.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #F5A9D6; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{nw.c2.t}}; opacity: {{nw.c2.op}}; z-index: {{nw.c2.z}}; pointer-events: {{nw.c2.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>{{nw.kk2}}</span><span>BRAIN GYM · {{nw.typeUp}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Confere a carta?</span><span style="font-size: 14px; line-height: 1.45">Ela entra no seu Brain gym na fila, com 0 de 10 blocos.</span><div style="display: flex; flex-direction: column; gap: 8px"><sc-for list="{{nw.sum}}" as="r" hint-placeholder-count="4"><div style="display: flex; flex-direction: column; gap: 2px; border-radius: 12px; background: rgba(245,242,236,0.6); border: 1.5px solid #0E0E12; padding: 10px 12px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.06em">{{r.k}}</span><span style="font-size: 14px; line-height: 1.4">{{r.v}}</span></div></sc-for></div>
+</div>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px">
+<button type="button" onClick="{{nw.prev}}" style="font-family: inherit; font-weight: 600; font-size: 15px; color: #F5F2EC; background: transparent; border: 1.5px solid #4A4858; border-radius: 14px; min-height: 48px; padding: 0 18px; cursor: pointer; opacity: {{nw.prevOp}}">Voltar</button>
+<div style="display: flex; gap: 6px"><sc-for list="{{nw.dots}}" as="d" hint-placeholder-count="5"><button type="button" aria-label="Ir para a pergunta {{d.n}}" onClick="{{d.go}}" style="width: 22px; height: 6px; padding: 0; border: 0; border-radius: 3px; background: {{d.bg}}; cursor: pointer"></button></sc-for></div>
+<button type="button" onClick="{{nw.next}}" style="font-family: inherit; font-weight: 600; font-size: 15px; color: #0E0E12; background: #F5A9D6; border: 2px solid #0E0E12; border-radius: 14px; min-height: 48px; padding: 0 20px; cursor: pointer">{{nw.nextLabel}}</button>
+</div>
+</div>
+</section>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1300}}'>
+class Component extends DCLogic {
+  renderVals() { var o = this.__acctRv() || {}, self = this, m = !!(this.state && this.state.acct); o.acctOpen = m; o.acctExp = m ? 'true' : 'false'; o.acctRing = m ? '0 0 0 2px #0E0E12, 0 0 0 4px #B7A6FF' : 'none'; o.acctToggle = function () { self.setState({ acct: !(self.state && self.state.acct) }); }; return o; }
+  constructor(props) { super(props); this.state = { fx: null, p: { b1: 4, b2: 10, b3: 1, b4: 7, b5: 6 }, open: null, nw: null, extra: [] }; }
+  __acctRv() {
+    var self = this;
+    var defs = [
+      { id: 'b1', type: 'LIVRO', title: '[TÍTULO DO LIVRO]', meta: 'Capítulo 5 de 12', skill: 'Pesquisa com usuários', notes: 'Separar a parte de recrutamento para aplicar no próximo estudo.' },
+      { id: 'b2', type: 'VÍDEO', title: '[TÍTULO DA PALESTRA]', meta: '42 min', skill: 'Facilitação', notes: 'Testar o formato de votação silenciosa no workshop.' },
+      { id: 'b3', type: 'ARTIGO', title: '[TÍTULO DO ARTIGO]', meta: 'Leitura de 15 min', skill: 'Visão de negócio', notes: '' },
+      { id: 'b4', type: 'CURSO', title: 'Pesquisa quantitativa', meta: 'Power up · módulo 7 de 10', skill: 'Pesquisa com usuários', notes: 'Módulo de amostragem foi o mais útil.' },
+      { id: 'b5', type: 'PODCAST', title: '[NOME DO PODCAST]', meta: 'Episódio 6 de 10', skill: 'Visão de negócio', notes: 'Episódio sobre precificação rendeu ideias para o checkout.' }
+    ];
+    defs = this.state.extra.concat(defs);
+    var p = this.state.p;
+    function set(id, v) { var np = Object.assign({}, self.state.p); np[id] = Math.max(0, Math.min(10, v)); self.setState({ p: np }); }
+    var done = 0;
+    var items = defs.map(function (d) {
+      var v = p[d.id];
+      if (v === 10) done++;
+      var blocks = [];
+      for (var i = 1; i <= 10; i++) {
+        (function (k) { blocks.push({ fill: k <= v ? '#0E0E12' : 'transparent', label: 'Marcar ' + (k * 10) + '%', pick: function () { set(d.id, k === v ? k - 1 : k); } }); })(i);
+      }
+      var tl = { 'LIVRO': 'Livro', 'VÍDEO': 'Vídeo', 'ARTIGO': 'Artigo', 'CURSO': 'Curso', 'PODCAST': 'Podcast', 'LINK': 'Link' }[d.type] || 'Link';
+      return Object.assign({}, d, {
+        typeLabel: tl, skillTxt: d.skill || 'Nenhuma ligada', icLivro: tl === 'Livro', icVideo: tl === 'Vídeo', icArtigo: tl === 'Artigo', icCurso: tl === 'Curso', icLink: tl === 'Link', icPodcast: tl === 'Podcast',
+        blocks: blocks,
+        pct: (v * 10) + '%',
+        status: v === 10 ? 'CONCLUÍDO' : (v === 0 ? 'NA FILA' : 'EM ANDAMENTO'),
+        stepLabel: v + ' de 10 blocos',
+        inc: function () { set(d.id, self.state.p[d.id] + 1); },
+        dec: function () { set(d.id, self.state.p[d.id] - 1); },
+        open: function (ev) { self.setState({ open: d.id, fx: fxCap(ev) }); }
+      });
+    });
+    var c = items.filter(function (it) { return it.id === self.state.open; })[0];
+
+    var FXR = this.state.fx;
+    var fxCap = function (ev) { try { var card = ev && ev.currentTarget; card = card && (card.closest('.coops-card') || card); var root = card && card.closest('[data-fx-root]'); if (!card || !root) return null; var r = card.getBoundingClientRect(), R = root.getBoundingClientRect(), sc = (R.width / root.offsetWidth) || 1; return { cx: (r.left + r.width / 2 - R.left) / sc, cy: (r.top - R.top) / sc, cw: r.width / sc, rw: root.offsetWidth, rh: root.offsetHeight, ch: r.height / sc, ready: false }; } catch (e) { return null; } };
+    var fxView = function (W) {
+      var F = FXR || { cx: 640, cy: 160, cw: 260, ch: 340, rw: 1280, rh: 1300, ready: true, h: 0, plain: true };
+      var w = Math.min(W, F.rw - 32), maxH = Math.min(900, F.rh - 48), h = Math.min(F.h || 560, maxH);
+      var top = Math.max(24, Math.min(F.cy + F.ch / 2 - h / 2, F.rh - h - 24));
+      if (!F.ready) setTimeout(function () { var el = document.getElementById('coops-focus'); var cur = self.state.fx; if (el && cur && !cur.ready) self.setState({ fx: Object.assign({}, cur, { h: el.offsetHeight, ready: true }) }); }, 0);
+      return { w: w, left: (F.rw - w) / 2, top: top, maxH: maxH, dx: F.cx - F.rw / 2, dy: F.cy - top, s: (F.cw / w).toFixed(3), op: F.ready ? 1 : 0,
+        anim: F.closing ? 'coopsFocusOut 300ms cubic-bezier(.4,0,1,1) both' : (F.ready ? (F.plain ? 'coopsFadeIn 320ms ease both' : 'coopsFocusIn 560ms cubic-bezier(.22,1,.36,1) both') : 'none') };
+    };
+    var fxS = fxView(760);
+    var TYPES = [['LIVRO', 'Livro'], ['VÍDEO', 'Vídeo'], ['ARTIGO', 'Artigo'], ['CURSO', 'Curso'], ['PODCAST', 'Podcast'], ['LINK', 'Link']];
+    var TQ = { 'LIVRO': ['Qual o livro?', 'Ex.: Continuous Discovery Habits', 'Ex.: 12 capítulos'], 'VÍDEO': ['Qual o vídeo ou palestra?', 'Ex.: Palestra sobre pesquisa contínua', 'Ex.: 42 min'], 'ARTIGO': ['Qual o artigo?', 'Ex.: Como priorizar descobertas', 'Ex.: Leitura de 15 min'], 'CURSO': ['Qual o curso?', 'Ex.: Pesquisa quantitativa', 'Ex.: 10 módulos'], 'PODCAST': ['Qual o podcast?', 'Ex.: Nome do podcast', 'Ex.: 10 episódios'], 'LINK': ['O que tem nesse link?', 'Ex.: Guia de entrevistas do time', 'Ex.: Material de referência'] };
+    var SKILLS = ['Pesquisa com usuários', 'Facilitação', 'Visão de negócio'];
+    var NF = this.state.nw, nwV = null;
+    var pick = function (t) { self.setState({ pk: false, nw: { tok: Date.now(), step: 0, type: t, titulo: '', meta: '', skill: '', link: '' } }); };
+    var nval = function (id) { var el = typeof document !== 'undefined' && document.getElementById(id); return el ? el.value.trim() : null; };
+    var NFL = [['titulo', 'nw-titulo'], ['meta', 'nw-meta'], ['link', 'nw-link']];
+    var ngrab = function () { var o = {}; NFL.forEach(function (q) { var v = nval(q[1]); o[q[0]] = v === null ? (self.state.nw[q[0]] || '') : v; }); return o; };
+    var setN = function (x) { self.setState({ nw: Object.assign({}, self.state.nw, x) }); };
+    if (NF) {
+      var ntok = String(NF.tok);
+      setTimeout(function () { NFL.forEach(function (q) { var el = document.getElementById(q[1]); if (el && el.getAttribute('data-tok') !== ntok) { el.value = NF[q[0]] || ''; el.setAttribute('data-tok', ntok); } }); }, 0);
+      var NL = 2;
+      var ngo = function (k) { var g = ngrab(); if (k > 0 && !g.titulo) { setN(Object.assign(g, { step: 0, err: true })); return; } setN(Object.assign(g, { step: Math.max(0, Math.min(NL, k)), err: false })); };
+      var chip = function (on) { return { on: on ? 'true' : 'false', bg: on ? '#0E0E12' : 'transparent', fg: on ? '#F5F2EC' : '#0E0E12' }; };
+      var tq = TQ[NF.type];
+      nwV = { titulo: 'Novo ' + TYPES.filter(function (t) { return t[0] === NF.type; })[0][1].toLowerCase(), typeUp: NF.type, q1: tq[0], ph1: tq[1], ph1b: tq[2], err: !!NF.err,
+        prevOp: NF.step === 0 ? 0.4 : 1, nextLabel: NF.step === NL ? 'Adicionar ao deck' : 'Próxima',
+        dots: [0, 1, 2].map(function (k) { return { n: k + 1, bg: k <= NF.step ? '#F5A9D6' : '#2C2C36', go: function () { ngo(k); } }; }),
+        types: TYPES.map(function (t) { return Object.assign({ label: t[1], pick: function () { setN(Object.assign(ngrab(), { type: t[0] })); } }, chip(NF.type === t[0])); }),
+        skills: SKILLS.map(function (t) { return Object.assign({ label: t, pick: function () { setN(Object.assign(ngrab(), { skill: self.state.nw.skill === t ? '' : t })); } }, chip(NF.skill === t)); }),
+        sum: [['TIPO', TYPES.filter(function (t) { return t[0] === NF.type; })[0][1]], ['TÍTULO', NF.titulo || '—'], ['TAMANHO', NF.meta || '—'], ['SKILL', NF.skill || 'Nenhuma'], ['LINK', NF.link || '—']].map(function (r) { return { k: r[0], v: r[1] }; }),
+        prev: function () { ngo(NF.step - 1); },
+        next: function () {
+          if (NF.step < NL) { ngo(NF.step + 1); return; }
+          var f = Object.assign({}, self.state.nw, ngrab());
+          var id = 'nb' + self.state.extra.length;
+          var np = Object.assign({}, self.state.p); np[id] = 0;
+          self.setState({ extra: [{ id: id, type: f.type, title: f.titulo, meta: f.meta || 'Na fila', skill: f.skill || '', notes: '', link: f.link || '' }].concat(self.state.extra), p: np, nw: null });
+        } };
+      for (var ni = 0; ni <= NL; ni++) {
+        var g3 = ni - NF.step;
+        nwV['kk' + ni] = ni === NL ? 'RESUMO' : 'PERGUNTA ' + (ni + 1) + ' DE ' + NL + (ni === 1 ? ' · OPCIONAL' : '');
+        nwV['c' + ni] = g3 < 0 ? { t: 'translate(-118%, 24px) rotate(-12deg)', op: 0, z: 20, pe: 'none', hidden: 'true' }
+          : { t: 'translate(' + (g3 * 16) + 'px, ' + (-g3 * 12) + 'px) rotate(' + (g3 * 3) + 'deg) scale(' + (1 - g3 * 0.03) + ')', op: g3 > 2 ? 0 : 1, z: 10 - g3, pe: g3 === 0 ? 'auto' : 'none', hidden: g3 === 0 ? 'false' : 'true' };
+      }
+    }
+    var emptyNw = { typeUp: '', q1: '', ph1: '', ph1b: '', err: false, prevOp: 1, nextLabel: '', dots: [], types: [], skills: [], sum: [], prev: function () {}, next: function () {}, kk0: '', kk1: '', kk2: '', titulo: '' };
+    [0, 1, 2].forEach(function (k) { emptyNw['c' + k] = {}; });
+    return {
+      fxS: fxS,
+      items: items,
+      doneLabel: done + ' de ' + defs.length + ' concluídos neste ciclo',
+      sheetOpen: !!c,
+      newOpen: !!nwV,
+      openNew: function () { self.setState({ open: null, fx: null, nw: null, pk: true }); },
+      pkOpen: !!self.state.pk,
+      closePk: function () { self.setState({ pk: false }); },
+      backToPk: function () { self.setState({ nw: null, pk: true }); },
+      pk_Livro: function () { pick('LIVRO'); }, pk_Video: function () { pick('VÍDEO'); }, pk_Artigo: function () { pick('ARTIGO'); }, pk_Curso: function () { pick('CURSO'); }, pk_Podcast: function () { pick('PODCAST'); }, pk_Link: function () { pick('LINK'); },
+      closeNew: function () { self.setState({ nw: null }); },
+      nw: nwV || emptyNw,
+      _sync: (function () { var nt = c ? (c.notes || '') : ''; var tk = c ? String(c.id) : ''; setTimeout(function () { var el = document.getElementById('bg-notes'); if (el && el.getAttribute('data-tok') !== tk) { el.value = nt; el.setAttribute('data-tok', tk); } }, 0); return ''; })(),
+      cur: c || { skillTxt: '', type: '', title: '', meta: '', skill: '', notes: '', pct: '', stepLabel: '', blocks: [] },
+      close: function () { var st = self.state; if (st.fx && !st.fx.closing && st.open) { self.setState({ fx: Object.assign({}, st.fx, { ready: true, closing: true }) }); setTimeout(function () { self.setState({ open: null, fx: null }); }, 290); } else self.setState({ open: null, fx: null }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

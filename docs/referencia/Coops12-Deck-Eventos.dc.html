@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Coops · Deck de eventos</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0E12}
+a{color:#B7A6FF}a:hover{color:#D9CFFF}
+@keyframes coopsSheetIn{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes coopsFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes coopsRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.coops-sheet-body{animation:coopsRise 420ms cubic-bezier(.22,1,.36,1) 160ms both}
+@media (prefers-reduced-motion: reduce){[role=dialog],.coops-overlay,.coops-sheet-body{animation:none!important}}
+/* Coops · interações padrão (DS) */
+.coops-m{transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease,border-color .25s ease}
+.coops-m:hover,.coops-m:focus-visible{transform:translateY(-8px) rotate(-1.5deg)!important;box-shadow:8px 8px 0 #4B36B0!important;border-color:#B7A6FF!important;outline:none}
+.coops-m:active{transform:translateY(-2px) scale(.97)!important;box-shadow:3px 3px 0 #4B36B0!important;transition-duration:80ms}
+.coops-av{display:block;line-height:0;transform-origin:50% 90%}
+.coops-m:focus .coops-av,.coops-m:active .coops-av{animation:coopsWave .5s cubic-bezier(.34,1.4,.64,1) 1}
+@keyframes coopsWave{30%{transform:translateY(-12px) rotate(-6deg)}60%{transform:translateY(-6px) rotate(5deg)}100%{transform:none}}
+.coops-pile .coops-front,.coops-card{transition:transform .4s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease}
+.coops-pile .coops-b1,.coops-pile .coops-b2{transition:transform .45s cubic-bezier(.34,1.3,.64,1)}
+.coops-pile:hover .coops-front,.coops-pile .coops-front:focus-visible{transform:translateY(-16px) rotate(-2deg)!important;outline:none}
+.coops-pile:hover .coops-b1{transform:rotate(6deg) translateX(10px)!important}
+.coops-pile:hover .coops-b2{transform:rotate(11deg) translateX(20px)!important}
+.coops-card:hover,.coops-card:focus-visible{transform:translateY(-10px) rotate(-1.5deg)!important;outline:none}
+.coops-pile .coops-front:active,.coops-pile .coops-front:focus,.coops-card:active,.coops-card:focus{animation:coopsPull .55s cubic-bezier(.65,0,.25,1) 1}
+@keyframes coopsPull{0%{transform:translateY(-16px) rotate(-2deg)}50%{transform:translateY(-44px) scale(1.04) rotate(0)}100%{transform:translateY(-16px) rotate(-2deg)}}
+@media (prefers-reduced-motion: reduce){.coops-m,.coops-av,.coops-front,.coops-b1,.coops-b2,.coops-card{transition:none!important;animation:none!important}}
+/* Coops · transição entre páginas */
+body::after{content:"";position:fixed;inset:0;z-index:9999;background:#0E0E12;pointer-events:none;animation:coopsCurtainIn .5s cubic-bezier(.22,1,.36,1) .05s both}
+@keyframes coopsCurtainIn{from{opacity:1}to{opacity:0}}
+body::before{content:"";position:fixed;inset:0;z-index:9998;background:#0E0E12;pointer-events:none;opacity:0;transition:opacity .26s ease}
+html.coops-leaving body::before{opacity:1}
+@media (prefers-reduced-motion: reduce){body::after,body::before{animation:none!important;transition:none!important;opacity:0!important}}
+/* Coops · scroll */
+*{scrollbar-width:thin;scrollbar-color:rgba(127,124,140,.55) transparent}
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-track{background:transparent}
+*::-webkit-scrollbar-thumb{background:rgba(127,124,140,.55);border-radius:999px;border:3px solid transparent;background-clip:padding-box}
+*::-webkit-scrollbar-thumb:hover{background:rgba(183,166,255,.8);background-clip:padding-box;border:3px solid transparent}
+*::-webkit-scrollbar-corner{background:transparent}
+.coops-wz-card{scrollbar-color:rgba(14,14,18,.35) transparent}
+.coops-wz-card::-webkit-scrollbar-thumb{background:rgba(14,14,18,.3);background-clip:padding-box}
+.coops-wz-card::-webkit-scrollbar-thumb:hover{background:rgba(14,14,18,.55);background-clip:padding-box}
+.coops-wz-card::-webkit-scrollbar-track{margin:18px 0}
+.coops-wz-card>*{flex-shrink:0}
+#fb-file:focus-visible + .fb-drop { outline: 3px solid #0E0E12; outline-offset: 3px; }
+.fb-drop:hover { background: rgba(14,14,18,0.06); }
+/* Coops · ícones do deck de eventos (DS) */
+.md-sw{transform-box:view-box!important;transform-origin:32px 4px}.md-st{transform-box:fill-box!important;transform-origin:50% 55%}.md-sp{opacity:0;transform-box:fill-box!important;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .md-sw{animation:mdSw 2s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .md-st{animation:mdSt 2s cubic-bezier(.34,1.5,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .md-sp{animation:mdSp 2s ease-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .md-sp2{animation-delay:.25s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .md-sp3{animation-delay:.5s}
+@keyframes mdSw{0%,100%{transform:rotate(0)}15%{transform:rotate(9deg)}35%{transform:rotate(-7deg)}55%{transform:rotate(4deg)}72%{transform:rotate(-2deg)}85%{transform:rotate(0)}}
+@keyframes mdSt{0%,40%{transform:none}55%{transform:scale(1.25) rotate(72deg)}70%,100%{transform:rotate(72deg)}}
+@keyframes mdSp{0%,45%{opacity:0;transform:scale(.3) rotate(0)}60%{opacity:1;transform:scale(1.15) rotate(45deg)}85%,100%{opacity:0;transform:scale(.6) rotate(90deg)}}
+.cp-bt{transform-box:view-box!important;transform-origin:32px 62px}.cp-ck{transform-box:view-box!important;transform-origin:32px 14px}.cp-fm{opacity:0;transform-box:fill-box!important;transform-origin:50% 100%}.cp-dr{opacity:0;transform-box:fill-box!important;transform-origin:50% 50%}.cp-cf{opacity:0;transform-box:fill-box!important;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .cp-bt{animation:cpBt 2.4s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .cp-ck{animation:cpCk 2.4s cubic-bezier(.3,.7,.4,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .cp-fm{animation:cpFm 2.4s ease-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .cp-dr{animation:cpDr 2.4s cubic-bezier(.2,.8,.4,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .cp-cf{animation:cpCf 2.4s cubic-bezier(.2,.8,.4,1) infinite}
+@keyframes cpBt{0%,4%{transform:none}10%{transform:rotate(-2deg)}15%{transform:rotate(2deg)}20%{transform:rotate(-3deg)}25%{transform:rotate(3deg)}30%{transform:rotate(-1deg)}34%{transform:translateY(3px) rotate(-5deg)}44%{transform:rotate(1deg)}52%,100%{transform:none}}
+@keyframes cpCk{0%,4%{transform:none;opacity:1}12%{transform:translateY(-1px) rotate(-6deg)}20%{transform:translateY(-2px) rotate(6deg)}28%{transform:translateY(-3px) rotate(-4deg)}32%{transform:translateY(-4px)}44%{transform:translate(6px,-30px) rotate(180deg);opacity:1}56%{transform:translate(10px,-38px) rotate(300deg);opacity:0}90%{transform:none;opacity:0}100%{transform:none;opacity:1}}
+@keyframes cpFm{0%,32%{opacity:0;transform:scale(.3)}38%{opacity:1;transform:scale(1.15)}70%{opacity:1;transform:scale(1)}84%,100%{opacity:0;transform:scale(.8)}}
+@keyframes cpDr{0%,32%{opacity:0;transform:translate(0,0) scale(.4)}40%{opacity:1}68%{opacity:1;transform:translate(var(--dx),var(--dy)) scale(1)}80%,100%{opacity:0;transform:translate(var(--dx),calc(var(--dy) + 4px)) scale(.6)}}
+@keyframes cpCf{0%,34%{opacity:0;transform:translate(0,0) rotate(0) scale(.3)}42%{opacity:1}70%{opacity:1;transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(1)}88%,100%{opacity:0;transform:translate(var(--x),calc(var(--y) + 10px)) rotate(var(--r))}}
+.c3-b{transform-box:fill-box;transform-origin:50% 100%}.c3-d{opacity:.3}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .c3-l{animation:c3A 1.6s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .c3-r{animation:c3A 1.6s ease-in-out .8s infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .c3-b{animation:c3B 1.6s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .c3-d{animation:c3D .9s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .c3-d2{animation-delay:.15s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .c3-d3{animation-delay:.3s}
+@keyframes c3A{0%,60%,100%{transform:none}20%{transform:translateY(-4px) rotate(-3deg)}40%{transform:translateY(0)}}
+@keyframes c3B{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes c3D{0%,100%{opacity:.3;transform:none}50%{opacity:1;transform:translateY(-1.5px)}}
+.e3-b{transform-box:view-box!important;transform-origin:32px 56px}.e3-ok{opacity:0;transform-box:fill-box;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .e3-b{animation:e3B 1.8s cubic-bezier(.45,0,.55,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .e3-ok{animation:e3O 1.8s cubic-bezier(.34,1.6,.64,1) infinite}
+@keyframes e3B{0%,100%{transform:none}10%{transform:scaleY(.86) scaleX(1.08)}22%{transform:translateY(-12px) scaleY(1.08) scaleX(.95)}34%{transform:scaleY(.9) scaleX(1.06)}44%{transform:translateY(-7px) scaleY(1.04)}54%{transform:scaleY(.95) scaleX(1.03)}62%{transform:none}}
+@keyframes e3O{0%,50%{opacity:0;transform:scale(.3)}62%,88%{opacity:1;transform:scale(1)}96%,100%{opacity:0}}
+.p-1,.p-2{opacity:0;transform-box:fill-box}.p-1{transform-origin:0 100%}.p-2{transform-origin:100% 100%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .p-1{animation:pB 2s cubic-bezier(.34,1.5,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .p-2{animation:pB 2s cubic-bezier(.34,1.5,.64,1) 1s infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .p-a{animation:pN 2s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .p-b{animation:pN 2s ease-in-out 1s infinite}
+@keyframes pB{0%{opacity:0;transform:scale(.3)}12%,42%{opacity:1;transform:scale(1)}52%,100%{opacity:0;transform:scale(.8)}}
+@keyframes pN{0%,50%,100%{transform:none}15%{transform:translateY(-2px)}30%{transform:translateY(1px)}}
+.hs-l2{opacity:0}.hs-all{transform-box:view-box;transform-origin:32px 37px}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .hs-all{animation:hsShake .45s ease-in-out infinite alternate}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .hs-l2{animation:hsL .9s ease-out infinite}
+@keyframes hsShake{from{transform:translateY(-3px) rotate(-2deg)}to{transform:translateY(3px) rotate(2deg)}}
+@keyframes hsL{0%{opacity:0;transform:translateY(3px)}30%{opacity:1}100%{opacity:0;transform:translateY(-4px)}}
+.bx-poof,.bx-chk{opacity:0}.bx-chk{stroke-dasharray:14;stroke-dashoffset:14}.bx-lid{transform-box:view-box;transform-origin:12px 32px}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .bx-lid{animation:bxLid 1.8s cubic-bezier(.5,0,.5,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .bx-poof{animation:bxPoof 1.8s ease-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .bx-chk{animation:bxChk 1.8s ease infinite}
+@keyframes bxLid{0%,30%{transform:translateY(-12px) rotate(-8deg)}45%{transform:translateY(0) rotate(0)}52%{transform:translateY(-2px)}58%,88%{transform:none}100%{transform:translateY(-12px) rotate(-8deg)}}
+@keyframes bxPoof{0%,44%{opacity:0;transform:scale(.6)}50%{opacity:1;transform:scale(1)}66%,100%{opacity:0;transform:scale(1.2)}}
+@keyframes bxChk{0%,55%{opacity:1;stroke-dashoffset:14}68%,88%{opacity:1;stroke-dashoffset:0}96%,100%{opacity:0;stroke-dashoffset:0}}
+.fb-a,.fb-b,.fb-c{transform-box:fill-box}.fb-a{transform-origin:0% 100%}.fb-b{transform-origin:100% 100%}.fb-c{transform-origin:0% 100%;opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .fb-a{animation:fbA 2.6s cubic-bezier(.34,1.5,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .fb-b{animation:fbB 2.6s cubic-bezier(.34,1.5,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .fb-c{animation:fbC 2.6s cubic-bezier(.34,1.5,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .fb-d{animation:fbD .6s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .fb-d2{animation-delay:.15s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .fb-d3{animation-delay:.3s}
+@keyframes fbA{0%{opacity:0;transform:scale(.2)}8%,62%{opacity:1;transform:scale(1)}72%,100%{opacity:0;transform:scale(.8) translateY(-4px)}}
+@keyframes fbB{0%,22%{opacity:0;transform:scale(.2)}30%,78%{opacity:1;transform:scale(1)}88%,100%{opacity:0;transform:scale(.8) translateY(-4px)}}
+@keyframes fbC{0%,44%{opacity:0;transform:scale(.2)}52%,90%{opacity:1;transform:scale(1)}98%,100%{opacity:0}}
+@keyframes fbD{0%,100%{opacity:.3}50%{opacity:1}}
+.coops-pile svg,.coops-icdemo svg{overflow:visible}
+.ev-hs{transform-box:view-box;transform-origin:32px 34px}.ev-hs-l{opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-hs{animation:evShake .5s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-hs-l{animation:evHsL 1s ease-out infinite}
+@keyframes evShake{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-5px) rotate(-4deg)}}
+@keyframes evHsL{0%{opacity:0;transform:translateY(3px)}30%{opacity:1}100%{opacity:0;transform:translateY(-4px)}}
+.ev-flap{transform-box:fill-box;transform-origin:50% 100%}.ev-tape{opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-flap1{animation:evFlap 2s cubic-bezier(.65,0,.35,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-flap2{animation:evFlap 2s cubic-bezier(.65,0,.35,1) .15s infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-tape{animation:evTape 2s ease infinite}
+@keyframes evFlap{0%,8%{transform:scaleY(1)}35%,80%{transform:scaleY(-.08)}95%,100%{transform:scaleY(1)}}
+@keyframes evTape{0%,40%{opacity:0;transform:scaleX(0)}50%,78%{opacity:1;transform:scaleX(1)}86%,100%{opacity:0}}
+.ev-tape{transform-box:fill-box;transform-origin:50% 50%;fill:rgba(14,14,18,.85)}
+.ev-q{transform-box:fill-box;transform-origin:50% 100%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-bub{animation:evBob 1.2s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-q{animation:evQ 1.2s cubic-bezier(.34,1.6,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-q2{animation-delay:.15s}
+@keyframes evBob{0%,100%{transform:none}50%{transform:translateY(-2px)}}
+@keyframes evQ{0%,60%,100%{transform:none}25%{transform:translateY(-4px) scale(1.15)}}
+.ev-cork{transform-box:fill-box;transform-origin:50% 100%}.ev-fz{opacity:0}.ev-fz *{transform-box:fill-box;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-cork{animation:evCork 1.8s cubic-bezier(.3,.8,.4,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-fz{animation:evFz 1.8s ease-out infinite}
+@keyframes evCork{0%{transform:none;opacity:1}8%{transform:rotate(-8deg)}14%{transform:rotate(8deg)}20%{transform:rotate(-6deg)}26%{transform:none}40%{transform:translate(4px,-22px) rotate(50deg);opacity:1}55%,85%{transform:translate(8px,-34px) rotate(120deg);opacity:0}86%{transform:none;opacity:0}100%{transform:none;opacity:1}}
+@keyframes evFz{0%,26%{opacity:0;transform:translateY(6px) scale(.4)}40%{opacity:1;transform:translateY(-2px) scale(1)}75%{opacity:.9;transform:translateY(-8px) scale(1.1)}90%,100%{opacity:0;transform:translateY(-12px) scale(1.15)}}
+@media (prefers-reduced-motion: reduce){.coops-pile svg *{animation:none!important;transition:none!important}}
+/* Promoção · pulso de brilho percorrendo a borda */
+@property --prA{syntax:'<angle>';inherits:false;initial-value:0deg}
+.ev-promo::after{content:"";position:absolute;inset:-3px;border-radius:inherit;padding:4px;background:conic-gradient(from var(--prA),transparent 0deg 220deg,rgba(255,250,230,.12) 270deg,rgba(255,252,240,.45) 320deg,rgba(255,255,255,.75) 345deg,rgba(255,250,230,.2) 356deg,transparent 360deg);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;filter:drop-shadow(0 0 6px rgba(255,248,220,.6));animation:prGlow 6s linear infinite,prBreath 6s ease-in-out infinite;pointer-events:none;z-index:2}
+@keyframes prGlow{to{--prA:360deg}}
+@keyframes prBreath{0%,100%{opacity:.55}50%{opacity:1}}
+@media (prefers-reduced-motion: reduce){.ev-promo::after{animation:none;opacity:0}}
+/* Coops · Carta em foco (DS) */
+@keyframes coopsFocusIn{from{transform:translate(var(--fdx),var(--fdy)) scale(var(--fs));opacity:.35}to{transform:none;opacity:1}}
+@keyframes coopsFocusOut{from{transform:none;opacity:1}to{transform:translate(var(--fdx),var(--fdy)) scale(var(--fs));opacity:0}}
+.coops-focus{transform-origin:50% 0}
+.coops-focus .coops-fx-body{animation:coopsFadeIn 260ms 200ms ease both}
+.coops-x{transition:background-color .2s ease,color .2s ease,transform .18s cubic-bezier(.34,1.56,.64,1)}
+.coops-x svg{transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.coops-x:hover,.coops-x:focus-visible{background:#0E0E12!important;color:var(--fbg,#F5F2EC)!important}
+.coops-x:hover svg,.coops-x:focus-visible svg{transform:rotate(90deg)}
+.coops-x:active{transform:scale(.88)}
+.coops-x:active svg{transform:rotate(90deg) scale(.9)}
+.coops-x:focus-visible{outline:3px solid #0E0E12;outline-offset:2px}
+.coops-focus button:not(.coops-x):focus-visible,.coops-focus a:focus-visible{outline:3px solid #0E0E12;outline-offset:2px}
+@media (prefers-reduced-motion: reduce){.coops-focus,.coops-focus .coops-fx-body{animation:none!important}.coops-x,.coops-x svg{transition:none!important;transform:none!important}}
+/* Coops · ícone animado do banner do deck do membro */
+.coops-mban svg{overflow:visible}
+.coops-mban svg *{transform-box:fill-box}
+.ic-arm,.ic-w,.ic-ring{transform-box:view-box!important;transform-origin:32px 32px}
+.ic-heart{transform-origin:50% 60%}.ic-ecg{stroke-dasharray:60}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-heart{animation:icBeat 1s ease-in-out infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-ecg{animation:icDraw60 1s ease-in-out infinite}
+@keyframes icBeat{0%,100%{transform:scale(1)}15%{transform:scale(1.14)}30%{transform:scale(.98)}45%{transform:scale(1.08)}}
+@keyframes icDraw60{0%{stroke-dashoffset:60}60%,100%{stroke-dashoffset:0}}
+.ic-peg{transform-origin:50% 100%}.ic-day{fill:none;stroke-width:1.75;opacity:0;transform-origin:50% 50%}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-peg{animation:icPeg 1.2s cubic-bezier(.34,1.6,.64,1) infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-peg2{animation-delay:.1s}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-day{animation:icDay 2.6s cubic-bezier(.34,1.6,.64,1) infinite both}
+@keyframes icDay{0%,3%{opacity:0;transform:scale(.2)}12%,70%{opacity:1;transform:scale(1)}80%,100%{opacity:0;transform:scale(.6)}}
+@keyframes icPeg{0%,60%,100%{transform:none}25%{transform:translateY(-4px)}}
+.ic-star{transform-origin:50% 55%}.ic-shard{opacity:0;transform-origin:50% 50%}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-star{animation:icBurst 1.8s cubic-bezier(.34,1.4,.64,1) infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-shard{animation:icShard 1.8s cubic-bezier(.2,.8,.3,1) infinite}
+@keyframes icBurst{0%{transform:scale(1);opacity:1}18%{transform:scale(1.18) rotate(-8deg);opacity:1}26%{transform:scale(.2);opacity:0}72%{transform:scale(.2);opacity:0}88%{transform:scale(1.1);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes icShard{0%,22%{opacity:0;transform:translate(0,0) scale(.4) rotate(0)}28%{opacity:1}62%{opacity:1;transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--rt))}74%,100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.6) rotate(var(--rt))}}
+.ic-leaf{transform-box:view-box!important;transform-origin:32px 32px;opacity:0}.ic-leafp{fill:rgba(255,255,255,.6)}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-leaf{animation:icLeaf 1.3s cubic-bezier(.45,0,.35,1) infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-leaf2{animation-delay:.45s}
+@keyframes icLeaf{0%{opacity:0;transform:scaleX(1) skewY(0)}6%{opacity:1}40%{transform:scaleX(.15) skewY(-10deg)}75%{opacity:1;transform:scaleX(-1) skewY(0)}85%,100%{opacity:0;transform:scaleX(-1)}}
+.ic-bgx{transform-box:view-box!important;transform-origin:32px 32px}.ic-bgx2,.ic-bgx3{opacity:0}.ic-knob{stroke-width:6}.ic-playt{transform-origin:50% 50%}.ic-wave{transform-origin:50% 50%}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-bgx{animation:icRot 4.2s cubic-bezier(.34,1.3,.64,1) infinite both}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-bgx2{animation-delay:1.4s}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-bgx3{animation-delay:2.8s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-knob{animation:icKnob 1.4s linear 1.4s infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-playt{animation:icPlay .7s ease-in-out infinite alternate}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-wave{animation:icWav .7s ease-in-out infinite alternate}
+@keyframes icRot{0%{opacity:0;transform:translateY(10px) rotate(-10deg) scale(.7)}6%,30%{opacity:1;transform:none}36%,100%{opacity:0;transform:translateY(-10px) rotate(10deg) scale(.7)}}
+@keyframes icKnob{from{transform:translateX(0)}to{transform:translateX(30px)}}
+@keyframes icPlay{to{transform:scale(1.15)}}
+@keyframes icWav{from{opacity:.3;transform:scale(.92)}to{opacity:1;transform:scale(1.04)}}
+.ic-path{stroke-dasharray:70}.ic-jflag,.ic-flag{transform-origin:0% 50%}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-path{animation:icDraw70 1.2s cubic-bezier(.65,0,.25,1) both}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-jflag{animation:icWave .5s ease-in-out .6s infinite}
+@keyframes icDraw70{0%{stroke-dashoffset:70}50%,100%{stroke-dashoffset:0}}
+@keyframes icWave{0%,100%{transform:skewY(0) scaleX(1)}50%{transform:skewY(-12deg) scaleX(.85)}}
+.ic-fire{opacity:0;transform-origin:50% 0%}.ic-tw{opacity:0}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-rocket{animation:icRocket .9s ease-in-out infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fire{animation:icFire .32s ease-in-out infinite alternate}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fire2{animation-duration:.24s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-tw{animation:icTw 1.1s linear infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-tw2{animation-delay:.3s}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-tw3{animation-delay:.55s}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-tw4{animation-delay:.8s}
+@keyframes icFire{from{opacity:.85;transform:translateY(-6px) scaleY(.8) scaleX(1.1)}to{opacity:1;transform:translateY(-6px) scaleY(1.2) scaleX(.9)}}
+@keyframes icTw{0%{opacity:0;transform:translateY(-10px)}20%{opacity:1}80%{opacity:1}100%{opacity:0;transform:translateY(22px)}}
+@keyframes icRocket{0%,100%{transform:translate(0,-6px)}25%{transform:translate(1px,-8px)}50%{transform:translate(0,-10px)}75%{transform:translate(-1px,-8px)}}
+.ic-mount{transition:transform .4s cubic-bezier(.34,1.4,.64,1)}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-flag{animation:icWave .45s ease-in-out infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-mount{transform:translateY(-2px)}
+.ic-fb{transform-origin:0% 50%}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb{animation:icFb 1.4s cubic-bezier(.34,1.5,.64,1) infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb2{animation-delay:.1s}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb3{animation-delay:.2s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb1{--s:.8}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb2{--s:1.3}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb3{--s:2}
+@keyframes icFb{0%,100%{transform:scaleX(1)}40%,60%{transform:scaleX(var(--s))}}
+.ic-sweep{transform-box:view-box!important;transform-origin:32px 32px}.ic-blip{stroke-width:5;opacity:0}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-sweep{animation:icSweep 1.8s linear infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-blip{animation:icBlip 1.8s ease-out infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-ring{animation:icPing 1.8s ease-out infinite}
+@keyframes icSweep{to{transform:rotate(360deg)}}
+@keyframes icBlip{0%,2%{opacity:0}6%{opacity:1}45%,100%{opacity:0}}
+@keyframes icPing{0%,4%,100%{transform:scale(1)}12%{transform:scale(1.05)}}
+.ic-ib{transform-origin:50% 100%}.ic-ib1{--a:1.8;--b:.6}.ic-ib2{--a:.55;--b:1.4}.ic-ib3{--a:1.6;--b:.5}.ic-ib4{--a:.55;--b:1.15}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-ib{animation:icBars 1.6s ease-in-out infinite}
+@keyframes icBars{0%,100%{transform:scaleY(1)}30%{transform:scaleY(var(--a))}65%{transform:scaleY(var(--b))}}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-arm{animation:icSee 1.6s cubic-bezier(.45,0,.55,1) infinite}:is(.coops-mban:hover,.coops-mban:focus-within) .ic-w{animation:icSeeW 1.6s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes icSee{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(14deg)}}
+@keyframes icSeeW{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(14deg) translateY(4px)}}
+@media (prefers-reduced-motion: reduce){.coops-mban svg *{animation:none!important;transition:none!important}}
+/* Coops · banner do deck do membro (DS) · mesmo padrão do squad */
+.coops-mban-ring{transition:transform .8s cubic-bezier(.22,1,.36,1)}
+.coops-mban:hover .coops-mban-ring{transform:scale(1.12) translate(-14px,-10px)}
+.coops-mban-ic{transition:transform .45s cubic-bezier(.34,1.56,.64,1)}
+.coops-mban:hover .coops-mban-ic{transform:rotate(-4deg) scale(1.04)}
+.coops-mban-me{transition:transform .45s cubic-bezier(.34,1.56,.64,1)}
+.coops-mban:hover .coops-mban-me{transform:translateY(-3px) rotate(3deg)}
+.coops-mban-back:hover{color:#0E0E12!important;text-decoration:underline!important}
+.coops-mban-btn{transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.coops-mban-btn:hover{transform:translateY(-2px)}.coops-mban-btn:active{transform:scale(.96)}
+.coops-mban a:focus-visible,.coops-mban button:focus-visible{outline:3px solid #0E0E12;outline-offset:3px}
+@media (prefers-reduced-motion: reduce){.coops-mban-ring,.coops-mban-ic,.coops-mban-me,.coops-mban-btn{transition:none!important;transform:none!important}}
+/* Coops · ícone mudança de time (DS) · abdução */
+.ab-sh{transform-box:view-box!important;transform-origin:32px 18px}
+.ab-pp{transform-box:view-box!important;transform-origin:32px 46px}
+.ab-bm{opacity:0}
+.ab-rg{opacity:0;transform-box:view-box!important;transform-origin:32px 30px}
+.ab-lt{fill:none}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ab-sh{animation:abSh 3.6s cubic-bezier(.45,0,.55,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ab-bm{animation:abBm 3.6s linear infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ab-rg{animation:abRg .9s linear infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ab-rg2{animation-delay:-.3s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ab-rg3{animation-delay:-.6s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ab-pp{animation:abPp 3.6s cubic-bezier(.45,0,.55,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ab-lt{animation:abLt 1.2s steps(1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ab-lt2{animation-delay:.4s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ab-lt3{animation-delay:.8s}
+@keyframes abRg{0%{opacity:0;transform:translateY(0) scale(.95)}12%{opacity:1}80%{opacity:.9}100%{opacity:0;transform:translateY(26px) scale(1.75)}}
+@keyframes abBm{0%,6%{opacity:0}12%,52%{opacity:1}57%,100%{opacity:0}}
+@keyframes abPp{0%,30%{transform:translateY(0) scale(1);opacity:1}52%{transform:translateY(-21px) scale(.6);opacity:1}55%{transform:translateY(-22px) scale(.55);opacity:0}86%{transform:translateY(0) scale(1);opacity:0}96%,100%{transform:translateY(0) scale(1);opacity:1}}
+@keyframes abSh{0%,56%{transform:translate(0,0) rotate(0);opacity:1}20%,44%{transform:translate(0,-1px) rotate(0)}60%{transform:translate(-2px,1px) rotate(-4deg);opacity:1}76%{transform:translate(30px,-12px) rotate(10deg);opacity:0}77%{transform:translate(-30px,-8px) rotate(-6deg);opacity:0}90%,100%{transform:translate(0,0) rotate(0);opacity:1}}
+@keyframes abLt{0%{fill:#0E0E12}33%{fill:none}}
+@media (prefers-reduced-motion: reduce){.ab-sh,.ab-pp,.ab-bm,.ab-rg,.ab-lt{animation:none!important}.ab-bm{opacity:0}}
+/* Frame 12 · escolha do tipo de evento */
+.ev-opt{transition:transform .35s cubic-bezier(.34,1.56,.64,1),box-shadow .3s ease}
+.ev-opt:hover,.ev-opt:focus-visible{transform:translateY(-6px) rotate(-1.5deg)!important;box-shadow:6px 6px 0 #4B36B0}
+.ev-opt:focus-visible{outline:3px solid #F5F2EC;outline-offset:3px}
+@media (prefers-reduced-motion: reduce){.ev-opt{transition:none!important;transform:none!important}}
+/* Frame 12 · comemoração na carta de promoção e mérito */
+.coops-focus .coops-fx-body>*{flex-shrink:0}
+.coops-focus.ev-promo::after{inset:-4px;border-radius:28px;z-index:3}
+.cel-cf{position:absolute;top:-16px;opacity:0;animation:celCf 2.6s linear infinite;animation-delay:var(--d)}
+@keyframes celCf{0%{opacity:0;transform:translateY(0) rotate(0)}10%{opacity:1}85%{opacity:1}100%{opacity:0;transform:translateY(190px) rotate(var(--r))}}
+.cel-a{animation:celHop 1.8s cubic-bezier(.34,1.4,.64,1) infinite}
+.cel-a2{animation-delay:.9s}
+@keyframes celHop{0%,40%,100%{transform:translateY(0) rotate(0)}15%{transform:translateY(-14px) rotate(-4deg)}28%{transform:translateY(0) rotate(2deg)}}
+.cel-obj{overflow:visible}
+.cel-obj *{transform-box:fill-box}
+.cel-fl1{transform-origin:50% 100%;animation:celFl1 1.8s ease-in-out infinite}
+.cel-fl2{transform-origin:50% 100%;animation:celFl2 1.8s ease-in-out infinite}
+@keyframes celFl1{0%,100%{transform:rotate(-6deg) translateX(-2px)}45%,55%{transform:rotate(10deg) translateX(3px)}}
+@keyframes celFl2{0%,100%{transform:rotate(6deg) translateX(2px)}45%,55%{transform:rotate(-10deg) translateX(-3px)}}
+.cel-clk{opacity:0;animation:celClk 1.8s ease infinite}
+@keyframes celClk{0%,42%{opacity:0;transform:scale(.6)}50%{opacity:1;transform:scale(1.1)}70%,100%{opacity:0;transform:scale(1)}}
+.cel-md{transform-box:view-box!important;transform-origin:32px 4px;animation:celMd 1.8s ease-in-out infinite}
+@keyframes celMd{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+@media (prefers-reduced-motion: reduce){.cel-cf,.cel-a,.cel-fl1,.cel-fl2,.cel-clk,.cel-md{animation:none!important}.cel-cf{opacity:1;top:14px}.cel-clk{opacity:1}}
+/* Coops · comentários recolhidos (DS) */
+@keyframes evComIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.ev-com-tg:hover .ev-com-ic,.ev-com-tg:focus-visible .ev-com-ic{animation:evComBob .9s ease-in-out infinite}
+.ev-com-tg:hover .ev-com-dots,.ev-com-tg:focus-visible .ev-com-dots{animation:evComDots .9s steps(1) infinite}
+@keyframes evComBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px) rotate(-4deg)}}
+@keyframes evComDots{0%{opacity:1}50%{opacity:.25}}
+.ev-com-tg:focus-visible{outline:2px solid #0E0E12;outline-offset:3px;border-radius:12px}
+@media (prefers-reduced-motion:reduce){.ev-com-tg *{animation:none!important}}
+/* Coops · Carta em foco · rolagem organizada (DS) */
+.coops-focus .coops-fx-body{scrollbar-width:thin;scrollbar-color:rgba(14,14,18,.38) transparent}
+.coops-focus .coops-fx-body::-webkit-scrollbar{width:8px}
+.coops-focus .coops-fx-body::-webkit-scrollbar-track{background:transparent;margin:56px 0 64px}
+.coops-focus .coops-fx-body::-webkit-scrollbar-thumb{background:rgba(14,14,18,.32);border-radius:999px}
+.coops-focus .coops-fx-body::-webkit-scrollbar-thumb:hover{background:rgba(14,14,18,.55)}
+.coops-focus .coops-fx-body>:first-child{position:sticky;top:var(--fx-st,0px);z-index:5;background:var(--fbg);padding-bottom:12px;margin-bottom:-12px;box-shadow:0 12px 12px -12px rgba(14,14,18,.28)}
+.coops-focus .coops-fx-foot{position:sticky;bottom:var(--fx-sb,0px);z-index:5;background:var(--fbg);padding-bottom:2px;box-shadow:0 -12px 12px -12px rgba(14,14,18,.28)}
+/* Coops · menu da conta (DS) */
+.hb-av{transition:transform .2s ease,box-shadow .2s ease}.hb-av:hover{transform:scale(1.06)}.hb-av:focus-visible{outline:3px solid #B7A6FF;outline-offset:3px}
+.hb-item{transition:background .18s ease}.hb-item:hover,.hb-item:focus-visible{background:#212129;outline:none}
+@keyframes hbPop{from{opacity:0;transform:scale(.9) translateY(-6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.hb-av,.hb-item{transition:none}}
+</style>
+</helmet>
+<div data-fx-root="1" style="position: relative; overflow: hidden; font-family: 'Schibsted Grotesk', system-ui, sans-serif; color: #F5F2EC; background: #0E0E12; min-height: 1300px; box-sizing: border-box; padding: 24px 32px 56px">
+<div style="max-width: 1216px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px">
+
+<header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap">
+<a href="Coops03-Hub.dc.html" style="color: #F5F2EC; text-decoration: none; font-size: 26px; font-weight: 800; letter-spacing: -0.03em">coops<span style="color: #B7A6FF">.</span></a>
+<nav aria-label="Produtos" style="display: flex; gap: 4px; background: #17171D; border: 1px solid #2C2C36; border-radius: 14px; padding: 4px">
+<a href="Coops05-Time.dc.html" aria-current="page" style="color: #0E0E12; background: #B7A6FF; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 10px; padding: 10px 16px">Time</a>
+<a href="Coops08-Iniciativa.dc.html" style="color: #A3A1AD; text-decoration: none; font-size: 14px; border-radius: 10px; padding: 10px 16px">Iniciativas</a>
+</nav>
+</div>
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #0E0E12; background: #B7A6FF; border-radius: 999px; padding: 6px 10px">MANAGER</span>
+<div style="position: relative"><button type="button" class="hb-av" onClick="{{acctToggle}}" aria-haspopup="true" aria-expanded="{{acctExp}}" aria-label="Abrir o menu da sua conta" style="display: block; padding: 0; border: 0; background: transparent; border-radius: 50%; cursor: pointer; line-height: 0; box-shadow: {{acctRing}}"><dc-import name="CoopsAvatar" skin="#E0B08A" hair-style="longo" shirt-style="blazer" bg="#F3D36B" size="{{ 44 }}" label="Seu avatar" hint-size="44px,44px"></dc-import></button><sc-if value="{{acctOpen}}" hint-placeholder-val="{{ false }}"><div role="menu" aria-label="Sua conta" style="animation: hbPop 260ms cubic-bezier(.34,1.4,.64,1) both; transform-origin: top right; position: absolute; right: 0; top: 56px; z-index: 30; width: 280px; box-sizing: border-box; border-radius: 22px; background: #17171D; border: 1.5px solid #2C2C36; box-shadow: 0 24px 50px rgba(0,0,0,0.55); padding: 10px; display: flex; flex-direction: column; gap: 4px; text-align: left"><div style="display: flex; flex-direction: column; gap: 2px; padding: 10px 12px 12px; border-bottom: 1px solid #2C2C36; margin-bottom: 4px"><span style="font-size: 16px; font-weight: 700; color: #F5F2EC">Marina Lopes</span><span style="font-size: 13px; color: #A3A1AD">marina@nimbo.com</span></div><a role="menuitem" class="hb-item" href="Coops21-Admin.dc.html" style="display: flex; align-items: center; gap: 12px; color: #F5F2EC; text-decoration: none; border-radius: 14px; padding: 10px 12px; min-height: 48px; box-sizing: border-box"><span style="flex: none; width: 36px; height: 36px; border-radius: 10px; background: #B7A6FF; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></span><span style="display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 600">Administração</span><span style="font-size: 12px; color: #A3A1AD">Projetos, lideranças, skills e seus dados</span></span></a><button type="button" role="menuitem" class="hb-item" onClick="{{acctToggle}}" style="display: flex; align-items: center; gap: 12px; font-family: inherit; color: #A3A1AD; background: transparent; border: 0; text-align: left; border-radius: 14px; padding: 10px 12px; min-height: 48px; cursor: pointer"><span style="flex: none; width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid #3A3846; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11"></path></svg></span><span style="font-size: 15px; font-weight: 600">Sair</span></button></div></sc-if></div>
+</div>
+</header>
+
+<section class="coops-mban" aria-labelledby="mb-title" style="position: relative; border-radius: 28px; border: 2px solid #0E0E12; background: #B7A6FF; color: #0E0E12; padding: 26px 30px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px 28px; overflow: hidden; box-shadow: 0 18px 40px rgba(0,0,0,0.45)">
+<span aria-hidden="true" class="coops-mban-ring" style="position: absolute; right: -70px; bottom: -110px; width: 320px; height: 320px; border-radius: 50%; border: 2px solid rgba(14,14,18,0.18); box-shadow: 0 0 0 44px rgba(14,14,18,0.04); pointer-events: none"></span>
+<div aria-hidden="true" class="coops-mban-ic" style="position: relative; flex: none; width: 116px; height: 116px; box-sizing: border-box; border-radius: 24px; border: 2px solid #0E0E12; background: rgba(245,242,236,0.55); display: flex; align-items: center; justify-content: center"><svg width="84" height="84" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="overflow: visible"><rect x="10" y="14" width="44" height="40" rx="4"></rect><path d="M10 24h44"></path><path class="ic-peg" d="M22 8v10"></path><path class="ic-peg ic-peg2" d="M42 8v10"></path><rect class="ic-day" style="animation-delay: 0.00s" x="13.5" y="29" width="9" height="8" rx="2"></rect><rect class="ic-day" style="animation-delay: 0.22s" x="27.5" y="29" width="9" height="8" rx="2"></rect><rect class="ic-day" style="animation-delay: 0.44s" x="41.5" y="29" width="9" height="8" rx="2"></rect><rect class="ic-day" style="animation-delay: 0.66s" x="13.5" y="41" width="9" height="8" rx="2"></rect><rect class="ic-day" style="animation-delay: 0.88s" x="27.5" y="41" width="9" height="8" rx="2"></rect><rect class="ic-day" style="animation-delay: 1.10s" x="41.5" y="41" width="9" height="8" rx="2"></rect></svg></div>
+<div style="position: relative; flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<a href="Coops06-Membro.dc.html" class="coops-mban-back" style="align-self: flex-start; font-size: 14px; color: rgba(14,14,18,0.72); text-decoration: none">← Joana Reis</a>
+<h1 id="mb-title" style="margin: 0; font-size: 52px; font-weight: 800; letter-spacing: -0.035em; line-height: 1">Deck de eventos</h1>
+<p style="margin: 0; font-size: 17px; line-height: 1.45; max-width: 640px">Check-ins, feedbacks e conquistas da Joana no ciclo.</p>
+
+</div>
+<div style="position: relative; flex: 0 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 14px">
+<a href="Coops06-Membro.dc.html" aria-label="Voltar para Joana Reis" class="coops-mban-me" style="flex: none; width: 112px; height: 84px; box-sizing: border-box; border-radius: 18px; background: #8B74F2; border: 2px solid #0E0E12; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; text-decoration: none; line-height: 0"><dc-import name="CoopsAvatar" skin="#8D5A3B" hair-style="coque" shirt-style="blazer" bg="#8B74F2" crown="{{ true }}" size="{{ 82 }}" label="Joana Reis" hint-size="82px,82px"></dc-import></a>
+<div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end">
+<button type="button" class="coops-mban-btn" onClick="{{openEv}}" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #F5F2EC; background: #0E0E12; border: 2px solid #0E0E12; border-radius: 12px; min-height: 48px; padding: 0 18px; cursor: pointer">+ Evento</button>
+</div>
+</div>
+</section>
+
+<div role="tablist" aria-label="Filtrar eventos" style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{filters}}" as="f" hint-placeholder-count="4">
+<sc-if value="{{f.active}}" hint-placeholder-val="{{ false }}"><button type="button" role="tab" aria-selected="true" onClick="{{f.pick}}" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #0E0E12; background: #F5F2EC; border: 0; border-radius: 999px; min-height: 44px; padding: 0 16px; cursor: pointer">{{f.label}}</button></sc-if>
+<sc-if value="{{f.idle}}" hint-placeholder-val="{{ true }}"><button type="button" role="tab" aria-selected="false" onClick="{{f.pick}}" style="font-family: inherit; font-size: 14px; color: #F5F2EC; background: transparent; border: 1px solid #4A4858; border-radius: 999px; min-height: 44px; padding: 0 16px; cursor: pointer">{{f.label}}</button></sc-if>
+</sc-for>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 28px">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="6">
+<div class="coops-pile" style="position: relative; height: 380px">
+<button class="coops-front {{e.cls}}" type="button" onClick="{{e.open}}" aria-label="{{e.aria}}" style="position: absolute; left: 0; top: 24px; right: 22px; height: 340px; font-family: inherit; text-align: left; box-sizing: border-box; border-radius: 22px; background: {{e.bg}}; color: #0E0E12; border: 2px solid #0E0E12; padding: 20px; display: flex; flex-direction: column; gap: 10px; cursor: pointer; box-shadow: 0 16px 36px rgba(0,0,0,0.45)">
+<span style="width: 100%; display: flex; justify-content: space-between; align-items: flex-start">
+<sc-if value="{{e.isCheckin}}" hint-placeholder-val="{{ false }}"><svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="c3-l"><g transform="translate(26 34) scale(-1 1)"><path d="M0 0h18v12a8 8 0 0 1-8 8h-2a8 8 0 0 1-8-8z" fill="#B7A6FF"></path><path d="M18 3h2a4 4 0 0 1 0 8h-2"></path></g></g><g class="c3-r"><g transform="translate(38 34)"><path d="M0 0h18v12a8 8 0 0 1-8 8h-2a8 8 0 0 1-8-8z" fill="#B7A6FF"></path><path d="M18 3h2a4 4 0 0 1 0 8h-2"></path></g></g><g class="c3-b"><path d="M20 8h24v14H36l-4 5-4-5h-8z"></path><circle class="c3-d" cx="26" cy="15" r="1.5" fill="#0E0E12" stroke="none"></circle><circle class="c3-d c3-d2" cx="32" cy="15" r="1.5" fill="#0E0E12" stroke="none"></circle><circle class="c3-d c3-d3" cx="38" cy="15" r="1.5" fill="#0E0E12" stroke="none"></circle></g><path d="M6 58h52"></path></svg></sc-if>
+<sc-if value="{{e.isFeedback}}" hint-placeholder-val="{{ false }}"><svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="p-a"><circle cx="16" cy="34" r="7"></circle><path d="M4 58c0-9 5-14 12-14s12 5 12 14"></path></g><g class="p-b"><circle cx="48" cy="34" r="7"></circle><path d="M36 58c0-9 5-14 12-14s12 5 12 14"></path></g><g class="p-1"><path d="M8 8h18v10h-10l-4 4v-4H8z"></path><path d="M12 13h10"></path></g><g class="p-2"><path d="M56 8H38v10h10l4 4v-4h4z"></path><path d="M42 13h10"></path></g></svg></sc-if>
+<sc-if value="{{e.isPromo}}" hint-placeholder-val="{{ false }}"><svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="rotate(24 32 40)"><g class="cp-bt"><path d="M22 62h20V38c0-8-5-10-5-15v-6h-10v6c0 5-5 7-5 15z" fill="#E8C46A"></path><path d="M22 44h20M22 54h20"></path><path d="M27 23h10"></path><g class="cp-ck"><path d="M28 17V11h8v6zM27 11c0-4 10-4 10 0"></path></g><path class="cp-fm" d="M27 17c-2-3 1-5 3-4 1-3 5-3 5 0 3-1 4 2 2 4"></path><circle class="cp-dr" style="--dx: -8px; --dy: -12px; animation-delay: 0ms" cx="32" cy="12" r="1.6" fill="none" stroke-width="1.5"></circle><circle class="cp-dr" style="--dx: 0px; --dy: -17px; animation-delay: 30ms" cx="32" cy="12" r="1.8" fill="none" stroke-width="1.5"></circle><circle class="cp-dr" style="--dx: 8px; --dy: -12px; animation-delay: 60ms" cx="32" cy="12" r="1.5" fill="none" stroke-width="1.5"></circle><circle class="cp-dr" style="--dx: -4px; --dy: -22px; animation-delay: 90ms" cx="32" cy="12" r="1.2" fill="none" stroke-width="1.5"></circle><circle class="cp-dr" style="--dx: 5px; --dy: -23px; animation-delay: 120ms" cx="32" cy="12" r="1.3" fill="none" stroke-width="1.5"></circle></g></g><rect class="cp-cf" style="--x: 10px; --y: -14px; --r: 140deg; animation-delay: 0ms" x="42.5" y="12.5" width="3" height="5" rx="1" fill="none" stroke-width="1.5"></rect><rect class="cp-cf" style="--x: 16px; --y: -4px; --r: -120deg; animation-delay: 25ms" x="42.5" y="12.5" width="3" height="5" rx="1" fill="none" stroke-width="1.5"></rect><rect class="cp-cf" style="--x: 4px; --y: -20px; --r: 200deg; animation-delay: 50ms" x="42.5" y="12.5" width="3" height="5" rx="1" fill="none" stroke-width="1.5"></rect><rect class="cp-cf" style="--x: -6px; --y: -16px; --r: -160deg; animation-delay: 75ms" x="42.5" y="12.5" width="3" height="5" rx="1" fill="none" stroke-width="1.5"></rect><rect class="cp-cf" style="--x: 18px; --y: -16px; --r: 90deg; animation-delay: 100ms" x="42.5" y="12.5" width="3" height="5" rx="1" fill="none" stroke-width="1.5"></rect><rect class="cp-cf" style="--x: -10px; --y: -6px; --r: 180deg; animation-delay: 125ms" x="42.5" y="12.5" width="3" height="5" rx="1" fill="none" stroke-width="1.5"></rect></svg></sc-if>
+<sc-if value="{{e.isMerito}}" hint-placeholder-val="{{ false }}"><svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="md-sw"><path d="M17 4h9l9 18h-9z" fill="#F5A9D6"></path><path d="M47 4h-9l-9 18h9z" fill="#F5A9D6"></path><circle cx="32" cy="38" r="14" fill="#F5A9D6"></circle><circle cx="32" cy="38" r="9"></circle><path class="md-st" d="M32 32l1.8 3.8 4 .4-3 2.8.9 4-3.7-2.1-3.7 2.1.9-4-3-2.8 4-.4z"></path></g><path class="md-sp" d="M52 22v6M49 25h6"></path><path class="md-sp md-sp2" d="M11 40v5M8.5 42.5h5"></path><path class="md-sp md-sp3" d="M52 50v4M50 52h4"></path></svg></sc-if>
+<sc-if value="{{e.isMv}}" hint-placeholder-val="{{ false }}"><svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="overflow: visible"><g class="ab-bm"><ellipse class="ab-rg" cx="32" cy="30" rx="6.5" ry="1.5" stroke-width="1.2"></ellipse><ellipse class="ab-rg ab-rg2" cx="32" cy="30" rx="6.5" ry="1.5" stroke-width="1.2"></ellipse><ellipse class="ab-rg ab-rg3" cx="32" cy="30" rx="6.5" ry="1.5" stroke-width="1.2"></ellipse></g><g class="ab-pp"><circle cx="32" cy="42" r="4.6" fill="#8FE3C8"></circle><path d="M25.5 56c0-6 2.9-8.6 6.5-8.6s6.5 2.6 6.5 8.6" fill="#8FE3C8"></path></g><g class="ab-sh"><path d="M22 17.5a10 9.5 0 0 1 20 0" fill="#8FE3C8"></path><path d="M27 12.2a5.5 5 0 0 1 3.4-2.6" stroke-width="1.6"></path><path d="M8 21.5c0-3.4 10.7-5.5 24-5.5s24 2.1 24 5.5-10.7 6-24 6-24-2.6-24-6z" fill="#8FE3C8"></path><path d="M11 21.8c5.5 2.2 14 3 21 3s15.5-.8 21-3" stroke-width="1.6"></path><circle class="ab-lt" cx="21" cy="23.4" r="1.5"></circle><circle class="ab-lt ab-lt2" cx="32" cy="24.6" r="1.5"></circle><circle class="ab-lt ab-lt3" cx="43" cy="23.4" r="1.5"></circle></g></svg></sc-if>
+<sc-if value="{{e.isEntrega}}" hint-placeholder-val="{{ false }}"><svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="e3-b"><path d="M14 30h36v26H14z" fill="#8FE3C8"></path><path d="M14 30l4-7h28l4 7M32 23v7"></path><path d="M24 42h16"></path></g><g class="e3-ok"><circle cx="52" cy="14" r="8"></circle><path d="M48 14l3 3 5-6"></path></g></svg></sc-if>
+<span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 44px; font-weight: 600; line-height: 1; letter-spacing: -0.03em">{{e.day}}</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">{{e.month}}</span></span>
+</span>
+<span style="margin-top: auto; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em">EVENTOS · {{e.typeLabel}}</span>
+<span style="font-size: 21px; font-weight: 600; line-height: 1.2">{{e.title}}</span>
+<span style="width: 100%; box-sizing: border-box; display: flex; justify-content: space-between; gap: 8px; font-size: 13px; border-top: 1.5px solid #0E0E12; padding-top: 10px"><span>{{e.author}}</span></span>
+</button>
+</div>
+</sc-for>
+</div>
+</div>
+
+<sc-if value="{{sheetOpen}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-label="Fechar carta" onClick="{{close}}" class="coops-overlay" style="animation: coopsFadeIn 320ms ease both; position: absolute; inset: 0; z-index: 9; border: 0; padding: 0; background: rgba(14,14,18,0.72); backdrop-filter: blur(3px); cursor: pointer"></button>
+<section id="coops-focus" class="coops-focus {{sel.cls}}" role="dialog" aria-modal="true" aria-labelledby="sheet-title" style="position: absolute; z-index: 10; left: {{fxS.left}}px; top: {{fxS.top}}px; width: {{fxS.w}}px; max-height: {{fxS.maxH}}px; opacity: {{fxS.op}}; animation: {{fxS.anim}}; --fdx: {{fxS.dx}}px; --fdy: {{fxS.dy}}px; --fs: {{fxS.s}}; --fbg: {{sel.color}}; background: {{sel.color}}; color: #0E0E12; border: 2px solid #0E0E12; border-radius: 26px; box-shadow: 0 30px 70px rgba(0,0,0,0.6); overflow: visible; padding: 22px 26px 26px; box-sizing: border-box">
+<div class="coops-sheet-body coops-fx-body" style="display: flex; flex-direction: column; gap: 20px; max-height: calc({{fxS.maxH}}px - 52px); overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; margin: -6px -20px -6px -6px; padding: 6px 20px 6px 6px; --fx-st: -6px; --fx-sb: -6px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: rgba(14,14,18,0.68)">DECK DE EVENTOS › {{sel.typeLabel}} · {{sel.day}} {{sel.month}}</span>
+<button type="button" class="coops-x" aria-label="Fechar" onClick="{{close}}" style="flex: 0 0 44px; height: 44px; border-radius: 14px; background: transparent; border: 1.5px solid #0E0E12; color: #0E0E12; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+<div style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: #0E0E12">{{sel.typeLabel}}</span>
+<h2 id="sheet-title" style="margin: 0; font-size: 34px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.1">{{sel.title}}</h2>
+<sc-if value="{{sel.isCel}}" hint-placeholder-val="{{ false }}">
+<div class="cel-stage" aria-hidden="true" style="position: relative; height: 176px; border-radius: 20px; border: 1.5px solid #0E0E12; background: rgba(245,242,236,0.45); overflow: hidden; display: flex; align-items: flex-end; justify-content: center; gap: 6px; padding-top: 18px">
+<svg class="cel-cf" aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" style="left: 8%; --d: 0ms; --r: 140deg" fill="none" stroke="#0E0E12" stroke-width="1.8" stroke-linecap="round"><path d="M3 3l8 8"></path></svg><svg class="cel-cf" aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" style="left: 20%; --d: 500ms; --r: -120deg" fill="none" stroke="#0E0E12" stroke-width="1.8" stroke-linecap="round"><path d="M7 2v10"></path></svg><svg class="cel-cf" aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" style="left: 34%; --d: 1100ms; --r: 200deg" fill="none" stroke="#0E0E12" stroke-width="1.8" stroke-linecap="round"><path d="M2 7c2-3 4 3 6 0s4 3 4 0"></path></svg><svg class="cel-cf" aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" style="left: 62%; --d: 300ms; --r: -160deg" fill="none" stroke="#0E0E12" stroke-width="1.8" stroke-linecap="round"><path d="M3 11L11 3"></path></svg><svg class="cel-cf" aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" style="left: 76%; --d: 800ms; --r: 120deg" fill="none" stroke="#0E0E12" stroke-width="1.8" stroke-linecap="round"><path d="M7 2v10M2 7h10"></path></svg><svg class="cel-cf" aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" style="left: 90%; --d: 1400ms; --r: -200deg" fill="none" stroke="#0E0E12" stroke-width="1.8" stroke-linecap="round"><path d="M2 7c2-3 4 3 6 0s4 3 4 0"></path></svg><svg class="cel-cf" aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" style="left: 48%; --d: 1700ms; --r: 90deg" fill="none" stroke="#0E0E12" stroke-width="1.8" stroke-linecap="round"><path d="M3 3l8 8"></path></svg>
+<div class="cel-a cel-a1" style="line-height: 0; border-radius: 50%; border: 2px solid #0E0E12; box-shadow: 4px 4px 0 #0E0E12; margin-bottom: 14px"><dc-import name="CoopsAvatar" skin="#8D5A3B" hair-style="coque" shirt-style="blazer" bg="#F5F2EC" crown="{{ true }}" size="{{ 104 }}" label="Joana Reis" hint-size="104px,104px"></dc-import></div>
+<div style="align-self: center; margin-bottom: 0"><sc-if value="{{sel.isPromo}}" hint-placeholder-val="{{ true }}"><svg class="cel-obj" width="84" height="84" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="cel-fl1"><path d="M14 10h12l-2 16a4 4 0 0 1-8 0z" fill="#E8C46A"></path><path d="M20 30v18M14 48h12"></path><path d="M15.5 18h9"></path></g><g class="cel-fl2"><path d="M38 10h12l-2 16a4 4 0 0 1-8 0z" fill="#E8C46A"></path><path d="M44 30v18M38 48h12"></path><path d="M39.5 18h9"></path></g><g class="cel-clk"><path d="M32 2v5M26 4l2 4M38 4l-2 4"></path></g></svg></sc-if><sc-if value="{{sel.isMerito}}" hint-placeholder-val="{{ false }}"><svg class="cel-obj" width="84" height="84" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="cel-md"><path d="M22 4h8l6 16h-8z" fill="#F5A9D6"></path><path d="M42 4h-8l-6 16h8z" fill="#F5A9D6"></path><circle cx="32" cy="36" r="14" fill="#F5A9D6"></circle><circle cx="32" cy="36" r="9"></circle><path d="M32 30l1.8 3.8 4 .4-3 2.8.9 4-3.7-2.1-3.7 2.1.9-4-3-2.8 4-.4z"></path></g><g class="cel-clk"><path d="M52 18v6M49 21h6"></path><path d="M10 44v4M8 46h4"></path></g></svg></sc-if></div>
+<div class="cel-a cel-a2" style="line-height: 0; border-radius: 50%; border: 2px solid #0E0E12; box-shadow: 4px 4px 0 #0E0E12; margin-bottom: 14px"><dc-import name="CoopsAvatar" skin="#E0B08A" hair-style="longo" bg="#F3D36B" size="{{ 104 }}" label="Marina Costa, manager" hint-size="104px,104px"></dc-import></div>
+</div>
+</sc-if>
+<sc-if value="{{sel.hasBody}}" hint-placeholder-val="{{ true }}"><p style="margin: 0; font-size: 17px; line-height: 1.6; color: #0E0E12">{{sel.body}}</p></sc-if>
+<sc-if value="{{sel.hasMsg}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; font-size: 17px; line-height: 1.6">{{sel.msg}}</p>
+<span style="font-size: 14px; font-weight: 600">{{sel.msgBy}}</span>
+</sc-if>
+<sc-if value="{{sel.isMv}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">DE</span><span style="font-size: 14px; font-weight: 600; border: 1.5px solid #0E0E12; border-radius: 999px; padding: 6px 12px; background: rgba(245,242,236,0.55)">{{sel.mvDe}}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">PARA</span><span style="font-size: 14px; font-weight: 600; color: #F5F2EC; background: #0E0E12; border-radius: 999px; padding: 7px 13px">{{sel.mvPara}}</span></div>
+</sc-if>
+<sc-if value="{{sel.isFb}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(14,14,18,0.68)">AUTOR DO FEEDBACK</span><span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #0E0E12; background: rgba(245,242,236,0.6); border: 1.5px solid #0E0E12; border-radius: 999px; padding: 5px 13px">{{sel.fbAutor}}</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(14,14,18,0.68)">ANEXOS · {{sel.fbCount}}</span>
+<sc-if value="{{sel.fbNone}}" hint-placeholder-val="{{ false }}"><span style="font-size: 14px; color: rgba(14,14,18,0.68)">Nenhum anexo neste feedback.</span></sc-if>
+<div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{sel.fbAnexos}}" as="ax" hint-placeholder-count="2"><button type="button" aria-label="Abrir anexo {{ax.n}}" style="font-family: inherit; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 14px 0 10px; border-radius: 12px; background: rgba(245,242,236,0.55); border: 1.5px solid #0E0E12; color: #0E0E12; cursor: pointer; font-size: 14px; max-width: 100%"><sc-if value="{{ax.isLink}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"></path><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"></path></svg></sc-if><sc-if value="{{ax.isFile}}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5"></path></svg></sc-if><span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px">{{ax.n}}</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(14,14,18,0.68)">{{ax.k}}</span></button></sc-for></div>
+</div>
+</sc-if>
+<sc-if value="{{sel.isCi}}" hint-placeholder-val="{{ false }}">
+<span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #0E0E12; background: rgba(245,242,236,0.6); border: 1.5px solid #0E0E12; border-radius: 999px; padding: 5px 11px; font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M4 9h16M8 3v4M16 3v4"></path></svg>{{sel.dateLong}}</span>
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #0E0E12">RESUMO DA CONVERSA</span><p style="margin: 0; font-size: 17px; line-height: 1.6; color: #0E0E12">{{sel.body}}</p></div>
+</sc-if>
+<div style="display: flex; flex-wrap: wrap; gap: 24px; border-top: 1.5px solid rgba(14,14,18,0.25); padding-top: 14px; font-size: 14px">
+<span><span style="color: rgba(14,14,18,0.68)">Registrado por </span>{{sel.author}}</span>
+<span><span style="color: rgba(14,14,18,0.68)">Quem pode editar </span>{{sel.editors}}</span>
+</div>
+</div>
+<sc-if value="{{sel.notCi}}" hint-placeholder-val="{{ true }}"><div style="flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+<sc-if value="{{sel.multi}}" hint-placeholder-val="{{ false }}">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(14,14,18,0.68)">CARTAS NESTA PILHA</span>
+<sc-for list="{{sel.records}}" as="r" hint-placeholder-count="3">
+<div style="display: flex; gap: 12px; align-items: flex-start; border-radius: 14px; background: rgba(245,242,236,0.55); border: 1.5px solid #0E0E12; padding: 14px">
+<span style="flex: 0 0 auto; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #0E0E12; padding-top: 3px">{{r.d}}</span>
+<span style="font-size: 15px; line-height: 1.45">{{r.t}}</span>
+</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{sel.single}}" hint-placeholder-val="{{ true }}">
+<div class="ev-com" style="display: flex; flex-direction: column; gap: 12px">
+<button type="button" class="ev-com-tg" onClick="{{sel.comToggle}}" aria-expanded="{{sel.comOpenStr}}" style="font-family: inherit; color: #0E0E12; background: transparent; border: 0; padding: 4px 0; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; text-align: left">
+<span style="display: inline-flex; align-items: center; gap: 10px"><svg class="ev-com-ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"></path><path class="ev-com-dots" d="M9 10.5h.01M12 10.5h.01M15 10.5h.01"></path></svg><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em">COMENTÁRIOS · {{sel.comCount}}</span></span>
+<span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; border: 1.5px solid #0E0E12; border-radius: 999px; padding: 6px 12px">{{sel.comLabel}}<svg class="ev-com-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{sel.comRot}}deg); transition: transform 240ms ease"><path d="M6 9l6 6 6-6"></path></svg></span>
+</button>
+<sc-if value="{{sel.comOpen}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 10px; animation: evComIn 280ms cubic-bezier(.22,1,.36,1) both">
+<sc-if value="{{sel.comNone}}" hint-placeholder-val="{{ true }}"><span style="font-size: 14px; color: rgba(14,14,18,0.68)">Nenhum comentário ainda. Seja a primeira pessoa a comentar.</span></sc-if>
+<sc-for list="{{sel.comList}}" as="cm" hint-placeholder-count="1"><div style="border-radius: 14px; background: rgba(245,242,236,0.55); border: 1.5px solid #0E0E12; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 13px; font-weight: 700">{{cm.by}} <span style="font-weight: 400; color: rgba(14,14,18,0.68)">· {{cm.when}}</span></span><span style="font-size: 15px; line-height: 1.45">{{cm.t}}</span></div></sc-for>
+<label for="ev-com" style="position: absolute; left: -9999px">Adicionar comentário</label>
+<textarea id="ev-com" rows="3" placeholder="Escreva seu comentário" style="font-family: inherit; font-size: 15px; color: #0E0E12; background: rgba(245,242,236,0.55); border: 1.5px solid #0E0E12; border-radius: 12px; padding: 12px; resize: vertical"></textarea>
+<div style="display: flex; gap: 10px; justify-content: flex-end"><button type="button" onClick="{{sel.comCancel}}" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #0E0E12; border: 1.5px solid #0E0E12; border-radius: 12px; min-height: 44px; padding: 0 16px; cursor: pointer; background: transparent">Cancelar</button><button type="button" onClick="{{sel.comPost}}" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #0E0E12; border: 1.5px solid #0E0E12; border-radius: 12px; min-height: 44px; padding: 0 16px; cursor: pointer; background: #0E0E12; color: #F5F2EC">Publicar</button></div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+</div></sc-if>
+</div>
+<sc-if value="{{sel.isCi}}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; border-top: 1.5px solid rgba(14,14,18,0.25); padding-top: 22px">
+<sc-for list="{{sel.blocks}}" as="bk" hint-placeholder-count="4"><div style="border-radius: 20px; background: rgba(245,242,236,0.55); border: 1.5px solid #0E0E12; border-top: 1.5px solid #0E0E12; padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px"><span style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #0E0E12">{{bk.k}}</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #F5F2EC; background: #0E0E12; border-radius: 999px; min-width: 22px; text-align: center; padding: 2px 7px">{{bk.n}}</span></span><sc-for list="{{bk.items}}" as="it" hint-placeholder-count="2"><span style="display: flex; gap: 10px; font-size: 15px; line-height: 1.45; padding-bottom: 10px; border-bottom: 1px solid #2C2C36"><span aria-hidden="true" style="flex: none; width: 6px; height: 6px; border-radius: 50%; background: #0E0E12; margin-top: 8px"></span>{{it.t}}</span></sc-for><sc-if value="{{bk.empty}}" hint-placeholder-val="{{ false }}"><span style="font-size: 14px; color: #6E6C7A">Nada registrado.</span></sc-if></div></sc-for>
+</div>
+</sc-if>
+<sc-if value="{{sel.isCi}}" hint-placeholder-val="{{ false }}">
+<div style="border-top: 1.5px solid rgba(14,14,18,0.25); padding-top: 14px">
+<div class="ev-com" style="display: flex; flex-direction: column; gap: 12px">
+<button type="button" class="ev-com-tg" onClick="{{sel.comToggle}}" aria-expanded="{{sel.comOpenStr}}" style="font-family: inherit; color: #0E0E12; background: transparent; border: 0; padding: 4px 0; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; text-align: left">
+<span style="display: inline-flex; align-items: center; gap: 10px"><svg class="ev-com-ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"></path><path class="ev-com-dots" d="M9 10.5h.01M12 10.5h.01M15 10.5h.01"></path></svg><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em">COMENTÁRIOS · {{sel.comCount}}</span></span>
+<span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; border: 1.5px solid #0E0E12; border-radius: 999px; padding: 6px 12px">{{sel.comLabel}}<svg class="ev-com-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{sel.comRot}}deg); transition: transform 240ms ease"><path d="M6 9l6 6 6-6"></path></svg></span>
+</button>
+<sc-if value="{{sel.comOpen}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 10px; animation: evComIn 280ms cubic-bezier(.22,1,.36,1) both">
+<sc-if value="{{sel.comNone}}" hint-placeholder-val="{{ true }}"><span style="font-size: 14px; color: rgba(14,14,18,0.68)">Nenhum comentário ainda. Seja a primeira pessoa a comentar.</span></sc-if>
+<sc-for list="{{sel.comList}}" as="cm" hint-placeholder-count="1"><div style="border-radius: 14px; background: rgba(245,242,236,0.55); border: 1.5px solid #0E0E12; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 13px; font-weight: 700">{{cm.by}} <span style="font-weight: 400; color: rgba(14,14,18,0.68)">· {{cm.when}}</span></span><span style="font-size: 15px; line-height: 1.45">{{cm.t}}</span></div></sc-for>
+<label for="ev-com" style="position: absolute; left: -9999px">Adicionar comentário</label>
+<textarea id="ev-com" rows="3" placeholder="Escreva seu comentário" style="font-family: inherit; font-size: 15px; color: #0E0E12; background: rgba(245,242,236,0.55); border: 1.5px solid #0E0E12; border-radius: 12px; padding: 12px; resize: vertical"></textarea>
+<div style="display: flex; gap: 10px; justify-content: flex-end"><button type="button" onClick="{{sel.comCancel}}" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #0E0E12; border: 1.5px solid #0E0E12; border-radius: 12px; min-height: 44px; padding: 0 16px; cursor: pointer; background: transparent">Cancelar</button><button type="button" onClick="{{sel.comPost}}" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #0E0E12; border: 1.5px solid #0E0E12; border-radius: 12px; min-height: 44px; padding: 0 16px; cursor: pointer; background: #0E0E12; color: #F5F2EC">Publicar</button></div>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+<div class="coops-fx-foot" style="display: flex; gap: 10px; flex-wrap: wrap; border-top: 1.5px solid rgba(14,14,18,0.25); padding-top: 16px"><button type="button" onClick="{{sel.edit}}" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #0E0E12; background: transparent; border: 1.5px solid #0E0E12; border-radius: 12px; min-height: 48px; padding: 0 14px; cursor: pointer; flex: 1 1 160px">{{sel.editLabel}}</button><button type="button" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #0E0E12; background: transparent; border: 1.5px solid #0E0E12; border-radius: 12px; min-height: 48px; padding: 0 14px; cursor: pointer; flex: 1 1 160px; display: inline-flex; align-items: center; justify-content: center; gap: 8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16v3H4zM6 10v9h12v-9M10 14h4"></path></svg>Arquivar</button></div>
+</div>
+</section>
+</sc-if>
+<sc-if value="{{ciOpen}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-label="Fechar" onClick="{{closeCi}}" class="coops-overlay" style="animation: coopsFadeIn 320ms ease both; position: absolute; inset: 0; z-index: 9; border: 0; padding: 0; background: rgba(14,14,18,0.72); backdrop-filter: blur(3px); cursor: pointer"></button>
+<section role="dialog" aria-modal="true" aria-label="{{cw.titulo}}" style="animation: coopsSheetIn 560ms cubic-bezier(.22,1,.36,1) both; position: absolute; left: 0; right: 0; bottom: 0; top: auto; max-height: calc(100% - 120px); z-index: 10; background: #0E0E12; border-radius: 32px 32px 0 0; border-top: 3px solid #B7A6FF; box-shadow: 0 -30px 80px rgba(0,0,0,0.6); overflow-y: auto; overflow-x: hidden; padding: 12px 32px 40px; box-sizing: border-box">
+<div aria-hidden="true" style="width: 56px; height: 5px; border-radius: 3px; background: #4A4858; margin: 0 auto 14px"></div>
+<div class="coops-sheet-body" style="max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #B7A6FF">DECK DE EVENTOS · {{cw.modo}}</span><h2 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.025em">{{cw.titulo}}</h2><span style="font-size: 13px; color: #A3A1AD">Uma pergunta por carta. Só o manager edita; a Joana vê.</span></div>
+<button type="button" aria-label="Fechar" onClick="{{closeCi}}" style="flex: 0 0 44px; height: 44px; border-radius: 14px; background: #212129; border: 1.5px solid #3A3846; color: #F5F2EC; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+</div>
+<div style="position: relative; height: 470px; margin: 16px 28px 0 0">
+<div class="coops-wz-card" aria-hidden="{{cw.c0.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #B7A6FF; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{cw.c0.t}}; opacity: {{cw.c0.op}}; z-index: {{cw.c0.z}}; pointer-events: {{cw.c0.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>PERGUNTA 1 DE 6</span><span>{{cw.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Qual o tema central da conversa?</span>
+<span style="font-size: 14px; line-height: 1.45">Vira o título da carta no deck.</span><span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; background: rgba(245,242,236,0.7); border: 1.5px solid #0E0E12; border-radius: 999px; padding: 6px 12px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M4 9h16M8 3v4M16 3v4"></path></svg>{{cw.dateLong}} · registrada automaticamente</span><input id="ci-tema" type="text" aria-label="Tema central" placeholder="Ex.: espaço para pesquisa no squad" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; min-height: 56px"><sc-if value="{{cw.err}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 14px; font-weight: 600">Dê um tema ao check-in para seguir.</span></sc-if>
+</div>
+<div class="coops-wz-card" aria-hidden="{{cw.c1.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #D9CFFF; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{cw.c1.t}}; opacity: {{cw.c1.op}}; z-index: {{cw.c1.z}}; pointer-events: {{cw.c1.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>PERGUNTA 2 DE 6</span><span>{{cw.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Como foi a conversa?</span>
+<span style="font-size: 14px; line-height: 1.45">Um resumo curto para lembrar do contexto depois.</span><textarea id="ci-resumo" rows="7" aria-label="Resumo da conversa" placeholder="O que vocês conversaram, em poucas linhas" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; resize: none"></textarea>
+</div>
+<div class="coops-wz-card" aria-hidden="{{cw.c2.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #F5A9D6; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{cw.c2.t}}; opacity: {{cw.c2.op}}; z-index: {{cw.c2.z}}; pointer-events: {{cw.c2.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>PERGUNTA 3 DE 6</span><span>{{cw.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">O que a Joana pediu para você?</span>
+<span style="font-size: 14px; line-height: 1.45">Solicitações do membro para o líder. Cada uma vira um item para acompanhar.</span><div style="display: flex; flex-direction: column; gap: 6px"><sc-for list="{{cw.pedidos}}" as="it" hint-placeholder-count="1"><div style="display: flex; gap: 10px; align-items: center; border-radius: 12px; background: rgba(245,242,236,0.75); border: 1.5px solid #0E0E12; padding: 8px 10px"><span style="flex: none; width: 22px; height: 22px; border-radius: 6px; background: #0E0E12; color: #F5F2EC; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 11px">{{it.n}}</span><span style="flex: 1; font-size: 14px; line-height: 1.4">{{it.t}}</span><button type="button" aria-label="Remover" onClick="{{it.remove}}" style="flex: none; width: 30px; height: 30px; border-radius: 8px; border: 0; background: transparent; color: #0E0E12; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div></sc-for></div><div style="display: flex; gap: 8px"><input id="ci-pedidos" type="text" aria-label="O que a Joana pediu para você?" placeholder="Ex.: mais tempo para pesquisa" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; flex: 1; width: auto; min-height: 48px"><button type="button" onClick="{{cw.add_pedidos}}" style="font-family: inherit; font-weight: 600; font-size: 13px; color: #0E0E12; background: transparent; border: 1.5px dashed #0E0E12; border-radius: 999px; min-height: 48px; padding: 0 14px; cursor: pointer">+ Adicionar</button></div>
+</div>
+<div class="coops-wz-card" aria-hidden="{{cw.c3.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #F3D36B; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{cw.c3.t}}; opacity: {{cw.c3.op}}; z-index: {{cw.c3.z}}; pointer-events: {{cw.c3.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>PERGUNTA 4 DE 6</span><span>{{cw.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">O que fica no radar?</span>
+<span style="font-size: 14px; line-height: 1.45">Sinais e temas para observar, sem ação ainda.</span><div style="display: flex; flex-direction: column; gap: 6px"><sc-for list="{{cw.radar}}" as="it" hint-placeholder-count="1"><div style="display: flex; gap: 10px; align-items: center; border-radius: 12px; background: rgba(245,242,236,0.75); border: 1.5px solid #0E0E12; padding: 8px 10px"><span style="flex: none; width: 22px; height: 22px; border-radius: 6px; background: #0E0E12; color: #F5F2EC; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 11px">{{it.n}}</span><span style="flex: 1; font-size: 14px; line-height: 1.4">{{it.t}}</span><button type="button" aria-label="Remover" onClick="{{it.remove}}" style="flex: none; width: 30px; height: 30px; border-radius: 8px; border: 0; background: transparent; color: #0E0E12; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div></sc-for></div><div style="display: flex; gap: 8px"><input id="ci-radar" type="text" aria-label="O que fica no radar?" placeholder="Ex.: carga alta no fim do trimestre" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; flex: 1; width: auto; min-height: 48px"><button type="button" onClick="{{cw.add_radar}}" style="font-family: inherit; font-weight: 600; font-size: 13px; color: #0E0E12; background: transparent; border: 1.5px dashed #0E0E12; border-radius: 999px; min-height: 48px; padding: 0 14px; cursor: pointer">+ Adicionar</button></div>
+</div>
+<div class="coops-wz-card" aria-hidden="{{cw.c4.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #8FE3C8; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{cw.c4.t}}; opacity: {{cw.c4.op}}; z-index: {{cw.c4.z}}; pointer-events: {{cw.c4.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>PERGUNTA 5 DE 6</span><span>{{cw.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">O que vocês combinaram?</span>
+<span style="font-size: 14px; line-height: 1.45">Combinados gerais, que valem a partir de agora.</span><div style="display: flex; flex-direction: column; gap: 6px"><sc-for list="{{cw.comb}}" as="it" hint-placeholder-count="1"><div style="display: flex; gap: 10px; align-items: center; border-radius: 12px; background: rgba(245,242,236,0.75); border: 1.5px solid #0E0E12; padding: 8px 10px"><span style="flex: none; width: 22px; height: 22px; border-radius: 6px; background: #0E0E12; color: #F5F2EC; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 11px">{{it.n}}</span><span style="flex: 1; font-size: 14px; line-height: 1.4">{{it.t}}</span><button type="button" aria-label="Remover" onClick="{{it.remove}}" style="flex: none; width: 30px; height: 30px; border-radius: 8px; border: 0; background: transparent; color: #0E0E12; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div></sc-for></div><div style="display: flex; gap: 8px"><input id="ci-comb" type="text" aria-label="O que vocês combinaram?" placeholder="Ex.: duas horas fixas de pesquisa por semana" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; flex: 1; width: auto; min-height: 48px"><button type="button" onClick="{{cw.add_comb}}" style="font-family: inherit; font-weight: 600; font-size: 13px; color: #0E0E12; background: transparent; border: 1.5px dashed #0E0E12; border-radius: 999px; min-height: 48px; padding: 0 14px; cursor: pointer">+ Adicionar</button></div>
+</div>
+<div class="coops-wz-card" aria-hidden="{{cw.c5.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #F5F2EC; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{cw.c5.t}}; opacity: {{cw.c5.op}}; z-index: {{cw.c5.z}}; pointer-events: {{cw.c5.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>PERGUNTA 6 DE 6</span><span>{{cw.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">E para o próximo encontro?</span>
+<span style="font-size: 14px; line-height: 1.45">O que cada um traz para o próximo check-in.</span><div style="display: flex; flex-direction: column; gap: 6px"><sc-for list="{{cw.prox}}" as="it" hint-placeholder-count="1"><div style="display: flex; gap: 10px; align-items: center; border-radius: 12px; background: rgba(245,242,236,0.75); border: 1.5px solid #0E0E12; padding: 8px 10px"><span style="flex: none; width: 22px; height: 22px; border-radius: 6px; background: #0E0E12; color: #F5F2EC; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 11px">{{it.n}}</span><span style="flex: 1; font-size: 14px; line-height: 1.4">{{it.t}}</span><button type="button" aria-label="Remover" onClick="{{it.remove}}" style="flex: none; width: 30px; height: 30px; border-radius: 8px; border: 0; background: transparent; color: #0E0E12; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div></sc-for></div><div style="display: flex; gap: 8px"><input id="ci-prox" type="text" aria-label="E para o próximo encontro?" placeholder="Ex.: trazer o roteiro da pesquisa com lojistas" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; flex: 1; width: auto; min-height: 48px"><button type="button" onClick="{{cw.add_prox}}" style="font-family: inherit; font-weight: 600; font-size: 13px; color: #0E0E12; background: transparent; border: 1.5px dashed #0E0E12; border-radius: 999px; min-height: 48px; padding: 0 14px; cursor: pointer">+ Adicionar</button></div>
+</div>
+<div class="coops-wz-card" aria-hidden="{{cw.c6.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #B7A6FF; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{cw.c6.t}}; opacity: {{cw.c6.op}}; z-index: {{cw.c6.z}}; pointer-events: {{cw.c6.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>RESUMO</span><span>{{cw.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Confere o check-in?</span>
+<span style="font-size: 14px; line-height: 1.45">Ele entra no deck de Eventos da Joana como uma carta de check-in.</span><div style="display: flex; flex-direction: column; gap: 8px"><sc-for list="{{cw.sum}}" as="r" hint-placeholder-count="6"><div style="display: flex; flex-direction: column; gap: 2px; border-radius: 12px; background: rgba(245,242,236,0.7); border: 1.5px solid #0E0E12; padding: 10px 12px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.06em">{{r.k}}</span><span style="font-size: 14px; line-height: 1.4">{{r.v}}</span></div></sc-for></div>
+</div>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px">
+<button type="button" onClick="{{cw.prev}}" style="font-family: inherit; font-weight: 600; font-size: 15px; color: #F5F2EC; background: transparent; border: 1.5px solid #4A4858; border-radius: 14px; min-height: 48px; padding: 0 18px; cursor: pointer; opacity: {{cw.prevOp}}">Voltar</button>
+<div style="display: flex; gap: 6px"><sc-for list="{{cw.dots}}" as="d" hint-placeholder-count="7"><button type="button" aria-label="Ir para a pergunta {{d.n}}" onClick="{{d.go}}" style="width: 22px; height: 6px; padding: 0; border: 0; border-radius: 3px; background: {{d.bg}}; cursor: pointer"></button></sc-for></div>
+<button type="button" onClick="{{cw.next}}" style="font-family: inherit; font-weight: 600; font-size: 15px; color: #0E0E12; background: #B7A6FF; border: 2px solid #0E0E12; border-radius: 14px; min-height: 48px; padding: 0 20px; cursor: pointer">{{cw.nextLabel}}</button>
+</div>
+</div>
+</section>
+</sc-if>
+<sc-if value="{{fbOpen}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-label="Fechar" onClick="{{closeFb}}" class="coops-overlay" style="animation: coopsFadeIn 320ms ease both; position: absolute; inset: 0; z-index: 9; border: 0; padding: 0; background: rgba(14,14,18,0.72); backdrop-filter: blur(3px); cursor: pointer"></button>
+<section role="dialog" aria-modal="true" aria-label="{{fw.titulo}}" style="animation: coopsSheetIn 560ms cubic-bezier(.22,1,.36,1) both; position: absolute; left: 0; right: 0; bottom: 0; top: auto; max-height: calc(100% - 120px); z-index: 10; background: #0E0E12; border-radius: 32px 32px 0 0; border-top: 3px solid #F5F2EC; box-shadow: 0 -30px 80px rgba(0,0,0,0.6); overflow-y: auto; overflow-x: hidden; padding: 12px 32px 40px; box-sizing: border-box">
+<div aria-hidden="true" style="width: 56px; height: 5px; border-radius: 3px; background: #4A4858; margin: 0 auto 14px"></div>
+<div class="coops-sheet-body" style="max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #F5F2EC">DECK DE EVENTOS · {{fw.modo}}</span><h2 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.025em">{{fw.titulo}}</h2><span style="font-size: 13px; color: #A3A1AD">Uma pergunta por carta. Manager e Joana podem registrar.</span></div>
+<button type="button" aria-label="Fechar" onClick="{{closeFb}}" style="flex: 0 0 44px; height: 44px; border-radius: 14px; background: #212129; border: 1.5px solid #3A3846; color: #F5F2EC; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+</div>
+<div style="position: relative; height: 470px; margin: 16px 28px 0 0">
+<div class="coops-wz-card" aria-hidden="{{fw.c0.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #F5F2EC; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{fw.c0.t}}; opacity: {{fw.c0.op}}; z-index: {{fw.c0.z}}; pointer-events: {{fw.c0.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>PERGUNTA 1 DE 4</span><span>{{fw.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Qual o título do feedback?</span>
+<span style="font-size: 14px; line-height: 1.45">Vira o título da carta no deck. Pode ser uma frase marcante do feedback.</span><input id="fb-titulo" type="text" aria-label="Título do feedback" placeholder="Ex.: “Facilitou o workshop com muita clareza.”" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; min-height: 56px"><sc-if value="{{fw.err}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 14px; font-weight: 600">Dê um título ao feedback para seguir.</span></sc-if>
+</div>
+<div class="coops-wz-card" aria-hidden="{{fw.c1.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #D9CFFF; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{fw.c1.t}}; opacity: {{fw.c1.op}}; z-index: {{fw.c1.z}}; pointer-events: {{fw.c1.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>PERGUNTA 2 DE 4</span><span>{{fw.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">O que foi dito?</span>
+<span style="font-size: 14px; line-height: 1.45">Descreva o feedback com o contexto em que ele aconteceu.</span><textarea id="fb-desc" rows="7" aria-label="Descrição do feedback" placeholder="O que a pessoa observou, em que situação e qual o impacto" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; resize: none"></textarea>
+</div>
+<div class="coops-wz-card" aria-hidden="{{fw.c2.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #8FE3C8; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{fw.c2.t}}; opacity: {{fw.c2.op}}; z-index: {{fw.c2.z}}; pointer-events: {{fw.c2.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>PERGUNTA 3 DE 4</span><span>{{fw.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Quem deu o feedback?</span>
+<span style="font-size: 14px; line-height: 1.45">Nome do autor, ou do grupo que deu o feedback.</span><input id="fb-autor" type="text" aria-label="Nome do autor" placeholder="Ex.: Caio Lima" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; min-height: 56px"><div style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{fw.quick}}" as="q" hint-placeholder-count="4"><button type="button" aria-pressed="{{q.on}}" onClick="{{q.pick}}" style="font-family: inherit; font-weight: 600; font-size: 13px; color: {{q.fg}}; background: {{q.bg}}; border: 1.5px solid #0E0E12; border-radius: 999px; min-height: 40px; padding: 0 14px; cursor: pointer">{{q.label}}</button></sc-for></div>
+</div>
+<div class="coops-wz-card" aria-hidden="{{fw.c3.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #F3D36B; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{fw.c3.t}}; opacity: {{fw.c3.op}}; z-index: {{fw.c3.z}}; pointer-events: {{fw.c3.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>PERGUNTA 4 DE 4 · OPCIONAL</span><span>{{fw.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Quer anexar algo?</span>
+<span style="font-size: 14px; line-height: 1.45">Prints, e-mails, a gravação ou um link que dão contexto ao feedback.</span><input id="fb-file" type="file" multiple onChange="{{fw.addFiles}}" style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none"><label for="fb-file" class="fb-drop" style="display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 64px; border: 1.5px dashed #0E0E12; border-radius: 14px; font-size: 15px; font-weight: 600; cursor: pointer; padding: 0 14px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5 12.5 19a5 5 0 0 1-7-7l8-8a3.4 3.4 0 0 1 4.8 4.8l-8 8a1.7 1.7 0 0 1-2.4-2.4L15 7.3"></path></svg>Escolher arquivos</label><div style="display: flex; flex-direction: column; gap: 6px"><sc-for list="{{fw.anexos}}" as="ax" hint-placeholder-count="1"><div style="display: flex; gap: 10px; align-items: center; border-radius: 12px; background: rgba(245,242,236,0.75); border: 1.5px solid #0E0E12; padding: 6px 6px 6px 12px"><sc-if value="{{ax.isLink}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"></path><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"></path></svg></sc-if><sc-if value="{{ax.isFile}}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5"></path></svg></sc-if><span style="flex: 1; min-width: 0; font-size: 14px; line-height: 1.4; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ax.n}}</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px">{{ax.k}}</span><button type="button" aria-label="Remover {{ax.n}}" onClick="{{ax.remove}}" style="flex: none; width: 32px; height: 32px; border-radius: 8px; border: 0; background: transparent; color: #0E0E12; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div></sc-for></div><div style="display: flex; gap: 8px"><input id="fb-link" type="url" aria-label="Adicionar um link" placeholder="Ou cole um link" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; flex: 1; width: auto; min-height: 48px"><button type="button" onClick="{{fw.addLink}}" style="font-family: inherit; font-weight: 600; font-size: 13px; color: #0E0E12; background: transparent; border: 1.5px dashed #0E0E12; border-radius: 999px; min-height: 48px; padding: 0 14px; cursor: pointer">+ Adicionar</button></div>
+</div>
+<div class="coops-wz-card" aria-hidden="{{fw.c4.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #F5F2EC; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{fw.c4.t}}; opacity: {{fw.c4.op}}; z-index: {{fw.c4.z}}; pointer-events: {{fw.c4.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>RESUMO</span><span>{{fw.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Confere o feedback?</span>
+<span style="font-size: 14px; line-height: 1.45">Ele entra no deck de Eventos da Joana como uma carta de feedback.</span><div style="display: flex; flex-direction: column; gap: 8px"><sc-for list="{{fw.sum}}" as="r" hint-placeholder-count="4"><div style="display: flex; flex-direction: column; gap: 2px; border-radius: 12px; background: rgba(183,166,255,0.28); border: 1.5px solid #0E0E12; padding: 10px 12px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.06em">{{r.k}}</span><span style="font-size: 14px; line-height: 1.4">{{r.v}}</span></div></sc-for></div>
+</div>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px">
+<button type="button" onClick="{{fw.prev}}" style="font-family: inherit; font-weight: 600; font-size: 15px; color: #F5F2EC; background: transparent; border: 1.5px solid #4A4858; border-radius: 14px; min-height: 48px; padding: 0 18px; cursor: pointer; opacity: {{fw.prevOp}}">Voltar</button>
+<div style="display: flex; gap: 6px"><sc-for list="{{fw.dots}}" as="d" hint-placeholder-count="5"><button type="button" aria-label="Ir para a pergunta {{d.n}}" onClick="{{d.go}}" style="width: 22px; height: 6px; padding: 0; border: 0; border-radius: 3px; background: {{d.bg}}; cursor: pointer"></button></sc-for></div>
+<button type="button" onClick="{{fw.next}}" style="font-family: inherit; font-weight: 600; font-size: 15px; color: #0E0E12; background: #B7A6FF; border: 2px solid #0E0E12; border-radius: 14px; min-height: 48px; padding: 0 20px; cursor: pointer">{{fw.nextLabel}}</button>
+</div>
+</div>
+</section>
+</sc-if>
+<sc-if value="{{evPick}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-label="Fechar" onClick="{{closeEv}}" class="coops-overlay" style="animation: coopsFadeIn 320ms ease both; position: absolute; inset: 0; z-index: 9; border: 0; padding: 0; background: rgba(14,14,18,0.72); backdrop-filter: blur(3px); cursor: pointer"></button>
+<section role="dialog" aria-modal="true" aria-labelledby="evp-title" style="animation: coopsSheetIn 560ms cubic-bezier(.22,1,.36,1) both; position: absolute; left: 0; right: 0; bottom: 0; top: auto; max-height: calc(100% - 120px); z-index: 10; background: #0E0E12; border-radius: 32px 32px 0 0; border-top: 3px solid #B7A6FF; box-shadow: 0 -30px 80px rgba(0,0,0,0.6); overflow-y: auto; overflow-x: hidden; padding: 12px 32px 40px; box-sizing: border-box">
+<div aria-hidden="true" style="width: 56px; height: 5px; border-radius: 3px; background: #4A4858; margin: 0 auto 14px"></div>
+<div class="coops-sheet-body" style="max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #B7A6FF">DECK DE EVENTOS · NOVO EVENTO</span><h2 id="evp-title" style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.025em">Que tipo de evento você quer registrar?</h2><span style="font-size: 13px; color: #A3A1AD">Escolha uma carta. Depois vêm as perguntas, uma por carta.</span></div>
+<button type="button" aria-label="Fechar" onClick="{{closeEv}}" style="flex: 0 0 44px; height: 44px; border-radius: 14px; background: #212129; border: 1.5px solid #3A3846; color: #F5F2EC; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px"><button type="button" class="coops-card ev-opt" onClick="{{pick_checkin}}" style="font-family: inherit; text-align: left; box-sizing: border-box; border-radius: 20px; background: #B7A6FF; color: #0E0E12; border: 2px solid #0E0E12; padding: 16px; min-height: 176px; display: flex; flex-direction: column; gap: 8px; cursor: pointer"><svg width="48" height="48" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="c3-l"><g transform="translate(26 34) scale(-1 1)"><path d="M0 0h18v12a8 8 0 0 1-8 8h-2a8 8 0 0 1-8-8z" fill="#B7A6FF"></path><path d="M18 3h2a4 4 0 0 1 0 8h-2"></path></g></g><g class="c3-r"><g transform="translate(38 34)"><path d="M0 0h18v12a8 8 0 0 1-8 8h-2a8 8 0 0 1-8-8z" fill="#B7A6FF"></path><path d="M18 3h2a4 4 0 0 1 0 8h-2"></path></g></g><g class="c3-b"><path d="M20 8h24v14H36l-4 5-4-5h-8z"></path><circle class="c3-d" cx="26" cy="15" r="1.5" fill="#0E0E12" stroke="none"></circle><circle class="c3-d c3-d2" cx="32" cy="15" r="1.5" fill="#0E0E12" stroke="none"></circle><circle class="c3-d c3-d3" cx="38" cy="15" r="1.5" fill="#0E0E12" stroke="none"></circle></g><path d="M6 58h52"></path></svg><span style="margin-top: auto; font-size: 18px; font-weight: 700; line-height: 1.15">Check-in</span><span style="font-size: 13px; line-height: 1.4">Conversa 1:1 com resumo, pedidos e combinados.</span></button><button type="button" class="coops-card ev-opt" onClick="{{pick_feedback}}" style="font-family: inherit; text-align: left; box-sizing: border-box; border-radius: 20px; background: #F5F2EC; color: #0E0E12; border: 2px solid #0E0E12; padding: 16px; min-height: 176px; display: flex; flex-direction: column; gap: 8px; cursor: pointer"><svg width="48" height="48" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="p-a"><circle cx="16" cy="34" r="7"></circle><path d="M4 58c0-9 5-14 12-14s12 5 12 14"></path></g><g class="p-b"><circle cx="48" cy="34" r="7"></circle><path d="M36 58c0-9 5-14 12-14s12 5 12 14"></path></g><g class="p-1"><path d="M8 8h18v10h-10l-4 4v-4H8z"></path><path d="M12 13h10"></path></g><g class="p-2"><path d="M56 8H38v10h10l4 4v-4h4z"></path><path d="M42 13h10"></path></g></svg><span style="margin-top: auto; font-size: 18px; font-weight: 700; line-height: 1.15">Feedback</span><span style="font-size: 13px; line-height: 1.4">O que alguém disse sobre o trabalho, com anexos.</span></button><button type="button" class="coops-card ev-opt" onClick="{{pick_promo}}" style="font-family: inherit; text-align: left; box-sizing: border-box; border-radius: 20px; background: #E8C46A; color: #0E0E12; border: 2px solid #0E0E12; padding: 16px; min-height: 176px; display: flex; flex-direction: column; gap: 8px; cursor: pointer"><svg width="48" height="48" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="rotate(24 32 40)"><g class="cp-bt"><path d="M22 62h20V38c0-8-5-10-5-15v-6h-10v6c0 5-5 7-5 15z" fill="#E8C46A"></path><path d="M22 44h20M22 54h20"></path><path d="M27 23h10"></path><g class="cp-ck"><path d="M28 17V11h8v6zM27 11c0-4 10-4 10 0"></path></g><path class="cp-fm" d="M27 17c-2-3 1-5 3-4 1-3 5-3 5 0 3-1 4 2 2 4"></path><circle class="cp-dr" style="--dx: -8px; --dy: -12px; animation-delay: 0ms" cx="32" cy="12" r="1.6" fill="none" stroke-width="1.5"></circle><circle class="cp-dr" style="--dx: 0px; --dy: -17px; animation-delay: 30ms" cx="32" cy="12" r="1.8" fill="none" stroke-width="1.5"></circle><circle class="cp-dr" style="--dx: 8px; --dy: -12px; animation-delay: 60ms" cx="32" cy="12" r="1.5" fill="none" stroke-width="1.5"></circle><circle class="cp-dr" style="--dx: -4px; --dy: -22px; animation-delay: 90ms" cx="32" cy="12" r="1.2" fill="none" stroke-width="1.5"></circle><circle class="cp-dr" style="--dx: 5px; --dy: -23px; animation-delay: 120ms" cx="32" cy="12" r="1.3" fill="none" stroke-width="1.5"></circle></g></g><rect class="cp-cf" style="--x: 10px; --y: -14px; --r: 140deg; animation-delay: 0ms" x="42.5" y="12.5" width="3" height="5" rx="1" fill="none" stroke-width="1.5"></rect><rect class="cp-cf" style="--x: 16px; --y: -4px; --r: -120deg; animation-delay: 25ms" x="42.5" y="12.5" width="3" height="5" rx="1" fill="none" stroke-width="1.5"></rect><rect class="cp-cf" style="--x: 4px; --y: -20px; --r: 200deg; animation-delay: 50ms" x="42.5" y="12.5" width="3" height="5" rx="1" fill="none" stroke-width="1.5"></rect><rect class="cp-cf" style="--x: -6px; --y: -16px; --r: -160deg; animation-delay: 75ms" x="42.5" y="12.5" width="3" height="5" rx="1" fill="none" stroke-width="1.5"></rect><rect class="cp-cf" style="--x: 18px; --y: -16px; --r: 90deg; animation-delay: 100ms" x="42.5" y="12.5" width="3" height="5" rx="1" fill="none" stroke-width="1.5"></rect><rect class="cp-cf" style="--x: -10px; --y: -6px; --r: 180deg; animation-delay: 125ms" x="42.5" y="12.5" width="3" height="5" rx="1" fill="none" stroke-width="1.5"></rect></svg><span style="margin-top: auto; font-size: 18px; font-weight: 700; line-height: 1.15">Promoção</span><span style="font-size: 13px; line-height: 1.4">Mudança de cargo ou de nível.</span></button><button type="button" class="coops-card ev-opt" onClick="{{pick_merito}}" style="font-family: inherit; text-align: left; box-sizing: border-box; border-radius: 20px; background: #F5A9D6; color: #0E0E12; border: 2px solid #0E0E12; padding: 16px; min-height: 176px; display: flex; flex-direction: column; gap: 8px; cursor: pointer"><svg width="48" height="48" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="md-sw"><path d="M17 4h9l9 18h-9z" fill="#F5A9D6"></path><path d="M47 4h-9l-9 18h9z" fill="#F5A9D6"></path><circle cx="32" cy="38" r="14" fill="#F5A9D6"></circle><circle cx="32" cy="38" r="9"></circle><path class="md-st" d="M32 32l1.8 3.8 4 .4-3 2.8.9 4-3.7-2.1-3.7 2.1.9-4-3-2.8 4-.4z"></path></g><path class="md-sp" d="M52 22v6M49 25h6"></path><path class="md-sp md-sp2" d="M11 40v5M8.5 42.5h5"></path><path class="md-sp md-sp3" d="M52 50v4M50 52h4"></path></svg><span style="margin-top: auto; font-size: 18px; font-weight: 700; line-height: 1.15">Mérito</span><span style="font-size: 13px; line-height: 1.4">Reconhecimento por algo que fez diferença.</span></button><button type="button" class="coops-card ev-opt" onClick="{{pick_mudanca}}" style="font-family: inherit; text-align: left; box-sizing: border-box; border-radius: 20px; background: #8FE3C8; color: #0E0E12; border: 2px solid #0E0E12; padding: 16px; min-height: 176px; display: flex; flex-direction: column; gap: 8px; cursor: pointer"><svg width="48" height="48" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="overflow: visible"><g class="ab-bm"><ellipse class="ab-rg" cx="32" cy="30" rx="6.5" ry="1.5" stroke-width="1.2"></ellipse><ellipse class="ab-rg ab-rg2" cx="32" cy="30" rx="6.5" ry="1.5" stroke-width="1.2"></ellipse><ellipse class="ab-rg ab-rg3" cx="32" cy="30" rx="6.5" ry="1.5" stroke-width="1.2"></ellipse></g><g class="ab-pp"><circle cx="32" cy="42" r="4.6" fill="#8FE3C8"></circle><path d="M25.5 56c0-6 2.9-8.6 6.5-8.6s6.5 2.6 6.5 8.6" fill="#8FE3C8"></path></g><g class="ab-sh"><path d="M22 17.5a10 9.5 0 0 1 20 0" fill="#8FE3C8"></path><path d="M27 12.2a5.5 5 0 0 1 3.4-2.6" stroke-width="1.6"></path><path d="M8 21.5c0-3.4 10.7-5.5 24-5.5s24 2.1 24 5.5-10.7 6-24 6-24-2.6-24-6z" fill="#8FE3C8"></path><path d="M11 21.8c5.5 2.2 14 3 21 3s15.5-.8 21-3" stroke-width="1.6"></path><circle class="ab-lt" cx="21" cy="23.4" r="1.5"></circle><circle class="ab-lt ab-lt2" cx="32" cy="24.6" r="1.5"></circle><circle class="ab-lt ab-lt3" cx="43" cy="23.4" r="1.5"></circle></g></svg><span style="margin-top: auto; font-size: 18px; font-weight: 700; line-height: 1.15">Mudança de time</span><span style="font-size: 13px; line-height: 1.4">Saída de um squad e chegada em outro.</span></button></div>
+</div>
+</section>
+</sc-if>
+<sc-if value="{{gwOpen}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-label="Fechar" onClick="{{closeGw}}" class="coops-overlay" style="animation: coopsFadeIn 320ms ease both; position: absolute; inset: 0; z-index: 9; border: 0; padding: 0; background: rgba(14,14,18,0.72); backdrop-filter: blur(3px); cursor: pointer"></button>
+<section role="dialog" aria-modal="true" aria-label="{{gw.titulo}}" style="animation: coopsSheetIn 560ms cubic-bezier(.22,1,.36,1) both; position: absolute; left: 0; right: 0; bottom: 0; top: auto; max-height: calc(100% - 120px); z-index: 10; background: #0E0E12; border-radius: 32px 32px 0 0; border-top: 3px solid {{gw.bg}}; box-shadow: 0 -30px 80px rgba(0,0,0,0.6); overflow-y: auto; overflow-x: hidden; padding: 12px 32px 40px; box-sizing: border-box">
+<div aria-hidden="true" style="width: 56px; height: 5px; border-radius: 3px; background: #4A4858; margin: 0 auto 14px"></div>
+<div class="coops-sheet-body" style="max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: {{gw.bg}}">DECK DE EVENTOS · {{gw.modo}} · {{gw.label}}</span><h2 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.025em">{{gw.titulo}}</h2><span style="font-size: 13px; color: #A3A1AD">Uma pergunta por carta. <sc-if value="{{gw.isNew}}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{backToPick}}" style="font: inherit; color: #B7A6FF; background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer">Trocar o tipo</button></sc-if></span></div>
+<button type="button" aria-label="Fechar" onClick="{{closeGw}}" style="flex: 0 0 44px; height: 44px; border-radius: 14px; background: #212129; border: 1.5px solid #3A3846; color: #F5F2EC; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+</div>
+<div style="position: relative; height: 440px; margin: 16px 28px 0 0">
+<div class="coops-wz-card" aria-hidden="{{gw.c0.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: {{gw.bg}}; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{gw.c0.t}}; opacity: {{gw.c0.op}}; z-index: {{gw.c0.z}}; pointer-events: {{gw.c0.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>{{gw.kk0}}</span><span>{{gw.label}} · {{gw.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">{{gw.q0}}</span>
+<span style="font-size: 14px; line-height: 1.45">Vira o título da carta no deck.</span><span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; background: rgba(245,242,236,0.7); border: 1.5px solid #0E0E12; border-radius: 999px; padding: 6px 12px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M4 9h16M8 3v4M16 3v4"></path></svg>{{gw.dateLong}} · registrada automaticamente</span><input id="gw-titulo" type="text" aria-label="Título do evento" placeholder="{{gw.ph0}}" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; min-height: 56px"><sc-if value="{{gw.err}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 14px; font-weight: 600">Dê um título ao evento para seguir.</span></sc-if>
+</div>
+<div class="coops-wz-card" aria-hidden="{{gw.c1.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #F5F2EC; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{gw.c1.t}}; opacity: {{gw.c1.op}}; z-index: {{gw.c1.z}}; pointer-events: {{gw.c1.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>{{gw.kk1}}</span><span>{{gw.label}} · {{gw.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">O que aconteceu?</span>
+<span style="font-size: 14px; line-height: 1.45">O contexto em poucas linhas, para lembrar depois.</span><textarea id="gw-desc" rows="6" aria-label="Descrição do evento" placeholder="{{gw.ph1}}" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; resize: none"></textarea>
+</div>
+<div class="coops-wz-card" aria-hidden="{{gw.c2.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #D9CFFF; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{gw.c2.t}}; opacity: {{gw.c2.op}}; z-index: {{gw.c2.z}}; pointer-events: {{gw.c2.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>{{gw.kk2}}</span><span>{{gw.label}} · {{gw.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">{{gw.q2}}</span>
+<span style="font-size: 14px; line-height: 1.45">{{gw.h2}}</span><sc-if value="{{gw.one}}" hint-placeholder-val="{{ true }}"><input id="gw-x1" type="text" aria-label="{{gw.q2}}" placeholder="{{gw.ph2}}" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; min-height: 56px"></sc-if><sc-if value="{{gw.two}}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-direction: column; gap: 10px"><label style="display: flex; flex-direction: column; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px">DE<input id="gw-x1" type="text" placeholder="Ex.: Squad Pagamentos" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; min-height: 52px; font-family: 'Schibsted Grotesk', system-ui, sans-serif"></label><label style="display: flex; flex-direction: column; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px">PARA<input id="gw-x2" type="text" placeholder="Ex.: Squad Onboarding" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; min-height: 52px; font-family: 'Schibsted Grotesk', system-ui, sans-serif"></label></div></sc-if>
+</div>
+<div class="coops-wz-card" aria-hidden="{{gw.c3.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #F5F2EC; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{gw.c3.t}}; opacity: {{gw.c3.op}}; z-index: {{gw.c3.z}}; pointer-events: {{gw.c3.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>{{gw.kk3}}</span><span>{{gw.label}} · {{gw.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Quer deixar uma mensagem para a Joana?</span>
+<span style="font-size: 14px; line-height: 1.45">Ela entra no corpo da carta, assinada por você.</span><textarea id="gw-msg" rows="6" aria-label="Mensagem da liderança" placeholder="{{gw.ph3}}" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; resize: none"></textarea>
+</div>
+<div class="coops-wz-card" aria-hidden="{{gw.c4.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: {{gw.bg}}; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{gw.c4.t}}; opacity: {{gw.c4.op}}; z-index: {{gw.c4.z}}; pointer-events: {{gw.c4.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="display: flex; justify-content: space-between; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em"><span>RESUMO</span><span>{{gw.label}} · {{gw.dateShort}}</span></span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Confere o evento?</span>
+<span style="font-size: 14px; line-height: 1.45">Ele entra no deck de Eventos da Joana como uma carta de {{gw.lower}}.</span><div style="display: flex; flex-direction: column; gap: 8px"><sc-for list="{{gw.sum}}" as="r" hint-placeholder-count="3"><div style="display: flex; flex-direction: column; gap: 2px; border-radius: 12px; background: rgba(245,242,236,0.6); border: 1.5px solid #0E0E12; padding: 10px 12px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.06em">{{r.k}}</span><span style="font-size: 14px; line-height: 1.4">{{r.v}}</span></div></sc-for></div>
+</div>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px">
+<button type="button" onClick="{{gw.prev}}" style="font-family: inherit; font-weight: 600; font-size: 15px; color: #F5F2EC; background: transparent; border: 1.5px solid #4A4858; border-radius: 14px; min-height: 48px; padding: 0 18px; cursor: pointer; opacity: {{gw.prevOp}}">Voltar</button>
+<div style="display: flex; gap: 6px"><sc-for list="{{gw.dots}}" as="d" hint-placeholder-count="5"><button type="button" aria-label="Ir para a pergunta {{d.n}}" onClick="{{d.go}}" style="width: 22px; height: 6px; padding: 0; border: 0; border-radius: 3px; background: {{d.bg}}; cursor: pointer"></button></sc-for></div>
+<button type="button" onClick="{{gw.next}}" style="font-family: inherit; font-weight: 600; font-size: 15px; color: #0E0E12; background: #B7A6FF; border: 2px solid #0E0E12; border-radius: 14px; min-height: 48px; padding: 0 20px; cursor: pointer">{{gw.nextLabel}}</button>
+</div>
+</div>
+</section>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1300}}'>
+class Component extends DCLogic {
+  renderVals() { var o = this.__acctRv() || {}, self = this, m = !!(this.state && this.state.acct); o.acctOpen = m; o.acctExp = m ? 'true' : 'false'; o.acctRing = m ? '0 0 0 2px #0E0E12, 0 0 0 4px #B7A6FF' : 'none'; o.acctToggle = function () { self.setState({ acct: !(self.state && self.state.acct) }); }; return o; }
+  constructor(props) { super(props); this.state = { filter: 'todos', sel: null, fx: null, ciOpen: false, fbOpen: false, evPick: false, com: { open: false, draft: '' }, comments: {}, gwForm: null, fbForm: null, extra: [], edits: {}, ciForm: null, wz: { step: 0, v: {}, ch: {} } }; }
+  __acctRv() {
+    var self = this;
+    function wzBuild(self, cfg) {
+      var W = self.state[cfg.key] || { step: 0, v: {}, ch: {} };
+      var setW = function (p) { var o = {}; o[cfg.key] = Object.assign({}, self.state[cfg.key] || { step: 0, v: {}, ch: {} }, p); self.setState(o); };
+      var grab = function () { var v = Object.assign({}, (self.state[cfg.key] || {}).v || {}); cfg.fields.forEach(function (id) { var el = document.getElementById(id); if (el) v[id.replace(/-/g, '_')] = el.value.trim(); }); return v; };
+      var go = function (k) { var v = grab(); if (k > 0 && cfg.required && !v[cfg.required.replace(/-/g, '_')]) { setW({ v: v, step: 0, err: true }); return; } setW({ v: v, step: Math.max(0, Math.min(cfg.n - 1, k)), err: false }); };
+      var o = { v: {}, s: {}, dots: [], prevOp: W.step === 0 ? 0.4 : 1, last: W.step === cfg.n - 1, notLast: W.step !== cfg.n - 1, err: !!W.err, finish: cfg.finish,
+        prev: function () { go(W.step - 1); }, next: function () { go(W.step + 1); },
+        done: function () { var v = grab(); cfg.onDone(Object.assign({}, v, (self.state[cfg.key] || {}).ch || {})); } };
+      cfg.fields.forEach(function (id) { var k = id.replace(/-/g, '_'); o.v[k] = (W.v && W.v[k]) || ''; });
+      Object.keys(cfg.summary || {}).forEach(function (k) { var val = (W.v && W.v[k]) || (W.ch && W.ch[k]) || ''; o.s[k] = val || cfg.summary[k]; });
+      Object.keys(cfg.choices || {}).forEach(function (k) {
+        o[k] = cfg.choices[k].map(function (lab) { var on = W.ch && W.ch[k] === lab; return { label: lab, on: on ? 'true' : 'false', bg: on ? '#0E0E12' : 'transparent', fg: on ? '#F5F2EC' : '#0E0E12',
+          pick: function () { var c = Object.assign({}, (self.state[cfg.key] || {}).ch || {}); c[k] = lab; setW({ ch: c, v: grab() }); } }; });
+      });
+      for (var i = 0; i < cfg.n; i++) {
+        var off = i - W.step;
+        o['c' + i] = off < 0
+          ? { t: 'translate(-118%, 24px) rotate(-12deg)', op: 0, z: 20, pe: 'none', hidden: 'true' }
+          : { t: 'translate(' + (off * 16) + 'px, ' + (-off * 12) + 'px) rotate(' + (off * 3) + 'deg) scale(' + (1 - off * 0.03) + ')', op: off > 2 ? 0 : 1, z: 10 - off, pe: off === 0 ? 'auto' : 'none', hidden: off === 0 ? 'false' : 'true' };
+        o['c' + i].kicker = (i === cfg.n - 1 && cfg.summaryCard) ? 'RESUMO' : 'PERGUNTA ' + (i + 1) + ' DE ' + (cfg.summaryCard ? cfg.n - 1 : cfg.n);
+        (function (k) { o.dots.push({ n: k + 1, bg: k <= W.step ? cfg.accent : '#2C2C36', go: function () { go(k); } }); })(i);
+      }
+      return o;
+    }
+    var all = [
+      { id: 'c1', type: 'checkin', day: '12', month: "OUT '26", dateLong: '12 de outubro de 2026 · segunda', title: 'Espaço para pesquisa no squad', body: 'Joana está confortável com a cadência do squad, mas sente que a pesquisa vira sempre a última prioridade. Conversamos sobre proteger um tempo fixo e envolver mais o time nas entrevistas.', author: 'Marina Costa · manager', records: [], ci: { pedidos: ['Duas horas fixas por semana para pesquisa', 'Participar do planejamento do Q1'], radar: ['Carga alta no fechamento do trimestre'], comb: ['Testar o bloco de pesquisa por 3 semanas', 'Marina leva o tema para o ritual do squad'], prox: ['Joana traz o roteiro da pesquisa com lojistas', 'Revisar como foram as duas horas fixas'] } },
+      { id: 'f1', type: 'feedback', day: '03', month: "OUT '26", title: 'Feedbacks do review de onboarding', body: 'Três pessoas comentaram a síntese da pesquisa apresentada no review.', author: 'Joana Reis', fb: { autor: 'Squad de onboarding · PM, Engenharia e Dados', anexos: [{ n: 'review-onboarding-sintese.pdf', link: false }] }, records: [
+        { d: 'PM', t: '“A síntese ajudou o squad a decidir rápido.”' },
+        { d: 'ENG', t: '“Os achados vieram com prioridade clara.”' },
+        { d: 'DADOS', t: '“Gostei de ver o funil junto das falas.”' }
+      ] },
+      { id: 'p1', type: 'promo', day: '01', month: "OUT '26", dateLong: '1 de outubro de 2026 · quinta', title: 'Promovida a Senior Product Designer', body: '', author: 'Marina Costa · manager', msg: 'Joana, essa promoção é o retrato de um ano em que você assumiu a pesquisa de ponta a ponta e fez o squad decidir melhor. Ver você facilitando com essa clareza foi um orgulho. Bora para o próximo nível!', records: [] },
+      { id: 'm1', type: 'merito', day: '22', month: "SET '26", title: 'Destaque do trimestre em pesquisa', body: 'Reconhecida pelo squad pela pesquisa que destravou o novo fluxo de envio de documento.', author: 'Marina Costa · manager', msg: 'Sua pesquisa mudou a direção do fluxo de envio de documento. Obrigada por trazer o time para perto de quem usa. Esse destaque é todo seu.', records: [] },
+      { id: 't1', type: 'mudanca', day: '04', month: "AGO '26", title: 'Chegou ao Squad Onboarding', body: 'Saiu do Squad Pagamentos para liderar o design do onboarding. Continua como champion da frente Saúde do design system em Pagamentos.', author: 'Marina Costa · manager', mv: { de: 'Squad Pagamentos', para: 'Squad Onboarding' }, records: [] },
+      { id: 'c2', type: 'checkin', day: '28', month: "SET '26", dateLong: '28 de setembro de 2026 · segunda', title: 'Liderar a próxima pesquisa de ponta a ponta', body: 'Conversa sobre carreira que virou o objetivo da jornada do Q4, com um retorno uma semana depois.', author: 'Marina Costa · manager', ci: { pedidos: ['Ser dona da próxima pesquisa do squad'], radar: ['Pouca experiência apresentando para liderança'], comb: ['Objetivo do Q4: conduzir uma pesquisa completa'], prox: ['Definir o escopo da pesquisa com o PM'] }, records: [
+        { d: '28 SET', t: 'Conversa sobre próximo passo de carreira' },
+        { d: '05 OUT', t: 'Retorno: objetivo do Q4 definido' }
+      ] },
+      { id: 'f2', type: 'feedback', day: '15', month: "SET '26", title: '“Facilitou o workshop com muita clareza.”', body: 'Feedback do time de engenharia após o workshop de priorização. A condução deixou claro o critério de cada decisão e o time saiu com a ordem das entregas definida.', author: 'Joana Reis', fb: { autor: 'Time de engenharia', anexos: [{ n: 'workshop-priorizacao.pdf', link: false }, { n: 'miro.com/board/priorizacao-q4', link: true }] }, records: [] },
+      { id: 'c3', type: 'checkin', day: '14', month: "SET '26", dateLong: '14 de setembro de 2026 · segunda', title: 'Carga alta no fechamento do trimestre', body: 'Joana chegou com a sprint apertada. Ajustamos o escopo e combinamos revisar a carga no próximo check-in.', author: 'Marina Costa · manager', ci: { pedidos: [], radar: ['Carga alta na sprint'], comb: ['Escopo da sprint reduzido'], prox: [] }, records: [
+        { d: '14 SET', t: 'Carga alta; ajustamos escopo da sprint' },
+        { d: '07 SET', t: 'Preparação do review de onboarding' },
+        { d: '31 AGO', t: 'Combinados para o fim do trimestre' },
+        { d: '24 AGO', t: 'Retorno das férias e prioridades' },
+        { d: '17 AGO', t: 'Passagem de contexto do squad' }
+      ] }
+    ];
+    var pal = {
+      checkin: { bg: '#B7A6FF', b1: '#8B74F2', b2: '#5B45C4', label: 'CHECK-IN', editors: 'Só o manager' },
+      feedback: { bg: '#F5F2EC', b1: '#D6CFC3', b2: '#ADA597', label: 'FEEDBACK', editors: 'Manager e Joana' },
+      mudanca: { bg: '#8FE3C8', b1: '#5FBFA3', b2: '#3E9A80', label: 'MUDANÇA DE TIME', editors: 'Só o manager' },
+      entrega: { bg: '#8FE3C8', b1: '#5FBFA3', b2: '#3E9A80', label: 'ENTREGA', editors: 'Manager e Joana' },
+      promo: { bg: '#E8C46A', b1: '#C9A646', b2: '#A3842C', label: 'PROMOÇÃO', editors: 'Só o manager' },
+      merito: { bg: '#F5A9D6', b1: '#D987B8', b2: '#B0668F', label: 'MÉRITO', editors: 'Só o manager' }
+    };
+    function cnt(e) { return 1; }
+    var totals = { todos: 0, checkin: 0, feedback: 0, entrega: 0, promo: 0, merito: 0, mudanca: 0 };
+    all.forEach(function (e) { totals.todos += cnt(e); totals[e.type] += cnt(e); });
+    var f = this.state.filter;
+    all = this.state.extra.concat(all).map(function (e) { return self.state.edits[e.id] ? Object.assign({}, e, self.state.edits[e.id]) : e; });
+    var list = all.filter(function (e) { return f === 'todos' || e.type === f; });
+    var selRaw = all.filter(function (e) { return e.id === self.state.sel; })[0];
+    var defs = [['todos', 'Todos'], ['checkin', 'Check-ins'], ['feedback', 'Feedbacks'], ['promo', 'Promoções'], ['merito', 'Méritos'], ['mudanca', 'Mudanças de time']];
+    var sel = { hasBody: false, cls: '', isCel: false, isPromo: false, isMerito: false, hasMsg: false, msg: '', msgBy: '', isMv: false, mvDe: '', mvPara: '', isFb: false, fbAutor: '', fbAnexos: [], fbCount: '0', fbNone: false, typeLabel: '', countLabel: '', day: '', month: '', title: '', body: '', author: '', editors: '', color: '#B7A6FF', multi: false, single: false, records: [], isCi: false, notCi: true, dateLong: '', blocks: [], editLabel: '', edit: function () {} };
+    var CF = this.state.ciForm, cwV = null;
+    var setC = function (p) { self.setState({ ciForm: Object.assign({}, self.state.ciForm, p) }); };
+    var val = function (id) { var el = typeof document !== 'undefined' && document.getElementById(id); return el ? el.value.trim() : ''; };
+    if (CF) {
+      var tok = String(CF.tok || 0);
+      setTimeout(function () { [['ci-tema', CF.tema], ['ci-resumo', CF.resumo]].forEach(function (q) { var el = document.getElementById(q[0]); if (el && el.getAttribute('data-tok') !== tok) { el.value = q[1] || ''; el.setAttribute('data-tok', tok); } }); }, 0);
+      var grab = function () { var t = val('ci-tema'), r = val('ci-resumo'); return { tema: t || (document.getElementById('ci-tema') ? '' : CF.tema), resumo: r || (document.getElementById('ci-resumo') ? '' : CF.resumo) }; };
+      var go = function (k) { var g = grab(); if (k > 0 && !g.tema) { setC(Object.assign(g, { step: 0, err: true })); return; } setC(Object.assign(g, { step: Math.max(0, Math.min(6, k)), err: false })); };
+      var LK = ['pedidos', 'radar', 'comb', 'prox'];
+      cwV = { modo: CF.id ? 'EDITAR CHECK-IN' : 'NOVO CHECK-IN', titulo: CF.id ? 'Editar check-in' : 'Check-in com a Joana', err: !!CF.err, dateLong: CF.dateLong, dateShort: CF.dateShort,
+        prevOp: CF.step === 0 ? 0.4 : 1, nextLabel: CF.step === 6 ? (CF.id ? 'Salvar alterações' : 'Registrar check-in') : 'Próxima',
+        dots: [0, 1, 2, 3, 4, 5, 6].map(function (k) { return { n: k + 1, bg: k <= CF.step ? '#B7A6FF' : '#2C2C36', go: function () { go(k); } }; }),
+        sum: [['DATA', CF.dateLong], ['TEMA CENTRAL', CF.tema || '—'], ['RESUMO', CF.resumo || '—'], ['SOLICITAÇÕES DA JOANA', CF.pedidos.join(' · ') || '—'], ['PARA FICAR NO RADAR', CF.radar.join(' · ') || '—'], ['COMBINADOS GERAIS', CF.comb.join(' · ') || '—'], ['PRÓXIMO ENCONTRO', CF.prox.join(' · ') || '—']].map(function (r) { return { k: r[0], v: r[1] }; }),
+        prev: function () { go(CF.step - 1); },
+        next: function () {
+          if (CF.step < 6) { go(CF.step + 1); return; }
+          var f = Object.assign({}, self.state.ciForm);
+          var data = { title: f.tema, body: f.resumo || '—', ci: { pedidos: f.pedidos, radar: f.radar, comb: f.comb, prox: f.prox } };
+          if (f.id) { var ed = Object.assign({}, self.state.edits); ed[f.id] = data; self.setState({ edits: ed, ciOpen: false, ciForm: null, sel: f.id }); }
+          else { var ev = Object.assign({ id: 'n' + self.state.extra.length, type: 'checkin', day: '20', month: "OUT '26", dateLong: f.dateLong, author: 'Marina Costa · manager', records: [] }, data); self.setState({ extra: [ev].concat(self.state.extra), ciOpen: false, ciForm: null, filter: 'todos', sel: ev.id }); }
+        } };
+      LK.forEach(function (k) {
+        cwV[k] = CF[k].map(function (t, ix) { return { n: ix + 1, t: t, remove: function () { var o = {}; o[k] = self.state.ciForm[k].filter(function (_, z) { return z !== ix; }); setC(Object.assign(grab(), o)); } }; });
+        cwV['add_' + k] = function () { var t = val('ci-' + k); if (!t) return; var el = document.getElementById('ci-' + k); if (el) el.value = ''; var o = {}; o[k] = self.state.ciForm[k].concat([t]); setC(o); };
+      });
+      for (var ci = 0; ci < 7; ci++) {
+        var of = ci - CF.step;
+        cwV['c' + ci] = of < 0
+          ? { t: 'translate(-118%, 24px) rotate(-12deg)', op: 0, z: 20, pe: 'none', hidden: 'true' }
+          : { t: 'translate(' + (of * 16) + 'px, ' + (-of * 12) + 'px) rotate(' + (of * 3) + 'deg) scale(' + (1 - of * 0.03) + ')', op: of > 2 ? 0 : 1, z: 10 - of, pe: of === 0 ? 'auto' : 'none', hidden: of === 0 ? 'false' : 'true' };
+      }
+    }
+    var FF = this.state.fbForm, fwV = null;
+    var setF = function (p) { self.setState({ fbForm: Object.assign({}, self.state.fbForm, p) }); };
+    var axView = function (a, rm) { var ext = a.link ? 'LINK' : ((a.n.split('.').pop() || '').toUpperCase().slice(0, 4) || 'ARQ'); return { n: a.n, k: a.n.indexOf('.') < 0 && !a.link ? 'ARQ' : ext, isLink: !!a.link, isFile: !a.link, remove: rm || function () {} }; };
+    if (FF) {
+      var ftok = String(FF.tok || 0);
+      setTimeout(function () { [['fb-titulo', FF.titulo], ['fb-desc', FF.desc], ['fb-autor', FF.autor]].forEach(function (q) { var el = document.getElementById(q[0]); if (el && el.getAttribute('data-tok') !== ftok) { el.value = q[1] || ''; el.setAttribute('data-tok', ftok); } }); }, 0);
+      var fgrab = function () { var o = {}; [['titulo', 'fb-titulo'], ['desc', 'fb-desc'], ['autor', 'fb-autor']].forEach(function (q) { var has = typeof document !== 'undefined' && document.getElementById(q[1]); o[q[0]] = has ? val(q[1]) : FF[q[0]]; }); return o; };
+      var fgo = function (k) { var g = fgrab(); if (k > 0 && !g.titulo) { setF(Object.assign(g, { step: 0, err: true })); return; } setF(Object.assign(g, { step: Math.max(0, Math.min(4, k)), err: false })); };
+      var QK = ['Marina Costa', 'Caio Lima', 'Aiko Tanaka', 'Time de engenharia'];
+      fwV = { modo: FF.id ? 'EDITAR FEEDBACK' : 'NOVO FEEDBACK', titulo: FF.id ? 'Editar feedback' : 'Feedback para a Joana', err: !!FF.err, dateShort: FF.dateShort,
+        prevOp: FF.step === 0 ? 0.4 : 1, nextLabel: FF.step === 4 ? (FF.id ? 'Salvar alterações' : 'Registrar feedback') : 'Próxima',
+        dots: [0, 1, 2, 3, 4].map(function (k) { return { n: k + 1, bg: k <= FF.step ? '#B7A6FF' : '#2C2C36', go: function () { fgo(k); } }; }),
+        quick: QK.map(function (q) { var on = FF.autor === q; return { label: q, on: on ? 'true' : 'false', bg: on ? '#0E0E12' : 'transparent', fg: on ? '#F5F2EC' : '#0E0E12', pick: function () { var el = document.getElementById('fb-autor'); if (el) el.value = q; setF(Object.assign(fgrab(), { autor: q })); } }; }),
+        anexos: FF.anexos.map(function (a, ix) { return axView(a, function () { setF(Object.assign(fgrab(), { anexos: self.state.fbForm.anexos.filter(function (_, z) { return z !== ix; }) })); }); }),
+        addFiles: function (ev) { var fl = (ev && ev.target && ev.target.files) || []; var add = []; for (var i = 0; i < fl.length; i++) add.push({ n: fl[i].name, link: false }); if (ev && ev.target) ev.target.value = ''; if (!add.length) return; setF(Object.assign(fgrab(), { anexos: self.state.fbForm.anexos.concat(add) })); },
+        addLink: function () { var t = val('fb-link'); if (!t) return; var el = document.getElementById('fb-link'); if (el) el.value = ''; setF(Object.assign(fgrab(), { anexos: self.state.fbForm.anexos.concat([{ n: t.replace(/^https?:\/\//, ''), link: true }]) })); },
+        sum: [['TÍTULO', FF.titulo || '—'], ['DESCRIÇÃO', FF.desc || '—'], ['AUTOR', FF.autor || '—'], ['ANEXOS', FF.anexos.map(function (a) { return a.n; }).join(' · ') || 'Nenhum']].map(function (r) { return { k: r[0], v: r[1] }; }),
+        prev: function () { fgo(FF.step - 1); },
+        next: function () {
+          if (FF.step < 4) { fgo(FF.step + 1); return; }
+          var f = Object.assign({}, self.state.fbForm);
+          var data = { title: f.titulo, body: f.desc || '—', fb: { autor: f.autor || 'Não informado', anexos: f.anexos } };
+          if (f.id) { var ed = Object.assign({}, self.state.edits); ed[f.id] = data; self.setState({ edits: ed, fbOpen: false, fbForm: null, sel: f.id }); }
+          else { var ev = Object.assign({ id: 'n' + self.state.extra.length, type: 'feedback', day: '20', month: "OUT '26", author: 'Marina Costa · manager', records: [] }, data); self.setState({ extra: [ev].concat(self.state.extra), fbOpen: false, fbForm: null, filter: 'todos', sel: ev.id }); }
+        } };
+      for (var fi = 0; fi < 5; fi++) {
+        var fo = fi - FF.step;
+        fwV['c' + fi] = fo < 0
+          ? { t: 'translate(-118%, 24px) rotate(-12deg)', op: 0, z: 20, pe: 'none', hidden: 'true' }
+          : { t: 'translate(' + (fo * 16) + 'px, ' + (-fo * 12) + 'px) rotate(' + (fo * 3) + 'deg) scale(' + (1 - fo * 0.03) + ')', op: fo > 2 ? 0 : 1, z: 10 - fo, pe: fo === 0 ? 'auto' : 'none', hidden: fo === 0 ? 'false' : 'true' };
+      }
+    }
+
+    var GWT = { promo: { label: 'PROMOÇÃO', lower: 'promoção', bg: '#E8C46A', q0: 'Qual a promoção?', ph0: 'Ex.: Promovida a Senior Product Designer', ph1: 'Por que essa promoção aconteceu agora', q2: 'Qual o novo cargo?', h2: 'O cargo que a Joana passa a ter.', ph2: 'Ex.: Senior Product Designer', k2: 'NOVO CARGO', ph3: 'Ex.: Joana, essa promoção é o retrato de um ano incrível...' },
+      merito: { label: 'MÉRITO', lower: 'mérito', bg: '#F5A9D6', q0: 'Qual o reconhecimento?', ph0: 'Ex.: Destaque do trimestre em pesquisa', ph1: 'O que a Joana fez e qual foi o impacto', q2: 'Quem reconheceu?', h2: 'Uma pessoa, um time ou um ritual da empresa.', ph2: 'Ex.: Squad Onboarding', k2: 'RECONHECIDO POR', ph3: 'Ex.: Obrigada por puxar o time para perto de quem usa...' },
+      mudanca: { label: 'MUDANÇA DE TIME', lower: 'mudança de time', bg: '#8FE3C8', q0: 'Qual a mudança?', ph0: 'Ex.: Chegou ao Squad Onboarding', ph1: 'Por que a mudança e o que muda no dia a dia', q2: 'De qual time para qual time?', h2: 'O time de onde a Joana sai e o time onde chega.', ph2: '', k2: 'DE → PARA', ph3: 'Ex.: Bem-vinda ao Onboarding! Que bom ter você aqui...' } };
+    var GF = this.state.gwForm, gwV = null;
+    var setG = function (p) { self.setState({ gwForm: Object.assign({}, self.state.gwForm, p) }); };
+    if (GF) {
+      var T = GWT[GF.type], gtok = String(GF.tok || 0);
+      setTimeout(function () { [['gw-titulo', GF.titulo], ['gw-desc', GF.desc], ['gw-x1', GF.x1], ['gw-x2', GF.x2], ['gw-msg', GF.msg]].forEach(function (q) { var el = document.getElementById(q[0]); if (el && el.getAttribute('data-tok') !== gtok) { el.value = q[1] || ''; el.setAttribute('data-tok', gtok); } }); }, 0);
+      var ggrab = function () { var o = {}; [['titulo', 'gw-titulo'], ['desc', 'gw-desc'], ['x1', 'gw-x1'], ['x2', 'gw-x2'], ['msg', 'gw-msg']].forEach(function (q) { var has = typeof document !== 'undefined' && document.getElementById(q[1]); o[q[0]] = has ? val(q[1]) : GF[q[0]]; }); return o; };
+      var ST = GF.type === 'promo' ? [0, 3, 4] : [0, 1, 2, 3, 4], LAST = ST.length - 1, NQ = ST.length - 1;
+      var ggo = function (k) { var g = ggrab(); if (k > 0 && !g.titulo) { setG(Object.assign(g, { step: 0, err: true })); return; } setG(Object.assign(g, { step: Math.max(0, Math.min(LAST, k)), err: false })); };
+      var x2txt = GF.type === 'mudanca' ? ((GF.x1 || '—') + ' → ' + (GF.x2 || '—')) : (GF.x1 || '—');
+      gwV = Object.assign({}, T, { titulo: (GF.id ? 'Editar ' : 'Nova carta de ') + T.lower, modo: GF.id ? 'EDITAR EVENTO' : 'NOVO EVENTO', isNew: !GF.id, dateLong: GF.dateLong, dateShort: GF.dateShort, err: !!GF.err, one: GF.type !== 'mudanca', two: GF.type === 'mudanca',
+        prevOp: GF.step === 0 ? 0.4 : 1, nextLabel: GF.step === LAST ? (GF.id ? 'Salvar alterações' : 'Registrar evento') : 'Próxima',
+        dots: ST.map(function (_, k) { return { n: k + 1, bg: k <= GF.step ? '#B7A6FF' : '#2C2C36', go: function () { ggo(k); } }; }),
+        sum: (GF.type === 'promo' ? [['DATA', GF.dateLong], ['TÍTULO', GF.titulo || '—'], ['MENSAGEM', GF.msg || '—']] : [['DATA', GF.dateLong], ['TÍTULO', GF.titulo || '—'], ['O QUE ACONTECEU', GF.desc || '—'], [T.k2, x2txt], ['MENSAGEM DA LIDERANÇA', GF.msg || '—']]).map(function (r) { return { k: r[0], v: r[1] }; }),
+        prev: function () { ggo(GF.step - 1); },
+        next: function () {
+          if (GF.step < LAST) { ggo(GF.step + 1); return; }
+          var f = Object.assign({}, self.state.gwForm);
+          var data = { title: f.titulo, body: f.type === 'promo' ? '' : (f.desc || ''), msg: f.msg || '' };
+          if (f.type === 'mudanca') data.mv = { de: f.x1 || '—', para: f.x2 || '—' };
+          if (f.type === 'merito' && f.x1) data.body = (f.desc ? f.desc + ' ' : '') + 'Reconhecido por: ' + f.x1 + '.';
+          if (f.id) { var ed = Object.assign({}, self.state.edits); ed[f.id] = Object.assign({}, ed[f.id] || {}, data); self.setState({ edits: ed, gwForm: null, sel: f.id, fx: null }); return; }
+          var ev = Object.assign({ id: 'n' + self.state.extra.length, type: f.type, day: '20', month: "OUT '26", dateLong: f.dateLong, author: 'Marina Costa · manager', records: [] }, data);
+          self.setState({ extra: [ev].concat(self.state.extra), gwForm: null, filter: 'todos', sel: ev.id, fx: null });
+        } });
+      for (var gi = 0; gi < 5; gi++) {
+        var pos = ST.indexOf(gi), go2 = pos - GF.step;
+        gwV['kk' + gi] = pos < 0 ? '' : (pos === LAST ? 'RESUMO' : 'PERGUNTA ' + (pos + 1) + ' DE ' + NQ + (gi === 3 && GF.type !== 'promo' ? ' · OPCIONAL' : ''));
+        gwV['c' + gi] = pos < 0 ? { t: 'translate(0, 0) scale(.9)', op: 0, z: 0, pe: 'none', hidden: 'true' } : (go2 < 0
+          ? { t: 'translate(-118%, 24px) rotate(-12deg)', op: 0, z: 20, pe: 'none', hidden: 'true' }
+          : { t: 'translate(' + (go2 * 16) + 'px, ' + (-go2 * 12) + 'px) rotate(' + (go2 * 3) + 'deg) scale(' + (1 - go2 * 0.03) + ')', op: go2 > 2 ? 0 : 1, z: 10 - go2, pe: go2 === 0 ? 'auto' : 'none', hidden: go2 === 0 ? 'false' : 'true' });
+      }
+    }
+    if (selRaw) {
+      var sc = cnt(selRaw);
+      var isCi = selRaw.type === 'checkin' && !!selRaw.ci;
+      var isFb = selRaw.type === 'feedback' && !!selRaw.fb;
+      var BK = [['pedidos', 'SOLICITAÇÕES DA JOANA', '#F5A9D6'], ['radar', 'PARA FICAR NO RADAR', '#F3D36B'], ['comb', 'COMBINADOS GERAIS', '#8FE3C8'], ['prox', 'PARA O PRÓXIMO ENCONTRO', '#F5F2EC']];
+      sel = Object.assign({}, selRaw, { typeLabel: pal[selRaw.type].label, editors: pal[selRaw.type].editors, color: pal[selRaw.type].bg, multi: sc > 1, single: sc === 1, countLabel: sc + (sc > 1 ? ' REGISTROS' : ' REGISTRO'),
+        isCi: isCi, notCi: !isCi, hasBody: !isCi && !!selRaw.body && selRaw.body !== '—', dateLong: selRaw.dateLong || '',
+        blocks: isCi ? BK.map(function (b) { var L = selRaw.ci[b[0]] || []; return { k: b[1], c: b[2], n: String(L.length), empty: !L.length, items: L.map(function (t) { return { t: t }; }) }; }) : [],
+        cls: selRaw.type === 'promo' ? 'ev-promo' : '', isCel: selRaw.type === 'promo' || selRaw.type === 'merito', isPromo: selRaw.type === 'promo', isMerito: selRaw.type === 'merito', hasMsg: !!selRaw.msg, msg: selRaw.msg || '', msgBy: 'Marina Costa, manager da Joana',
+        isMv: selRaw.type === 'mudanca' && !!selRaw.mv, mvDe: selRaw.mv ? selRaw.mv.de : '', mvPara: selRaw.mv ? selRaw.mv.para : '',
+        isFb: isFb, fbAutor: isFb ? selRaw.fb.autor : '', fbAnexos: isFb ? selRaw.fb.anexos.map(function (a) { return axView(a); }) : [], fbCount: isFb ? String(selRaw.fb.anexos.length) : '0', fbNone: isFb && !selRaw.fb.anexos.length,
+        comOpen: self.state.com.open, comOpenStr: self.state.com.open ? 'true' : 'false', comRot: self.state.com.open ? 180 : 0, comLabel: self.state.com.open ? 'Fechar' : 'Comentar',
+        comList: (self.state.comments[selRaw.id] || []), comCount: String((self.state.comments[selRaw.id] || []).length), comNone: !(self.state.comments[selRaw.id] || []).length,
+        comToggle: function () { var o = !self.state.com.open; self.setState({ com: { open: o, draft: '' } }); if (o) setTimeout(function () { var el = document.getElementById('ev-com'); if (el) el.focus(); }, 60); },
+        comCancel: function () { self.setState({ com: { open: false, draft: '' } }); },
+        comPost: function () { var el = document.getElementById('ev-com'), t = el ? el.value.trim() : ''; if (!t) { if (el) el.focus(); return; } el.value = ''; var all = Object.assign({}, self.state.comments); all[selRaw.id] = (all[selRaw.id] || []).concat([{ by: 'Marina Costa', when: 'agora', t: t }]); self.setState({ comments: all, com: { open: true, draft: '' } }); },
+        editLabel: isCi ? 'Editar check-in' : (isFb ? 'Editar feedback' : (GWT[selRaw.type] ? 'Editar ' + GWT[selRaw.type].lower : 'Editar carta')),
+        edit: function () { if (GWT[selRaw.type]) { var mvx = selRaw.mv || {}; self.setState({ gwForm: { tok: Date.now(), step: 0, id: selRaw.id, type: selRaw.type, titulo: selRaw.title, desc: selRaw.type === 'promo' ? '' : (selRaw.body || ''), x1: mvx.de || '', x2: mvx.para || '', msg: selRaw.msg || '', dateLong: selRaw.dateLong || (selRaw.day + ' ' + selRaw.month), dateShort: selRaw.day + ' ' + selRaw.month, err: false }, fx: null }); return; } if (isFb) { self.setState({ fbOpen: true, fbForm: { tok: Date.now(), step: 0, id: selRaw.id, dateShort: selRaw.day + ' ' + selRaw.month, titulo: selRaw.title, desc: selRaw.body, autor: selRaw.fb.autor, anexos: selRaw.fb.anexos.slice(), err: false } }); return; } if (!isCi) return; self.setState({ ciOpen: true, ciForm: { tok: Date.now(), step: 0, id: selRaw.id, dateLong: selRaw.dateLong, dateShort: selRaw.day + ' ' + selRaw.month, tema: selRaw.title, resumo: selRaw.body, pedidos: (selRaw.ci.pedidos || []).slice(), radar: (selRaw.ci.radar || []).slice(), comb: (selRaw.ci.comb || []).slice(), prox: (selRaw.ci.prox || []).slice(), err: false } }); } });
+    }
+
+    var FXR = this.state.fx;
+    var fxCap = function (ev) { try { var card = ev && ev.currentTarget, root = card && card.closest('[data-fx-root]'); if (!card || !root) return null; var r = card.getBoundingClientRect(), R = root.getBoundingClientRect(), sc = (R.width / root.offsetWidth) || 1; return { cx: (r.left + r.width / 2 - R.left) / sc, cy: (r.top - R.top) / sc, cw: r.width / sc, rw: root.offsetWidth, rh: root.offsetHeight, ch: r.height / sc, ready: false }; } catch (e) { return null; } };
+    var fxView = function (W) {
+      var F = FXR || { cx: 640, cy: 160, cw: 260, ch: 340, rw: 1280, rh: 1300, ready: true, h: 0, plain: true };
+      var w = Math.min(W, F.rw - 32), maxH = Math.min(900, F.rh - 48), h = Math.min(F.h || 560, maxH);
+      var top = Math.max(24, Math.min(F.cy + F.ch / 2 - h / 2, F.rh - h - 24));
+      if (!F.ready) setTimeout(function () { var el = document.getElementById('coops-focus'); var cur = self.state.fx; if (el && cur && !cur.ready) self.setState({ fx: Object.assign({}, cur, { h: el.offsetHeight, ready: true }) }); }, 0);
+      return { w: w, left: (F.rw - w) / 2, top: top, maxH: maxH, dx: F.cx - F.rw / 2, dy: F.cy - top, s: (F.cw / w).toFixed(3), op: F.ready ? 1 : 0,
+        anim: F.closing ? 'coopsFocusOut 300ms cubic-bezier(.4,0,1,1) both' : (F.ready ? (F.plain ? 'coopsFadeIn 320ms ease both' : 'coopsFocusIn 560ms cubic-bezier(.22,1,.36,1) both') : 'none') };
+    };
+    var fxS = fxView(sel.isCi ? 760 : 620);
+    return {
+      filters: defs.map(function (d) { return { label: d[1] + ' · ' + totals[d[0]], active: d[0] === f, idle: d[0] !== f, pick: function () { self.setState({ filter: d[0] }); } }; }),
+      events: list.map(function (e) {
+        var n = cnt(e), p = pal[e.type];
+        return Object.assign({}, e, {
+          bg: p.bg, back1: p.b1, back2: p.b2, typeLabel: p.label,
+          count: n, multi: n > 1, stack1: n >= 2, stack2: n >= 5,
+          isCheckin: e.type === 'checkin', isFeedback: e.type === 'feedback', isEntrega: e.type === 'entrega', isMv: e.type === 'mudanca', isPromo: e.type === 'promo', cls: e.type === 'promo' ? 'ev-promo' : '', isMerito: e.type === 'merito',
+          aria: 'Abrir ' + p.label + ', ' + n + (n > 1 ? ' registros' : ' registro') + ': ' + e.title,
+          shadow: n > 1 ? '0 14px 30px rgba(0,0,0,0.45)' : 'none',
+          open: function (ev) { self.setState({ sel: e.id, fx: fxCap(ev), com: { open: false, draft: '' } }); }
+        });
+      }),
+      fxS: fxS,
+      sheetOpen: !!selRaw && !this.state.ciOpen && !this.state.fbOpen && !this.state.evPick && !this.state.gwForm,
+      evPick: !!this.state.evPick,
+      openEv: function () { self.setState({ evPick: true, sel: null, fx: null, ciOpen: false, ciForm: null, fbOpen: false, fbForm: null, gwForm: null }); },
+      closeEv: function () { self.setState({ evPick: false }); },
+      backToPick: function () { self.setState({ gwForm: null, evPick: true }); },
+      pick_checkin: function () { self.setState({ evPick: false, ciOpen: true, fbOpen: false, fbForm: null, sel: null, ciForm: { tok: Date.now(), step: 0, id: null, dateLong: '20 de outubro de 2026 · terça', dateShort: "20 OUT '26", tema: '', resumo: '', pedidos: [], radar: [], comb: [], prox: [], err: false } }); },
+      pick_feedback: function () { self.setState({ evPick: false, fbOpen: true, ciOpen: false, ciForm: null, sel: null, fbForm: { tok: Date.now(), step: 0, id: null, dateShort: "20 OUT '26", titulo: '', desc: '', autor: '', anexos: [], err: false } }); },
+      pick_promo: function () { self.setState({ evPick: false, sel: null, gwForm: { tok: Date.now(), step: 0, type: 'promo', titulo: '', desc: '', x1: '', x2: '', msg: '', dateLong: '20 de outubro de 2026 · terça', dateShort: "20 OUT '26", err: false } }); },
+      pick_merito: function () { self.setState({ evPick: false, sel: null, gwForm: { tok: Date.now(), step: 0, type: 'merito', titulo: '', desc: '', x1: '', x2: '', msg: '', dateLong: '20 de outubro de 2026 · terça', dateShort: "20 OUT '26", err: false } }); },
+      pick_mudanca: function () { self.setState({ evPick: false, sel: null, gwForm: { tok: Date.now(), step: 0, type: 'mudanca', titulo: '', desc: '', x1: '', x2: '', msg: '', dateLong: '20 de outubro de 2026 · terça', dateShort: "20 OUT '26", err: false } }); },
+      gwOpen: !!this.state.gwForm,
+      closeGw: function () { self.setState({ gwForm: null, sel: null }); },
+      gw: gwV || { label: '', lower: '', bg: '#B7A6FF', q0: '', ph0: '', ph1: '', q2: '', h2: '', ph2: '', ph3: '', titulo: '', err: false, one: true, two: false, prevOp: 1, nextLabel: '', dots: [], sum: [], prev: function () {}, next: function () {}, c0: {}, c1: {}, c2: {}, c3: {}, c4: {}, kk0: '', kk1: '', kk2: '', kk3: '', modo: '', isNew: true, dateLong: '', dateShort: '' },
+
+      sel: sel,
+      close: function () { var st = self.state; if (st.fx && !st.fx.closing && st.sel) { self.setState({ fx: Object.assign({}, st.fx, { ready: true, closing: true }) }); setTimeout(function () { self.setState({ sel: null, fx: null }); }, 290); } else self.setState({ sel: null, fx: null }); },
+      ciOpen: this.state.ciOpen,
+      fbOpen: this.state.fbOpen,
+      openFb: function () { self.setState({ fbOpen: true, ciOpen: false, ciForm: null, sel: null, fbForm: { tok: Date.now(), step: 0, id: null, dateShort: "20 OUT '26", titulo: '', desc: '', autor: '', anexos: [], err: false } }); },
+      closeFb: function () { self.setState({ fbOpen: false, fbForm: null, sel: null }); },
+      fw: fwV || { modo: '', titulo: '', err: false, dateShort: '', prevOp: 1, nextLabel: '', dots: [], quick: [], anexos: [], sum: [], addFiles: function () {}, addLink: function () {}, prev: function () {}, next: function () {}, c0: {}, c1: {}, c2: {}, c3: {}, c4: {} },
+      openCi: function () { self.setState({ ciOpen: true, fbOpen: false, fbForm: null, sel: null, ciForm: { tok: Date.now(), step: 0, id: null, dateLong: '20 de outubro de 2026 · terça', dateShort: "20 OUT '26", tema: '', resumo: '', pedidos: [], radar: [], comb: [], prox: [], err: false } }); },
+      closeCi: function () { self.setState({ ciOpen: false, ciForm: null, sel: null }); },
+      cw: cwV || { modo: '', titulo: '', err: false, dateLong: '', dateShort: '', prevOp: 1, nextLabel: '', dots: [], sum: [], prev: function () {}, next: function () {}, pedidos: [], radar: [], comb: [], prox: [], add_pedidos: function () {}, add_radar: function () {}, add_comb: function () {}, add_prox: function () {}, c0: {}, c1: {}, c2: {}, c3: {}, c4: {}, c5: {}, c6: {} },
+    };
+  }
+}
+</script>
+</body>
+</html>

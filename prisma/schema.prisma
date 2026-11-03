@@ -1,0 +1,209 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  IC
+  MANAGER
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+}
+
+enum InitiativeStatus {
+  ABERTA
+  ENCERRADA
+}
+
+// ---------- Conta ----------
+model User {
+  id             String   @id @default(uuid())
+  name           String
+  email          String   @unique
+  phone          String?
+  role           Role
+  onboardingStep Int      @default(1) // 1 conta criada · 2 primeiro projeto · 3 time e iniciativas
+  title          String?
+  avatar         Json? // {skin,bg,hairStyle,shirtStyle,facialHair,glasses,glassesShape,earrings,lashes,crown}
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  projectsOwned Project[]
+  drafts        Draft[]
+  persons       Person[]
+  loginTokens   LoginToken[]
+}
+
+model LoginToken {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model WishlistEntry {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  role      String
+  focus     String?
+  pains     String[]
+  channels  String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ---------- Projeto ----------
+model Project {
+  id        String    @id @default(uuid())
+  name      String
+  segment   String
+  tagline   String?
+  strategy  String?
+  ownerId   String
+  owner     User      @relation(fields: [ownerId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  indicators      KeyIndicator[]
+  competitors     Competitor[]
+  referenceLinks  ReferenceLink[]
+  skillCategories SkillCategory[]
+  skills          Skill[]
+  invites         Invite[]
+  squads          Squad[]
+  persons         Person[]
+  initiatives     Initiative[]
+
+  @@index([ownerId])
+}
+
+model KeyIndicator {
+  id        String  @id @default(uuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name      String
+  position  Int     @default(0)
+}
+
+model Competitor {
+  id        String  @id @default(uuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name      String
+  position  Int     @default(0)
+}
+
+model ReferenceLink {
+  id        String  @id @default(uuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  url       String
+  host      String
+  position  Int     @default(0)
+}
+
+model SkillCategory {
+  id        String  @id @default(uuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name      String
+  skills    Skill[]
+}
+
+model Skill {
+  id         String         @id @default(uuid())
+  projectId  String
+  project    Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  categoryId String?
+  category   SkillCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  name       String
+  position   Int            @default(0)
+}
+
+model Invite {
+  id        String       @id @default(uuid())
+  projectId String
+  project   Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name      String
+  email     String
+  position  Role
+  status    InviteStatus @default(PENDING)
+  createdAt DateTime     @default(now())
+
+  @@unique([projectId, email])
+}
+
+// ---------- Time (contadores do hub; telas completas no Marco 2) ----------
+model Squad {
+  id        String            @id @default(uuid())
+  projectId String
+  project   Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name      String
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  deletedAt DateTime?
+  members   SquadMembership[]
+}
+
+model Person {
+  id        String            @id @default(uuid())
+  projectId String
+  project   Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?             @relation(fields: [userId], references: [id])
+  name      String
+  title     String?
+  avatar    Json?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  deletedAt DateTime?
+  squads    SquadMembership[]
+}
+
+model SquadMembership {
+  squadId  String
+  squad    Squad  @relation(fields: [squadId], references: [id], onDelete: Cascade)
+  personId String
+  person   Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@id([squadId, personId])
+}
+
+model Initiative {
+  id        String           @id @default(uuid())
+  projectId String
+  project   Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  product   String
+  problem   String?
+  need      String?
+  status    InitiativeStatus @default(ABERTA)
+  moment    Int?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+// ---------- Rascunhos de deck de perguntas (PRD 6.2) ----------
+model Draft {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scope     String // ex.: "project:new", "project:edit"
+  entityId  String   @default("") // vazio quando é criação
+  payload   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, scope, entityId])
+}

@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Coops · Membro</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0E12}
+a{color:#B7A6FF}a:hover{color:#D9CFFF}
+/* Coops · interações padrão (DS) */
+.coops-m{transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease,border-color .25s ease}
+.coops-m:hover,.coops-m:focus-visible{transform:translateY(-8px) rotate(-1.5deg)!important;box-shadow:8px 8px 0 #4B36B0!important;border-color:#B7A6FF!important;outline:none}
+.coops-m:active{transform:translateY(-2px) scale(.97)!important;box-shadow:3px 3px 0 #4B36B0!important;transition-duration:80ms}
+.coops-av{display:block;line-height:0;transform-origin:50% 90%}
+.coops-m:focus .coops-av,.coops-m:active .coops-av{animation:coopsWave .5s cubic-bezier(.34,1.4,.64,1) 1}
+@keyframes coopsWave{30%{transform:translateY(-12px) rotate(-6deg)}60%{transform:translateY(-6px) rotate(5deg)}100%{transform:none}}
+.coops-pile .coops-front,.coops-card{transition:transform .4s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease}
+.coops-pile .coops-b1,.coops-pile .coops-b2{transition:transform .45s cubic-bezier(.34,1.3,.64,1)}
+.coops-pile:hover .coops-front,.coops-pile .coops-front:focus-visible{transform:translateY(-16px) rotate(-2deg)!important;outline:none}
+.coops-pile:hover .coops-b1{transform:rotate(6deg) translateX(10px)!important}
+.coops-pile:hover .coops-b2{transform:rotate(11deg) translateX(20px)!important}
+.coops-card:hover,.coops-card:focus-visible{transform:translateY(-10px) rotate(-1.5deg)!important;outline:none}
+.coops-pile .coops-front:active,.coops-pile .coops-front:focus,.coops-card:active,.coops-card:focus{animation:coopsPull .55s cubic-bezier(.65,0,.25,1) 1}
+@keyframes coopsPull{0%{transform:translateY(-16px) rotate(-2deg)}50%{transform:translateY(-44px) scale(1.04) rotate(0)}100%{transform:translateY(-16px) rotate(-2deg)}}
+.coops-m.coops-go{animation:coopsPress .5s cubic-bezier(.2,.8,.2,1) 1}
+.coops-m.coops-go .coops-av{animation:coopsWave .5s cubic-bezier(.34,1.4,.64,1) 1}
+@keyframes coopsPress{0%{transform:translateY(-8px) rotate(-1.5deg)}25%{transform:translateY(-2px) scale(.97)}100%{transform:translateY(-8px) rotate(-1.5deg)}}
+.coops-front.coops-go,.coops-card.coops-go{animation:coopsPull .55s cubic-bezier(.65,0,.25,1) 1}
+@media (prefers-reduced-motion: reduce){.coops-m,.coops-av,.coops-front,.coops-b1,.coops-b2,.coops-card{transition:none!important;animation:none!important}}
+/* Coops · transição entre páginas */
+body::after{content:"";position:fixed;inset:0;z-index:9999;background:#0E0E12;pointer-events:none;animation:coopsCurtainIn .5s cubic-bezier(.22,1,.36,1) .05s both}
+@keyframes coopsCurtainIn{from{opacity:1}to{opacity:0}}
+body::before{content:"";position:fixed;inset:0;z-index:9998;background:#0E0E12;pointer-events:none;opacity:0;transition:opacity .26s ease}
+html.coops-leaving body::before{opacity:1}
+@media (prefers-reduced-motion: reduce){body::after,body::before{animation:none!important;transition:none!important;opacity:0!important}}
+/* Coops · scroll */
+*{scrollbar-width:thin;scrollbar-color:rgba(127,124,140,.55) transparent}
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-track{background:transparent}
+*::-webkit-scrollbar-thumb{background:rgba(127,124,140,.55);border-radius:999px;border:3px solid transparent;background-clip:padding-box}
+*::-webkit-scrollbar-thumb:hover{background:rgba(183,166,255,.8);background-clip:padding-box;border:3px solid transparent}
+*::-webkit-scrollbar-corner{background:transparent}
+.coops-wz-card{scrollbar-color:rgba(14,14,18,.35) transparent}
+.coops-wz-card::-webkit-scrollbar-thumb{background:rgba(14,14,18,.3);background-clip:padding-box}
+.coops-wz-card::-webkit-scrollbar-thumb:hover{background:rgba(14,14,18,.55);background-clip:padding-box}
+.coops-wz-card::-webkit-scrollbar-track{margin:18px 0}
+.coops-wz-card>*{flex-shrink:0}
+/* Coops · micro-interações dos ícones (DS) · em loop enquanto o card está em foco */
+.coops-pile svg,.coops-card svg,.coops-icdemo svg{overflow:visible}
+.coops-pile svg *,.coops-card svg *,.coops-icdemo svg *{transform-box:fill-box}
+.ic-arm,.ic-w,.ic-ring{transform-box:view-box!important;transform-origin:32px 32px}
+.ic-heart{transform-origin:50% 60%}.ic-ecg{stroke-dasharray:60}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-heart{animation:icBeat 1s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-ecg{animation:icDraw60 1s ease-in-out infinite}
+@keyframes icBeat{0%,100%{transform:scale(1)}15%{transform:scale(1.14)}30%{transform:scale(.98)}45%{transform:scale(1.08)}}
+@keyframes icDraw60{0%{stroke-dashoffset:60}60%,100%{stroke-dashoffset:0}}
+.ic-peg{transform-origin:50% 100%}.ic-day{fill:none;stroke-width:1.75;opacity:0;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-peg{animation:icPeg 1.2s cubic-bezier(.34,1.6,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-peg2{animation-delay:.1s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-day{animation:icDay 2.6s cubic-bezier(.34,1.6,.64,1) infinite both}
+@keyframes icDay{0%,3%{opacity:0;transform:scale(.2)}12%,70%{opacity:1;transform:scale(1)}80%,100%{opacity:0;transform:scale(.6)}}
+@keyframes icPeg{0%,60%,100%{transform:none}25%{transform:translateY(-4px)}}
+.ic-star{transform-origin:50% 55%}.ic-shard{opacity:0;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-star{animation:icBurst 1.8s cubic-bezier(.34,1.4,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-shard{animation:icShard 1.8s cubic-bezier(.2,.8,.3,1) infinite}
+@keyframes icBurst{0%{transform:scale(1);opacity:1}18%{transform:scale(1.18) rotate(-8deg);opacity:1}26%{transform:scale(.2);opacity:0}72%{transform:scale(.2);opacity:0}88%{transform:scale(1.1);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes icShard{0%,22%{opacity:0;transform:translate(0,0) scale(.4) rotate(0)}28%{opacity:1}62%{opacity:1;transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--rt))}74%,100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.6) rotate(var(--rt))}}
+.ic-leaf{transform-box:view-box!important;transform-origin:32px 32px;opacity:0}.ic-leafp{fill:rgba(255,255,255,.6)}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-leaf{animation:icLeaf 1.3s cubic-bezier(.45,0,.35,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-leaf2{animation-delay:.45s}
+@keyframes icLeaf{0%{opacity:0;transform:scaleX(1) skewY(0)}6%{opacity:1}40%{transform:scaleX(.15) skewY(-10deg)}75%{opacity:1;transform:scaleX(-1) skewY(0)}85%,100%{opacity:0;transform:scaleX(-1)}}
+.ic-bgx{transform-box:view-box!important;transform-origin:32px 32px}.ic-bgx2,.ic-bgx3{opacity:0}.ic-knob{stroke-width:6}.ic-playt{transform-origin:50% 50%}.ic-wave{transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-bgx{animation:icRot 4.2s cubic-bezier(.34,1.3,.64,1) infinite both}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-bgx2{animation-delay:1.4s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-bgx3{animation-delay:2.8s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-knob{animation:icKnob 1.4s linear 1.4s infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-playt{animation:icPlay .7s ease-in-out infinite alternate}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-wave{animation:icWav .7s ease-in-out infinite alternate}
+@keyframes icRot{0%{opacity:0;transform:translateY(10px) rotate(-10deg) scale(.7)}6%,30%{opacity:1;transform:none}36%,100%{opacity:0;transform:translateY(-10px) rotate(10deg) scale(.7)}}
+@keyframes icKnob{from{transform:translateX(0)}to{transform:translateX(30px)}}
+@keyframes icPlay{to{transform:scale(1.15)}}
+@keyframes icWav{from{opacity:.3;transform:scale(.92)}to{opacity:1;transform:scale(1.04)}}
+.ic-path{stroke-dasharray:70}.ic-jflag,.ic-flag{transform-origin:0% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-path{animation:icDraw70 1.2s cubic-bezier(.65,0,.25,1) both}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-jflag{animation:icWave .5s ease-in-out .6s infinite}
+@keyframes icDraw70{0%{stroke-dashoffset:70}50%,100%{stroke-dashoffset:0}}
+@keyframes icWave{0%,100%{transform:skewY(0) scaleX(1)}50%{transform:skewY(-12deg) scaleX(.85)}}
+.ic-fire{opacity:0;transform-origin:50% 0%}.ic-tw{opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-rocket{animation:icRocket .9s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-fire{animation:icFire .32s ease-in-out infinite alternate}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-fire2{animation-duration:.24s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-tw{animation:icTw 1.1s linear infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-tw2{animation-delay:.3s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-tw3{animation-delay:.55s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-tw4{animation-delay:.8s}
+@keyframes icFire{from{opacity:.85;transform:translateY(-6px) scaleY(.8) scaleX(1.1)}to{opacity:1;transform:translateY(-6px) scaleY(1.2) scaleX(.9)}}
+@keyframes icTw{0%{opacity:0;transform:translateY(-10px)}20%{opacity:1}80%{opacity:1}100%{opacity:0;transform:translateY(22px)}}
+@keyframes icRocket{0%,100%{transform:translate(0,-6px)}25%{transform:translate(1px,-8px)}50%{transform:translate(0,-10px)}75%{transform:translate(-1px,-8px)}}
+.ic-mount{transition:transform .4s cubic-bezier(.34,1.4,.64,1)}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-flag{animation:icWave .45s ease-in-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-mount{transform:translateY(-2px)}
+.ic-fb{transform-origin:0% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-fb{animation:icFb 1.4s cubic-bezier(.34,1.5,.64,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-fb2{animation-delay:.1s}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-fb3{animation-delay:.2s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-fb1{--s:.8}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-fb2{--s:1.3}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-fb3{--s:2}
+@keyframes icFb{0%,100%{transform:scaleX(1)}40%,60%{transform:scaleX(var(--s))}}
+.ic-sweep{transform-box:view-box!important;transform-origin:32px 32px}.ic-blip{stroke-width:5;opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-sweep{animation:icSweep 1.8s linear infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-blip{animation:icBlip 1.8s ease-out infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-ring{animation:icPing 1.8s ease-out infinite}
+@keyframes icSweep{to{transform:rotate(360deg)}}
+@keyframes icBlip{0%,2%{opacity:0}6%{opacity:1}45%,100%{opacity:0}}
+@keyframes icPing{0%,4%,100%{transform:scale(1)}12%{transform:scale(1.05)}}
+.ic-ib{transform-origin:50% 100%}.ic-ib1{--a:1.8;--b:.6}.ic-ib2{--a:.55;--b:1.4}.ic-ib3{--a:1.6;--b:.5}.ic-ib4{--a:.55;--b:1.15}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-ib{animation:icBars 1.6s ease-in-out infinite}
+@keyframes icBars{0%,100%{transform:scaleY(1)}30%{transform:scaleY(var(--a))}65%{transform:scaleY(var(--b))}}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-arm{animation:icSee 1.6s cubic-bezier(.45,0,.55,1) infinite}:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ic-w{animation:icSeeW 1.6s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes icSee{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(14deg)}}
+@keyframes icSeeW{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(14deg) translateY(4px)}}
+@media (prefers-reduced-motion: reduce){.coops-pile svg *,.coops-card svg *,.coops-icdemo svg *{animation:none!important;transition:none!important}}
+/* Frame 06 · hero do membro animado no hover */
+.h06-ring{transition:transform .9s cubic-bezier(.22,1,.36,1)}
+.h06:hover .h06-ring{transform:scale(1.18) translate(14px,14px)}
+.h06:hover .h06-ring2{transform:scale(1.12) translate(-14px,-10px)}
+.h06-av{transition:box-shadow .4s ease}
+.h06:hover .h06-av{box-shadow:12px 12px 0 #0E0E12;animation:h06Wave 1.8s ease-in-out infinite}
+@keyframes h06Wave{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-10px) rotate(-4deg)}55%{transform:translateY(-4px) rotate(3deg)}}
+.h06-chip{position:absolute;left:50%;top:50%;width:30px;height:40px;margin:-20px 0 0 -15px;z-index:0;opacity:0;transform:translate(0,0) scale(.3);transition:transform .6s cubic-bezier(.34,1.5,.64,1) var(--d),opacity .25s ease var(--d)}
+.h06-chipin{display:block;width:100%;height:100%;box-sizing:border-box;border-radius:8px;border:2px solid #0E0E12;box-shadow:3px 3px 0 #0E0E12}
+.h06:hover .h06-chip{opacity:1;transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(1)}
+.h06:hover .h06-chipin{animation:h06Float 1.6s ease-in-out infinite}
+@keyframes h06Float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.h06-pill{display:inline-block;transition:transform .45s cubic-bezier(.34,1.6,.64,1)}
+.h06:hover .h06-pill{transform:translateY(-3px) rotate(-2deg)}
+.h06:hover .h06-pill2{transform:translateY(-3px) rotate(2deg);transition-delay:.06s}
+.h06 h1{transition:letter-spacing .5s ease}
+.h06:hover h1{letter-spacing:-0.03em}
+@media (prefers-reduced-motion: reduce){.h06 *{animation:none!important;transition:none!important}}
+/* Coops · power up energizado no hover (DS) */
+.coops-pu{transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .25s ease;cursor:pointer}
+.coops-pu:hover,.coops-pu:focus-visible{transform:translateY(-4px);border-color:#8FE3C8!important;outline:none}
+.coops-pu svg{overflow:visible}
+.coops-pu:hover .pu-tile,.coops-pu:focus-visible .pu-tile{animation:puGlow .9s ease-in-out infinite}
+@keyframes puGlow{0%,100%{box-shadow:0 0 0 0 rgba(143,227,200,0)}50%{box-shadow:0 0 0 5px rgba(143,227,200,.22),0 0 22px rgba(143,227,200,.75)}}
+.pu-bolt{transform-box:fill-box;transform-origin:50% 50%}
+.coops-pu:hover .pu-bolt,.coops-pu:focus-visible .pu-bolt{animation:puZap 1.4s steps(1,end) infinite,puShake .14s linear infinite}
+@keyframes puZap{0%{fill:transparent}6%{fill:#F5F2EC}11%{fill:transparent}17%{fill:#D4F7EA}23%{fill:transparent}28%,82%{fill:#D4F7EA}88%{fill:#F5F2EC}94%,100%{fill:#D4F7EA}}
+@keyframes puShake{0%,100%{transform:scale(1.14) translate(0,0) rotate(0)}25%{transform:scale(1.14) translate(.5px,-.4px) rotate(3deg)}50%{transform:scale(1.14) translate(-.5px,.4px) rotate(-3deg)}75%{transform:scale(1.14) translate(.4px,.5px) rotate(1deg)}}
+.pu-spk{opacity:0;transform-box:fill-box;transform-origin:50% 50%}
+.coops-pu:hover .pu-spk,.coops-pu:focus-visible .pu-spk{animation:puSpark .7s ease-out infinite}
+.coops-pu:hover .pu-spk2{animation-delay:.18s}.coops-pu:hover .pu-spk3{animation-delay:.36s}.coops-pu:hover .pu-spk4{animation-delay:.52s}
+@keyframes puSpark{0%{opacity:0;transform:scale(.3)}30%{opacity:1;transform:scale(1.2)}100%{opacity:0;transform:scale(.6)}}
+@media (prefers-reduced-motion: reduce){.coops-pu,.coops-pu *{animation:none!important;transition:none!important}}
+@keyframes coopsSheetIn{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes coopsFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes coopsRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.coops-sheet-body{animation:coopsRise 420ms cubic-bezier(.22,1,.36,1) 160ms both}
+@media (prefers-reduced-motion: reduce){[role=dialog],.coops-overlay,.coops-sheet-body{animation:none!important}}
+/* Coops · menu da conta (DS) */
+.hb-av{transition:transform .2s ease,box-shadow .2s ease}.hb-av:hover{transform:scale(1.06)}.hb-av:focus-visible{outline:3px solid #B7A6FF;outline-offset:3px}
+.hb-item{transition:background .18s ease}.hb-item:hover,.hb-item:focus-visible{background:#212129;outline:none}
+@keyframes hbPop{from{opacity:0;transform:scale(.9) translateY(-6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.hb-av,.hb-item{transition:none}}
+
+/* Coops · barra fixa do perfil (aparece na altura dos decks) */
+#mb-bar{position:fixed;left:0;right:0;top:0;z-index:50;transform:translateY(-110%);opacity:0;visibility:hidden;transition:transform .45s cubic-bezier(.22,1,.36,1),opacity .3s ease,visibility 0s linear .45s}
+#mb-bar.on{transform:translateY(0);opacity:1;visibility:visible;transition:transform .45s cubic-bezier(.22,1,.36,1),opacity .3s ease,visibility 0s}
+#mb-bar .mb-av{transition:transform .4s cubic-bezier(.34,1.56,.64,1)}#mb-bar.on .mb-av{animation:mbPop .5s cubic-bezier(.34,1.56,.64,1) .15s both}
+@keyframes mbPop{from{transform:scale(.6) rotate(-10deg)}to{transform:none}}
+#mb-bar a:focus-visible,#mb-bar button:focus-visible{outline:3px solid #0E0E12;outline-offset:2px}
+.mb-btn{transition:transform .18s cubic-bezier(.34,1.56,.64,1)}.mb-btn:hover{transform:translateY(-2px)}.mb-btn:active{transform:scale(.96)}
+@media (max-width:860px){#mb-bar .mb-hide{display:none!important}}
+@media (prefers-reduced-motion:reduce){#mb-bar,#mb-bar.on,#mb-bar .mb-av{transition:none!important;animation:none!important}}
+</style>
+</helmet>
+<div style="position: relative; overflow: hidden; font-family: 'Schibsted Grotesk', system-ui, sans-serif; color: #F5F2EC; background: #0E0E12; min-height: 2050px; box-sizing: border-box; padding: 24px 32px 56px">
+<div style="max-width: 1216px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px">
+
+<header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap">
+<a href="Coops03-Hub.dc.html" style="color: #F5F2EC; text-decoration: none; font-size: 26px; font-weight: 800; letter-spacing: -0.03em">coops<span style="color: #B7A6FF">.</span></a>
+<nav aria-label="Produtos" style="display: flex; gap: 4px; background: #17171D; border: 1px solid #2C2C36; border-radius: 14px; padding: 4px">
+<a href="Coops05-Time.dc.html" aria-current="page" style="color: #0E0E12; background: #B7A6FF; text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 10px; padding: 10px 16px">Time</a>
+<a href="Coops08-Iniciativa.dc.html" style="color: #A3A1AD; text-decoration: none; font-size: 14px; border-radius: 10px; padding: 10px 16px">Iniciativas</a>
+</nav>
+</div>
+<div style="display: flex; align-items: center; gap: 12px">
+<a href="Coops07-Membro-IC.dc.html" style="font-size: 14px; padding: 12px 0">Ver como IC</a>
+<div style="position: relative"><button type="button" class="hb-av" onClick="{{acctToggle}}" aria-haspopup="true" aria-expanded="{{acctExp}}" aria-label="Abrir o menu da sua conta" style="display: block; padding: 0; border: 0; background: transparent; border-radius: 50%; cursor: pointer; line-height: 0; box-shadow: {{acctRing}}"><dc-import name="CoopsAvatar" skin="#E0B08A" hair-style="longo" shirt-style="blazer" bg="#F3D36B" size="{{ 44 }}" label="Seu avatar" hint-size="44px,44px"></dc-import></button><sc-if value="{{acctOpen}}" hint-placeholder-val="{{ false }}"><div role="menu" aria-label="Sua conta" style="animation: hbPop 260ms cubic-bezier(.34,1.4,.64,1) both; transform-origin: top right; position: absolute; right: 0; top: 56px; z-index: 30; width: 280px; box-sizing: border-box; border-radius: 22px; background: #17171D; border: 1.5px solid #2C2C36; box-shadow: 0 24px 50px rgba(0,0,0,0.55); padding: 10px; display: flex; flex-direction: column; gap: 4px; text-align: left"><div style="display: flex; flex-direction: column; gap: 2px; padding: 10px 12px 12px; border-bottom: 1px solid #2C2C36; margin-bottom: 4px"><span style="font-size: 16px; font-weight: 700; color: #F5F2EC">Marina Lopes</span><span style="font-size: 13px; color: #A3A1AD">marina@nimbo.com</span></div><a role="menuitem" class="hb-item" href="Coops21-Admin.dc.html" style="display: flex; align-items: center; gap: 12px; color: #F5F2EC; text-decoration: none; border-radius: 14px; padding: 10px 12px; min-height: 48px; box-sizing: border-box"><span style="flex: none; width: 36px; height: 36px; border-radius: 10px; background: #B7A6FF; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></span><span style="display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 600">Administração</span><span style="font-size: 12px; color: #A3A1AD">Projetos, lideranças, skills e seus dados</span></span></a><button type="button" role="menuitem" class="hb-item" onClick="{{acctToggle}}" style="display: flex; align-items: center; gap: 12px; font-family: inherit; color: #A3A1AD; background: transparent; border: 0; text-align: left; border-radius: 14px; padding: 10px 12px; min-height: 48px; cursor: pointer"><span style="flex: none; width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid #3A3846; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11"></path></svg></span><span style="font-size: 15px; font-weight: 600">Sair</span></button></div></sc-if></div>
+</div>
+</header>
+<div id="mb-bar" role="region" aria-label="Resumo do perfil de Joana Reis" aria-hidden="true"><div style="display: flex; align-items: center; gap: 14px; border-radius: 0; background: #B7A6FF; color: #0E0E12; border: 0; border-bottom: 2px solid #0E0E12; padding: 10px max(16px, calc((100% - 1216px) / 2)); box-shadow: 0 14px 34px rgba(0,0,0,0.45)"><span class="mb-av" style="flex: none; width: 48px; height: 48px; border-radius: 50%; border: 2px solid #0E0E12; background: #F5F2EC; overflow: hidden; line-height: 0; box-sizing: border-box"><dc-import name="CoopsAvatar" skin="#8D5A3B" hair-style="coque" shirt-style="blazer" bg="#F5F2EC" crown="{{champion}}" size="{{ 44 }}" label="" hint-size="44px,44px"></dc-import></span><span style="display: flex; flex-direction: column; min-width: 0"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.08em">SQUAD ONBOARDING</span><span style="font-size: 18px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Joana Reis</span><span style="font-size: 12px">Senior Product Designer</span></span><span class="mb-hide" style="display: flex; gap: 6px; flex-wrap: wrap; margin-left: 6px"><span style="font-size: 12px; font-weight: 600; background: #F3D36B; border: 1.5px solid #0E0E12; border-radius: 999px; padding: 5px 10px">Skill principal · Pesquisa</span><span style="font-size: 12px; font-weight: 600; color: #F5F2EC; background: #0E0E12; border-radius: 999px; padding: 5px 10px">2a 4m de casa</span></span><span aria-hidden="true" style="flex: 1 1 auto"></span><a class="coops-card mb-hide" href="Coops18b-Squad-Frentes.dc.html" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #0E0E12; background: #F5A9D6; border: 1.5px solid #0E0E12; border-radius: 12px; padding: 6px 10px; min-height: 40px; box-sizing: border-box"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.06em">CHAMPION</span><span style="font-size: 13px; font-weight: 700">Saúde do DS · 40%</span></a><button type="button" class="mb-btn" style="flex: none; font-family: inherit; font-weight: 600; font-size: 14px; color: #F5F2EC; background: #0E0E12; border: 0; border-radius: 12px; min-height: 44px; padding: 0 16px; cursor: pointer">+ Check-in</button></div></div>
+
+
+<a href="Coops05-Time.dc.html" style="font-size: 14px; color: #A3A1AD; text-decoration: none">← Squad Onboarding</a>
+
+<section class="h06" style="position: relative; overflow: hidden; border-radius: 36px; background: #B7A6FF; color: #0E0E12; border: 2px solid #0E0E12; padding: 44px 28px 32px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px">
+<div class="h06-ring" aria-hidden="true" style="position: absolute; left: -60px; top: -60px; width: 220px; height: 220px; border-radius: 50%; border: 1.5px solid rgba(14,14,18,0.25)"></div>
+<div class="h06-ring h06-ring2" aria-hidden="true" style="position: absolute; right: -80px; bottom: -90px; width: 280px; height: 280px; border-radius: 50%; border: 1.5px solid rgba(14,14,18,0.25)"></div>
+<span style="position: relative; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em">SQUAD ONBOARDING · LIDERADA</span>
+<div class="h06-stage" style="position: relative"><span class="h06-chip" aria-hidden="true" style="--x: -156px; --y: -12px; --r: -16deg; --d: 0ms"><span class="h06-chipin" style="background: #A9D8F5; animation-delay: 0ms"></span></span><span class="h06-chip" aria-hidden="true" style="--x: -128px; --y: 48px; --r: -6deg; --d: 50ms"><span class="h06-chipin" style="background: #F3D36B; animation-delay: 180ms"></span></span><span class="h06-chip" aria-hidden="true" style="--x: -118px; --y: -72px; --r: -24deg; --d: 100ms"><span class="h06-chipin" style="background: #8FE3C8; animation-delay: 360ms"></span></span><span class="h06-chip" aria-hidden="true" style="--x: 128px; --y: -52px; --r: 12deg; --d: 150ms"><span class="h06-chipin" style="background: #F5A9D6; animation-delay: 540ms"></span></span><span class="h06-chip" aria-hidden="true" style="--x: 126px; --y: 62px; --r: 20deg; --d: 200ms"><span class="h06-chipin" style="background: #FF8A5B; animation-delay: 720ms"></span></span><span class="h06-chip" aria-hidden="true" style="--x: 172px; --y: 22px; --r: 8deg; --d: 250ms"><span class="h06-chipin" style="background: #D9CFFF; animation-delay: 900ms"></span></span><div class="h06-av" style="position: relative; z-index: 1; border-radius: 50%; border: 2px solid #0E0E12; box-shadow: 8px 8px 0 #0E0E12; line-height: 0">
+<dc-import name="CoopsAvatar" skin="#8D5A3B" hair-style="coque" shirt-style="blazer" bg="#F5F2EC" crown="{{champion}}" size="{{ 168 }}" label="Joana Reis" hint-size="168px,168px"></dc-import>
+</div>
+</div>
+<h1 style="position: relative; margin: 10px 0 0; font-size: 56px; font-weight: 800; letter-spacing: -0.04em; line-height: 1">Joana Reis</h1>
+<span style="position: relative; font-size: 18px">Senior Product Designer</span>
+<div style="position: relative; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 4px">
+<span class="h06-pill" style="font-size: 14px; font-weight: 600; color: #0E0E12; background: #F3D36B; border: 1.5px solid #0E0E12; border-radius: 999px; padding: 7px 14px">Skill principal · Pesquisa</span>
+<span class="h06-pill h06-pill2" style="font-size: 14px; font-weight: 600; color: #F5F2EC; background: #0E0E12; border-radius: 999px; padding: 8px 14px">2 anos e 4 meses de casa</span>
+</div>
+<a class="coops-card" href="Coops18b-Squad-Frentes.dc.html" style="position: relative; margin-top: 12px; width: 100%; max-width: 620px; box-sizing: border-box; border-radius: 22px; background: #F5A9D6; color: #0E0E12; text-decoration: none; border: 2px solid #0E0E12; padding: 14px 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px; text-align: left"><span aria-hidden="true" style="flex: 0 0 44px; height: 44px; border-radius: 12px; border: 1.5px solid currentColor; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 18 5 7l5 5 2-7 2 7 5-5 2 11z"></path></svg></span><span style="flex: 1 1 260px; display: flex; flex-direction: column; gap: 2px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em">CHAMPION DA FRENTE · SQUAD PAGAMENTOS</span><span style="font-size: 17px; font-weight: 700; line-height: 1.25">Saúde do design system · 40%</span></span><span style="font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; padding: 0 6px">Ver frente <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></a>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px"><h2 style="margin: 0; font-size: 24px; font-weight: 700">Power ups</h2><span style="font-size: 14px; color: #A3A1AD">Mentorias, cursos e projetos paralelos</span></div>
+<div style="display: flex; flex-wrap: wrap; gap: 12px">
+<sc-for list="{{pus}}" as="u" hint-placeholder-count="2">
+<div class="coops-pu" tabindex="0" style="flex: 1 1 260px; border-radius: 18px; background: #17171D; border: 1px solid #2C2C36; padding: 16px; display: flex; gap: 14px; align-items: center"><span class="pu-tile" aria-hidden="true" style="flex: 0 0 44px; height: 44px; border-radius: 12px; background: #8FE3C8; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path class="pu-spk" d="M3.5 5.5 6 7"></path><path class="pu-spk pu-spk2" d="M20.5 3.5 18.5 6"></path><path class="pu-spk pu-spk3" d="M21 17.5 18.5 16.5"></path><path class="pu-spk pu-spk4" d="M3 18.5 5.5 17"></path><path class="pu-bolt" d="M13 2 4 14h7l-1 8 9-12h-7z"></path></svg></span><div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #8FE3C8">{{u.tipo}}</span><span style="font-weight: 600">{{u.titulo}}</span><sc-if value="{{u.hasProg}}" hint-placeholder-val="{{ true }}"><div style="height: 6px; border-radius: 3px; background: #2C2C36"><div style="width: {{u.w}}; height: 6px; border-radius: 3px; background: #8FE3C8"></div></div></sc-if><sc-if value="{{u.hasFreq}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; color: #A3A1AD">{{u.sub}}</span></sc-if></div><sc-if value="{{u.hasProg}}" hint-placeholder-val="{{ true }}"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px">{{u.pct}}</span></sc-if></div>
+</sc-for>
+<button type="button" onClick="{{openPw}}" style="font-family: inherit; flex: 0 1 200px; min-height: 76px; border-radius: 18px; background: transparent; border: 1.5px dashed #4A4858; color: #F5F2EC; font-size: 15px; font-weight: 600; cursor: pointer">+ Power up</button>
+</div>
+</section>
+
+<section id="mb-decks" style="display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px"><h2 style="margin: 0; font-size: 24px; font-weight: 700">Decks da Joana</h2><button type="button" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #0E0E12; background: #B7A6FF; border: 0; border-radius: 12px; min-height: 44px; padding: 0 16px; cursor: pointer">+ Check-in</button></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 28px">
+<div class="coops-pile" style="position: relative; height: 380px">
+<div class="coops-b2" aria-hidden="true" style="position: absolute; left: 22px; top: 0; right: 0; height: 340px; border-radius: 22px; background: #4F8DB3; border: 2px solid #0E0E12; transform: rotate(5deg)"></div>
+<div class="coops-b1" aria-hidden="true" style="position: absolute; left: 12px; top: 10px; right: 10px; height: 340px; border-radius: 22px; background: #7FB8DD; border: 2px solid #0E0E12; transform: rotate(2.5deg)"></div>
+<a class="coops-front" href="Coops19b-Saude-Manager.dc.html" style="position: absolute; left: 0; top: 24px; right: 22px; height: 340px; box-sizing: border-box; border-radius: 22px; background: #A9D8F5; color: #0E0E12; text-decoration: none; border: 2px solid #0E0E12; padding: 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 16px 36px rgba(0,0,0,0.45)">
+<div style="display: flex; justify-content: space-between; align-items: flex-start"><svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ic-heart" d="M32 54S8 40 8 24a12 12 0 0 1 24-4 12 12 0 0 1 24 4c0 16-24 30-24 30z"></path><path class="ic-ecg" d="M14 30h10l4-8 6 16 4-8h12"></path></svg><span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 44px; font-weight: 600; line-height: 1">3,3</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">MÉDIA / 5</span></span></div>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; margin-top: auto">SAÚDE · CHECK-IN</span>
+<span style="font-size: 21px; font-weight: 600; line-height: 1.2">Clareza de negócio em baixa</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; line-height: 1.45"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Só você e seu manager veem</span>
+<span style="font-size: 13px; border-top: 1.5px solid #0E0E12; padding-top: 10px">Respondido na semana 6 · +0,5 vs Q3</span>
+</a>
+</div>
+
+<div class="coops-pile" style="position: relative; height: 380px">
+<div class="coops-b2" aria-hidden="true" style="position: absolute; left: 22px; top: 0; right: 0; height: 340px; border-radius: 22px; background: #4B36B0; border: 2px solid #0E0E12; transform: rotate(5deg)"></div>
+<div class="coops-b1" aria-hidden="true" style="position: absolute; left: 12px; top: 10px; right: 10px; height: 340px; border-radius: 22px; background: #8B74F2; border: 2px solid #0E0E12; transform: rotate(2.5deg)"></div>
+<a class="coops-front" href="Coops12-Deck-Eventos.dc.html" style="position: absolute; left: 0; top: 24px; right: 22px; height: 340px; box-sizing: border-box; border-radius: 22px; background: #B7A6FF; color: #0E0E12; text-decoration: none; border: 2px solid #0E0E12; padding: 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 16px 36px rgba(0,0,0,0.45)">
+<div style="display: flex; justify-content: space-between; align-items: flex-start"><svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="10" y="14" width="44" height="40" rx="4"></rect><path d="M10 24h44"></path><path class="ic-peg" d="M22 8v10"></path><path class="ic-peg ic-peg2" d="M42 8v10"></path><rect class="ic-day" style="animation-delay: 0.00s" x="13.5" y="29" width="9" height="8" rx="2"></rect><rect class="ic-day" style="animation-delay: 0.22s" x="27.5" y="29" width="9" height="8" rx="2"></rect><rect class="ic-day" style="animation-delay: 0.44s" x="41.5" y="29" width="9" height="8" rx="2"></rect><rect class="ic-day" style="animation-delay: 0.66s" x="13.5" y="41" width="9" height="8" rx="2"></rect><rect class="ic-day" style="animation-delay: 0.88s" x="27.5" y="41" width="9" height="8" rx="2"></rect><rect class="ic-day" style="animation-delay: 1.10s" x="41.5" y="41" width="9" height="8" rx="2"></rect></svg><span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 44px; font-weight: 600; line-height: 1">12</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">OUT '26</span></span></div>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; margin-top: auto">EVENTOS · CHECK-IN</span>
+<span style="font-size: 21px; font-weight: 600; line-height: 1.2">Ritmo bom; pediu mais espaço para pesquisa.</span>
+<span style="font-size: 13px; border-top: 1.5px solid #0E0E12; padding-top: 10px">8 cartas · 3 check-ins · 2 feedbacks</span>
+</a>
+</div>
+
+<div class="coops-pile" style="position: relative; height: 380px">
+<div class="coops-b2" aria-hidden="true" style="position: absolute; left: 22px; top: 0; right: 0; height: 340px; border-radius: 22px; background: #B8962F; border: 2px solid #0E0E12; transform: rotate(5deg)"></div>
+<div class="coops-b1" aria-hidden="true" style="position: absolute; left: 12px; top: 10px; right: 10px; height: 340px; border-radius: 22px; background: #D9B84B; border: 2px solid #0E0E12; transform: rotate(2.5deg)"></div>
+<a class="coops-front" href="Coops13-Skills.dc.html" style="position: absolute; left: 0; top: 24px; right: 22px; height: 340px; box-sizing: border-box; border-radius: 22px; background: #F3D36B; color: #0E0E12; text-decoration: none; border: 2px solid #0E0E12; padding: 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 16px 36px rgba(0,0,0,0.45)">
+<div style="display: flex; justify-content: space-between; align-items: flex-start"><svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ic-star" d="M32 6l7 15 16 2-12 11 3 16-14-8-14 8 3-16L9 23l16-2z"></path><path class="ic-shard" style="--dx: 0px; --dy: -22px; --rt: -120deg" d="M32.0 23.5 33.6 27.7 38.2 28.0 34.7 30.9 35.8 35.3 32.0 32.8 28.2 35.3 29.3 30.9 25.8 28.0 30.4 27.7z"></path><path class="ic-shard" style="--dx: 21px; --dy: -7px; --rt: 120deg" d="M32.0 23.5 33.6 27.7 38.2 28.0 34.7 30.9 35.8 35.3 32.0 32.8 28.2 35.3 29.3 30.9 25.8 28.0 30.4 27.7z"></path><path class="ic-shard" style="--dx: 13px; --dy: 18px; --rt: -120deg" d="M32.0 23.5 33.6 27.7 38.2 28.0 34.7 30.9 35.8 35.3 32.0 32.8 28.2 35.3 29.3 30.9 25.8 28.0 30.4 27.7z"></path><path class="ic-shard" style="--dx: -13px; --dy: 18px; --rt: 120deg" d="M32.0 23.5 33.6 27.7 38.2 28.0 34.7 30.9 35.8 35.3 32.0 32.8 28.2 35.3 29.3 30.9 25.8 28.0 30.4 27.7z"></path><path class="ic-shard" style="--dx: -21px; --dy: -7px; --rt: -120deg" d="M32.0 23.5 33.6 27.7 38.2 28.0 34.7 30.9 35.8 35.3 32.0 32.8 28.2 35.3 29.3 30.9 25.8 28.0 30.4 27.7z"></path></svg><span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 44px; font-weight: 600; line-height: 1">4.2</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">MÉDIA / 5</span></span></div>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; margin-top: auto">SKILLS</span>
+<div style="display: flex; flex-direction: column; gap: 6px; font-size: 14px">
+<span style="display: flex; justify-content: space-between"><span>Pesquisa</span><span style="font-family: 'JetBrains Mono', monospace">●●●●●</span></span>
+<span style="display: flex; justify-content: space-between"><span>Facilitação</span><span style="font-family: 'JetBrains Mono', monospace">●●●●○</span></span>
+<span style="display: flex; justify-content: space-between"><span>Visão de negócio</span><span style="font-family: 'JetBrains Mono', monospace">●●●○○</span></span>
+</div>
+<span style="font-size: 13px; border-top: 1.5px solid #0E0E12; padding-top: 10px">5 skills do projeto · avaliar</span>
+</a>
+</div>
+
+<div class="coops-pile" style="position: relative; height: 380px">
+<div class="coops-b1" aria-hidden="true" style="position: absolute; left: 12px; top: 10px; right: 10px; height: 340px; border-radius: 22px; background: #D884B6; border: 2px solid #0E0E12; transform: rotate(3deg)"></div>
+<a class="coops-front" href="Coops14-BrainGym.dc.html" style="position: absolute; left: 0; top: 24px; right: 22px; height: 340px; box-sizing: border-box; border-radius: 22px; background: #F5A9D6; color: #0E0E12; text-decoration: none; border: 2px solid #0E0E12; padding: 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 16px 36px rgba(0,0,0,0.45)">
+<div style="display: flex; justify-content: space-between; align-items: flex-start"><svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="ic-bgx ic-bgx1"><path d="M12 14h16a4 4 0 0 1 4 4v36a4 4 0 0 0-4-4H12zM17 24h9M17 31h9"></path><path d="M52 14H36a4 4 0 0 0-4 4v36a4 4 0 0 1 4-4h16z"></path><path d="M38 24h9M38 31h9"></path><g class="ic-leaf"><path class="ic-leafp" d="M52 14H36a4 4 0 0 0-4 4v36a4 4 0 0 1 4-4h16z"></path><path d="M38 24h9M38 31h9"></path></g><g class="ic-leaf ic-leaf2"><path class="ic-leafp" d="M52 14H36a4 4 0 0 0-4 4v36a4 4 0 0 1 4-4h16z"></path></g></g><g class="ic-bgx ic-bgx2"><rect x="8" y="12" width="48" height="34" rx="6"></rect><path class="ic-playt" d="M28 22v14l12-7z"></path><path d="M8 54h48"></path><path class="ic-knob" d="M20 54h.01"></path></g><g class="ic-bgx ic-bgx3"><path d="M26 10a6 6 0 0 1 12 0v18a6 6 0 0 1-12 0z"></path><path d="M18 26a14 14 0 0 0 28 0M32 40v12M24 54h16"></path><path class="ic-wave" d="M11 16a22 22 0 0 0 0 20M53 16a22 22 0 0 1 0 20"></path></g></svg><span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 44px; font-weight: 600; line-height: 1">4</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">ESTUDANDO</span></span></div>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; margin-top: auto">BRAIN GYM · LIVRO</span>
+<span style="font-size: 21px; font-weight: 600; line-height: 1.2">[TÍTULO DO LIVRO]</span>
+<div aria-hidden="true" style="display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 3px"><span style="height: 14px; border-radius: 4px; background: #0E0E12; border: 1.5px solid #0E0E12"></span><span style="height: 14px; border-radius: 4px; background: #0E0E12; border: 1.5px solid #0E0E12"></span><span style="height: 14px; border-radius: 4px; background: #0E0E12; border: 1.5px solid #0E0E12"></span><span style="height: 14px; border-radius: 4px; background: #0E0E12; border: 1.5px solid #0E0E12"></span><span style="height: 14px; border-radius: 4px; border: 1.5px solid #0E0E12"></span><span style="height: 14px; border-radius: 4px; border: 1.5px solid #0E0E12"></span><span style="height: 14px; border-radius: 4px; border: 1.5px solid #0E0E12"></span><span style="height: 14px; border-radius: 4px; border: 1.5px solid #0E0E12"></span><span style="height: 14px; border-radius: 4px; border: 1.5px solid #0E0E12"></span><span style="height: 14px; border-radius: 4px; border: 1.5px solid #0E0E12"></span></div>
+<span style="font-size: 13px; border-top: 1.5px solid #0E0E12; padding-top: 10px">40% lido · + 2 vídeos</span>
+</a>
+</div>
+
+<div class="coops-pile" style="position: relative; height: 380px">
+<a class="coops-front" href="Coops15-Jornada.dc.html" style="position: absolute; left: 0; top: 24px; right: 22px; height: 340px; box-sizing: border-box; border-radius: 22px; background: #FF8A5B; color: #0E0E12; text-decoration: none; border: 2px solid #0E0E12; padding: 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 16px 36px rgba(0,0,0,0.45)">
+<div style="display: flex; justify-content: space-between; align-items: flex-start"><svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ic-path" d="M8 54c10 0 10-14 20-14s8-14 18-14"></path><path d="M46 26V8"></path><path class="ic-jflag" d="M46 8l10 5-10 5"></path><circle cx="8" cy="54" r="3"></circle></svg><span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 44px; font-weight: 600; line-height: 1">Q4</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">CICLO</span></span></div>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; margin-top: auto">JORNADA · OBJETIVOS</span>
+<span style="font-size: 21px; font-weight: 600; line-height: 1.2">Liderar a pesquisa de onboarding de ponta a ponta</span>
+<span style="font-size: 13px; line-height: 1.45">3 objetivos no ciclo, cada um com o seu sinal · 2 de 3 atingidos</span>
+<span style="font-size: 13px; border-top: 1.5px solid #0E0E12; padding-top: 10px">2 focos · Facilitação e Visão de negócio</span>
+</a>
+</div>
+
+<div class="coops-pile" style="position: relative; height: 380px">
+<div class="coops-b1" aria-hidden="true" style="position: absolute; left: 12px; top: 10px; right: 10px; height: 340px; border-radius: 22px; background: #5FC4A6; border: 2px solid #0E0E12; transform: rotate(2.5deg)"></div>
+<a class="coops-front" href="Coops20b-Entregas-IC.dc.html" style="position: absolute; left: 0; top: 24px; right: 22px; height: 340px; box-sizing: border-box; border-radius: 22px; background: #8FE3C8; color: #0E0E12; text-decoration: none; border: 2px solid #0E0E12; padding: 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 16px 36px rgba(0,0,0,0.45)">
+<div style="display: flex; justify-content: space-between; align-items: flex-start"><svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ic-tw" d="M12 10v6M9 13h6"></path><path class="ic-tw ic-tw2" d="M53 26v5M50.5 28.5h5"></path><path class="ic-tw ic-tw3" d="M10 36h.01"></path><path class="ic-tw ic-tw4" d="M55 8h.01"></path><g class="ic-rocket"><path d="M32 6c10 8 14 20 10 34H22C18 26 22 14 32 6z"></path><circle cx="32" cy="24" r="5"></circle><path d="M22 40l-8 10h12M42 40l8 10H38"></path></g><path class="ic-fire" d="M26 42c0 7 3 11 6 19 3-8 6-12 6-19"></path><path class="ic-fire ic-fire2" d="M29.5 42c0 4 1 7 2.5 11 1.5-4 2.5-7 2.5-11"></path></svg><span style="display: flex; flex-direction: column; align-items: flex-end"><span style="font-size: 44px; font-weight: 600; line-height: 1">3</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">FINALIZADAS</span></span></div>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; margin-top: auto">INICIATIVAS · ENTREGUE</span>
+<span style="font-size: 21px; font-weight: 600; line-height: 1.2">Captura guiada na câmera</span>
+<span style="font-size: 13px; line-height: 1.45">Abandono no envio do documento · out '26</span>
+<span style="font-size: 13px; border-top: 1.5px solid #0E0E12; padding-top: 10px">2 entregues · 1 pausada</span>
+</a>
+</div>
+</div>
+</section>
+</div>
+<sc-if value="{{pwOpen}}" hint-placeholder-val="{{ false }}">
+<button type="button" aria-label="Fechar" onClick="{{closePw}}" class="coops-overlay" style="animation: coopsFadeIn 320ms ease both; position: absolute; inset: 0; z-index: 9; border: 0; padding: 0; background: rgba(14,14,18,0.72); backdrop-filter: blur(3px); cursor: pointer"></button>
+<section role="dialog" aria-modal="true" aria-label="Cadastro de power up" style="animation: coopsSheetIn 560ms cubic-bezier(.22,1,.36,1) both; position: absolute; left: 0; right: 0; bottom: 0; top: auto; max-height: calc(100% - 120px); z-index: 10; background: #0E0E12; border-radius: 32px 32px 0 0; border-top: 3px solid #8FE3C8; box-shadow: 0 -30px 80px rgba(0,0,0,0.6); overflow-y: auto; overflow-x: hidden; padding: 12px 32px 40px; box-sizing: border-box">
+<div aria-hidden="true" style="width: 56px; height: 5px; border-radius: 3px; background: #4A4858; margin: 0 auto 14px"></div>
+<div class="coops-sheet-body" style="max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8FE3C8">POWER UPS · NOVO</span><h2 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.025em">Cadastrar power up</h2><span style="font-size: 13px; color: #A3A1AD">Uma pergunta por carta. Joana e o manager veem o resultado.</span></div>
+<button type="button" aria-label="Fechar" onClick="{{closePw}}" style="flex: 0 0 44px; height: 44px; border-radius: 14px; background: #212129; border: 1.5px solid #3A3846; color: #F5F2EC; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+</div>
+<div style="position: relative; height: 470px; margin: 16px 28px 0 0">
+<div class="coops-wz-card" aria-hidden="{{pw.c0.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #8FE3C8; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{pw.c0.t}}; opacity: {{pw.c0.op}}; z-index: {{pw.c0.z}}; pointer-events: {{pw.c0.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em">PERGUNTA 1 DE 5</span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Que tipo de power up?</span>
+<span style="font-size: 14px; line-height: 1.45">Power up é uma ação que acelera o seu desenvolvimento: uma mentoria com um profissional, um curso sobre algum assunto ou um projeto paralelo.</span><div role="radiogroup" aria-label="Tipo de power up" style="display: flex; flex-direction: column; gap: 8px"><sc-for list="{{pw.tipos}}" as="t" hint-placeholder-count="3"><button type="button" role="radio" aria-checked="{{t.on}}" onClick="{{t.pick}}" style="font-family: inherit; text-align: left; display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 0 16px; border-radius: 14px; border: 2px solid #0E0E12; background: {{t.bg}}; color: {{t.fg}}; cursor: pointer"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; border: 1.5px solid currentColor; border-radius: 8px; padding: 4px 6px">{{t.tag}}</span><span style="display: flex; flex-direction: column"><span style="font-size: 16px; font-weight: 700">{{t.label}}</span><span style="font-size: 12px; opacity: 0.85">{{t.hint}}</span></span></button></sc-for></div><sc-if value="{{pw.err0}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 14px; font-weight: 600">Escolha um tipo para seguir.</span></sc-if>
+</div>
+<div class="coops-wz-card" aria-hidden="{{pw.c1.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #F5F2EC; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{pw.c1.t}}; opacity: {{pw.c1.op}}; z-index: {{pw.c1.z}}; pointer-events: {{pw.c1.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em">PERGUNTA 2 DE 5</span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">{{pw.q1}}</span>
+<span style="font-size: 14px; line-height: 1.45">{{pw.h1}}</span><input id="pw-nome" type="text" aria-label="{{pw.q1}}" placeholder="{{pw.ph1}}" style="font-family: inherit; font-size: 17px; line-height: 1.5; color: #0E0E12; background: rgba(245,242,236,0.65); border: 1.5px solid rgba(14,14,18,0.3); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; min-height: 56px"><sc-if value="{{pw.err1}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 14px; font-weight: 600">Preencha para seguir.</span></sc-if>
+</div>
+<div class="coops-wz-card" aria-hidden="{{pw.c2.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #B7A6FF; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{pw.c2.t}}; opacity: {{pw.c2.op}}; z-index: {{pw.c2.z}}; pointer-events: {{pw.c2.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em">PERGUNTA 3 DE 5</span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Que skill ele acelera?</span>
+<span style="font-size: 14px; line-height: 1.45">Ajuda o manager a ligar o power up ao PDI.</span><div role="radiogroup" aria-label="Skill" style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{pw.skills}}" as="k" hint-placeholder-count="6"><button type="button" role="radio" aria-checked="{{k.on}}" onClick="{{k.pick}}" style="font-family: inherit; font-size: 14px; font-weight: 600; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid #0E0E12; background: {{k.bg}}; color: {{k.fg}}; cursor: pointer">{{k.label}}</button></sc-for></div>
+</div>
+<div class="coops-wz-card" aria-hidden="{{pw.c3.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #F3D36B; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{pw.c3.t}}; opacity: {{pw.c3.op}}; z-index: {{pw.c3.z}}; pointer-events: {{pw.c3.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em">PERGUNTA 4 DE 5</span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">{{pw.q3}}</span>
+<span style="font-size: 14px; line-height: 1.45">{{pw.h3}}</span><sc-if value="{{pw.isMent}}" hint-placeholder-val="{{ false }}"><div role="radiogroup" aria-label="Frequência" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px"><sc-for list="{{pw.freqs}}" as="f" hint-placeholder-count="4"><button type="button" role="radio" aria-checked="{{f.on}}" onClick="{{f.pick}}" style="font-family: inherit; text-align: left; display: flex; flex-direction: column; gap: 2px; min-height: 64px; padding: 10px 14px; border-radius: 14px; border: 2px solid #0E0E12; background: {{f.bg}}; color: {{f.fg}}; cursor: pointer"><span style="font-size: 16px; font-weight: 700">{{f.label}}</span><span style="font-size: 12px; opacity: 0.85">{{f.hint}}</span></button></sc-for></div></sc-if><sc-if value="{{pw.isProg}}" hint-placeholder-val="{{ true }}"><span style="font-size: 56px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; margin-top: 4px">{{pw.prog}}%</span><div role="radiogroup" aria-label="Progresso" style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px"><sc-for list="{{pw.bars}}" as="b" hint-placeholder-count="10"><button type="button" role="radio" aria-checked="{{b.on}}" aria-label="Progresso {{b.label}}" onClick="{{b.pick}}" style="padding: 0; height: 32px; border-radius: 5px; border: 1.5px solid #0E0E12; background: {{b.bg}}; cursor: pointer; transition: background-color 160ms ease"></button></sc-for></div><span style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px"><span>10%</span><span>100%</span></span><button type="button" onClick="{{pw.zero}}" style="align-self: flex-start; font-family: inherit; font-size: 13px; font-weight: 600; background: transparent; border: 0; color: #0E0E12; text-decoration: underline; cursor: pointer; padding: 4px 0">Ainda não comecei</button></sc-if>
+</div>
+<div class="coops-wz-card" aria-hidden="{{pw.c4.hidden}}" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 26px; background: #F5F2EC; color: #0E0E12; border: 2px solid #0E0E12; padding: 26px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; transform: {{pw.c4.t}}; opacity: {{pw.c4.op}}; z-index: {{pw.c4.z}}; pointer-events: {{pw.c4.pe}}; box-shadow: 0 18px 40px rgba(0,0,0,0.45); transition: transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em">PERGUNTA 5 DE 5</span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15">Confere o power up?</span>
+<span style="font-size: 14px; line-height: 1.45">É assim que ele vai aparecer na lista.</span><div class="coops-pu" tabindex="0" style="border-radius: 18px; background: #17171D; color: #F5F2EC; border: 1px solid #2C2C36; padding: 16px; display: flex; gap: 14px; align-items: center"><span class="pu-tile" aria-hidden="true" style="flex: 0 0 44px; height: 44px; border-radius: 12px; background: #8FE3C8; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path class="pu-spk" d="M3.5 5.5 6 7"></path><path class="pu-spk pu-spk2" d="M20.5 3.5 18.5 6"></path><path class="pu-spk pu-spk3" d="M21 17.5 18.5 16.5"></path><path class="pu-spk pu-spk4" d="M3 18.5 5.5 17"></path><path class="pu-bolt" d="M13 2 4 14h7l-1 8 9-12h-7z"></path></svg></span><div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: #8FE3C8">{{pw.sum.tipo}}</span><span style="font-weight: 600">{{pw.sum.titulo}}</span><sc-if value="{{pw.sum.hasProg}}" hint-placeholder-val="{{ true }}"><div style="height: 6px; border-radius: 3px; background: #2C2C36"><div style="width: {{pw.sum.w}}; height: 6px; border-radius: 3px; background: #8FE3C8"></div></div></sc-if><sc-if value="{{pw.sum.hasFreq}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; color: #A3A1AD">{{pw.sum.sub}}</span></sc-if></div><sc-if value="{{pw.sum.hasProg}}" hint-placeholder-val="{{ true }}"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px">{{pw.sum.pct}}</span></sc-if></div><div style="display: flex; flex-direction: column; gap: 6px; font-size: 14px"><span><b>Skill:</b> {{pw.sum.skill}}</span><span>Aparece no perfil da Joana e no 1:1 com o manager.</span></div>
+</div>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px">
+<button type="button" onClick="{{pw.prev}}" style="font-family: inherit; font-weight: 600; font-size: 15px; color: #F5F2EC; background: transparent; border: 1.5px solid #4A4858; border-radius: 14px; min-height: 48px; padding: 0 14px; cursor: pointer; opacity: {{pw.prevOp}}">Voltar</button>
+<div style="display: flex; gap: 6px"><sc-for list="{{pw.dots}}" as="d" hint-placeholder-count="5"><button type="button" aria-label="Ir para a pergunta {{d.n}}" onClick="{{d.go}}" style="width: 22px; height: 6px; padding: 0; border: 0; border-radius: 3px; background: {{d.bg}}; cursor: pointer"></button></sc-for></div>
+<button type="button" onClick="{{pw.next}}" style="font-family: inherit; font-weight: 600; font-size: 15px; color: #0E0E12; background: #8FE3C8; border: 2px solid #0E0E12; border-radius: 14px; min-height: 48px; padding: 0 20px; cursor: pointer">{{pw.nextLabel}}</button>
+</div>
+</div>
+</section>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":2050}}'>
+class Component extends DCLogic {
+  renderVals() {
+    if (typeof window !== 'undefined' && !window.__mbBar) { window.__mbBar = true; var mbS = function () { var bar = document.getElementById('mb-bar'), dk = document.getElementById('mb-decks'); if (!bar || !dk) return; var on = dk.getBoundingClientRect().top < 140; if (bar.classList.contains('on') !== on) { bar.classList.toggle('on', on); bar.setAttribute('aria-hidden', on ? 'false' : 'true'); } }; window.addEventListener('scroll', mbS, { passive: true }); window.addEventListener('resize', mbS); setTimeout(mbS, 400); }
+ var o = this.__acctRv() || {}, self = this, m = !!(this.state && this.state.acct); o.acctOpen = m; o.acctExp = m ? 'true' : 'false'; o.acctRing = m ? '0 0 0 2px #0E0E12, 0 0 0 4px #B7A6FF' : 'none'; o.acctToggle = function () { self.setState({ acct: !(self.state && self.state.acct) }); }; return o; }
+  constructor(props) { super(props); this.state = { champion: true, pwForm: null, pus: [
+    { tipo: 'curso', nome: 'Pesquisa quantitativa', skill: 'Pesquisa', prog: 60 },
+    { tipo: 'mentoria', nome: 'Caio Souza', skill: 'Facilitação', freq: 'Quinzenal' }
+  ] }; }
+  __acctRv() {
+    if (typeof window !== 'undefined' && !window.__coopsNav) { window.__coopsNav = true; window.addEventListener('click', function (ev) { var a = ev.target && ev.target.closest ? ev.target.closest('a.coops-m, a.coops-front, a.coops-card') : null; if (!a) return; var h = a.getAttribute('href') || ''; if (!h || h.charAt(0) === '#') return; if (a.getAttribute('data-coops-go') === '1') { a.removeAttribute('data-coops-go'); return; } ev.preventDefault(); ev.stopImmediatePropagation(); a.classList.remove('coops-go'); void a.offsetWidth; a.classList.add('coops-go'); var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; setTimeout(function () { document.documentElement.classList.add('coops-leaving'); }, reduce ? 0 : 330); setTimeout(function () { a.classList.remove('coops-go'); a.setAttribute('data-coops-go', '1'); a.click(); setTimeout(function () { document.documentElement.classList.remove('coops-leaving'); }, 1200); }, reduce ? 0 : 600); }, true); }
+
+    var self = this;
+    var c = this.state.champion;
+    var TIPOS = { mentoria: ['MEN', 'Mentoria', 'Encontros com um profissional · tem frequência'], curso: ['CUR', 'Curso', 'Um assunto para estudar · tem progresso'], projeto: ['PRO', 'Projeto paralelo', 'Algo que você constrói fora do dia a dia · tem progresso'] };
+    var SK = ['Pesquisa', 'Facilitação', 'Visão de negócio', 'Visual e sistemas', 'Escrita', 'Liderança'];
+    var FQ = [['Semanal', 'Toda semana'], ['Quinzenal', 'A cada 15 dias'], ['Mensal', 'Uma vez por mês'], ['Pontual', 'Quando precisar']];
+    var view = function (u) {
+      var t = u.tipo, isM = t === 'mentoria';
+      var titulo = u.nome || '…';
+      return { tipo: (TIPOS[t] || TIPOS.curso)[1].toUpperCase(), titulo: titulo, hasProg: !isM, hasFreq: isM, w: (u.prog || 0) + '%', pct: (u.prog || 0) + '%', sub: (u.freq || 'Frequência a definir') + (u.skill ? ' · ' + u.skill.toLowerCase() : ''), skill: u.skill || 'Sem skill ligada' };
+    };
+    var W = this.state.pwForm, pwV = null;
+    var setW = function (p) { self.setState({ pwForm: Object.assign({}, self.state.pwForm, p) }); };
+    var val = function (id) { var el = typeof document !== 'undefined' && document.getElementById(id); return el ? el.value.trim() : ''; };
+    if (W) {
+      var tok = String(W.tok || 0);
+      setTimeout(function () { var el = document.getElementById('pw-nome'); if (el && el.getAttribute('data-tok') !== tok + ':' + W.tipo) { el.value = W.nome || ''; el.setAttribute('data-tok', tok + ':' + W.tipo); } }, 0);
+      var grab = function () { return { nome: val('pw-nome') || W.nome || '' }; };
+      var go = function (k) {
+        var g = grab();
+        if (k > 0 && !W.tipo) { setW(Object.assign(g, { step: 0, err0: true })); return; }
+        if (k > 1 && !g.nome) { setW(Object.assign(g, { step: 1, err1: true })); return; }
+        setW(Object.assign(g, { step: Math.max(0, Math.min(4, k)), err0: false, err1: false }));
+      };
+      var isM = W.tipo === 'mentoria';
+      var Q1 = { mentoria: ['Com quem é a mentoria?', 'Ex.: Caio Souza', 'Pode ser alguém de dentro ou de fora da empresa.'], curso: ['Qual o curso?', 'Ex.: Pesquisa quantitativa', 'O nome do curso ou do assunto.'], projeto: ['Qual o projeto paralelo?', 'Ex.: Biblioteca de ícones open source', 'Algo que você constrói fora das entregas do squad.'] }[W.tipo || 'curso'];
+      pwV = { err0: !!W.err0, err1: !!W.err1, isMent: isM, isProg: !isM && !!W.tipo, q1: Q1[0], ph1: Q1[1], h1: Q1[2],
+        q3: isM ? 'Com que frequência?' : 'Quanto já avançou?', h3: isM ? 'Mentoria não tem barra: o que importa é o ritmo dos encontros.' : 'Toque numa barra. Dá para atualizar depois.',
+        prevOp: W.step === 0 ? 0.4 : 1, nextLabel: W.step === 4 ? 'Adicionar power up' : 'Próxima', prog: W.prog || 0,
+        tipos: Object.keys(TIPOS).map(function (k) { var on = W.tipo === k; return { tag: TIPOS[k][0], label: TIPOS[k][1], hint: TIPOS[k][2], on: on ? 'true' : 'false', bg: on ? '#0E0E12' : 'rgba(245,242,236,0.6)', fg: on ? '#F5F2EC' : '#0E0E12', pick: function () { setW(Object.assign(grab(), { tipo: k, err0: false })); } }; }),
+        skills: SK.map(function (k) { var on = W.skill === k; return { label: k, on: on ? 'true' : 'false', bg: on ? '#0E0E12' : 'transparent', fg: on ? '#F5F2EC' : '#0E0E12', pick: function () { setW(Object.assign(grab(), { skill: on ? null : k })); } }; }),
+        freqs: FQ.map(function (f) { var on = W.freq === f[0]; return { label: f[0], hint: f[1], on: on ? 'true' : 'false', bg: on ? '#0E0E12' : 'rgba(245,242,236,0.6)', fg: on ? '#F5F2EC' : '#0E0E12', pick: function () { setW(Object.assign(grab(), { freq: f[0] })); } }; }),
+        bars: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(function (k) { var v = k * 10; return { label: v + '%', on: v === W.prog ? 'true' : 'false', bg: v <= (W.prog || 0) ? '#0E0E12' : 'transparent', pick: function () { setW(Object.assign(grab(), { prog: v })); } }; }),
+        zero: function () { setW(Object.assign(grab(), { prog: 0 })); },
+        sum: view(W),
+        dots: [0, 1, 2, 3, 4].map(function (k) { return { n: k + 1, bg: k <= W.step ? '#8FE3C8' : '#2C2C36', go: function () { go(k); } }; }),
+        prev: function () { go(W.step - 1); },
+        next: function () {
+          if (W.step < 4) { go(W.step + 1); return; }
+          var f = Object.assign({}, self.state.pwForm, grab());
+          var item = { tipo: f.tipo, nome: f.nome, skill: f.skill, prog: f.tipo === 'mentoria' ? null : (f.prog || 0), freq: f.tipo === 'mentoria' ? (f.freq || 'Pontual') : null };
+          self.setState({ pus: [item].concat(self.state.pus), pwForm: null });
+        } };
+      for (var ci = 0; ci < 5; ci++) {
+        var of = ci - W.step;
+        pwV['c' + ci] = of < 0
+          ? { t: 'translate(-118%, 24px) rotate(-12deg)', op: 0, z: 20, pe: 'none', hidden: 'true' }
+          : { t: 'translate(' + (of * 16) + 'px, ' + (-of * 12) + 'px) rotate(' + (of * 3) + 'deg) scale(' + (1 - of * 0.03) + ')', op: of > 2 ? 0 : 1, z: 10 - of, pe: of === 0 ? 'auto' : 'none', hidden: of === 0 ? 'false' : 'true' };
+      }
+    }
+    return {
+      pus: this.state.pus.map(view),
+      pwOpen: !!W,
+      pw: pwV || { err0: false, err1: false, isMent: false, isProg: false, q1: '', ph1: '', h1: '', q3: '', h3: '', prevOp: 1, nextLabel: '', prog: 0, tipos: [], skills: [], freqs: [], bars: [], zero: function () {}, sum: { tipo: '', titulo: '', hasProg: false, hasFreq: false, w: '0%', pct: '', sub: '', skill: '' }, dots: [], prev: function () {}, next: function () {}, c0: {}, c1: {}, c2: {}, c3: {}, c4: {} },
+      openPw: function () { self.setState({ pwForm: { tok: Date.now(), step: 0, tipo: null, nome: '', skill: null, freq: null, prog: 0 } }); },
+      closePw: function () { self.setState({ pwForm: null }); },
+      champion: c,
+      championBg: c ? '#F3D36B' : '#0E0E12',
+      championFg: c ? '#0E0E12' : '#F5F2EC',
+      ctaBg: c ? '#0E0E12' : '#B7A6FF',
+      ctaFg: c ? '#F5F2EC' : '#0E0E12',
+      championText: c ? 'Iniciativa: estruturar a biblioteca de pesquisa do time' : 'Sem iniciativa. Adicione uma para tornar a Joana champion.',
+      championCta: c ? 'Encerrar iniciativa' : '+ Iniciativa',
+      toggleChampion: function () { self.setState({ champion: !self.state.champion }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

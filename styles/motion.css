@@ -1,0 +1,61 @@
+/* Copiado dos protótipos — mesmos nomes e valores de @keyframes. */
+
+/* Coops · transição entre páginas */
+/* Coops · scroll */
+/* Coops · interações padrão (DS) */
+.coops-m{transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease,border-color .25s ease}
+.coops-m:hover,.coops-m:focus-visible{transform:translateY(-8px) rotate(-1.5deg)!important;box-shadow:8px 8px 0 #4B36B0!important;border-color:#B7A6FF!important;outline:none}
+.coops-m:active{transform:translateY(-2px) scale(.97)!important;box-shadow:3px 3px 0 #4B36B0!important;transition-duration:80ms}
+.coops-av{display:block;line-height:0;transform-origin:50% 90%}
+.coops-m:focus .coops-av,.coops-m:active .coops-av{animation:coopsWave .5s cubic-bezier(.34,1.4,.64,1) 1}
+@keyframes coopsWave{30%{transform:translateY(-12px) rotate(-6deg)}60%{transform:translateY(-6px) rotate(5deg)}100%{transform:none}}
+.coops-pile .coops-front,.coops-card{transition:transform .4s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease}
+.coops-pile .coops-b1,.coops-pile .coops-b2{transition:transform .45s cubic-bezier(.34,1.3,.64,1)}
+.coops-pile:hover .coops-front,.coops-pile .coops-front:focus-visible{transform:translateY(-16px) rotate(-2deg)!important;outline:none}
+.coops-pile:hover .coops-b1{transform:rotate(6deg) translateX(10px)!important}
+.coops-pile:hover .coops-b2{transform:rotate(11deg) translateX(20px)!important}
+.coops-card:hover,.coops-card:focus-visible{transform:translateY(-10px) rotate(-1.5deg)!important;outline:none}
+.coops-pile .coops-front:active,.coops-pile .coops-front:focus,.coops-card:active,.coops-card:focus{animation:coopsPull .55s cubic-bezier(.65,0,.25,1) 1}
+@keyframes coopsPull{0%{transform:translateY(-16px) rotate(-2deg)}50%{transform:translateY(-44px) scale(1.04) rotate(0)}100%{transform:translateY(-16px) rotate(-2deg)}}
+.coops-m.coops-go{animation:coopsPress .5s cubic-bezier(.2,.8,.2,1) 1}
+.coops-m.coops-go .coops-av{animation:coopsWave .5s cubic-bezier(.34,1.4,.64,1) 1}
+@keyframes coopsPress{0%{transform:translateY(-8px) rotate(-1.5deg)}25%{transform:translateY(-2px) scale(.97)}100%{transform:translateY(-8px) rotate(-1.5deg)}}
+.coops-front.coops-go,.coops-card.coops-go{animation:coopsPull .55s cubic-bezier(.65,0,.25,1) 1}
+@media (prefers-reduced-motion: reduce){.coops-m,.coops-av,.coops-front,.coops-b1,.coops-b2,.coops-card{transition:none!important;animation:none!important}}
+@keyframes coopsSheetIn{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes coopsFadeIn{from{opacity:0}to{opacity:1}}
+
+/* Coops · cadastro de membro e squad */
+.tw-chip{transition:transform .16s ease,background .2s ease}.tw-chip:hover{transform:translateY(-2px)}.tw-chip:active{transform:scale(.96)}
+.tw-sw{transition:transform .16s ease,box-shadow .2s ease}.tw-sw:hover{transform:scale(1.08)}
+.tw-row:focus-visible,.tw-crown:focus-visible,.tw-chip:focus-visible,.tw-sw:focus-visible{outline:3px solid #0E0E12;outline-offset:2px}
+.tw-add{transition:border-color .2s ease,transform .3s cubic-bezier(.34,1.56,.64,1)}.tw-add:hover{border-color:#B7A6FF!important;transform:translateY(-6px)}
+@media (prefers-reduced-motion:reduce){.tw-chip,.tw-sw,.tw-add{transition:none}}
+.hb-av{transition:transform .2s ease,box-shadow .2s ease}.hb-av:hover{transform:scale(1.06)}.hb-av:focus-visible{outline:3px solid #B7A6FF;outline-offset:3px}
+.hb-item{transition:background .18s ease}.hb-item:hover,.hb-item:focus-visible{background:#212129;outline:none}
+@keyframes hbPop{from{opacity:0;transform:scale(.9) translateY(-6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.hb-av,.hb-item{transition:none}}
+
+/* Coops · cadastro de projeto (deck de perguntas) */
+.hb-new{transition:transform .18s cubic-bezier(.34,1.56,.64,1)}.hb-new:hover{transform:translateY(-2px)}.hb-new:active{transform:scale(.96)}.hb-new:focus-visible{outline:3px solid #F5F2EC;outline-offset:3px}
+.hb-add{transition:border-color .2s ease,transform .3s cubic-bezier(.34,1.56,.64,1)}.hb-add:hover{border-color:#B7A6FF!important;transform:translateY(-6px)}.hb-add:focus-visible{outline:3px solid #B7A6FF;outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.hb-new,.hb-add{transition:none}}
+
+/* Coops · primeiro acesso */
+.fa-in{animation:faIn .5s cubic-bezier(.22,1,.36,1) both}@keyframes faIn{from{opacity:0;transform:translateY(16px)}}
+.fa-pop{animation:faPop .7s cubic-bezier(.34,1.56,.64,1) .1s both}@keyframes faPop{from{opacity:0;transform:translateY(60px) rotate(-6deg) scale(.85)}}
+.fa-next{animation:faIn .5s cubic-bezier(.22,1,.36,1) both}.fa-next:nth-of-type(2){animation-delay:.25s}.fa-next:nth-of-type(3){animation-delay:.38s}
+.fa-start:hover .fa-arrow{transform:translateX(6px)}.fa-arrow{display:inline-block;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.fa-ic .fa-a{transform-box:view-box;transform-origin:32px 32px;transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.fa-start:hover .fa-ic .fa-a{transform:translateY(-3px) rotate(-4deg)}
+.fa-next:hover .fa-ic .fa-a{transform:scale(1.08)}
+.fa-next:hover .fa-flag{animation:faWave .6s ease-in-out 2}@keyframes faWave{50%{transform:skewY(-6deg)}}
+.fa-flag{transform-box:view-box;transform-origin:18px 21px}
+@media (prefers-reduced-motion:reduce){.fa-in,.fa-pop,.fa-next,.fa-arrow,.fa-ic .fa-a,.fa-flag{animation:none!important;transition:none!important}}
+
+@keyframes coopsCurtainIn{from{opacity:1}to{opacity:0}}
+@keyframes coopsRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes coopsFocusIn{from{transform:translate(var(--fdx),var(--fdy)) scale(var(--fs));opacity:.35}to{transform:none;opacity:1}}
+@keyframes coopsFocusOut{from{transform:none;opacity:1}to{transform:translate(var(--fdx),var(--fdy)) scale(var(--fs));opacity:0}}
+@keyframes coopsFill{from{width:0}to{width:100%}}
+.coops-overlay{animation:coopsFadeIn 320ms ease both}
