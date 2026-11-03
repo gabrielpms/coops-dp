@@ -13,14 +13,15 @@ export function QuestionDeck({ tag, cards, step, onGo, nextLabel, busy, busyLabe
   const m = cards.length - 1; // total de perguntas (o resumo não conta)
   return (
     <>
-      <div style={{ position: 'relative', height: 480, margin: '16px 28px 0 0' }}>
+      {/* Grade em pilha: todas as cartas ocupam a mesma célula, então a altura é a da carta mais alta (mín. 480) e nenhuma rola por dentro. */}
+      <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', minHeight: 480, margin: '16px 28px 0 0' }}>
         {cards.map((c, i) => {
           const g = i - step;
           const t = g < 0 ? 'translate(-118%, 24px) rotate(-12deg)' : `translate(${g * 16}px, ${-g * 12}px) rotate(${g * 3}deg) scale(${1 - g * 0.03})`;
           const active = g === 0;
           return (
             <div key={c.id} className="coops-wz-card" aria-hidden={!active} inert={!active}
-              style={{ position: 'absolute', inset: 0, boxSizing: 'border-box', borderRadius: 26, background: c.bg, color: '#0E0E12', border: '2px solid #0E0E12', padding: 26, display: 'flex', flexDirection: 'column', gap: 14, overflowY: 'auto',
+              style={{ gridArea: '1 / 1', position: 'relative', boxSizing: 'border-box', borderRadius: 26, background: c.bg, color: '#0E0E12', border: '2px solid #0E0E12', padding: 26, display: 'flex', flexDirection: 'column', gap: 14, overflowY: 'auto',
                 transform: t, opacity: g < 0 ? 0 : g > 2 ? 0 : 1, zIndex: g < 0 ? 20 : 10 - g, pointerEvents: active ? 'auto' : 'none', boxShadow: '0 18px 40px rgba(0,0,0,0.45)',
                 transition: 'transform 520ms cubic-bezier(.65,0,.25,1), opacity 400ms ease' }}>
               <span style={{ display: 'flex', justifyContent: 'space-between', gap: 8, ...label(11, '0.08em') }}>
