@@ -19,8 +19,9 @@ export const signupSchema = z.object({
   email: text(200).toLowerCase().regex(EMAIL_RE, 'E-mail inválido'),
   phone: text(40).optional().default(''),
   role: z.enum(['IC', 'MANAGER']),
+  password: z.string().min(8, 'A senha precisa ter pelo menos 8 caracteres').max(128, 'A senha pode ter no máximo 128 caracteres'),
 });
-export const loginSchema = z.object({ email: text(200).toLowerCase().regex(EMAIL_RE, 'E-mail inválido') });
+export const loginSchema = z.object({ email: text(200).toLowerCase().regex(EMAIL_RE, 'E-mail inválido'), password: z.string().min(1, 'Digite sua senha').max(128) });
 
 export const projectSchema = z.object({
   name: text(120).min(1, 'Escreva o nome da empresa'),

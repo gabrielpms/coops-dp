@@ -10,8 +10,8 @@ describe('projectSchema (regras do deck de projeto, PRD M3)', () => {
   it('valida e-mail dos convites', () => expect(() => projectSchema.parse({ ...ok, invites: [{ name: 'A', email: 'x', position: 'IC' }] })).toThrow());
 });
 describe('signupSchema', () => {
-  it('normaliza o e-mail', () => expect(signupSchema.parse({ name: 'A', email: ' A@B.com ', role: 'IC' }).email).toBe('a@b.com'));
-  it('só aceita IC ou MANAGER', () => expect(() => signupSchema.parse({ name: 'A', email: 'a@b.com', role: 'ADMIN' })).toThrow());
+  it('normaliza o e-mail', () => expect(signupSchema.parse({ name: 'A', email: ' A@B.com ', role: 'IC', password: '12345678' }).email).toBe('a@b.com'));
+  it('só aceita IC ou MANAGER', () => expect(() => signupSchema.parse({ name: 'A', email: 'a@b.com', role: 'ADMIN', password: '12345678' })).toThrow());
 });
 describe('hostOf', () => {
   it('extrai o host sem www', () => expect(hostOf('https://www.nubank.com.br/x')).toBe('nubank.com.br'));
@@ -25,4 +25,12 @@ describe('wishlistSchema (M1)', () => {
   it('exige o aceite de comunicações', () => expect(() => wishlistSchema.parse({ ...ok, consent: false })).toThrow());
   it('exige e-mail válido', () => expect(() => wishlistSchema.parse({ ...ok, email: 'x' })).toThrow());
   it('só aceita papéis conhecidos', () => expect(() => wishlistSchema.parse({ ...ok, role: 'CEO' })).toThrow());
+});
+
+import { hashPassword, verifyPassword } from '@/lib/password';
+describe('senha', () => {
+  it('confere a senha certa e recusa a errada', () => { const h = hashPassword('senha-forte-123'); expect(verifyPassword('senha-forte-123', h)).toBe(true); expect(verifyPassword('outra-senha', h)).toBe(false); });
+  it('gera hashes diferentes para a mesma senha (sal)', () => expect(hashPassword('x1234567')).not.toBe(hashPassword('x1234567')));
+  it('conta sem senha nunca autentica', () => { expect(verifyPassword('qualquer', null)).toBe(false); expect(verifyPassword('', undefined)).toBe(false); });
+  it('signup exige 8+ caracteres', () => expect(() => signupSchema.parse({ name: 'A', email: 'a@b.com', role: 'IC', password: '1234567' })).toThrow());
 });

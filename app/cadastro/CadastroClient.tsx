@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Avatar } from '@/components/avatar/Avatar';
 import { useCoopsRouter, CoopsLink } from '@/components/nav/useCoopsRouter';
+import { PasswordField } from '@/components/ds/PasswordField';
 import { deskInput, label } from '@/components/ds/tokens';
 
 const F = [
@@ -91,7 +92,7 @@ function Carousel() {
 
 export function CadastroClient() {
   const { go } = useCoopsRouter();
-  const [v, setV] = useState({ name: '', email: '', phone: '', role: 'MANAGER' as 'IC' | 'MANAGER' });
+  const [v, setV] = useState({ name: '', email: '', phone: '', password: '', role: 'MANAGER' as 'IC' | 'MANAGER' });
   const [focus, setFocus] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -100,6 +101,7 @@ export function CadastroClient() {
     e.preventDefault();
     setBusy(true); setError('');
     try {
+      if (v.password.length < 8) { setError('A senha precisa ter pelo menos 8 caracteres'); setBusy(false); document.getElementById('cad-senha')?.focus(); return; }
       const r = await fetch('/api/auth/signup', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(v) });
       const d = await r.json();
       if (!r.ok) { setError(d.error ?? 'Não foi possível criar a conta.'); setBusy(false); return; }
@@ -134,6 +136,7 @@ export function CadastroClient() {
           {field('cad-nome', 'Nome', 'text', 'name', 'Marina Costa', 'name')}
           {field('cad-email', 'E-mail de trabalho', 'email', 'email', 'voce@empresa.com', 'email')}
           {field('cad-tel', 'Telefone', 'tel', 'tel', '(11) 90000-0000', 'phone')}
+          <PasswordField id="cad-senha" label="Crie uma senha" autoComplete="new-password" value={v.password} onChange={(password) => setV({ ...v, password })} hint="Mínimo de 8 caracteres." />
           <fieldset style={{ border: 0, margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
             <legend style={{ fontSize: 14, color: '#A3A1AD', marginBottom: 10, padding: 0 }}>Como você atua?</legend>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 10 }}>

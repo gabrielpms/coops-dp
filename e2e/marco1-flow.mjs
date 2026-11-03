@@ -2,13 +2,15 @@ import { createRequire } from 'node:module';
 const { chromium } = createRequire(import.meta.url)('playwright');
 const S = process.env.SHOTS ?? '/tmp/coops-e2e-';
 (async () => {
-  const b = await chromium.launch(); const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } }); const p = await ctx.newPage();
-  const errors = []; p.on('pageerror', e => errors.push('pageerror ' + e.message)); p.on('console', m => { if (m.type() === 'error') errors.push('console ' + m.text()); });
+  const BASE = process.env.BASE ?? 'http://localhost:3000';
+const b = await chromium.launch(); const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } }); const p = await ctx.newPage();
+  const errors = []; p.on('pageerror', e => errors.push('pageerror ' + e.message)); p.on('console', m => { if (m.type() === 'error' && !m.text().includes('401')) errors.push('console ' + m.text()); });
   const email = `marina${Date.now()}@nimbo.com`;
-  await p.goto('http://localhost:3000/cadastro');
-  await p.fill('#cad-nome', 'Marina Lopes'); await p.fill('#cad-email', email); await p.fill('#cad-tel', '(11) 90000-0000');
+  await p.goto(BASE + '/cadastro');
+  await p.fill('#cad-nome', 'Marina Lopes'); await p.fill('#cad-email', email); await p.fill('#cad-tel', '(11) 90000-0000'); await p.fill('#cad-senha', 'curta');
   await p.screenshot({ path: S + '1-cadastro.png' });
-  await p.click('button[type=submit]'); await p.waitForURL('**/primeiro-acesso', { timeout: 8000 });
+  await p.click('button[type=submit]'); await p.waitForTimeout(400); console.log('senha curta barrada:', await p.locator('span[role=alert]').innerText());
+  await p.fill('#cad-senha', 'senha-forte-123'); await p.click('button[type=submit]'); await p.waitForURL('**/primeiro-acesso', { timeout: 8000 });
   await p.waitForTimeout(900); await p.screenshot({ path: S + '2-primeiro.png' });
   await p.click('button.fa-start'); await p.waitForSelector('[role=dialog]'); await p.waitForTimeout(900);
   // tenta avançar sem nome -> erro
@@ -43,6 +45,12 @@ const S = process.env.SHOTS ?? '/tmp/coops-e2e-';
   await p.screenshot({ path: S + '7-hub.png' });
   console.log('hub card:', (await p.locator('article').innerText()).replace(/\n/g, ' | '));
   await p.click('button[aria-label="Abrir o menu da sua conta"]'); await p.waitForTimeout(400); await p.screenshot({ path: S + '8-menu.png' });
+  // sair e entrar com e-mail + senha
+  await p.click('[role=menuitem]:has-text("Sair")', { timeout: 5000 }); await p.waitForURL(BASE + '/'); 
+  await p.goto(BASE + '/entrar'); await p.fill('#ent-email', email); await p.fill('#ent-senha', 'senha-errada'); await p.click('button[type=submit]'); await p.waitForTimeout(500);
+  console.log('senha errada:', await p.locator('span[role=alert]').innerText());
+  await p.fill('#ent-senha', 'senha-forte-123'); await p.click('button[type=submit]'); await p.waitForURL('**/hub', { timeout: 8000 });
+  console.log('login com senha entrou no hub: true');
   console.log('ERROS:', errors.length ? errors : 'nenhum');
   await b.close();
 })().catch(e => { console.error('FALHOU', e.message.split('\n')[0]); process.exit(1); });

@@ -9,7 +9,7 @@ Implementação do [PRD](./docs/PRD-Coops.md). Protótipos de referência em [`d
 | Tokens, `@keyframes` copiados dos protótipos, base (scroll, cortina, reduced-motion) | `styles/` |
 | Avatar parametrizável (SVG do `CoopsAvatar`) | `components/avatar` |
 | BottomSheet, QuestionDeck, cortina de navegação, AccountMenu | `components/{sheet,wizard,nav,ds}` |
-| Cadastro com carrossel, entrar por link mágico, sessão por cookie | `app/cadastro`, `app/entrar`, `app/api/auth` |
+| Cadastro com carrossel e senha, login por e-mail + senha, sessão por cookie | `app/cadastro`, `app/entrar`, `app/api/auth` |
 | Primeiro acesso (retoma de onde parou) | `app/primeiro-acesso` |
 | Hub + deck de 7 perguntas de projeto (criar e editar) | `app/hub`, `components/wizard/ProjectDeck.tsx` |
 | Rascunho do deck salvo no banco (debounce 600 ms + ao avançar) | `app/api/drafts` |
@@ -27,7 +27,7 @@ npx prisma db push          # ou: npm run db:migrate
 npm run dev
 ```
 
-Em desenvolvimento o link mágico de login aparece na tela e no log do servidor (não há SMTP ainda — `lib/mail.ts`).
+Convites por e-mail só são registrados no log do servidor (não há SMTP ainda — `lib/mail.ts`).
 
 ## Testes
 
@@ -38,7 +38,7 @@ node e2e/marco1-flow.mjs          # fluxo E2E com o servidor rodando em :3000 (u
 
 ## Decisões e pendências
 
-- **Login:** link mágico por e-mail (hash SHA-256 do token, 15 min, uso único). Google fica para depois (PRD §12.5). O cadastro já entra logado **sem verificar o e-mail** — ligar a verificação junto com o SMTP (M10).
+- **Login:** e-mail + senha criada no cadastro (mín. 8 caracteres, hash scrypt em `lib/password.ts`). Google fica para depois (PRD §12.5). Ainda **não há** "esqueci minha senha", verificação de e-mail nem limite de tentativas de login; contas criadas antes da senha (sem `passwordHash`) não conseguem entrar até haver recuperação de senha.
 - **Convites:** são salvos e vinculam a pessoa ao projeto quando ela cria a conta com o mesmo e-mail; o envio real é M10 (hoje só log).
 - **Estilos:** inline como nos protótipos, para manter os valores exatos; classes/animações compartilhadas em `styles/motion.css`.
 - **TanStack Query** entra com as ações otimistas do Marco 2; no Marco 1 só há criar/editar projeto e rascunhos.

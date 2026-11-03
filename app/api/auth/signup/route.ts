@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
 import { createSession } from '@/lib/session';
 import { fail, json, parse, isResponse } from '@/lib/api/http';
+import { hashPassword } from '@/lib/password';
 import { signupSchema } from '@/lib/validation';
 
 export async function POST(req: Request) {
@@ -11,7 +12,7 @@ export async function POST(req: Request) {
   // Convidado: se há convite pendente, o papel segue o convite e já vincula à pessoa/projeto.
   const invites = await db.invite.findMany({ where: { email: body.email, status: 'PENDING' } });
   const user = await db.user.create({
-    data: { name: body.name, email: body.email, phone: body.phone || null, role: invites[0]?.position ?? body.role, onboardingStep: invites.length ? 3 : 2 },
+    data: { name: body.name, email: body.email, phone: body.phone || null, passwordHash: hashPassword(body.password), role: invites[0]?.position ?? body.role, onboardingStep: invites.length ? 3 : 2 },
   });
   for (const inv of invites) {
     await db.$transaction([
