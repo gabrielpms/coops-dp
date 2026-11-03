@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { createSession } from '@/lib/session';
-import { hashToken } from '../login/route';
+import { hashToken } from '@/lib/tokens';
 
 export async function GET(req: Request) {
   const url = new URL(req.url);

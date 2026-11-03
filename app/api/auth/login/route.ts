@@ -1,10 +1,9 @@
-import { createHash, randomBytes } from 'node:crypto';
+import { randomBytes } from 'node:crypto';
+import { hashToken } from '@/lib/tokens';
 import { db } from '@/lib/db';
 import { json, parse, isResponse } from '@/lib/api/http';
 import { loginSchema } from '@/lib/validation';
 import { sendMail } from '@/lib/mail';
-
-export const hashToken = (t: string) => createHash('sha256').update(t).digest('hex');
 
 // Link mágico. A resposta é sempre a mesma, exista a conta ou não (não vaza quem tem conta).
 export async function POST(req: Request) {
