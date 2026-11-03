@@ -2,7 +2,7 @@
 import { useState, type ReactNode } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
 import { CoopsLink } from '@/components/nav/useCoopsRouter';
-import { ProjectDeck, type ProjectForm } from '@/components/wizard/ProjectDeck';
+import { ProjectDeck, type ProjectDraft, type ProjectForm } from '@/components/wizard/ProjectDeck';
 import { label, segmentIcon } from '@/components/ds/tokens';
 
 type P = { id: string; name: string; segment: string; tagline: string; strategy: string; indicators: string[]; competitors: string[]; links: string[]; skills: string[]; invites: { name: string; email: string; position: 'IC' | 'MANAGER' }[]; counts: { squads: number; people: number; initiatives: number }; pendingInvites: number };
@@ -38,7 +38,9 @@ const Intro = ({ step, title, sub }: { step: number; title: string; sub: ReactNo
 
 const toForm = (p: P): ProjectForm => ({ name: p.name, segment: p.segment, tagline: p.tagline, strategy: p.strategy, indicators: p.indicators, competitors: p.competitors, links: p.links, skills: p.skills, invites: p.invites.filter((i) => true).map(({ name, email, position }) => ({ name, email, position })) });
 
-export function PrimeiroAcessoClient({ user, project: initial }: { user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: any }; project: P | null }) {
+export function PrimeiroAcessoClient({ user, project: initial, createDraft: initialCreate, editDraft: initialEdit }: { user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: any }; project: P | null; createDraft: ProjectDraft | null; editDraft: ProjectDraft | null }) {
+  const [createDraft, setCreateDraft] = useState<ProjectDraft | null>(initialCreate);
+  const [editDraft, setEditDraft] = useState<ProjectDraft | null>(initialEdit);
   const [project, setProject] = useState<P | null>(initial);
   const [deck, setDeck] = useState<'create' | 'edit' | null>(null);
   const first = user.name.split(' ')[0];
@@ -128,8 +130,8 @@ export function PrimeiroAcessoClient({ user, project: initial }: { user: { name:
           </div>
         )}
       </div>
-      {deck === 'create' && <ProjectDeck mode="create" title="Seu primeiro projeto" onClose={close} onSaved={(p) => { setProject(p); close(); window.scrollTo({ top: 0 }); }} />}
-      {deck === 'edit' && project && <ProjectDeck mode="edit" projectId={project.id} initial={toForm(project)} onClose={close} onSaved={(p) => { setProject(p); close(); }} />}
+      {deck === 'create' && <ProjectDeck mode="create" title="Seu primeiro projeto" draft={createDraft} onDraftChange={setCreateDraft} onClose={close} onSaved={(p) => { setProject(p); close(); window.scrollTo({ top: 0 }); }} />}
+      {deck === 'edit' && project && <ProjectDeck mode="edit" projectId={project.id} initial={toForm(project)} draft={editDraft} onDraftChange={setEditDraft} onClose={close} onSaved={(p) => { setProject(p); close(); }} />}
     </div>
   );
 }

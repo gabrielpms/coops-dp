@@ -18,46 +18,41 @@ const POS_LABEL = { IC: 'IC', MANAGER: 'Manager' } as const;
 
 type Saved = { id: string; [k: string]: unknown };
 
-export function ProjectDeck({ mode, projectId, initial, title, onClose, onSaved }: {
+export type ProjectDraft = { form: ProjectForm; step: number };
+
+export function ProjectDeck({ mode, projectId, initial, draft, title, onClose, onSaved, onDraftChange }: {
   mode: 'create' | 'edit'; projectId?: string; initial?: ProjectForm; title?: string; onClose: () => void; onSaved: (project: any) => void;
+  /** Rascunho já carregado junto com a página: o deck abre pronto, sem esperar o servidor. */
+  draft?: ProjectDraft | null;
+  /** Avisa quem abriu o deck do último rascunho, para a próxima abertura já vir atualizada. */
+  onDraftChange?: (d: ProjectDraft | null) => void;
 }) {
   const entityId = mode === 'edit' ? projectId ?? '' : '';
-  const [form, setForm] = useState<ProjectForm>(initial ?? emptyProject());
-  const [step, setStep] = useState(0);
+  const [form, setForm] = useState<ProjectForm>(() => (draft?.form ? { ...emptyProject(), ...draft.form } : initial ?? emptyProject()));
+  const [step, setStep] = useState(() => Math.min(LAST, draft?.step ?? 0));
   const [errs, setErrs] = useState<{ name?: boolean; segment?: boolean; skills?: boolean; invite?: boolean }>({});
   const [busy, setBusy] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [typed, setTyped] = useState({ ind: '', con: '', link: '', skill: '', pn: '', pe: '' });
   const [pos, setPos] = useState<'IC' | 'MANAGER'>('IC');
-  const loaded = useRef(false);
-  const touched = useRef(false); // a pessoa já mexeu: o rascunho que chegar depois não pode sobrescrever
+  const touched = useRef(false); // só grava rascunho depois que a pessoa mexe
 
-  // ---- Rascunho persistente (PRD 6.2): carrega ao abrir, salva com debounce de 600 ms e ao avançar
+  // ---- Rascunho persistente (PRD 6.2): salva com debounce de 600 ms ao digitar e na hora ao avançar
   const save = useCallback((f: ProjectForm, s: number) => {
+    onDraftChange?.({ form: f, step: s });
     fetch('/api/drafts', { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ scope: SCOPE, entityId, payload: { form: f, step: s } }) }).catch(() => {});
-  }, [entityId]);
-
-  useEffect(() => {
-    let alive = true;
-    fetch(`/api/drafts?scope=${SCOPE}&entityId=${encodeURIComponent(entityId)}`).then((r) => r.json()).then((d) => {
-      if (!alive) return;
-      const p = d?.draft?.payload as { form?: ProjectForm; step?: number } | undefined;
-      if (p?.form && !touched.current) { setForm({ ...emptyProject(), ...p.form }); setStep(Math.min(LAST, p.step ?? 0)); }
-      loaded.current = true;
-    }).catch(() => { loaded.current = true; });
-    return () => { alive = false; };
-  }, [entityId]);
+  }, [entityId, onDraftChange]);
 
   const debounce = useRef<ReturnType<typeof setTimeout>>(undefined);
   const latest = useRef({ form, step });
   latest.current = { form, step };
   useEffect(() => {
-    if (!loaded.current) return;
+    if (!touched.current) return;
     clearTimeout(debounce.current);
     debounce.current = setTimeout(() => save(latest.current.form, latest.current.step), 600);
     return () => clearTimeout(debounce.current);
   }, [form, save]);
-  useEffect(() => () => { if (loaded.current) save(latest.current.form, latest.current.step); }, [save]);
+  useEffect(() => () => { if (touched.current) save(latest.current.form, latest.current.step); }, [save]);
 
   const set = (patch: Partial<ProjectForm>) => { touched.current = true; setForm((f) => ({ ...f, ...patch })); };
   const trimmed = (f: ProjectForm) => ({ ...f, name: f.name.trim(), tagline: f.tagline.trim(), strategy: f.strategy.trim() });
@@ -77,7 +72,7 @@ export function ProjectDeck({ mode, projectId, initial, title, onClose, onSaved 
       });
       const data = await res.json();
       if (!res.ok) { setServerError(data.error ?? 'Não deu para salvar. Tente de novo.'); return; }
-      loaded.current = false; clearTimeout(debounce.current);
+      touched.current = false; clearTimeout(debounce.current); onDraftChange?.(null);
       onSaved(data.project);
     } catch { setServerError('Sem conexão. Tente de novo.'); } finally { setBusy(false); }
   };

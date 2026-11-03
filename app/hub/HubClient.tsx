@@ -2,12 +2,13 @@
 import { useState } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
 import { ProjectCard } from '@/components/ds/ProjectCard';
-import { ProjectDeck } from '@/components/wizard/ProjectDeck';
+import { ProjectDeck, type ProjectDraft } from '@/components/wizard/ProjectDeck';
 import { useCoopsRouter } from '@/components/nav/useCoopsRouter';
 import { label } from '@/components/ds/tokens';
 
-export function HubClient({ user, projects }: { user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: any }; projects: any[] }) {
+export function HubClient({ user, projects, draft: initialDraft }: { user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: any }; projects: any[]; draft: ProjectDraft | null }) {
   const [deck, setDeck] = useState(false);
+  const [draft, setDraft] = useState<ProjectDraft | null>(initialDraft);
   const { refresh } = useCoopsRouter();
   const first = user.name.split(' ')[0];
   const isManager = user.role === 'MANAGER';
@@ -37,7 +38,7 @@ export function HubClient({ user, projects }: { user: { name: string; email: str
           {!isManager && !projects.length && <p style={{ color: '#A3A1AD', fontSize: 17, maxWidth: 520 }}>Você ainda não está em nenhum projeto. Quando um manager aceitar seu convite, o projeto aparece aqui.</p>}
         </div>
       </div>
-      {deck && <ProjectDeck mode="create" onClose={() => setDeck(false)} onSaved={() => { setDeck(false); refresh(); }} />}
+      {deck && <ProjectDeck mode="create" draft={draft} onDraftChange={setDraft} onClose={() => setDeck(false)} onSaved={() => { setDeck(false); refresh(); }} />}
     </div>
   );
 }
