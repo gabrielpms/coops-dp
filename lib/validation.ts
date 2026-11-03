@@ -25,7 +25,8 @@ export const loginSchema = z.object({ email: text(200).toLowerCase().regex(EMAIL
 
 export const projectSchema = z.object({
   name: text(120).min(1, 'Escreva o nome da empresa'),
-  segment: z.enum(SEGMENTS, { message: 'Escolha um segmento' }),
+  // Texto livre: as tags de SEGMENTS são só atalhos.
+  segment: text(60).min(1, 'Escolha ou escreva o segmento'),
   tagline: text(200).optional().default(''),
   strategy: text(2000).optional().default(''),
   indicators: list.default([]),

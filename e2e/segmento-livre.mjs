@@ -1,0 +1,21 @@
+import { createRequire } from 'node:module';
+const { chromium } = createRequire(import.meta.url)('playwright');
+const BASE = process.env.BASE ?? 'http://localhost:3000';
+const b = await chromium.launch(); const p = await (await b.newContext({ viewport: { width: 1280, height: 900 } })).newPage();
+const errors = []; p.on('pageerror', (e) => errors.push(e.message));
+await p.goto(BASE + '/cadastro'); await p.fill('#cad-nome', 'Seg Teste'); await p.fill('#cad-email', `seg${Date.now()}@x.com`); await p.fill('#cad-senha', 'senha-forte-123');
+await p.click('button[type=submit]'); await p.waitForURL('**/primeiro-acesso'); await p.waitForLoadState('networkidle');
+await p.click('button.fa-start'); await p.fill('input[aria-label="Nome da empresa"]', 'Segura SA');
+await p.click('button:text-is("Próxima")'); await p.waitForTimeout(300);
+console.log('sem segmento barra:', await p.locator('span[role=alert]').innerText());
+await p.fill('#pw-segmento', 'Seguros de vida');
+console.log('nenhuma tag marcada:', await p.locator('button[aria-pressed=true]').count() === 0);
+await p.click('button[aria-pressed]:text-is("Fintech")'); console.log('atalho preenche o campo:', await p.inputValue('#pw-segmento'));
+await p.fill('#pw-segmento', 'Seguros de vida');
+for (let i = 0; i < 6; i++) { await p.click('button:text-is("Próxima")'); await p.waitForTimeout(650); }
+console.log('resumo mostra:', await p.locator('text=SEGUROS DE VIDA').first().isVisible());
+await p.click('button:text-is("Criar projeto")'); await p.waitForSelector('text=Projeto criado. Bora pro time?', { timeout: 8000 });
+console.log('carta do projeto:', await p.locator('text=SEGUROS DE VIDA').first().isVisible());
+await p.reload(); await p.waitForTimeout(600);
+console.log('persistiu após recarregar:', await p.locator('text=SEGUROS DE VIDA').first().isVisible());
+console.log('ERROS:', errors.length ? errors : 'nenhum'); await b.close();

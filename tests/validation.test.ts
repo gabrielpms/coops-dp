@@ -5,7 +5,9 @@ describe('projectSchema (regras do deck de projeto, PRD M3)', () => {
   const ok = { name: 'Nimbo Pay', segment: 'Fintech', skills: ['Pesquisa com usuários'] };
   it('aceita o mínimo: empresa, segmento e 1 skill', () => expect(projectSchema.parse(ok).invites).toEqual([]));
   it('exige nome', () => expect(() => projectSchema.parse({ ...ok, name: '  ' })).toThrow());
-  it('exige segmento válido', () => expect(() => projectSchema.parse({ ...ok, segment: 'Outro' })).toThrow());
+  it('aceita segmento escrito pela pessoa (as tags são só atalhos)', () => expect(projectSchema.parse({ ...ok, segment: '  Seguros ' }).segment).toBe('Seguros'));
+  it('exige segmento preenchido', () => expect(() => projectSchema.parse({ ...ok, segment: '   ' })).toThrow());
+  it('limita o segmento a 60 caracteres', () => expect(() => projectSchema.parse({ ...ok, segment: 'x'.repeat(61) })).toThrow());
   it('exige ao menos 1 skill', () => expect(() => projectSchema.parse({ ...ok, skills: [] })).toThrow());
   it('valida e-mail dos convites', () => expect(() => projectSchema.parse({ ...ok, invites: [{ name: 'A', email: 'x', position: 'IC' }] })).toThrow());
 });

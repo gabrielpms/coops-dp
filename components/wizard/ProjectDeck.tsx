@@ -55,11 +55,11 @@ export function ProjectDeck({ mode, projectId, initial, draft, title, onClose, o
   useEffect(() => () => { if (touched.current) save(latest.current.form, latest.current.step); }, [save]);
 
   const set = (patch: Partial<ProjectForm>) => { touched.current = true; setForm((f) => ({ ...f, ...patch })); };
-  const trimmed = (f: ProjectForm) => ({ ...f, name: f.name.trim(), tagline: f.tagline.trim(), strategy: f.strategy.trim() });
+  const trimmed = (f: ProjectForm) => ({ ...f, name: f.name.trim(), segment: f.segment.trim(), tagline: f.tagline.trim(), strategy: f.strategy.trim() });
 
   const validate = (f: ProjectForm, to: number) => {
     if (to > 0 && !f.name.trim()) return { at: 0, flags: { name: true } };
-    if (to > 0 && !f.segment) return { at: 0, flags: { segment: true } };
+    if (to > 0 && !f.segment.trim()) return { at: 0, flags: { segment: true } };
     if (to > 4 && !f.skills.length) return { at: 4, flags: { skills: true } };
     return null;
   };
@@ -129,11 +129,12 @@ export function ProjectDeck({ mode, projectId, initial, draft, title, onClose, o
       <Title>Qual é a empresa?</Title><Help>O nome e o segmento aparecem na carta do projeto no hub.</Help>
       <input id="pw-nome" type="text" aria-label="Nome da empresa" placeholder="Ex.: Nimbo Pay" value={form.name} onChange={(e) => { set({ name: e.target.value }); setErrs((x) => ({ ...x, name: false })); }} style={cardInput} />
       <Err show={errs.name}>Escreva o nome da empresa para seguir.</Err>
-      <span style={label()}>SEGMENTO</span>
-      <div role="radiogroup" aria-label="Segmento" style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-        {SEGMENTS.map((s) => <button key={s} type="button" role="radio" aria-checked={form.segment === s} className="tw-chip" onClick={() => { set({ segment: s }); setErrs((x) => ({ ...x, segment: false })); }} style={chipStyle(form.segment === s)}>{s}</button>)}
+      <Mono htmlFor="pw-segmento">SEGMENTO · ESCOLHA UM OU ESCREVA O SEU</Mono>
+      <input id="pw-segmento" type="text" maxLength={60} placeholder="Ex.: Seguros, Games, Setor público…" value={form.segment} onChange={(e) => { set({ segment: e.target.value }); setErrs((x) => ({ ...x, segment: false })); }} style={cardInput} />
+      <div role="group" aria-label="Atalhos de segmento" style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+        {SEGMENTS.map((s) => { const on = form.segment.trim().toLowerCase() === s.toLowerCase(); return <button key={s} type="button" aria-pressed={on} className="tw-chip" onClick={() => { set({ segment: s }); setErrs((x) => ({ ...x, segment: false })); }} style={chipStyle(on)}>{s}</button>; })}
       </div>
-      <Err show={errs.segment}>Escolha o segmento para seguir.</Err>
+      <Err show={errs.segment}>Escolha ou escreva o segmento para seguir.</Err>
       <Mono htmlFor="pw-desc">EM UMA FRASE · OPCIONAL</Mono>
       <input id="pw-desc" type="text" placeholder="Ex.: Conta digital para quem abre a primeira conta" value={form.tagline} onChange={(e) => set({ tagline: e.target.value })} style={cardInput} />
     </>) },

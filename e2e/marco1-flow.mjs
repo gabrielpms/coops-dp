@@ -16,7 +16,7 @@ const b = await chromium.launch(); const ctx = await b.newContext({ viewport: { 
   // tenta avançar sem nome -> erro
   await p.click('button:text-is("Próxima")'); await p.waitForTimeout(300);
   console.log('erro nome visivel:', await p.locator('text=Escreva o nome da empresa').isVisible());
-  await p.fill('input[aria-label="Nome da empresa"]', 'Nimbo Pay'); await p.click('button[role=radio]:has-text("Fintech")');
+  await p.fill('input[aria-label="Nome da empresa"]', 'Nimbo Pay'); await p.click('button[aria-pressed]:text-is("Fintech")');
   await p.click('button:text-is("Próxima")'); await p.waitForTimeout(700);
   await p.fill('textarea[aria-label="Estratégia da empresa"]', 'Ser a primeira conta de quem nunca teve banco.');
   await p.screenshot({ path: S + '3-deck.png' });
