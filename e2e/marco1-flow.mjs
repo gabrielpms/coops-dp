@@ -33,7 +33,7 @@ const b = await chromium.launch(); const ctx = await b.newContext({ viewport: { 
   await p.fill('input[aria-label="Novo concorrente"]', 'Lume Bank'); await p.keyboard.press('Enter');
   await p.fill('input[aria-label="Novo link de referência"]', 'https://www.nubank.com.br'); await p.keyboard.press('Enter');
   await p.click('button:text-is("Próxima")'); await p.waitForTimeout(650);
-  await p.click('button[aria-label="Remover Facilitação"]');
+  await p.click('button:has-text("+ Pesquisa com usuários")'); await p.click('button:has-text("+ Visual e sistemas")');
   await p.click('button:text-is("Próxima")'); await p.waitForTimeout(650);
   await p.fill('input[aria-label="Nome da pessoa"]', 'Caio Souza'); await p.fill('input[aria-label="E-mail da pessoa"]', 'caio@nimbo.com'); await p.click('button:text-is("Convidar")');
   await p.screenshot({ path: S + '4-convites.png' });

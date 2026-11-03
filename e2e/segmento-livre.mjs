@@ -12,7 +12,11 @@ await p.fill('#pw-segmento', 'Seguros de vida');
 console.log('nenhuma tag marcada:', await p.locator('button[aria-pressed=true]').count() === 0);
 await p.click('button[aria-pressed]:text-is("Fintech")'); console.log('atalho preenche o campo:', await p.inputValue('#pw-segmento'));
 await p.fill('#pw-segmento', 'Seguros de vida');
-for (let i = 0; i < 6; i++) { await p.click('button:text-is("Próxima")'); await p.waitForTimeout(650); }
+for (let i = 0; i < 4; i++) { await p.click('button:text-is("Próxima")'); await p.waitForTimeout(650); }
+await p.click('button:text-is("Próxima")'); await p.waitForTimeout(400);
+console.log('sem skill marcada, barra:', await p.locator('span[role=alert]').innerText());
+await p.click('button:has-text("+ Facilitação")');
+for (let i = 0; i < 2; i++) { await p.click('button:text-is("Próxima")'); await p.waitForTimeout(650); }
 console.log('resumo mostra:', await p.locator('text=SEGUROS DE VIDA').first().isVisible());
 await p.click('button:text-is("Criar projeto")'); await p.waitForSelector('text=Projeto criado. Bora pro time?', { timeout: 8000 });
 console.log('carta do projeto:', await p.locator('text=SEGUROS DE VIDA').first().isVisible());

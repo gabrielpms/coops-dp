@@ -10,7 +10,7 @@ export type ProjectForm = {
   indicators: string[]; competitors: string[]; links: string[]; skills: string[];
   invites: { name: string; email: string; position: 'IC' | 'MANAGER' }[];
 };
-export const emptyProject = (): ProjectForm => ({ name: '', segment: '', tagline: '', strategy: '', indicators: [], competitors: [], links: [], skills: [...DEFAULT_SKILLS], invites: [] });
+export const emptyProject = (): ProjectForm => ({ name: '', segment: '', tagline: '', strategy: '', indicators: [], competitors: [], links: [], skills: [], invites: [] }); // as sugestões (DEFAULT_SKILLS) não vêm marcadas: só entra o que a pessoa escolhe
 
 const SCOPE = 'project';
 const LAST = 6;
@@ -160,10 +160,14 @@ export function ProjectDeck({ mode, projectId, initial, draft, title, onClose, o
       {chips("links", form.links)}
     </>) },
     { id: 'skills', bg: '#F3D36B', node: (<>
-      <Title>Quais skills o time desenvolve?</Title><Help>Já vêm cinco sugestões. Tire ou adicione; depois você organiza em categorias na administração.</Help>
+      <Title>Quais skills o time desenvolve?</Title><Help>Escolha entre as sugestões ou escreva as suas. Depois você organiza em categorias na administração.</Help>
       {addRow("skill", "skills", "Ex.: Escrita de interface", "Nova skill")}
       {chips("skills", form.skills)}
-      <Err show={errs.skills}>Deixe pelo menos uma skill para seguir.</Err>
+      <span style={label()}>SUGESTÕES</span>
+      <div role="group" aria-label="Sugestões de skill" style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+        {DEFAULT_SKILLS.filter((s) => !form.skills.includes(s)).map((s) => <button key={s} type="button" className="tw-chip" onClick={() => { set({ skills: [...form.skills, s] }); setErrs((x) => ({ ...x, skills: false })); }} style={chipStyle(false)}>+ {s}</button>)}
+      </div>
+      <Err show={errs.skills}>Escolha pelo menos uma skill para seguir.</Err>
     </>) },
     { id: 'convites', bg: '#A9D8F5', optional: true, node: (<>
       <Title>Quem entra na plataforma?</Title><Help>Cada pessoa recebe um convite por e-mail. Dá para convidar mais gente depois.</Help>

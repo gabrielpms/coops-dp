@@ -97,7 +97,7 @@ export function PrimeiroAcessoClient({ user, project: initial, createDraft: init
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}><h2 style={{ margin: 0, fontSize: 30, fontWeight: 800, letterSpacing: '-0.03em' }}>{project.name}</h2><span style={{ fontSize: 14 }}>{project.tagline || 'Projeto novo'}</span></div>
                   <div style={{ marginTop: 'auto', display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8, borderTop: '1.5px solid #0E0E12', paddingTop: 12 }}>
-                    {[[project.indicators.length, 'indicadores'], [project.skills.length, 'skills'], [project.pendingInvites, 'convites']].map(([v, l]) => <span key={String(l)} style={{ display: 'flex', flexDirection: 'column' }}><span style={{ fontSize: 26, fontWeight: 600 }}>{v}</span><span style={{ fontSize: 12 }}>{l}</span></span>)}
+                    {[[project.indicators.length, project.indicators.length === 1 ? 'indicador' : 'indicadores'], [project.skills.length, project.skills.length === 1 ? 'skill' : 'skills'], [project.pendingInvites, project.pendingInvites === 1 ? 'convite' : 'convites']].map(([v, l]) => <span key={String(l)} style={{ display: 'flex', flexDirection: 'column' }}><span style={{ fontSize: 26, fontWeight: 600 }}>{v}</span><span style={{ fontSize: 12 }}>{l}</span></span>)}
                   </div>
                 </article>
               </div>
