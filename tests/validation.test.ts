@@ -36,3 +36,11 @@ describe('senha', () => {
   it('conta sem senha nunca autentica', () => { expect(verifyPassword('qualquer', null)).toBe(false); expect(verifyPassword('', undefined)).toBe(false); });
   it('signup exige 8+ caracteres', () => expect(() => signupSchema.parse({ name: 'A', email: 'a@b.com', role: 'IC', password: '1234567' })).toThrow());
 });
+
+import { memberSchema, squadSchema } from '@/lib/validation';
+describe('time (M5)', () => {
+  const m = { name: 'Joana', email: 'J@x.com' };
+  it('membro: exige nome e e-mail válido e normaliza o e-mail', () => { expect(memberSchema.parse(m).email).toBe('j@x.com'); expect(() => memberSchema.parse({ ...m, name: ' ' })).toThrow(); expect(() => memberSchema.parse({ ...m, email: 'x' })).toThrow(); });
+  it('membro: data de entrada só no formato AAAA-MM-DD', () => { expect(memberSchema.parse({ ...m, joinedAt: '2024-03-10' }).joinedAt).toBe('2024-03-10'); expect(() => memberSchema.parse({ ...m, joinedAt: '10/03/2024' })).toThrow(); });
+  it('squad: exige nome, cor em hex e ids de pessoa', () => { expect(squadSchema.parse({ name: 'Onboarding' }).color).toBe('#B7A6FF'); expect(() => squadSchema.parse({ name: '' })).toThrow(); expect(() => squadSchema.parse({ name: 'A', color: 'roxo' })).toThrow(); expect(() => squadSchema.parse({ name: 'A', members: [{ personId: 'x' }] })).toThrow(); });
+});

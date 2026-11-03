@@ -156,6 +156,7 @@ model Squad {
   projectId String
   project   Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
   name      String
+  color     String            @default("#B7A6FF")
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
   deletedAt DateTime?
@@ -170,6 +171,9 @@ model Person {
   user      User?             @relation(fields: [userId], references: [id])
   name      String
   title     String?
+  email     String? // e-mail do convite; vincula ao User quando a pessoa cria a conta
+  mainSkill String?
+  joinedAt  DateTime?
   avatar    Json?
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
@@ -182,6 +186,7 @@ model SquadMembership {
   squad    Squad  @relation(fields: [squadId], references: [id], onDelete: Cascade)
   personId String
   person   Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+  crown    Boolean @default(false) // referência (champion) no squad
 
   @@id([squadId, personId])
 }

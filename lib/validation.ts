@@ -59,3 +59,22 @@ export const wishlistSchema = z.object({
   consent: z.literal(true, { message: 'Marque o aceite de comunicações para entrar na lista.' }),
 });
 export type WishlistInput = z.infer<typeof wishlistSchema>;
+
+// ---------- Time (M5) ----------
+const hex = z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Cor inválida');
+export const SQUAD_COLORS = ['#B7A6FF', '#F3D36B', '#F5A9D6', '#FF8A5B', '#8FE3C8', '#A9D8F5'] as const;
+export const memberSchema = z.object({
+  name: text(120).min(1, 'Escreva o nome da pessoa'),
+  title: text(120).optional().default(''),
+  avatar: avatarSchema.optional(),
+  mainSkill: text(80).optional().default(''),
+  joinedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Data inválida').optional().or(z.literal('')).default(''),
+  email: text(200).toLowerCase().regex(EMAIL_RE, 'Coloque um e-mail válido para enviar o convite'),
+});
+export type MemberInput = z.infer<typeof memberSchema>;
+export const squadSchema = z.object({
+  name: text(80).min(1, 'Escreva o nome do squad'),
+  color: hex.default('#B7A6FF'),
+  members: z.array(z.object({ personId: z.string().uuid(), crown: z.boolean().default(false) })).max(100).default([]),
+});
+export type SquadInput = z.infer<typeof squadSchema>;

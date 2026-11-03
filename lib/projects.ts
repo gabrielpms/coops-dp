@@ -7,6 +7,7 @@ export const projectInclude = {
   referenceLinks: { orderBy: { position: 'asc' as const } },
   skills: { orderBy: { position: 'asc' as const } },
   invites: true,
+  persons: { where: { deletedAt: null }, select: { email: true } },
   _count: { select: { squads: { where: { deletedAt: null } }, persons: { where: { deletedAt: null } }, initiatives: true } },
 };
 
@@ -16,11 +17,12 @@ export function serializeProject(p: any) {
     indicators: p.indicators.map((x: any) => x.name), competitors: p.competitors.map((x: any) => x.name),
     links: p.referenceLinks.map((x: any) => x.url), skills: p.skills.map((x: any) => x.name),
     invites: p.invites.map((x: any) => ({ name: x.name, email: x.email, position: x.position, status: x.status })),
-    counts: { squads: p._count.squads, people: p._count.persons + p.invites.filter((i: any) => i.status === 'PENDING').length, initiatives: p._count.initiatives },
+    counts: { squads: p._count.squads, people: p._count.persons + p.invites.filter((i: any) => i.status === 'PENDING' && !p.persons.some((x: any) => x.email === i.email)).length, initiatives: p._count.initiatives },
     pendingInvites: p.invites.filter((i: any) => i.status === 'PENDING').length,
   };
 }
 
+const dedupe = <T extends { email: string }>(a: T[]) => a.filter((v, i, arr) => arr.findIndex((o) => o.email === v.email) === i);
 const rows = <T, R extends object>(arr: T[], f: (x: T, i: number) => R) => arr.map((x, i) => ({ ...f(x, i), position: i }));
 
 export async function createProject(ownerId: string, ownerName: string, input: ProjectInput) {
@@ -33,7 +35,8 @@ export async function createProject(ownerId: string, ownerName: string, input: P
         referenceLinks: { create: rows(input.links, (url) => ({ url, host: hostOf(url) })) },
         skills: { create: rows(input.skills, (name) => ({ name })) },
         invites: { create: input.invites.filter((v, i, a) => a.findIndex((o) => o.email === v.email) === i).map((i) => ({ name: i.name, email: i.email, position: i.position })) },
-        persons: { create: { name: ownerName, userId: ownerId } },
+        // O dono e cada convidado viram cartas no Time (convidado sem conta ainda: userId vazio)
+        persons: { create: [{ name: ownerName, userId: ownerId }, ...dedupe(input.invites).map((i) => ({ name: i.name, email: i.email }))] },
       },
     });
     await tx.user.updateMany({ where: { id: ownerId, onboardingStep: { lt: 3 } }, data: { onboardingStep: 3 } });
@@ -57,9 +60,13 @@ export async function updateProject(id: string, input: ProjectInput) {
     for (const [position, name] of input.skills.entries()) await tx.skill.updateMany({ where: { projectId: id, name }, data: { position } });
     // convites: acrescenta novos; remove pendentes que saíram da lista; nunca mexe em aceitos
     const emails = input.invites.map((i) => i.email);
+    // convite removido da lista: some também a carta, se a pessoa ainda não entrou
+    await tx.person.deleteMany({ where: { projectId: id, userId: null, email: { not: null, notIn: emails }, deletedAt: null, squads: { none: {} } } });
     await tx.invite.deleteMany({ where: { projectId: id, status: 'PENDING', email: { notIn: emails } } });
-    for (const i of input.invites) {
+    for (const i of dedupe(input.invites)) {
       await tx.invite.upsert({ where: { projectId_email: { projectId: id, email: i.email } }, create: { projectId: id, name: i.name, email: i.email, position: i.position }, update: {} });
+      const has = await tx.person.findFirst({ where: { projectId: id, email: i.email, deletedAt: null } });
+      if (!has) await tx.person.create({ data: { projectId: id, name: i.name, email: i.email } });
     }
   });
 }

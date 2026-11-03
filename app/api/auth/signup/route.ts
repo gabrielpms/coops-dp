@@ -15,8 +15,10 @@ export async function POST(req: Request) {
     data: { name: body.name, email: body.email, phone: body.phone || null, passwordHash: hashPassword(body.password), role: invites[0]?.position ?? body.role, onboardingStep: invites.length ? 3 : 2 },
   });
   for (const inv of invites) {
+    // A pessoa já existe como carta (criada ao convidar): só vincula à conta. Convites do deck de projeto não criam carta.
+    const linked = await db.person.updateMany({ where: { projectId: inv.projectId, email: inv.email, userId: null }, data: { userId: user.id } });
     await db.$transaction([
-      db.person.create({ data: { projectId: inv.projectId, userId: user.id, name: user.name } }),
+      ...(linked.count ? [] : [db.person.create({ data: { projectId: inv.projectId, userId: user.id, name: user.name, email: inv.email } })]),
       db.invite.update({ where: { id: inv.id }, data: { status: 'ACCEPTED' } }),
     ]);
   }
