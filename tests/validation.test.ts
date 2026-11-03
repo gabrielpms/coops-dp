@@ -69,3 +69,12 @@ describe('jornada e saúde (M6)', () => {
   it('foco exige meta maior que o nível de hoje', () => { expect(journeySchema.parse({ kind: 'FOCO', title: 'S', levelFrom: 3, levelTo: 4 }).levelTo).toBe(4); expect(() => journeySchema.parse({ kind: 'FOCO', title: 'S', levelFrom: 4, levelTo: 4 })).toThrow(); expect(() => journeySchema.parse({ kind: 'FOCO', title: 'S' })).toThrow(); });
   it('check-in exige as 4 notas de 1 a 5', () => { expect(healthSchema.parse({ saude: 1, design: 2, produto: 3, negocio: 5 }).note).toBe(''); expect(() => healthSchema.parse({ saude: 0, design: 2, produto: 3, negocio: 5 })).toThrow(); expect(() => healthSchema.parse({ saude: 1, design: 2, produto: 3 })).toThrow(); });
 });
+
+import { squadCardSchema } from '@/lib/validation';
+import { splitCard } from '@/lib/squadCards';
+describe('decks do squad (M7)', () => {
+  it('desafio: nome obrigatório, complexidade 1-5 e ações com padrões', () => { const d = squadCardSchema.parse({ deck: 'DESAFIO', title: 'A', acoes: [{ texto: 'x' }] }); expect(d.deck === 'DESAFIO' && d.complexidade).toBe(3); expect(d.deck === 'DESAFIO' && d.acoes[0].done).toBe(false); expect(() => squadCardSchema.parse({ deck: 'DESAFIO', title: ' ' })).toThrow(); expect(() => squadCardSchema.parse({ deck: 'DESAFIO', title: 'A', complexidade: 6 })).toThrow(); });
+  it('frente: champion precisa ser uuid ou nulo', () => { expect(() => squadCardSchema.parse({ deck: 'FRENTE', title: 'F', championPersonId: 'x' })).toThrow(); expect(squadCardSchema.parse({ deck: 'FRENTE', title: 'F' })).toMatchObject({ nivel: 1, championPersonId: null }); });
+  it('tipo desconhecido é recusado', () => expect(() => squadCardSchema.parse({ deck: 'OUTRO', title: 'x' })).toThrow());
+  it('splitCard separa colunas e dados', () => { const s = splitCard(squadCardSchema.parse({ deck: 'DESAFIO', title: 'A', complexidade: 4, cenario: 'c' })); expect(s).toMatchObject({ deck: 'DESAFIO', title: 'A', level: 4, championPersonId: null }); expect((s.data as any).cenario).toBe('c'); expect((s.data as any).title).toBeUndefined(); });
+});

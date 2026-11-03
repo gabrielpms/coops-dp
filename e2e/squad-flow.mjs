@@ -1,0 +1,61 @@
+import { createRequire } from 'node:module';
+const { chromium } = createRequire(import.meta.url)('playwright');
+const BASE = process.env.BASE ?? 'http://localhost:3000';
+const S = process.env.SHOTS ?? '/tmp/coops-squad-';
+const b = await chromium.launch(); const errors = [];
+const mk = async () => { const c = await b.newContext({ viewport: { width: 1280, height: 900 } }); const p = await c.newPage(); p.on('pageerror', (e) => errors.push('pageerror ' + e.message)); p.on('console', (m) => { if (m.type() === 'error' && !/40[0-9]/.test(m.text())) errors.push('console ' + m.text()); }); return p; };
+const stamp = Date.now(); const icEmail = `sq${stamp}@x.com`;
+const next = async (p, n = 1) => { for (let i = 0; i < n; i++) { await p.click('button:text-is("Próxima")'); await p.waitForTimeout(650); } };
+const p = await mk();
+await p.goto(BASE + '/cadastro'); await p.fill('#cad-nome', 'Marina Gestora'); await p.fill('#cad-email', `ms${stamp}@x.com`); await p.fill('#cad-senha', 'senha-forte-123');
+await p.click('button[type=submit]'); await p.waitForURL('**/primeiro-acesso'); await p.waitForLoadState('networkidle');
+const ids = await p.evaluate(async (ic) => {
+  const j = async (u, bd) => (await fetch(u, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(bd) })).json();
+  const pr = (await j('/api/projects', { name: 'Nimbo Pay', segment: 'Fintech', skills: ['Pesquisa'] })).project.id;
+  const joana = (await j(`/api/projects/${pr}/members`, { name: 'Joana Reis', email: ic })).person.id;
+  const sq = (await j(`/api/projects/${pr}/squads`, { name: 'Onboarding', color: '#F5A9D6', members: [{ personId: joana, crown: false }] })).squad.id;
+  const other = (await j(`/api/projects/${pr}/squads`, { name: 'Pagamentos', color: '#F3D36B', members: [] })).squad.id;
+  return { pr, joana, sq, other };
+}, icEmail);
+await p.goto(`${BASE}/p/${ids.pr}/time`); await p.click('a[aria-label="Abrir a mesa do time Onboarding"]'); await p.waitForURL(`**/squads/${ids.sq}`); await p.waitForSelector('h1:has-text("Onboarding")');
+console.log('mesa do time com os 6 decks:', await p.locator('section[aria-label="Decks do squad"] a').count());
+await p.screenshot({ path: S + '1-mesa.png' });
+// ---- desafios
+await p.click('a[aria-label="Abrir Desafios de time"]'); await p.waitForSelector('h1:text-is("Desafios de time")');
+await p.click('button:text-is("+ Desafio")'); await p.waitForSelector('[role=dialog]'); await next(p); console.log('nome obrigatório:', await p.locator('span[role=alert]').first().innerText());
+await p.fill('input[aria-label="Nome"]', 'Pessoas desistem no envio do documento'); await next(p); await p.fill('textarea[aria-label="Cenário atual"]', '42% abandonam na captura.'); await next(p);
+await p.locator('[role=radiogroup][aria-label="Complexidade"] button').nth(3).click(); await next(p);
+await p.fill('input[aria-label="Evidência"]', '42% abandonam na etapa de foto'); await p.keyboard.press('Enter'); await next(p);
+await p.fill('textarea[aria-label="Abordagem"]', 'Guia de enquadramento na câmera.'); await p.fill('input[aria-label="Nova ação"]', 'Prototipar guia'); await p.click('button[aria-pressed]:text-is("Joana")'); await p.fill('input[aria-label="Prazo"]', 'nov'); await p.keyboard.press('Enter'); await next(p);
+await p.click('button:text-is("Criar")'); await p.waitForSelector('button[aria-label="Abrir Pessoas desistem no envio do documento"]', { timeout: 10000 }); await p.waitForTimeout(400);
+console.log('carta mostra 0/1 ações:', (await p.locator('button[aria-label^="Abrir Pessoas"]').innerText()).includes('0/1'));
+await p.click('button[aria-label="Abrir Pessoas desistem no envio do documento"]'); await p.waitForSelector('[role=dialog]:has-text("LISTA DE AÇÕES")'); await p.waitForTimeout(500);
+await p.screenshot({ path: S + '2-foco.png' });
+await p.click('input[type=checkbox]'); await p.waitForTimeout(1800); await p.reload(); await p.click('button[aria-label^="Abrir Pessoas"]'); await p.waitForSelector('input[type=checkbox]');
+console.log('ação concluída persistiu:', await p.locator('input[type=checkbox]').isChecked());
+await p.click('button:text-is("Encerrar")'); await p.waitForTimeout(1200); await p.keyboard.press('Escape'); await p.waitForTimeout(400);
+console.log('pills:', (await p.locator('[role=tab]').allInnerTexts()).join(' | '));
+await p.click('[role=tab]:has-text("Encerradas")'); console.log('encerrada cinza com selo:', (await p.locator('button[aria-label^="Abrir Pessoas"]').innerText()).includes('DESCONTINUADA EM'));
+await p.click('button[aria-label^="Abrir Pessoas"]'); await p.click('button:text-is("Reabrir")'); await p.waitForTimeout(1200); await p.keyboard.press('Escape'); await p.click('[role=tab]:has-text("Ativas")'); console.log('reaberta volta às ativas:', await p.locator('button[aria-label^="Abrir Pessoas"]').isVisible());
+// ---- frentes com champion
+await p.goto(`${BASE}/p/${ids.pr}/squads/${ids.sq}/frentes`); await p.click('button:text-is("+ Frente")'); await p.fill('input[aria-label="Nome"]', 'Saúde do design system'); await next(p, 3);
+await p.locator('[role=radiogroup][aria-label="Nível de progresso"] button').nth(1).click(); await next(p, 3); await p.click('button[role=radio]:has-text("Joana Reis")'); await next(p);
+await p.click('button:text-is("Criar")'); await p.waitForSelector('button[aria-label="Abrir Saúde do design system"]', { timeout: 10000 });
+console.log('frente com champion:', (await p.locator('button[aria-label="Abrir Saúde do design system"]').innerText()).includes('CHAMPION JOANA'));
+await p.screenshot({ path: S + '3-frentes.png' });
+// ---- indicador ligado ao desafio, estratégia, alavanca
+await p.goto(`${BASE}/p/${ids.pr}/squads/${ids.sq}/indicadores`); await p.click('button:text-is("+ Indicador")'); await p.fill('input[aria-label="Nome"]', 'Ativação em 7 dias'); await next(p); await p.fill('input[aria-label="Valor"]', '42%'); await p.click('button[role=radio]:has-text("Desce")'); await next(p);
+await p.click('[role=radiogroup][aria-label="Desafio"] button:has-text("Pessoas desistem")'); await next(p); await p.click('button:text-is("Criar")'); await p.waitForSelector('button[aria-label="Abrir Ativação em 7 dias"]', { timeout: 10000 });
+console.log('indicador:', (await p.locator('button[aria-label="Abrir Ativação em 7 dias"]').innerText()).replace(/\s+/g, ' ').slice(0, 90));
+await p.goto(`${BASE}/p/${ids.pr}/squads/${ids.sq}/estrategia`); await p.click('button:text-is("+ Item")'); await p.fill('input[aria-label="Nome"]', 'Reduzir abandono no cadastro'); await next(p, 2); await p.click('button:text-is("Criar")'); await p.waitForSelector('button[aria-label="Abrir Reduzir abandono no cadastro"]', { timeout: 10000 });
+await p.goto(`${BASE}/p/${ids.pr}/squads/${ids.sq}/alavancas`); await p.click('button:text-is("+ Alavanca")'); await p.fill('input[aria-label="Nome"]', 'Reduzir campos'); await next(p, 2); await p.click('button:text-is("Criar")'); await p.waitForSelector('button[aria-label="Abrir Reduzir campos"]', { timeout: 10000 });
+console.log('estratégia e alavanca criadas: true');
+await p.goto(`${BASE}/p/${ids.pr}/squads/${ids.sq}/saude`); console.log('saúde do time agregada com mínimo de respostas:', await p.locator('text=Ainda poucas respostas').isVisible());
+// ---- IC do squad: só leitura; outro squad: sem acesso
+const q = await mk(); await q.goto(BASE + '/cadastro'); await q.fill('#cad-nome', 'Joana Reis'); await q.fill('#cad-email', icEmail); await q.fill('#cad-senha', 'senha-forte-123'); await q.click('button[type=submit]'); await q.waitForURL('**/hub');
+await q.goto(`${BASE}/p/${ids.pr}/squads/${ids.sq}/desafios`); await q.waitForSelector('button[aria-label^="Abrir Pessoas"]');
+console.log('IC vê como time (sem botão de criar):', await q.locator('button:text-is("+ Desafio")').count() === 0 && await q.locator('text=Você está vendo como time').first().isVisible());
+const st = await q.evaluate(async (sq) => (await fetch(`/api/squads/${sq}/cards`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ deck: 'ALAVANCA', title: 'x' }) })).status, ids.sq);
+console.log('IC não cria carta (esperado 403):', st);
+await q.goto(`${BASE}/p/${ids.pr}/squads/${ids.other}/desafios`); await q.waitForURL('**/hub'); console.log('IC fora do squad é levado ao hub: true');
+console.log('ERROS:', errors.length ? errors : 'nenhum'); await b.close();

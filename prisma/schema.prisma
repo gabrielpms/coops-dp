@@ -165,6 +165,7 @@ model Squad {
   deletedAt   DateTime?
   members     SquadMembership[]
   leaderships LeadershipSquad[]
+  cards       SquadCard[]
 }
 
 model Person {
@@ -191,6 +192,7 @@ model Person {
   journey    JourneyGoal[]
   health     HealthCheckin[]
   reportsTo  LeadershipMember[] @relation("ReportsTo")
+  squadCards SquadCard[]
 }
 
 model SquadMembership {
@@ -404,4 +406,40 @@ model HealthCheckin {
   createdAt DateTime @default(now())
 
   @@index([personId])
+}
+
+// ---------- Decks do squad (M7) ----------
+// Uma tabela para os cinco decks de cartas do squad: o tipo (deck) decide os campos guardados em `data`.
+enum SquadDeck {
+  DESAFIO
+  FRENTE
+  ESTRATEGIA
+  INDICADOR
+  ALAVANCA
+}
+
+enum CardStatus {
+  ABERTA
+  ENCERRADA
+}
+
+model SquadCard {
+  id               String     @id @default(uuid())
+  squadId          String
+  squad            Squad      @relation(fields: [squadId], references: [id], onDelete: Cascade)
+  deck             SquadDeck
+  title            String
+  data             Json       @default("{}")
+  level            Int? // desafio: complexidade; frente: nível de progresso (1-5)
+  championPersonId String?
+  champion         Person?    @relation(fields: [championPersonId], references: [id], onDelete: SetNull)
+  status           CardStatus @default(ABERTA)
+  closedAt         DateTime?
+  createdById      String?
+  updatedById      String?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  deletedAt        DateTime?
+
+  @@index([squadId, deck])
 }

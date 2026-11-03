@@ -1,20 +1,22 @@
-import { notFound, redirect } from 'next/navigation';
-import { currentUser } from '@/lib/session';
 import { db } from '@/lib/db';
-import { accessibleWhere } from '@/lib/projects';
-import { CoopsLink } from '@/components/nav/useCoopsRouter';
+import { loadSquadPage } from '@/lib/squad';
+import { SquadHomeClient } from './SquadHomeClient';
 
-export default async function SquadPlaceholder({ params }: { params: Promise<{ projectId: string; squadId: string }> }) {
+export const dynamic = 'force-dynamic';
+
+export default async function SquadPage({ params }: { params: Promise<{ projectId: string; squadId: string }> }) {
   const { projectId, squadId } = await params;
-  const u = await currentUser();
-  if (!u) redirect('/cadastro');
-  const squad = await db.squad.findFirst({ where: { id: squadId, projectId, deletedAt: null, project: accessibleWhere(u.id) } });
-  if (!squad) notFound();
+  const { user, squad, isManager } = await loadSquadPage(projectId, squadId);
+  const [members, cards] = await Promise.all([
+    db.squadMembership.findMany({ where: { squadId }, include: { person: { select: { id: true, name: true, title: true, avatar: true, deletedAt: true } } } }),
+    db.squadCard.groupBy({ by: ['deck'], where: { squadId, deletedAt: null, status: 'ABERTA' }, _count: true }),
+  ]);
+  const n = (d: string) => cards.find((c) => c.deck === d)?._count ?? 0;
   return (
-    <main style={{ maxWidth: 720, margin: '0 auto', padding: '64px 32px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <CoopsLink href={`/p/${projectId}/time`} style={{ fontSize: 14 }}>← voltar ao time</CoopsLink>
-      <h1 style={{ margin: 0, fontSize: 48, fontWeight: 800, letterSpacing: '-0.035em' }}>{squad.name}</h1>
-      <p style={{ margin: 0, color: '#A3A1AD', fontSize: 17 }}>Os decks do squad (desafios, frentes, estratégia, indicadores, alavancas e saúde) entram no Marco 3 do plano do PRD.</p>
-    </main>
+    <SquadHomeClient
+      user={{ name: user.name, email: user.email, role: user.role, avatar: user.avatar as any }} projectId={projectId} squad={squad} isManager={isManager}
+      people={members.filter((m) => !m.person.deletedAt).map((m) => ({ id: m.person.id, name: m.person.name, title: m.person.title ?? '', avatar: (m.person.avatar as any) ?? null, crown: m.crown }))}
+      counts={{ DESAFIO: n('DESAFIO'), FRENTE: n('FRENTE'), ESTRATEGIA: n('ESTRATEGIA'), INDICADOR: n('INDICADOR'), ALAVANCA: n('ALAVANCA') }}
+    />
   );
 }

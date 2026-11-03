@@ -168,3 +168,20 @@ export const HEALTH_DIMS = [
   { id: 'produto', title: 'Estratégia do produto', help: 'Entende as prioridades e o porquê do roadmap?', lo: 'Nada claro', hi: 'Muito claro', tip: 'Que tal pedir ao PM um resumo das prioridades do trimestre?' },
   { id: 'negocio', title: 'Estratégia de negócio', help: 'Conecta o trabalho às metas da empresa?', lo: 'Nada claro', hi: 'Muito claro', tip: 'A estratégia de negócio está pouco clara. Quer levar isso para o próximo 1:1?' },
 ] as const;
+
+// ---------- Decks do squad (M7) ----------
+export const EVIDENCE_TYPES = ['Dado', 'Pesquisa', 'Fala de usuário', 'Link'] as const;
+const evidence = z.object({ tipo: z.enum(EVIDENCE_TYPES), texto: text(500).min(1) });
+const action = z.object({ texto: text(300).min(1), dono: text(80).optional().default(''), prazo: text(40).optional().default(''), done: z.boolean().optional().default(false) });
+const lvl = z.number().int().min(1).max(5);
+const nameOf = (msg: string) => text(160).min(1, msg);
+export const squadCardSchema = z.discriminatedUnion('deck', [
+  z.object({ deck: z.literal('DESAFIO'), title: nameOf('Dê um nome ao desafio para salvar.'), cenario: text(1500).optional().default(''), complexidade: lvl.default(3), evidencias: z.array(evidence).max(20).default([]), abordagem: text(1500).optional().default(''), acoes: z.array(action).max(30).default([]) }),
+  z.object({ deck: z.literal('FRENTE'), title: nameOf('Dê um nome à frente para seguir.'), oque: text(1500).optional().default(''), impacto: text(1000).optional().default(''), nivel: lvl.default(1), evidencias: z.array(evidence).max(20).default([]), acoes: z.array(action).max(30).default([]), championPersonId: z.string().uuid().nullable().optional().default(null) }),
+  z.object({ deck: z.literal('ESTRATEGIA'), title: nameOf('Dê um título ao item de estratégia.'), texto: text(2000).optional().default('') }),
+  z.object({ deck: z.literal('INDICADOR'), title: nameOf('Dê um nome ao indicador.'), valor: text(40).optional().default(''), variacao: z.enum(['sobe', 'desce', 'estavel']).default('estavel'), challengeId: z.string().uuid().nullable().optional().default(null) }),
+  z.object({ deck: z.literal('ALAVANCA'), title: nameOf('Dê um nome à alavanca.'), descricao: text(1500).optional().default('') }),
+]);
+export type SquadCardInput = z.infer<typeof squadCardSchema>;
+export const cardStatusSchema = z.object({ status: z.enum(['ABERTA', 'ENCERRADA']) });
+export const SQUAD_DECK_SLUGS = { desafios: 'DESAFIO', frentes: 'FRENTE', estrategia: 'ESTRATEGIA', indicadores: 'INDICADOR', alavancas: 'ALAVANCA' } as const;
