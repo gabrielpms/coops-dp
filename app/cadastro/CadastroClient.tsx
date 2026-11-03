@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Avatar } from '@/components/avatar/Avatar';
 import { useCoopsRouter, CoopsLink } from '@/components/nav/useCoopsRouter';
+import { Spinner } from '@/components/ds/ScreenLoader';
 import { PasswordField } from '@/components/ds/PasswordField';
 import { deskInput, label } from '@/components/ds/tokens';
 
@@ -145,7 +146,7 @@ export function CadastroClient() {
             </div>
           </fieldset>
           {error && <span role="alert" style={{ fontSize: 14, fontWeight: 600, color: '#FF8A5B' }}>{error}</span>}
-          <button type="submit" disabled={busy} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 52, color: '#0E0E12', background: '#B7A6FF', border: 0, fontFamily: 'inherit', fontWeight: 600, fontSize: 16, borderRadius: 14, cursor: busy ? 'wait' : 'pointer', opacity: busy ? 0.7 : 1 }}>Criar conta</button>
+          <button type="submit" disabled={busy} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 52, color: '#0E0E12', background: '#B7A6FF', border: 0, fontFamily: 'inherit', fontWeight: 600, fontSize: 16, borderRadius: 14, cursor: busy ? 'wait' : 'pointer', opacity: busy ? 0.7 : 1, gap: 10 }}>{busy && <Spinner />}{busy ? 'Criando conta…' : 'Criar conta'}</button>
           <p style={{ margin: 0, fontSize: 14, color: '#A3A1AD', textAlign: 'center' }}>Já tem conta? <CoopsLink href="/entrar">Entrar</CoopsLink></p>
         </form>
       </main>

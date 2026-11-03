@@ -1,12 +1,13 @@
 'use client';
 import type { ReactNode } from 'react';
 import { label } from '../ds/tokens';
+import { Spinner } from '../ds/ScreenLoader';
 
 export type DeckCard = { id: string; bg: string; optional?: boolean; summary?: boolean; node: ReactNode };
 
 /** Deck de perguntas: uma carta por vez, as próximas aparecem atrás, as respondidas saem pela esquerda. */
-export function QuestionDeck({ tag, cards, step, onGo, nextLabel, busy, error }: {
-  tag: string; cards: DeckCard[]; step: number; onGo: (k: number) => void; nextLabel: string; busy?: boolean; error?: string | null;
+export function QuestionDeck({ tag, cards, step, onGo, nextLabel, busy, busyLabel = 'Salvando…', error }: {
+  tag: string; cards: DeckCard[]; step: number; onGo: (k: number) => void; nextLabel: string; busy?: boolean; busyLabel?: string; error?: string | null;
 }) {
   const last = cards.length - 1;
   const m = cards.length - 1; // total de perguntas (o resumo não conta)
@@ -30,6 +31,7 @@ export function QuestionDeck({ tag, cards, step, onGo, nextLabel, busy, error }:
           );
         })}
       </div>
+      {busy && <span role="status" aria-live="polite" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>{busyLabel}</span>}
       {error && <span role="alert" style={{ fontSize: 14, fontWeight: 600, color: '#FF8A5B' }}>{error}</span>}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginTop: 8 }}>
         <button type="button" onClick={() => step > 0 && onGo(step - 1)} style={{ fontFamily: 'inherit', fontWeight: 600, fontSize: 15, color: '#F5F2EC', background: 'transparent', border: '1.5px solid #4A4858', borderRadius: 14, minHeight: 48, padding: '0 18px', cursor: 'pointer', opacity: step === 0 ? 0.4 : 1 }}>Voltar</button>
@@ -40,7 +42,7 @@ export function QuestionDeck({ tag, cards, step, onGo, nextLabel, busy, error }:
             </button>
           ))}
         </div>
-        <button type="button" disabled={busy} onClick={() => onGo(step + 1)} style={{ fontFamily: 'inherit', fontWeight: 600, fontSize: 15, color: '#0E0E12', background: '#B7A6FF', border: '2px solid #0E0E12', borderRadius: 14, minHeight: 48, padding: '0 20px', cursor: busy ? 'wait' : 'pointer', opacity: busy ? 0.6 : 1 }}>{nextLabel}</button>
+        <button type="button" disabled={busy} onClick={() => onGo(step + 1)} style={{ fontFamily: 'inherit', fontWeight: 600, fontSize: 15, color: '#0E0E12', background: '#B7A6FF', border: '2px solid #0E0E12', borderRadius: 14, minHeight: 48, padding: '0 20px', cursor: busy ? 'wait' : 'pointer', opacity: busy ? 0.7 : 1, display: 'inline-flex', alignItems: 'center', gap: 10 }}>{busy && <Spinner />}{busy ? busyLabel : nextLabel}</button>
       </div>
     </>
   );

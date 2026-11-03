@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { CoopsLink, useCoopsRouter } from '@/components/nav/useCoopsRouter';
+import { Spinner } from '@/components/ds/ScreenLoader';
 import { PasswordField } from '@/components/ds/PasswordField';
 import { deskInput, label } from '@/components/ds/tokens';
 
@@ -31,7 +32,7 @@ export function EntrarClient() {
         </div>
         <PasswordField id="ent-senha" label="Senha" autoComplete="current-password" value={v.password} onChange={(password) => setV({ ...v, password })} />
         {error && <span role="alert" style={{ fontSize: 14, fontWeight: 600, color: '#FF8A5B' }}>{error}</span>}
-        <button type="submit" disabled={busy} style={{ minHeight: 52, color: '#0E0E12', background: '#B7A6FF', border: 0, fontFamily: 'inherit', fontWeight: 600, fontSize: 16, borderRadius: 14, cursor: busy ? 'wait' : 'pointer', opacity: busy ? 0.7 : 1 }}>Entrar</button>
+        <button type="submit" disabled={busy} style={{ minHeight: 52, color: '#0E0E12', background: '#B7A6FF', border: 0, fontFamily: 'inherit', fontWeight: 600, fontSize: 16, borderRadius: 14, cursor: busy ? 'wait' : 'pointer', opacity: busy ? 0.7 : 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>{busy && <Spinner />}{busy ? 'Entrando…' : 'Entrar'}</button>
         <p style={{ margin: 0, fontSize: 14, color: '#A3A1AD', textAlign: 'center' }}>Ainda não tem conta? <CoopsLink href="/cadastro">Criar conta</CoopsLink></p>
       </form>
     </main>

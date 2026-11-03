@@ -59,3 +59,11 @@
 @keyframes coopsFocusOut{from{transform:none;opacity:1}to{transform:translate(var(--fdx),var(--fdy)) scale(var(--fs));opacity:0}}
 @keyframes coopsFill{from{width:0}to{width:100%}}
 .coops-overlay{animation:coopsFadeIn 320ms ease both}
+
+/* Coops · carregamento de tela (ScreenLoader / Spinner) */
+.coops-loader{animation:coopsFadeIn .3s ease 250ms both} /* só aparece se a espera passar de 250 ms: sem piscar em cargas rápidas */
+.ld-card{transform-origin:50% 100%;animation:ldPull 1.5s cubic-bezier(.65,0,.25,1) infinite;transform:translateX(var(--x)) rotate(var(--r))}
+@keyframes ldPull{0%,100%{transform:translateX(var(--x)) translateY(0) rotate(var(--r))}45%{transform:translateX(var(--x)) translateY(-18px) rotate(calc(var(--r) * .4))}}
+.ld-star{animation:ldSpin 1.6s cubic-bezier(.65,0,.25,1) infinite;transform-origin:50% 50%}
+@keyframes ldSpin{0%{transform:rotate(0) scale(1)}50%{transform:rotate(90deg) scale(1.12)}100%{transform:rotate(180deg) scale(1)}}
+@media (prefers-reduced-motion: reduce){.coops-loader,.ld-card,.ld-star{animation:none!important}}

@@ -225,7 +225,7 @@ export function ProjectDeck({ mode, projectId, initial, draft, title, onClose, o
   const heading = title ?? (mode === 'edit' ? 'Editar projeto' : 'Novo projeto');
   return (
     <BottomSheet tag={mode === 'edit' ? 'PROJETO · EDITAR' : 'PROJETO · NOVO'} title={heading} onClose={onClose}>
-      <QuestionDeck tag={mode === 'edit' ? 'PROJETO · EDITAR' : 'PROJETO · NOVO'} cards={cards} step={step} onGo={go} busy={busy} error={serverError}
+      <QuestionDeck tag={mode === 'edit' ? 'PROJETO · EDITAR' : 'PROJETO · NOVO'} cards={cards} step={step} onGo={go} busy={busy} busyLabel={mode === 'edit' ? 'Salvando…' : 'Criando projeto…'} error={serverError}
         nextLabel={step === LAST ? (mode === 'edit' ? 'Salvar alterações' : 'Criar projeto') : 'Próxima'} />
     </BottomSheet>
   );

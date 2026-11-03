@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ROLE_OPTIONS } from './data';
 import { WISH_CHANNELS, WISH_ROLES, WISH_TEAM_SIZES, EMAIL_RE } from '@/lib/validation';
 import { label } from '../ds/tokens';
+import { Spinner } from '../ds/ScreenLoader';
 
 const LS = 'coops.wishlist';
 type Form = { name: string; email: string; role: number; teamSize: string; focus: number; pains: number[]; channels: number[]; beta: boolean; consent: boolean };
@@ -135,7 +136,7 @@ export function WishlistSheet({ seed, onClose }: { seed: WishSeed; onClose: () =
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'flex-end', paddingTop: 20, borderTop: '1px solid #23232B' }}>
                   <span style={{ fontSize: 13, color: '#6E6C78', marginRight: 'auto' }}>Leva menos de 1 minuto.</span>
                   <button type="button" onClick={onClose} style={{ display: 'inline-flex', alignItems: 'center', minHeight: 48, padding: '0 18px', borderRadius: 14, border: '1.5px solid #3A3846', background: 'transparent', color: '#F5F2EC', fontFamily: 'inherit', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>Agora não</button>
-                  <button type="submit" disabled={busy} style={{ display: 'inline-flex', alignItems: 'center', minHeight: 48, padding: '0 22px', borderRadius: 14, border: 0, background: '#B7A6FF', color: '#0E0E12', fontFamily: 'inherit', fontSize: 15, fontWeight: 600, cursor: busy ? 'wait' : 'pointer', opacity: busy ? 0.7 : 1 }}>Entrar na wish list</button>
+                  <button type="submit" disabled={busy} style={{ display: 'inline-flex', alignItems: 'center', minHeight: 48, padding: '0 22px', borderRadius: 14, border: 0, background: '#B7A6FF', color: '#0E0E12', fontFamily: 'inherit', fontSize: 15, fontWeight: 600, cursor: busy ? 'wait' : 'pointer', opacity: busy ? 0.7 : 1, gap: 10 }}>{busy && <Spinner />}{busy ? 'Enviando…' : 'Entrar na wish list'}</button>
                 </div>
               </form>
             ) : (
