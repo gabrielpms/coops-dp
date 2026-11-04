@@ -86,3 +86,10 @@ describe('eventos (M6)', () => {
   it('data só no formato AAAA-MM-DD', () => { expect(() => eventSchema.parse({ type: 'MERITO', title: 'T', date: '03/11/2026' })).toThrow(); expect(eventSchema.parse({ type: 'MERITO', title: 'T', date: '2026-11-03' }).date).toBe('2026-11-03'); });
   it('comentário não pode ser vazio', () => { expect(() => eventCommentSchema.parse({ text: ' ' })).toThrow(); expect(eventCommentSchema.parse({ text: 'ok' }).text).toBe('ok'); });
 });
+
+import { initiativeSchema } from '@/lib/validation';
+describe('initiativeSchema (M8.1)', () => {
+  it('exige só o produto', () => expect(initiativeSchema.parse({ product: ' Abertura de conta ' })).toEqual({ product: 'Abertura de conta', problem: '', need: '' }));
+  it('recusa produto vazio', () => expect(() => initiativeSchema.parse({ product: '  ' })).toThrow());
+  it('limita o problema a 1000 caracteres', () => expect(() => initiativeSchema.parse({ product: 'x', problem: 'x'.repeat(1001) })).toThrow());
+});

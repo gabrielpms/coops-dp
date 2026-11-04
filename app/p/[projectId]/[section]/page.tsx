@@ -6,7 +6,6 @@ import { CoopsLink } from '@/components/nav/useCoopsRouter';
 
 const SECTIONS: Record<string, { title: string; when: string }> = {
   time: { title: 'Gestão de time', when: 'Marco 2 · Time' },
-  iniciativas: { title: 'Iniciativas', when: 'Marco 4 · Iniciativas' },
 };
 
 export default async function Placeholder({ params }: { params: Promise<{ projectId: string; section: string }> }) {

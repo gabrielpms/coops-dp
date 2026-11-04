@@ -199,3 +199,11 @@ export const eventSchema = z.discriminatedUnion('type', [
 export type EventInput = z.infer<typeof eventSchema>;
 export const eventCommentSchema = z.object({ text: text(1000).min(1, 'Escreva o comentário para publicar.') });
 export const EVENT_TYPE_LABEL = { CHECKIN: 'Check-in', FEEDBACK: 'Feedback', ENTREGA: 'Entrega', PROMOCAO: 'Promoção', MERITO: 'Mérito', MUDANCA_TIME: 'Mudança de time' } as const;
+
+// ---------- Iniciativas (M8.1) ----------
+export const initiativeSchema = z.object({
+  product: text(160).min(1, 'Diga qual é o produto da iniciativa para seguir.'),
+  problem: text(1000).optional().default(''),
+  need: text(1000).optional().default(''),
+});
+export type InitiativeInput = z.infer<typeof initiativeSchema>;
