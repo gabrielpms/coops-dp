@@ -12,7 +12,7 @@ export default async function MesaPage({ params }: { params: Promise<{ projectId
   if (!u) redirect('/cadastro');
   const i = await db.initiative.findFirst({
     where: { id, projectId, project: accessibleWhere(u.id) },
-    include: { contextCards: true, doubts: { where: { resolved: true }, orderBy: { position: 'asc' } } },
+    include: { contextCards: true, attachments: { where: { uploaded: true }, orderBy: { createdAt: 'asc' } }, doubts: { where: { resolved: true }, orderBy: { position: 'asc' } } },
   });
   if (!i) notFound();
   if (!i.tableOpenedAt) redirect(`/p/${projectId}/iniciativas/${id}`);
@@ -21,6 +21,7 @@ export default async function MesaPage({ params }: { params: Promise<{ projectId
       user={{ name: u.name, email: u.email, role: u.role, avatar: u.avatar as any }} projectId={projectId}
       initiative={{ id: i.id, product: i.product, problem: i.problem ?? '', need: i.need || i.deducedNeed || '', status: i.status, moment: i.moment, momentReason: i.momentReason ?? '', closeOutcome: i.closeOutcome, closeNote: i.closeNote ?? '' }}
       cards={i.contextCards.map((c) => ({ kind: c.kind, text: c.text, links: c.links }))}
+      attachments={i.attachments.map((a) => ({ id: a.id, kind: a.kind, name: a.name, size: a.size }))}
       resolved={i.doubts.map((d) => ({ question: d.question, summary: d.summary ?? '' }))}
     />
   );

@@ -8,14 +8,16 @@ import { cardInput, darkBtn, label } from '@/components/ds/tokens';
 import { CONTEXT_KINDS, CONTEXT_META } from '@/lib/validation';
 
 type Kind = (typeof CONTEXT_KINDS)[number];
+type Att = { id: string; kind: string; name: string; size: number };
+const sizeLabel = (n: number) => (n < 1024 * 1024 ? `${Math.max(1, Math.round(n / 1024))} KB` : `${(n / 1024 / 1024).toFixed(1)} MB`);
 type Card = { kind: string; text: string; links: string[] };
 const MOMENTS = ['', 'Entendimento do desafio', 'Soft prepare', 'Explore the solutions', 'Risk mitigation', 'Articulando decisões'];
 const OUTCOMES = { ENTREGUE: 'Entregue', PARCIAL: 'Entregue em parte', CANCELADA: 'Cancelada' } as const;
 
-export function MesaClient({ user, projectId, initiative, cards, resolved }: {
+export function MesaClient({ user, projectId, initiative, cards, attachments, resolved }: {
   user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; projectId: string;
   initiative: { id: string; product: string; problem: string; need: string; status: 'ABERTA' | 'ENCERRADA'; moment: number | null; momentReason: string; closeOutcome: string | null; closeNote: string };
-  cards: Card[]; resolved: { question: string; summary: string }[];
+  cards: Card[]; attachments: Att[]; resolved: { question: string; summary: string }[];
 }) {
   const { refresh } = useCoopsRouter();
   const isManager = user.role === 'MANAGER';
@@ -31,7 +33,9 @@ export function MesaClient({ user, projectId, initiative, cards, resolved }: {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const api = `/api/initiatives/${initiative.id}`;
-  const onTable = (k: string) => cards.find((c) => c.kind === k);
+  const filesOf = (k: string) => attachments.filter((a) => a.kind === k);
+  const onTable = (k: string): Card | undefined => cards.find((c) => c.kind === k) ?? (filesOf(k).length ? { kind: k, text: '', links: [] } : undefined);
+  const [uploading, setUploading] = useState(false);
 
   const call = async (url: string, method: string, body?: object) => {
     setBusy(true); setError(null);
@@ -44,8 +48,25 @@ export function MesaClient({ user, projectId, initiative, cards, resolved }: {
   };
   const open = (k: Kind) => { const c = onTable(k); setText(c?.text ?? ''); setLinks(c?.links ?? []); setLink(''); setError(null); setEditing(k); };
   const addLink = () => { const v = link.trim(); if (v && !links.includes(v)) setLinks([...links, v]); setLink(''); };
-  const saveCard = async () => { const pending = link.trim(); const all = pending && !links.includes(pending) ? [...links, pending] : links; if (await call(`${api}/context/${editing}`, 'PUT', { text, links: all })) { setEditing(null); refresh(); } };
+  const saveCard = async () => { const pending = link.trim(); const all = pending && !links.includes(pending) ? [...links, pending] : links; if (!text.trim() && !all.length && filesOf(editing!).length) { setEditing(null); return; } if (await call(`${api}/context/${editing}`, 'PUT', { text, links: all })) { setEditing(null); refresh(); } };
   const remove = async () => { if (await call(`${api}/context/${editing}`, 'DELETE')) { setEditing(null); refresh(); } };
+  /** Envio em 3 passos: pede a URL, envia direto ao armazenamento e confirma. */
+  const upload = async (file: File) => {
+    if (!editing) return;
+    setUploading(true); setError(null);
+    try {
+      const mime = file.type || 'application/octet-stream';
+      const res = await fetch(`${api}/attachments`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ kind: editing, name: file.name, mime, size: file.size }) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { setError(data.error ?? 'Não deu para enviar. Tente de novo.'); return; }
+      const put = await fetch(data.uploadUrl, { method: 'PUT', headers: { 'content-type': mime }, body: file });
+      if (!put.ok) { await fetch(`/api/attachments/${data.attachment.id}`, { method: 'DELETE' }).catch(() => {}); setError('O envio falhou. Tente de novo.'); return; }
+      const ok = await fetch(`/api/attachments/${data.attachment.id}`, { method: 'PATCH' });
+      if (!ok.ok) { setError((await ok.json().catch(() => ({}))).error ?? 'O envio não foi confirmado.'); return; }
+      refresh();
+    } catch { setError('Sem conexão. Tente de novo.'); } finally { setUploading(false); }
+  };
+  const removeFile = async (id: string) => { if (await call(`/api/attachments/${id}`, 'DELETE')) refresh(); };
   const identify = async () => { if (await call(`${api}/moment`, 'POST')) refresh(); };
   const finish = async () => { if (await call(`${api}/close`, 'POST', { outcome, note })) { setClosing(false); refresh(); } };
   const reopen = async () => { if (await call(`${api}/close`, 'DELETE')) refresh(); };
@@ -85,6 +106,7 @@ export function MesaClient({ user, projectId, initiative, cards, resolved }: {
               <div key={k} style={{ ...box, background: m.bg }}>
                 <span style={label(11, '0.08em')}>{m.title.toUpperCase()}</span>
                 {c.text && <span style={{ fontSize: 15, lineHeight: 1.4, whiteSpace: 'pre-wrap' }}>{c.text}</span>}
+                {filesOf(k).map((f) => <a key={f.id} href={`/api/attachments/${f.id}`} target="_blank" rel="noopener noreferrer" style={{ color: '#0E0E12', fontSize: 13, wordBreak: 'break-all' }}>📎 {f.name} · {sizeLabel(f.size)}</a>)}
                 {c.links.map((l) => <a key={l} href={/^https?:\/\//i.test(l) ? l : `https://${l}`} target="_blank" rel="noopener noreferrer" style={{ color: '#0E0E12', fontSize: 13, wordBreak: 'break-all' }}>{l}</a>)}
                 {canEdit && <button type="button" onClick={() => open(k)} style={{ ...darkBtn, marginTop: 'auto', alignSelf: 'flex-start', minHeight: 44 }}>Editar</button>}
               </div>
@@ -95,7 +117,7 @@ export function MesaClient({ user, projectId, initiative, cards, resolved }: {
             ) : null;
           })}
         </section>
-        <p style={{ margin: 0, color: '#A3A1AD', fontSize: 14 }}>Anexar arquivo e o deck de ferramentas do momento entram nos próximos passos.</p>
+        <p style={{ margin: 0, color: '#A3A1AD', fontSize: 14 }}>O deck de ferramentas do momento entra no próximo passo.</p>
       </div>
 
       {editing && (
@@ -108,6 +130,19 @@ export function MesaClient({ user, projectId, initiative, cards, resolved }: {
           </form>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {links.map((l) => <button key={l} type="button" aria-label={`Remover ${l}`} onClick={() => setLinks(links.filter((x) => x !== l))} style={{ fontFamily: 'inherit', fontSize: 13, color: '#F5F2EC', background: '#2C2C36', border: 0, borderRadius: 999, minHeight: 36, padding: '0 12px', cursor: 'pointer' }}>{l} ✕</button>)}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {filesOf(editing).map((f) => (
+              <div key={f.id} style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#2C2C36', borderRadius: 12, padding: '4px 4px 4px 12px' }}>
+                <a href={`/api/attachments/${f.id}`} target="_blank" rel="noopener noreferrer" style={{ flex: '1 1 auto', minWidth: 0, fontSize: 14, color: '#F5F2EC', overflowWrap: 'anywhere' }}>📎 {f.name} · {sizeLabel(f.size)}</a>
+                <button type="button" aria-label={`Remover ${f.name}`} onClick={() => removeFile(f.id)} style={{ width: 44, height: 44, border: 0, background: 'transparent', color: '#F5F2EC', cursor: 'pointer' }}>✕</button>
+              </div>
+            ))}
+            <label style={{ ...ghost, display: 'inline-flex', alignItems: 'center', alignSelf: 'flex-start', cursor: uploading ? 'wait' : 'pointer', boxSizing: 'border-box', fontWeight: 600, fontSize: 14, padding: '0 16px', borderRadius: 14 }}>
+              {uploading ? 'Enviando…' : '+ Anexar arquivo'}
+              <input type="file" disabled={uploading} style={{ position: 'absolute', width: 1, height: 1, opacity: 0 }} onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) void upload(f); }} />
+            </label>
+            <span style={{ fontSize: 12, color: '#A3A1AD' }}>Imagem, PDF, Office, texto ou vídeo, até 25 MB.</span>
           </div>
           {error && <span role="alert" style={{ fontSize: 14, fontWeight: 600, color: '#FF8A5B' }}>{error}</span>}
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'space-between' }}>

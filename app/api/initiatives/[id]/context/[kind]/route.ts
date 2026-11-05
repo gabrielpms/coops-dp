@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
 import { fail, isResponse, json, parse } from '@/lib/api/http';
 import { initiativeAccess } from '@/lib/initiatives';
+import { removeObject, storageConfigured } from '@/lib/storage';
 import { CONTEXT_KINDS, contextCardSchema } from '@/lib/validation';
 
 type Ctx = { params: Promise<{ id: string; kind: string }> };
@@ -23,6 +24,9 @@ export async function DELETE(_: Request, { params }: Ctx) {
   const { id, kind } = await params;
   const ctx = await initiativeAccess(id, true);
   if (isResponse(ctx)) return ctx;
+  const files = await db.attachment.findMany({ where: { initiativeId: id, kind } });
+  if (storageConfigured()) await Promise.all(files.map((f) => removeObject(f.key).catch(() => {})));
+  await db.attachment.deleteMany({ where: { initiativeId: id, kind } });
   await db.contextCard.deleteMany({ where: { initiativeId: id, kind } });
   return json({ ok: true });
 }
