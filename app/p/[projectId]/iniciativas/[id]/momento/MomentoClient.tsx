@@ -35,7 +35,9 @@ export function MomentoClient({ user, projectId, initiative, tools, plays }: {
     setBusy(true); setError(null);
     try {
       const res = await fetch(`${api}/plays`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ toolId }) });
-      if (!res.ok) { setError((await res.json().catch(() => ({}))).error ?? 'Não deu para jogar a carta.'); return; }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { setError(data.error ?? 'Não deu para jogar a carta.'); return; }
+      setOpenCard(null); setReview(false); setOpenPlay(data.play.id); // abre assim que a página recarregar com o deck novo
       refresh();
     } catch { setError('Sem conexão. Tente de novo.'); } finally { setBusy(false); }
   };

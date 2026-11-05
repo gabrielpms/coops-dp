@@ -17,9 +17,10 @@ export async function POST(req: Request, { params }: Ctx) {
   const doubt = await db.agentDoubt.findFirst({ where: { id: doubtId, initiativeId: id } });
   if (!doubt) return fail(404, 'Dúvida não encontrada');
   const reply = agentReply(body.text);
+  const at = Date.now(); // horários explícitos: a resposta do agente sempre vem depois da fala da pessoa
   await db.$transaction([
-    db.agentMessage.create({ data: { doubtId, role: 'USER', text: body.text } }),
-    db.agentMessage.create({ data: { doubtId, role: 'AGENT', text: reply, createdAt: new Date(Date.now() + 1) } }),
+    db.agentMessage.create({ data: { doubtId, role: 'USER', text: body.text, createdAt: new Date(at) } }),
+    db.agentMessage.create({ data: { doubtId, role: 'AGENT', text: reply, createdAt: new Date(at + 1) } }),
     db.agentDoubt.update({ where: { id: doubtId }, data: { resolved: false, summary: null } }),
     db.initiative.update({ where: { id }, data: { tableOpenedAt: null } }),
   ]);
