@@ -178,6 +178,10 @@ CREATE TABLE "Initiative" (
     "moment" INTEGER,
     "deducedNeed" TEXT,
     "tableOpenedAt" TIMESTAMP(3),
+    "momentReason" TEXT,
+    "closeOutcome" TEXT,
+    "closeNote" TEXT,
+    "closedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -219,6 +223,25 @@ ALTER TABLE "AgentDoubt" ADD CONSTRAINT "AgentDoubt_initiativeId_fkey" FOREIGN K
 
 -- AddForeignKey
 ALTER TABLE "AgentMessage" ADD CONSTRAINT "AgentMessage_doubtId_fkey" FOREIGN KEY ("doubtId") REFERENCES "AgentDoubt"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- CreateTable
+CREATE TABLE "ContextCard" (
+    "id" TEXT NOT NULL,
+    "initiativeId" TEXT NOT NULL,
+    "kind" TEXT NOT NULL,
+    "text" TEXT NOT NULL DEFAULT '',
+    "links" TEXT[],
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ContextCard_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ContextCard_initiativeId_kind_key" ON "ContextCard"("initiativeId", "kind");
+
+-- AddForeignKey
+ALTER TABLE "ContextCard" ADD CONSTRAINT "ContextCard_initiativeId_fkey" FOREIGN KEY ("initiativeId") REFERENCES "Initiative"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- CreateTable
 CREATE TABLE "Draft" (

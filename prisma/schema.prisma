@@ -219,6 +219,11 @@ model Initiative {
   tableOpenedAt DateTime? // quando o manager abriu a mesa (todas as dúvidas resolvidas)
   deliveries    Delivery[]
   doubts        AgentDoubt[]
+  contextCards  ContextCard[]
+  momentReason  String?
+  closeOutcome  String? // como terminou (M8.3)
+  closeNote     String?
+  closedAt      DateTime?
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 }
@@ -510,4 +515,18 @@ model EventComment {
   createdAt  DateTime    @default(now())
 
   @@index([eventId])
+}
+
+// ---------- Mesa da iniciativa (M8.3) ----------
+model ContextCard {
+  id           String     @id @default(uuid())
+  initiativeId String
+  initiative   Initiative @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  kind         String // IMPACTO | OBJETIVO | USUARIOS | METRICAS | SABEMOS | REGRAS | REFERENCIAS | TENTATIVAS | FLUXO
+  text         String     @default("")
+  links        String[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([initiativeId, kind])
 }

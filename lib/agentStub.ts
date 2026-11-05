@@ -26,3 +26,12 @@ export function agentReply(userText: string): string {
 }
 
 export const understoodSummary = (agentText: string) => agentText.replace(/^Entendi assim:\s*/, '').replace(/\s*Entendi certo\?$/, '');
+
+/** Momento fixo do M8.3 (o M9 troca pela análise real): mais contexto na mesa avança o momento. */
+export function identifyMoment(cardCount: number, resolvedDoubts: number): { moment: number; reason: string } {
+  const depth = cardCount + resolvedDoubts;
+  if (depth < 3) return { moment: 1, reason: 'Ainda há pouco contexto na mesa: o primeiro passo é entender bem o desafio.' };
+  if (depth < 5) return { moment: 2, reason: 'O desafio já está claro; falta preparar o terreno com dados e pessoas antes de explorar soluções.' };
+  if (depth < 7) return { moment: 3, reason: 'Há contexto suficiente para explorar soluções com segurança.' };
+  return { moment: 4, reason: 'O contexto está profundo: vale mitigar riscos antes de decidir.' };
+}

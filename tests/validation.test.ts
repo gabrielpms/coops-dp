@@ -104,3 +104,13 @@ describe('agente de respostas fixas (M8.2)', () => {
   it('sempre fecha com "Entendi certo?"', () => expect(agentReply('as pessoas abandonam')).toBe('Entendi assim: as pessoas abandonam. Entendi certo?'));
   it('o resumo confirmado tira a moldura da resposta', () => expect(understoodSummary(agentReply('x'))).toBe('x.'));
 });
+
+import { contextCardSchema, closeSchema } from '@/lib/validation';
+import { identifyMoment } from '@/lib/agentStub';
+describe('mesa da iniciativa (M8.3)', () => {
+  it('carta precisa de texto ou link', () => expect(() => contextCardSchema.parse({})).toThrow());
+  it('aceita só um link', () => expect(contextCardSchema.parse({ links: ['figma.com/x'] }).links).toHaveLength(1));
+  it('recusa link inválido', () => expect(() => contextCardSchema.parse({ text: 'a', links: ['sem ponto'] })).toThrow());
+  it('só aceita desfechos conhecidos', () => { expect(closeSchema.parse({ outcome: 'PARCIAL' }).note).toBe(''); expect(() => closeSchema.parse({ outcome: 'X' })).toThrow(); });
+  it('mais contexto avança o momento', () => { expect(identifyMoment(0, 0).moment).toBe(1); expect(identifyMoment(3, 2).moment).toBe(3); expect(identifyMoment(9, 3).moment).toBe(4); });
+});

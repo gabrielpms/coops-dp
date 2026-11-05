@@ -36,7 +36,7 @@ export function ConfereClient({ user, projectId, initiative, doubts }: {
   const send = async () => { if (!text.trim()) return; if (await call(`${api}/doubts/${openId}/messages`, 'POST', { text })) { setText(''); refresh(); } };
   const resolve = async () => { if (await call(`${api}/doubts/${openId}/resolve`, 'POST')) { setOpenId(null); refresh(); } };
   const reopen = async (id: string) => { if (await call(`${api}/doubts/${id}/resolve`, 'DELETE')) refresh(); };
-  const openTable = async () => { if (await call(`${api}/table`, 'POST')) { refresh(); push(`/p/${projectId}/iniciativas`); } };
+  const openTable = async () => { if (await call(`${api}/table`, 'POST')) { refresh(); push(`/p/${projectId}/iniciativas/${initiative.id}/mesa`); } };
 
   const card = { color: '#0E0E12', borderRadius: 22, border: '2px solid #0E0E12', padding: 20, display: 'flex', flexDirection: 'column', gap: 10, minHeight: 200, boxSizing: 'border-box', boxShadow: '0 16px 36px rgba(0,0,0,0.45)' } as const;
   const info = (tag: string, bg: string, body: string, flag?: string) => (
@@ -78,7 +78,7 @@ export function ConfereClient({ user, projectId, initiative, doubts }: {
         </section>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-          {initiative.tableOpened ? <span style={{ ...label(12, '0.08em'), color: '#9BE3C3' }}>MESA ABERTA · AS CARTAS DE CONTEXTO ENTRAM NO PRÓXIMO PASSO</span> : isManager && (
+          {initiative.tableOpened ? <CoopsLink href={`/p/${projectId}/iniciativas/${initiative.id}/mesa`} style={{ fontWeight: 600, fontSize: 16, minHeight: 52, display: 'inline-flex', alignItems: 'center' }}>Ir para a mesa →</CoopsLink> : isManager && (
             <>
               <button type="button" disabled={missing > 0 || busy} onClick={openTable} style={{ fontFamily: 'inherit', fontWeight: 600, fontSize: 16, color: '#0E0E12', background: '#B7A6FF', border: '2px solid #0E0E12', borderRadius: 14, minHeight: 52, padding: '0 22px', cursor: missing ? 'not-allowed' : 'pointer', opacity: missing ? 0.45 : 1 }}>Isso mesmo, abrir a mesa</button>
               {missing > 0 && <span style={{ ...label(12, '0.08em'), color: '#F3D36B' }}>FALTAM RESOLVER {missing} {plural(missing, 'DÚVIDA', 'DÚVIDAS')}</span>}
