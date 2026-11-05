@@ -86,3 +86,48 @@ describe('eventos (M6)', () => {
   it('data só no formato AAAA-MM-DD', () => { expect(() => eventSchema.parse({ type: 'MERITO', title: 'T', date: '03/11/2026' })).toThrow(); expect(eventSchema.parse({ type: 'MERITO', title: 'T', date: '2026-11-03' }).date).toBe('2026-11-03'); });
   it('comentário não pode ser vazio', () => { expect(() => eventCommentSchema.parse({ text: ' ' })).toThrow(); expect(eventCommentSchema.parse({ text: 'ok' }).text).toBe('ok'); });
 });
+
+import { initiativeSchema } from '@/lib/validation';
+describe('initiativeSchema (M8.1)', () => {
+  it('exige só o produto', () => expect(initiativeSchema.parse({ product: ' Abertura de conta ' })).toEqual({ product: 'Abertura de conta', problem: '', need: '' }));
+  it('recusa produto vazio', () => expect(() => initiativeSchema.parse({ product: '  ' })).toThrow());
+  it('limita o problema a 1000 caracteres', () => expect(() => initiativeSchema.parse({ product: 'x', problem: 'x'.repeat(1001) })).toThrow());
+});
+
+import { agentReply, deduceNeed, initialDoubts, understoodSummary } from '@/lib/agentStub';
+describe('agente de respostas fixas (M8.2)', () => {
+  it('nunca passa de 3 dúvidas', () => expect(initialDoubts({ product: 'X' }).length).toBeLessThanOrEqual(3));
+  it('pergunta pelo problema quando ele falta', () => expect(initialDoubts({ product: 'X' })[0]).toMatch(/problema/));
+  it('com problema e necessidade claros sobram 2 dúvidas', () => expect(initialDoubts({ product: 'X', problem: 'a', need: 'b' })).toHaveLength(2));
+  it('a necessidade deduzida marca o que falta confirmar', () => expect(deduceNeed({ product: 'X' })).toContain('[CONFIRMAR'));
+  it('mantém a necessidade escrita pela pessoa', () => expect(deduceNeed({ product: 'X', need: ' mais conversão ' })).toBe('mais conversão'));
+  it('sempre fecha com "Entendi certo?"', () => expect(agentReply('as pessoas abandonam')).toBe('Entendi assim: as pessoas abandonam. Entendi certo?'));
+  it('o resumo confirmado tira a moldura da resposta', () => expect(understoodSummary(agentReply('x'))).toBe('x.'));
+});
+
+import { contextCardSchema, closeSchema } from '@/lib/validation';
+import { identifyMoment } from '@/lib/agentStub';
+describe('mesa da iniciativa (M8.3)', () => {
+  it('carta precisa de texto ou link', () => expect(() => contextCardSchema.parse({})).toThrow());
+  it('aceita só um link', () => expect(contextCardSchema.parse({ links: ['figma.com/x'] }).links).toHaveLength(1));
+  it('recusa link inválido', () => expect(() => contextCardSchema.parse({ text: 'a', links: ['sem ponto'] })).toThrow());
+  it('só aceita desfechos conhecidos', () => { expect(closeSchema.parse({ outcome: 'PARCIAL' }).note).toBe(''); expect(() => closeSchema.parse({ outcome: 'X' })).toThrow(); });
+  it('mais contexto avança o momento', () => { expect(identifyMoment(0, 0).moment).toBe(1); expect(identifyMoment(3, 2).moment).toBe(3); expect(identifyMoment(9, 3).moment).toBe(4); });
+});
+
+import { safeName, objectKey, ALLOWED_MIME, storageConfigured } from '@/lib/storage';
+import { attachmentRequestSchema } from '@/lib/validation';
+describe('anexos (M8.3)', () => {
+  it('limpa o nome do arquivo para o caminho', () => expect(safeName('../Relatório final (v2).pdf')).toBe('_Relatorio_final_v2_.pdf'));
+  it('a chave fica dentro da iniciativa', () => expect(objectKey('abc', 'a b.png')).toMatch(/^initiatives\/abc\/[0-9a-f-]{36}-a_b\.png$/));
+  it('não aceita executáveis nem HTML', () => { expect(ALLOWED_MIME).not.toContain('text/html'); expect(ALLOWED_MIME).not.toContain('application/x-msdownload'); });
+  it('sem variáveis, o armazenamento fica desligado', () => expect(storageConfigured()).toBe(false));
+  it('o pedido exige uma carta de contexto válida', () => { expect(() => attachmentRequestSchema.parse({ kind: 'X', name: 'a', mime: 'image/png', size: 1 })).toThrow(); expect(attachmentRequestSchema.parse({ kind: 'FLUXO', name: 'a', mime: 'image/png', size: 1 }).kind).toBe('FLUXO'); });
+});
+
+import { TOOLS, toolsOf, toolById, responseFor, MOMENTS } from '@/lib/tools';
+describe('deck de ferramentas (M8.4)', () => {
+  it('cada um dos 5 momentos tem de 3 a 6 ferramentas', () => { for (let m = 1; m <= 5; m++) { const n = toolsOf(m).length; expect(n).toBeGreaterThanOrEqual(3); expect(n).toBeLessThanOrEqual(6); } expect(MOMENTS).toHaveLength(6); });
+  it('ids de ferramenta são únicos', () => expect(new Set(TOOLS.map((t) => t.id)).size).toBe(TOOLS.length));
+  it('o deck de resposta tem 3 cartas e não inventa números', () => { const r = responseFor(toolById('jtbd')!, 'Conta'); expect(r).toHaveLength(3); expect(r.map((c) => c.tag)).toEqual(['SEGURA', 'MÉDIA', 'OUSADA']); expect(r.every((c) => c.metric.startsWith('[CONFIRMAR'))).toBe(true); });
+});
