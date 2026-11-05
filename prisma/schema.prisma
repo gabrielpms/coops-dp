@@ -207,17 +207,46 @@ model SquadMembership {
 }
 
 model Initiative {
-  id         String           @id @default(uuid())
-  projectId  String
-  project    Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  product    String
-  problem    String?
-  need       String?
-  status     InitiativeStatus @default(ABERTA)
-  moment     Int?
-  deliveries Delivery[]
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @updatedAt
+  id            String           @id @default(uuid())
+  projectId     String
+  project       Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  product       String
+  problem       String?
+  need          String?
+  status        InitiativeStatus @default(ABERTA)
+  moment        Int?
+  deducedNeed   String? // necessidade deduzida pelo agente (PRECISA CONFIRMAR)
+  tableOpenedAt DateTime? // quando o manager abriu a mesa (todas as dúvidas resolvidas)
+  deliveries    Delivery[]
+  doubts        AgentDoubt[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+// ---------- Agente confere o entendimento (M8.2) ----------
+model AgentDoubt {
+  id           String         @id @default(uuid())
+  initiativeId String
+  initiative   Initiative     @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  position     Int
+  question     String
+  resolved     Boolean        @default(false)
+  summary      String? // "Entendi assim…" confirmado; vira a carta de contexto
+  messages     AgentMessage[]
+  createdAt    DateTime       @default(now())
+
+  @@index([initiativeId])
+}
+
+model AgentMessage {
+  id        String     @id @default(uuid())
+  doubtId   String
+  doubt     AgentDoubt @relation(fields: [doubtId], references: [id], onDelete: Cascade)
+  role      String // USER | AGENT
+  text      String
+  createdAt DateTime   @default(now())
+
+  @@index([doubtId])
 }
 
 // ---------- Rascunhos de deck de perguntas (PRD 6.2) ----------

@@ -93,3 +93,14 @@ describe('initiativeSchema (M8.1)', () => {
   it('recusa produto vazio', () => expect(() => initiativeSchema.parse({ product: '  ' })).toThrow());
   it('limita o problema a 1000 caracteres', () => expect(() => initiativeSchema.parse({ product: 'x', problem: 'x'.repeat(1001) })).toThrow());
 });
+
+import { agentReply, deduceNeed, initialDoubts, understoodSummary } from '@/lib/agentStub';
+describe('agente de respostas fixas (M8.2)', () => {
+  it('nunca passa de 3 dúvidas', () => expect(initialDoubts({ product: 'X' }).length).toBeLessThanOrEqual(3));
+  it('pergunta pelo problema quando ele falta', () => expect(initialDoubts({ product: 'X' })[0]).toMatch(/problema/));
+  it('com problema e necessidade claros sobram 2 dúvidas', () => expect(initialDoubts({ product: 'X', problem: 'a', need: 'b' })).toHaveLength(2));
+  it('a necessidade deduzida marca o que falta confirmar', () => expect(deduceNeed({ product: 'X' })).toContain('[CONFIRMAR'));
+  it('mantém a necessidade escrita pela pessoa', () => expect(deduceNeed({ product: 'X', need: ' mais conversão ' })).toBe('mais conversão'));
+  it('sempre fecha com "Entendi certo?"', () => expect(agentReply('as pessoas abandonam')).toBe('Entendi assim: as pessoas abandonam. Entendi certo?'));
+  it('o resumo confirmado tira a moldura da resposta', () => expect(understoodSummary(agentReply('x'))).toBe('x.'));
+});

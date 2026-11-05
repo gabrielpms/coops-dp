@@ -13,7 +13,7 @@ const MOMENTS = ['', 'Entendimento do desafio', 'Soft prepare', 'Explore the sol
 export function IniciativasClient({ user, project, items, draft: d0 }: {
   user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; project: { id: string; name: string }; items: InitiativeItem[]; draft: InitiativeDraft | null;
 }) {
-  const { refresh } = useCoopsRouter();
+  const { go: push } = useCoopsRouter();
   const [tab, setTab] = useState<'ABERTA' | 'ENCERRADA'>('ABERTA');
   const [deck, setDeck] = useState(false);
   const [draft, setDraft] = useState(d0);
@@ -44,17 +44,17 @@ export function IniciativasClient({ user, project, items, draft: d0 }: {
             </button>
           )}
           {shown.map((i) => (
-            <div key={i.id} style={{ ...card, background: i.status === 'ENCERRADA' ? '#CFCDD6' : '#B7A6FF' }}>
+            <CoopsLink key={i.id} href={`/p/${project.id}/iniciativas/${i.id}`} className="coops-card" style={{ ...card, background: i.status === 'ENCERRADA' ? '#CFCDD6' : '#B7A6FF' }}>
               <span style={label(11, '0.08em')}>{i.moment ? `MOMENTO ${i.moment} · ${MOMENTS[i.moment].toUpperCase()}` : 'MOMENTO · A IDENTIFICAR'}</span>
               <span style={{ marginTop: 'auto', fontSize: 24, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }}>{i.product}</span>
               <span style={{ borderTop: '1.5px solid #0E0E12', paddingTop: 10, fontSize: 13, lineHeight: 1.4 }}>{i.problem || 'Problema ainda não informado.'}</span>
-            </div>
+            </CoopsLink>
           ))}
           {shown.length === 0 && !(isManager && tab === 'ABERTA') && <p style={{ margin: 0, color: '#A3A1AD', fontSize: 16 }}>Nenhuma iniciativa {tab === 'ABERTA' ? 'em andamento' : 'encerrada'} ainda.</p>}
         </section>
-        <p style={{ margin: 0, color: '#A3A1AD', fontSize: 14 }}>{items.length} {plural(items.length, 'iniciativa', 'iniciativas')} no projeto. A conferência do agente e a mesa entram nos próximos passos do Marco 4.</p>
+        <p style={{ margin: 0, color: '#A3A1AD', fontSize: 14 }}>{items.length} {plural(items.length, 'iniciativa', 'iniciativas')} no projeto. A mesa e o deck de ferramentas entram nos próximos passos do Marco 4.</p>
       </div>
-      {deck && <InitiativeDeck projectId={project.id} draft={draft} onDraftChange={setDraft} onClose={() => setDeck(false)} onSaved={() => { setDeck(false); refresh(); }} />}
+      {deck && <InitiativeDeck projectId={project.id} draft={draft} onDraftChange={setDraft} onClose={() => setDeck(false)} onSaved={(id) => { setDeck(false); push(`/p/${project.id}/iniciativas/${id}`); }} />}
     </div>
   );
 }

@@ -176,11 +176,49 @@ CREATE TABLE "Initiative" (
     "need" TEXT,
     "status" "InitiativeStatus" NOT NULL DEFAULT 'ABERTA',
     "moment" INTEGER,
+    "deducedNeed" TEXT,
+    "tableOpenedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Initiative_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateTable
+CREATE TABLE "AgentDoubt" (
+    "id" TEXT NOT NULL,
+    "initiativeId" TEXT NOT NULL,
+    "position" INTEGER NOT NULL,
+    "question" TEXT NOT NULL,
+    "resolved" BOOLEAN NOT NULL DEFAULT false,
+    "summary" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "AgentDoubt_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "AgentMessage" (
+    "id" TEXT NOT NULL,
+    "doubtId" TEXT NOT NULL,
+    "role" TEXT NOT NULL,
+    "text" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "AgentMessage_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE INDEX "AgentDoubt_initiativeId_idx" ON "AgentDoubt"("initiativeId");
+
+-- CreateIndex
+CREATE INDEX "AgentMessage_doubtId_idx" ON "AgentMessage"("doubtId");
+
+-- AddForeignKey
+ALTER TABLE "AgentDoubt" ADD CONSTRAINT "AgentDoubt_initiativeId_fkey" FOREIGN KEY ("initiativeId") REFERENCES "Initiative"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AgentMessage" ADD CONSTRAINT "AgentMessage_doubtId_fkey" FOREIGN KEY ("doubtId") REFERENCES "AgentDoubt"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- CreateTable
 CREATE TABLE "Draft" (
