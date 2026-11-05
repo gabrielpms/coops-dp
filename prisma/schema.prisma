@@ -221,6 +221,7 @@ model Initiative {
   doubts        AgentDoubt[]
   contextCards  ContextCard[]
   attachments   Attachment[]
+  plays         ToolPlay[]
   momentReason  String?
   closeOutcome  String? // como terminou (M8.3)
   closeNote     String?
@@ -547,4 +548,35 @@ model Attachment {
   createdAt    DateTime   @default(now())
 
   @@index([initiativeId, kind])
+}
+
+// ---------- Deck de ferramentas e deck de resposta (M8.4) ----------
+model ToolPlay {
+  id           String         @id @default(uuid())
+  initiativeId String
+  initiative   Initiative     @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  toolId       String
+  cards        ResponseCard[]
+  createdAt    DateTime       @default(now())
+
+  @@unique([initiativeId, toolId])
+}
+
+model ResponseCard {
+  id          String   @id @default(uuid())
+  playId      String
+  play        ToolPlay @relation(fields: [playId], references: [id], onDelete: Cascade)
+  position    Int
+  title       String
+  tag         String // SEGURA | MÉDIA | OUSADA
+  description String
+  impact      String
+  effort      String
+  metric      String
+  nextStep    String
+  decision    String? // KEPT | DISCARDED (nulo = pendente)
+  note        String?
+  updatedAt   DateTime @updatedAt
+
+  @@index([playId])
 }

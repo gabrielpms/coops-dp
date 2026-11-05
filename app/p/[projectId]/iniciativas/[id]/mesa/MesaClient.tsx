@@ -19,7 +19,7 @@ export function MesaClient({ user, projectId, initiative, cards, attachments, re
   initiative: { id: string; product: string; problem: string; need: string; status: 'ABERTA' | 'ENCERRADA'; moment: number | null; momentReason: string; closeOutcome: string | null; closeNote: string };
   cards: Card[]; attachments: Att[]; resolved: { question: string; summary: string }[];
 }) {
-  const { refresh } = useCoopsRouter();
+  const { refresh, go } = useCoopsRouter();
   const isManager = user.role === 'MANAGER';
   const closed = initiative.status === 'ENCERRADA';
   const canEdit = isManager && !closed;
@@ -67,7 +67,7 @@ export function MesaClient({ user, projectId, initiative, cards, attachments, re
     } catch { setError('Sem conexão. Tente de novo.'); } finally { setUploading(false); }
   };
   const removeFile = async (id: string) => { if (await call(`/api/attachments/${id}`, 'DELETE')) refresh(); };
-  const identify = async () => { if (await call(`${api}/moment`, 'POST')) refresh(); };
+  const identify = async () => { if (await call(`${api}/moment`, 'POST')) go(`/p/${projectId}/iniciativas/${initiative.id}/momento`); };
   const finish = async () => { if (await call(`${api}/close`, 'POST', { outcome, note })) { setClosing(false); refresh(); } };
   const reopen = async () => { if (await call(`${api}/close`, 'DELETE')) refresh(); };
 
@@ -88,6 +88,7 @@ export function MesaClient({ user, projectId, initiative, cards, attachments, re
             {canEdit && <button type="button" disabled={busy} onClick={identify} style={primary}>Identificar o momento</button>}
             {isManager && (closed ? <button type="button" disabled={busy} onClick={reopen} style={ghost}>Reabrir</button> : <button type="button" onClick={() => { setNote(''); setError(null); setClosing(true); }} style={ghost}>Finalizar iniciativa</button>)}
           </div>
+          {initiative.moment && <CoopsLink href={`/p/${projectId}/iniciativas/${initiative.id}/momento`} style={{ fontWeight: 600, fontSize: 15, minHeight: 44, display: 'inline-flex', alignItems: 'center', alignSelf: 'flex-start' }}>Ver ferramentas do momento →</CoopsLink>}
           {initiative.moment && <p style={{ margin: '8px 0 0', fontSize: 15, lineHeight: 1.45 }}><b>Momento {initiative.moment} · {MOMENTS[initiative.moment]}.</b> <span style={{ color: '#A3A1AD' }}>{initiative.momentReason}</span></p>}
           {error && !editing && !closing && <span role="alert" style={{ fontSize: 14, fontWeight: 600, color: '#FF8A5B' }}>{error}</span>}
         </section>

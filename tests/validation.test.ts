@@ -124,3 +124,10 @@ describe('anexos (M8.3)', () => {
   it('sem variáveis, o armazenamento fica desligado', () => expect(storageConfigured()).toBe(false));
   it('o pedido exige uma carta de contexto válida', () => { expect(() => attachmentRequestSchema.parse({ kind: 'X', name: 'a', mime: 'image/png', size: 1 })).toThrow(); expect(attachmentRequestSchema.parse({ kind: 'FLUXO', name: 'a', mime: 'image/png', size: 1 }).kind).toBe('FLUXO'); });
 });
+
+import { TOOLS, toolsOf, toolById, responseFor, MOMENTS } from '@/lib/tools';
+describe('deck de ferramentas (M8.4)', () => {
+  it('cada um dos 5 momentos tem de 3 a 6 ferramentas', () => { for (let m = 1; m <= 5; m++) { const n = toolsOf(m).length; expect(n).toBeGreaterThanOrEqual(3); expect(n).toBeLessThanOrEqual(6); } expect(MOMENTS).toHaveLength(6); });
+  it('ids de ferramenta são únicos', () => expect(new Set(TOOLS.map((t) => t.id)).size).toBe(TOOLS.length));
+  it('o deck de resposta tem 3 cartas e não inventa números', () => { const r = responseFor(toolById('jtbd')!, 'Conta'); expect(r).toHaveLength(3); expect(r.map((c) => c.tag)).toEqual(['SEGURA', 'MÉDIA', 'OUSADA']); expect(r.every((c) => c.metric.startsWith('[CONFIRMAR'))).toBe(true); });
+});

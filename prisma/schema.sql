@@ -269,6 +269,47 @@ CREATE INDEX "Attachment_initiativeId_kind_idx" ON "Attachment"("initiativeId", 
 ALTER TABLE "Attachment" ADD CONSTRAINT "Attachment_initiativeId_fkey" FOREIGN KEY ("initiativeId") REFERENCES "Initiative"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- CreateTable
+CREATE TABLE "ToolPlay" (
+    "id" TEXT NOT NULL,
+    "initiativeId" TEXT NOT NULL,
+    "toolId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "ToolPlay_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ResponseCard" (
+    "id" TEXT NOT NULL,
+    "playId" TEXT NOT NULL,
+    "position" INTEGER NOT NULL,
+    "title" TEXT NOT NULL,
+    "tag" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "impact" TEXT NOT NULL,
+    "effort" TEXT NOT NULL,
+    "metric" TEXT NOT NULL,
+    "nextStep" TEXT NOT NULL,
+    "decision" TEXT,
+    "note" TEXT,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ResponseCard_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ToolPlay_initiativeId_toolId_key" ON "ToolPlay"("initiativeId", "toolId");
+
+-- CreateIndex
+CREATE INDEX "ResponseCard_playId_idx" ON "ResponseCard"("playId");
+
+-- AddForeignKey
+ALTER TABLE "ToolPlay" ADD CONSTRAINT "ToolPlay_initiativeId_fkey" FOREIGN KEY ("initiativeId") REFERENCES "Initiative"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ResponseCard" ADD CONSTRAINT "ResponseCard_playId_fkey" FOREIGN KEY ("playId") REFERENCES "ToolPlay"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- CreateTable
 CREATE TABLE "Draft" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
