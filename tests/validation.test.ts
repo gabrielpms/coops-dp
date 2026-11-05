@@ -114,3 +114,13 @@ describe('mesa da iniciativa (M8.3)', () => {
   it('só aceita desfechos conhecidos', () => { expect(closeSchema.parse({ outcome: 'PARCIAL' }).note).toBe(''); expect(() => closeSchema.parse({ outcome: 'X' })).toThrow(); });
   it('mais contexto avança o momento', () => { expect(identifyMoment(0, 0).moment).toBe(1); expect(identifyMoment(3, 2).moment).toBe(3); expect(identifyMoment(9, 3).moment).toBe(4); });
 });
+
+import { safeName, objectKey, ALLOWED_MIME, storageConfigured } from '@/lib/storage';
+import { attachmentRequestSchema } from '@/lib/validation';
+describe('anexos (M8.3)', () => {
+  it('limpa o nome do arquivo para o caminho', () => expect(safeName('../Relatório final (v2).pdf')).toBe('_Relatorio_final_v2_.pdf'));
+  it('a chave fica dentro da iniciativa', () => expect(objectKey('abc', 'a b.png')).toMatch(/^initiatives\/abc\/[0-9a-f-]{36}-a_b\.png$/));
+  it('não aceita executáveis nem HTML', () => { expect(ALLOWED_MIME).not.toContain('text/html'); expect(ALLOWED_MIME).not.toContain('application/x-msdownload'); });
+  it('sem variáveis, o armazenamento fica desligado', () => expect(storageConfigured()).toBe(false));
+  it('o pedido exige uma carta de contexto válida', () => { expect(() => attachmentRequestSchema.parse({ kind: 'X', name: 'a', mime: 'image/png', size: 1 })).toThrow(); expect(attachmentRequestSchema.parse({ kind: 'FLUXO', name: 'a', mime: 'image/png', size: 1 }).kind).toBe('FLUXO'); });
+});

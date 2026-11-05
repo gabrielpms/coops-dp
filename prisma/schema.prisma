@@ -220,6 +220,7 @@ model Initiative {
   deliveries    Delivery[]
   doubts        AgentDoubt[]
   contextCards  ContextCard[]
+  attachments   Attachment[]
   momentReason  String?
   closeOutcome  String? // como terminou (M8.3)
   closeNote     String?
@@ -529,4 +530,21 @@ model ContextCard {
   updatedAt    DateTime   @updatedAt
 
   @@unique([initiativeId, kind])
+}
+
+// ---------- Anexos da mesa (M8.3) ----------
+model Attachment {
+  id           String     @id @default(uuid())
+  initiativeId String
+  initiative   Initiative @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  kind         String // carta de contexto a que pertence (ContextCard.kind)
+  name         String
+  mime         String
+  size         Int
+  key          String     @unique // caminho do objeto no bucket
+  uploaded     Boolean    @default(false) // vira true quando o navegador confirma o envio
+  uploadedById String
+  createdAt    DateTime   @default(now())
+
+  @@index([initiativeId, kind])
 }

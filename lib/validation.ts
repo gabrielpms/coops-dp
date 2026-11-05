@@ -224,3 +224,8 @@ export const CONTEXT_META: Record<(typeof CONTEXT_KINDS)[number], { title: strin
 export const contextCardSchema = z.object({ text: text(2000).optional().default(''), links: z.array(urlText).max(10).default([]) })
   .refine((v) => v.text || v.links.length, 'Escreva algo ou adicione um link.');
 export const closeSchema = z.object({ outcome: z.enum(['ENTREGUE', 'PARCIAL', 'CANCELADA']), note: text(1000).optional().default('') });
+
+// ---------- Anexos (M8.3) ----------
+export const attachmentRequestSchema = z.object({
+  kind: z.enum(CONTEXT_KINDS), name: text(200).min(1), mime: text(120).min(1), size: z.number().int().positive(),
+});

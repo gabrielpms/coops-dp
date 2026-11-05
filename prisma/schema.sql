@@ -244,6 +244,31 @@ CREATE UNIQUE INDEX "ContextCard_initiativeId_kind_key" ON "ContextCard"("initia
 ALTER TABLE "ContextCard" ADD CONSTRAINT "ContextCard_initiativeId_fkey" FOREIGN KEY ("initiativeId") REFERENCES "Initiative"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- CreateTable
+CREATE TABLE "Attachment" (
+    "id" TEXT NOT NULL,
+    "initiativeId" TEXT NOT NULL,
+    "kind" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "mime" TEXT NOT NULL,
+    "size" INTEGER NOT NULL,
+    "key" TEXT NOT NULL,
+    "uploaded" BOOLEAN NOT NULL DEFAULT false,
+    "uploadedById" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Attachment_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Attachment_key_key" ON "Attachment"("key");
+
+-- CreateIndex
+CREATE INDEX "Attachment_initiativeId_kind_idx" ON "Attachment"("initiativeId", "kind");
+
+-- AddForeignKey
+ALTER TABLE "Attachment" ADD CONSTRAINT "Attachment_initiativeId_fkey" FOREIGN KEY ("initiativeId") REFERENCES "Initiative"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- CreateTable
 CREATE TABLE "Draft" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
