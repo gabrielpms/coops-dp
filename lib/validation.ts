@@ -102,6 +102,7 @@ export const leadershipSchema = z.object({
   avatar: avatarSchema.optional(),
   squadIds: ids,
   memberIds: ids,
+  self: z.boolean().optional(),
 });
 export const categorySchema = z.object({
   name: text(80).min(1, 'Escreva o nome da categoria'),

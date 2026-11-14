@@ -9,3 +9,12 @@ export async function readDraft<T>(userId: string, scope: string, entityId = '')
 }
 
 export const readProjectDraft = (userId: string, entityId = ''): Promise<ProjectDraft | null> => readDraft(userId, 'project', entityId);
+
+/** Vários rascunhos do mesmo usuário numa única consulta (evita uma ida ao banco por rascunho). */
+export async function readDrafts(userId: string, wanted: { scope: string; entityId?: string }[]): Promise<({ form: any; step: number } | null)[]> {
+  const rows = await db.draft.findMany({ where: { userId, OR: wanted.map((w) => ({ scope: w.scope, entityId: w.entityId ?? '' })) } });
+  return wanted.map((w) => {
+    const p = rows.find((r) => r.scope === w.scope && r.entityId === (w.entityId ?? ''))?.payload as { form?: unknown; step?: number } | null | undefined;
+    return p?.form ? { form: p.form, step: p.step ?? 0 } : null;
+  });
+}
