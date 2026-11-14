@@ -24,16 +24,18 @@ export function HubClient({ user, projects, draft: initialDraft }: { user: { nam
           </div>
           {isManager && <button type="button" className="hb-new" onClick={() => setDeck(true)} style={{ color: '#0E0E12', background: '#B7A6FF', border: 0, fontWeight: 600, fontSize: 15, borderRadius: 14, padding: '14px 20px', minHeight: 48, cursor: 'pointer' }}>+ Novo projeto</button>}
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, alignItems: 'stretch' }}>
           {projects.map((p, i) => <ProjectCard key={p.id} p={p} depth={i === 0 ? 2 : 1} />)}
           {isManager && (
-            <button type="button" className="hb-add" onClick={() => setDeck(true)} style={{ cursor: 'pointer', background: 'transparent', flex: '0 1 342px', minHeight: 380, marginTop: 14, boxSizing: 'border-box', borderRadius: 26, border: '1.5px dashed #4A4858', color: '#F5F2EC', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14, padding: 24 }}>
+            <div style={{ flex: '0 1 360px', display: 'flex', padding: '14px 18px 0 0' }}>
+            <button type="button" className="hb-add" onClick={() => setDeck(true)} style={{ cursor: 'pointer', background: 'transparent', flex: 1, minHeight: 330, boxSizing: 'border-box', borderRadius: 26, border: '1.5px dashed #4A4858', color: '#F5F2EC', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14, padding: 24 }}>
               <span style={{ width: 56, height: 56, borderRadius: 16, border: '1.5px solid #4A4858', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
               </span>
               <span style={{ fontSize: 20, fontWeight: 700 }}>Novo projeto</span>
               <span style={{ fontSize: 14, color: '#A3A1AD', textAlign: 'center', maxWidth: 220 }}>Empresa, estratégia, skills e mercado em um só deck</span>
             </button>
+            </div>
           )}
           {!isManager && !projects.length && <p style={{ color: '#A3A1AD', fontSize: 17, maxWidth: 520 }}>Você ainda não está em nenhum projeto. Quando um manager aceitar seu convite, o projeto aparece aqui.</p>}
         </div>
