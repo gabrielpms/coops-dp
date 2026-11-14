@@ -12,15 +12,12 @@ export default async function AdminPage() {
   const u = await currentUser();
   if (!u) redirect('/cadastro');
   const isManager = u.role === 'MANAGER';
-  const rows = isManager ? await db.project.findMany({ where: { ...accessibleWhere(u.id), ownerId: u.id }, include: projectInclude, orderBy: { createdAt: 'asc' } }) : [];
-  const ids = rows.map((r) => r.id);
-  const [leads, cats, projectDraft, userDraft] = await Promise.all([
-    ids.length ? db.leadership.groupBy({ by: ['projectId'], where: { projectId: { in: ids }, deletedAt: null }, _count: true }) : [],
-    ids.length ? db.skillCategory.groupBy({ by: ['projectId'], where: { projectId: { in: ids } }, _count: true }) : [],
+  const [rows, projectDraft, userDraft] = await Promise.all([
+    isManager ? db.project.findMany({ where: { ...accessibleWhere(u.id), ownerId: u.id }, include: { ...projectInclude, _count: { select: { ...projectInclude._count.select, leaderships: { where: { deletedAt: null } }, skillCategories: true } } }, orderBy: { createdAt: 'asc' } }) : [],
     isManager ? readProjectDraft(u.id) : null,
     readDraft<any>(u.id, 'udata', u.id),
   ]);
-  const projects = rows.map((r) => ({ ...serializeProject(r), leaderships: leads.find((l) => l.projectId === r.id)?._count ?? 0, categories: cats.find((c) => c.projectId === r.id)?._count ?? 0 }));
+  const projects = rows.map((r) => ({ ...serializeProject(r), leaderships: r._count.leaderships, categories: r._count.skillCategories }));
   return (
     <AdminClient
       user={{ id: u.id, name: u.name, email: u.email, title: u.title ?? '', phone: u.phone ?? '', avatar: u.avatar as any, role: u.role }}
