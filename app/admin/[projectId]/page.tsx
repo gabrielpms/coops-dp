@@ -1,7 +1,7 @@
 import { notFound, redirect } from 'next/navigation';
 import { currentUser } from '@/lib/session';
 import { db } from '@/lib/db';
-import { readDraft } from '@/lib/drafts';
+import { readDrafts } from '@/lib/drafts';
 import { AdminProjectClient } from './AdminProjectClient';
 
 export const dynamic = 'force-dynamic';
@@ -11,17 +11,19 @@ export default async function AdminProjectPage({ params }: { params: Promise<{ p
   const u = await currentUser();
   if (!u) redirect('/cadastro');
   if (u.role !== 'MANAGER') redirect('/admin');
-  const project = await db.project.findFirst({
+  // Tudo em paralelo: só o acesso ao projeto decide se os demais dados são usados.
+  const projectQuery = db.project.findFirst({
     where: { id: projectId, deletedAt: null, OR: [{ ownerId: u.id }, { persons: { some: { userId: u.id, deletedAt: null } } }] },
     include: { indicators: { orderBy: { position: 'asc' } }, competitors: { orderBy: { position: 'asc' } }, skillCategories: { orderBy: { name: 'asc' }, include: { skills: { orderBy: { position: 'asc' } } } }, skills: { orderBy: { position: 'asc' } } },
   });
-  if (!project) notFound();
-  const [leaderships, squads, persons, drafts] = await Promise.all([
+  const [project, leaderships, squads, persons, drafts] = await Promise.all([
+    projectQuery,
     db.leadership.findMany({ where: { projectId, deletedAt: null }, orderBy: { createdAt: 'asc' }, include: { person: true, members: true, squads: true } }),
     db.squad.findMany({ where: { projectId, deletedAt: null }, orderBy: { createdAt: 'asc' }, include: { members: true, leaderships: { include: { leadership: { include: { person: true } } } } } }),
     db.person.findMany({ where: { projectId, deletedAt: null }, orderBy: { createdAt: 'asc' }, include: { squads: { include: { squad: true } }, reportsTo: { include: { leadership: { include: { person: true } } } }, leads: true } }),
-    Promise.all([readDraft<any>(u.id, 'leadership', projectId), readDraft<any>(u.id, 'category', projectId), readDraft<any>(u.id, 'pdata', projectId), readDraft<any>(u.id, 'udata', u.id)]),
+    readDrafts(u.id, [{ scope: 'leadership', entityId: projectId }, { scope: 'category', entityId: projectId }, { scope: 'pdata', entityId: projectId }, { scope: 'udata', entityId: u.id }]),
   ]);
+  if (!project) notFound();
   const active = (l: { leadership: { deletedAt: Date | null } }) => !l.leadership.deletedAt;
   return (
     <AdminProjectClient
