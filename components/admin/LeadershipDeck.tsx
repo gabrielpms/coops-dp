@@ -9,10 +9,10 @@ import { AvatarEditor, DEFAULT_AVATAR_CFG } from '../avatar/AvatarEditor';
 import { cardInput, chipStyle, label } from '../ds/tokens';
 import { EMAIL_RE, LEADER_TITLES } from '@/lib/validation';
 
-export type LeadershipForm = { name: string; title: string; email: string; avatar: AvatarConfig; squadIds: string[]; memberIds: string[] };
+export type LeadershipForm = { name: string; title: string; email: string; avatar: AvatarConfig; squadIds: string[]; memberIds: string[]; self?: boolean };
 export type LeadershipDraft = Draft<LeadershipForm>;
 export type LeadSquad = { id: string; name: string; color: string; personIds: string[]; leader: string | null };
-export type LeadPerson = { id: string; name: string; title: string; avatar: AvatarConfig | null; squadNames: string[]; leader: string | null; isLeaderPerson: boolean };
+export type LeadPerson = { id: string; name: string; title: string; avatar: AvatarConfig | null; squadNames: string[]; leader: string | null; isLeaderPerson: boolean; isMe?: boolean };
 export type LeadershipView = { id: string; personId: string; name: string; title: string; email: string; avatar: AvatarConfig | null; squadIds: string[]; memberIds: string[]; invited: boolean };
 const LAST = 4;
 
@@ -29,18 +29,27 @@ export function LeadershipDeck({ projectId, editing, squads, people, draft, onDr
   const [serverError, setServerError] = useState<string | null>(null);
   const TAG = editing ? 'ADMINISTRAÇÃO · EDITAR LIDERANÇA' : 'ADMINISTRAÇÃO · NOVA LIDERANÇA';
   // quem pode ser liderado: todos, menos a própria pessoa que lidera
-  const reports = people.filter((p) => p.id !== editing?.personId);
+  const me = people.find((p) => p.isMe);
+  const canBeSelf = !editing && !!me && !me.isLeaderPerson;
+  const self = !!form.self && canBeSelf;
+  const reports = people.filter((p) => p.id !== (editing?.personId ?? (self ? me?.id : undefined)));
+  const toggleSelf = () => {
+    if (!me) return;
+    if (self) { set({ self: false, name: '', title: '', avatar: { ...DEFAULT_AVATAR_CFG, crown: true }, memberIds: form.memberIds }); return; }
+    set({ self: true, name: me.name, title: me.title, avatar: { ...DEFAULT_AVATAR_CFG, ...(me.avatar ?? {}), crown: true }, memberIds: form.memberIds.filter((x) => x !== me.id) });
+    setErrs({});
+  };
 
   const validate = (to: number) => {
     if (to > 0 && !form.name.trim()) return { at: 0, flags: { name: true } };
-    if (to > 0 && !editing && !EMAIL_RE.test(form.email.trim())) return { at: 0, flags: { email: true } };
+    if (to > 0 && !editing && !self && !EMAIL_RE.test(form.email.trim())) return { at: 0, flags: { email: true } };
     return null;
   };
   const call = async (method: 'POST' | 'PATCH' | 'DELETE') => {
     setBusy(true); setServerError(null);
     try {
       const url = editing ? `/api/projects/${projectId}/leaderships/${editing.id}` : `/api/projects/${projectId}/leaderships`;
-      const r = await fetch(url, { method, headers: { 'content-type': 'application/json' }, ...(method === 'DELETE' ? {} : { body: JSON.stringify({ name: form.name.trim(), title: form.title.trim(), ...(editing ? {} : { email: form.email.trim() }), avatar: { ...form.avatar, crown: true }, squadIds: form.squadIds, memberIds: form.memberIds }) }) });
+      const r = await fetch(url, { method, headers: { 'content-type': 'application/json' }, ...(method === 'DELETE' ? {} : { body: JSON.stringify({ name: form.name.trim(), title: form.title.trim(), ...(editing || self ? {} : { email: form.email.trim() }), ...(self ? { self: true } : {}), avatar: { ...form.avatar, crown: true }, squadIds: form.squadIds, memberIds: form.memberIds }) }) });
       const data = await r.json();
       if (!r.ok) { setServerError(data.error ?? 'Não deu para salvar. Tente de novo.'); return; }
       d.done(); onSaved();
@@ -67,15 +76,18 @@ export function LeadershipDeck({ projectId, editing, squads, people, draft, onDr
 
   const cards: DeckCard[] = [
     { id: 'quem', bg: '#F3D36B', node: (<>
-      <Title>Quem vai liderar?</Title><Help>{editing ? 'Dá para ajustar nome, cargo, avatar, squads e pessoas.' : 'A pessoa recebe um convite para entrar como manager deste projeto.'}</Help>
+      <Title>Quem vai liderar?</Title><Help>{editing ? 'Dá para ajustar nome, cargo, avatar, squads e pessoas.' : self ? 'Você usa a sua própria carta do Time. Não precisa de convite.' : 'A pessoa recebe um convite para entrar como manager deste projeto.'}</Help>
+      {canBeSelf && <button type="button" aria-pressed={self} onClick={toggleSelf} style={{ ...chipStyle(self), alignSelf: 'flex-start', minHeight: 44, padding: '0 16px' }}>{self ? '✓ Eu serei a liderança' : 'Eu serei a liderança'}</button>}
       <input type="text" aria-label="Nome da liderança" placeholder="Ex.: Marina Lopes" value={form.name} onChange={(e) => { set({ name: e.target.value }); setErrs((x) => ({ ...x, name: false })); }} style={cardInput} />
       <Err show={errs.name}>Escreva o nome para seguir.</Err>
       <label htmlFor="lw-cargo" style={label()}>CARGO · OPCIONAL</label>
       <input id="lw-cargo" type="text" placeholder="Ex.: Head de Design" value={form.title} onChange={(e) => set({ title: e.target.value })} style={cardInput} />
       <div role="group" aria-label="Sugestões de cargo" style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{LEADER_TITLES.map((t) => <button key={t} type="button" aria-pressed={form.title === t} className="tw-chip" onClick={() => set({ title: t })} style={chipStyle(form.title === t)}>{t}</button>)}</div>
+      {!self && <>
       <label htmlFor="lw-email" style={label()}>E-MAIL PARA O CONVITE</label>
       <input id="lw-email" type="email" placeholder="nome@empresa.com" value={form.email} readOnly={!!editing} onChange={(e) => { set({ email: e.target.value }); setErrs((x) => ({ ...x, email: false })); }} style={{ ...cardInput, ...(editing ? { opacity: 0.6 } : {}) }} />
       <Err show={errs.email}>Coloque um e-mail válido para enviar o convite.</Err>
+      </>}
     </>) },
     { id: 'avatar', bg: '#F5F2EC', node: (<><Title>Monte o avatar</Title><Help>Ele aparece na carta de liderança e no topo da plataforma para essa pessoa.</Help><AvatarEditor value={form.avatar} onChange={(avatar) => set({ avatar: { ...avatar, crown: true } })} /></>) },
     { id: 'squads', bg: '#8FE3C8', optional: true, node: (<>
@@ -100,7 +112,7 @@ export function LeadershipDeck({ projectId, editing, squads, people, draft, onDr
     </>) },
     { id: 'resumo', bg: '#B7A6FF', summary: true, node: (<>
       <Title>Confere a liderança?</Title>
-      <Help>{editing ? 'Squads e pessoas escolhidos saem da liderança anterior.' : `Ao confirmar, o convite vai para ${form.email.trim() || 'o e-mail informado'}. Squads e pessoas escolhidos saem da liderança anterior.`}</Help>
+      <Help>{editing ? 'Squads e pessoas escolhidos saem da liderança anterior.' : self ? 'Squads e pessoas escolhidos saem da liderança anterior.' : `Ao confirmar, o convite vai para ${form.email.trim() || 'o e-mail informado'}. Squads e pessoas escolhidos saem da liderança anterior.`}</Help>
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'flex-start' }}>
         <span style={{ lineHeight: 0, borderRadius: '50%', border: '2px solid #0E0E12' }} aria-hidden="true"><Avatar {...form.avatar} crown size={110} label="" /></span>
         <div style={{ flex: '1 1 220px', display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -114,7 +126,7 @@ export function LeadershipDeck({ projectId, editing, squads, people, draft, onDr
   ];
   return (
     <BottomSheet tag={TAG} title={editing ? 'Editar liderança' : 'Nova liderança'} onClose={onClose}>
-      <QuestionDeck tag={TAG} cards={cards} step={d.step} onGo={go} busy={busy} busyLabel="Salvando…" error={serverError} nextLabel={d.step === LAST ? (editing ? 'Salvar liderança' : 'Adicionar e enviar convite') : 'Próxima'} />
+      <QuestionDeck tag={TAG} cards={cards} step={d.step} onGo={go} busy={busy} busyLabel="Salvando…" error={serverError} nextLabel={d.step === LAST ? (editing || self ? 'Salvar liderança' : 'Adicionar e enviar convite') : 'Próxima'} />
     </BottomSheet>
   );
 }

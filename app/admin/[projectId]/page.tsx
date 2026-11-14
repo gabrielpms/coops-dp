@@ -33,7 +33,7 @@ export default async function AdminProjectPage({ params }: { params: Promise<{ p
       looseSkills={project.skills.filter((s) => !s.categoryId).map((s) => s.name)}
       leaderships={leaderships.map((l) => ({ id: l.id, personId: l.personId, name: l.person.name, title: l.person.title ?? '', email: l.person.email ?? '', avatar: l.person.avatar as any, squadIds: l.squads.map((s) => s.squadId), memberIds: l.members.map((m) => m.personId), invited: !l.person.userId }))}
       squads={squads.map((s) => ({ id: s.id, name: s.name, color: s.color, personIds: s.members.map((m) => m.personId), leader: s.leaderships.filter(active)[0]?.leadership.person.name ?? null }))}
-      people={persons.map((p) => ({ id: p.id, name: p.name, title: p.title ?? '', avatar: p.avatar as any, squadNames: p.squads.filter((m) => !m.squad.deletedAt).map((m) => m.squad.name), leader: p.reportsTo.filter(active)[0]?.leadership.person.name ?? null, isLeaderPerson: !!p.leads }))}
+      people={persons.map((p) => ({ id: p.id, name: p.name, title: p.title ?? '', avatar: p.avatar as any, squadNames: p.squads.filter((m) => !m.squad.deletedAt).map((m) => m.squad.name), leader: p.reportsTo.filter(active)[0]?.leadership.person.name ?? null, isLeaderPerson: !!p.leads && !p.leads.deletedAt, isMe: p.userId === u.id }))}
       drafts={{ leadership: drafts[0], category: drafts[1], pdata: drafts[2], udata: drafts[3] }}
     />
   );
