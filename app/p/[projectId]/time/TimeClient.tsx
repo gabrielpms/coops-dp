@@ -37,8 +37,8 @@ export function TimeClient({ user, project, persons, squads, memberDraft: md0, s
   const btnPrimary = { fontFamily: 'inherit', fontWeight: 600, fontSize: 14, color: '#0E0E12', background: '#B7A6FF', border: 0, borderRadius: 14, minHeight: 48, padding: '0 18px', cursor: 'pointer' } as const;
 
   const emptyPanel = (key: string, tag: string, title: string, text: string, cta: string, onClick: () => void, visual: React.ReactNode) => (
-    <div key={key} style={{ flex: '1 1 420px', borderRadius: 30, background: '#17171D', border: '1px solid #2C2C36', padding: 32, display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'center' }}>
-      <div aria-hidden="true" style={{ flex: '0 0 auto' }}>{visual}</div>
+    <div key={key} className="ep" style={{ flex: '1 1 420px', borderRadius: 30, background: '#17171D', border: '1px solid #2C2C36', padding: 32, display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'center' }}>
+      <div aria-hidden="true" className="ep-visual" style={{ flex: '0 0 auto' }}>{visual}</div>
       <div style={{ flex: '1 1 220px', display: 'flex', flexDirection: 'column', gap: 10 }}>
         <span style={{ ...label(11, '0.06em'), color: '#B7A6FF' }}>{tag}</span>
         <h2 style={{ margin: 0, fontSize: 26, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }}>{title}</h2>
@@ -47,7 +47,7 @@ export function TimeClient({ user, project, persons, squads, memberDraft: md0, s
       </div>
     </div>
   );
-  const dashedCard = (children: React.ReactNode, dash = '#4A4858') => <div style={{ position: 'relative', width: 130, height: 180, borderRadius: 20, border: `2px dashed ${dash}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{children}</div>;
+  const dashedCard = (children: React.ReactNode, dash = '#4A4858') => <div className="ep-dash" style={{ position: 'relative', width: 130, height: 180, borderRadius: 20, border: `2px dashed ${dash}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{children}</div>;
 
   return (
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
@@ -69,9 +69,9 @@ export function TimeClient({ user, project, persons, squads, memberDraft: md0, s
           <section aria-label="Primeiros passos do time" style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
             {!hasOthers && emptyPanel('p', 'GESTÃO DE TIME · SEM CONVIDADOS', 'Seu time ainda não tem cartas', 'Adicione pessoas, monte o avatar delas e envie o convite por e-mail. Cada pessoa ganha os próprios decks.', '+ Convidar primeira pessoa', () => setDeck('member'),
               <div style={{ position: 'relative', width: 170, height: 210 }}>
-                <div style={{ position: 'absolute', left: 30, top: 0, width: 130, height: 180, borderRadius: 20, border: '2px dashed #4A4858', transform: 'rotate(8deg)' }} />
-                <div style={{ position: 'absolute', left: 14, top: 10, width: 130, height: 180, borderRadius: 20, border: '2px dashed #6E6C7A', transform: 'rotate(3deg)' }} />
-                <div style={{ position: 'absolute', left: 0, top: 24, width: 130, height: 180, borderRadius: 20, background: '#0E0E12', border: '2px dashed #B7A6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Avatar skin="#FFFFFF" hairStyle="careca" bg="#2C2C36" size={84} label="Avatar vazio" /></div>
+                <div style={{ position: 'absolute', left: 30, top: 0, width: 130, height: 180, borderRadius: 20, border: '2px dashed #4A4858', transform: 'rotate(8deg)' }} className="ep-c3" />
+                <div style={{ position: 'absolute', left: 14, top: 10, width: 130, height: 180, borderRadius: 20, border: '2px dashed #6E6C7A', transform: 'rotate(3deg)' }} className="ep-c2" />
+                <div className="ep-c1" style={{ position: 'absolute', left: 0, top: 24, width: 130, height: 180, borderRadius: 20, background: '#0E0E12', border: '2px dashed #B7A6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span className="ep-av" style={{ lineHeight: 0 }}><Avatar skin="#FFFFFF" hairStyle="careca" bg="#2C2C36" size={84} label="Avatar vazio" /></span></div>
               </div>)}
             {noSquads && emptyPanel('s', 'SQUADS · NENHUM', 'Nenhum squad ainda', 'Squads reúnem quem trabalha junto na mesma frente. Crie o primeiro, escolha uma cor e coloque as pessoas nele.', '+ Criar primeiro squad', () => setDeck('squad'),
               dashedCard(<svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#B7A6FF" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="3 3"><circle cx="22" cy="20" r="7" /><circle cx="44" cy="22" r="6" /><path d="M8 50c1-10 7-15 14-15s13 5 14 15M34 50c1-8 5-12 10-12s9 4 10 12" /></svg>, '#B7A6FF'))}

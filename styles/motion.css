@@ -154,3 +154,21 @@
 .coops-card:hover .di-ev,.coops-card:focus-visible .di-ev{animation:diBob 1.2s ease-in-out infinite}
 @keyframes diBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 @media (prefers-reduced-motion:reduce){.di-star,.di-pg,.di-rk,.di-fl,.di-ev{animation:none!important}}
+
+/* Coops · estados vazios do time: reagem ao hover do painel */
+.ep{transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .25s ease,box-shadow .35s ease}
+.ep:hover{transform:translateY(-4px);border-color:#B7A6FF!important;box-shadow:0 18px 40px rgba(0,0,0,.4)}
+.ep-c1,.ep-c2,.ep-c3,.ep-dash{transition:transform .5s cubic-bezier(.34,1.3,.64,1),border-color .25s ease}
+.ep:hover .ep-c1{transform:translateY(-8px) rotate(-2deg)}
+.ep:hover .ep-c2{transform:translateX(10px) rotate(8deg)}
+.ep:hover .ep-c3{transform:translateX(22px) rotate(14deg)}
+.ep:hover .ep-c1{border-style:solid}
+.ep-av{display:block;transform-origin:50% 90%}
+.ep:hover .ep-av{animation:coopsWave .7s cubic-bezier(.34,1.4,.64,1) 1}
+.ep:hover .ep-dash{transform:translateY(-8px) rotate(-3deg);border-style:solid!important}
+.ep-dash svg{overflow:visible}.ep-dash svg *{transform-box:fill-box;transform-origin:50% 50%}
+.ep:hover .ep-dash svg circle{animation:epBob 1.1s ease-in-out infinite}
+.ep:hover .ep-dash svg circle:nth-of-type(2){animation-delay:.18s}
+.ep:hover .ep-dash svg path{animation:epBob 1.1s ease-in-out .09s infinite}
+@keyframes epBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@media (prefers-reduced-motion:reduce){.ep,.ep *{transition:none!important;animation:none!important}}
