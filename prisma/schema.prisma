@@ -207,17 +207,53 @@ model SquadMembership {
 }
 
 model Initiative {
-  id         String           @id @default(uuid())
-  projectId  String
-  project    Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  product    String
-  problem    String?
-  need       String?
-  status     InitiativeStatus @default(ABERTA)
-  moment     Int?
-  deliveries Delivery[]
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @updatedAt
+  id            String           @id @default(uuid())
+  projectId     String
+  project       Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  product       String
+  problem       String?
+  need          String?
+  status        InitiativeStatus @default(ABERTA)
+  moment        Int?
+  deducedNeed   String? // necessidade deduzida pelo agente (PRECISA CONFIRMAR)
+  tableOpenedAt DateTime? // quando o manager abriu a mesa (todas as dúvidas resolvidas)
+  deliveries    Delivery[]
+  doubts        AgentDoubt[]
+  contextCards  ContextCard[]
+  attachments   Attachment[]
+  plays         ToolPlay[]
+  momentReason  String?
+  closeOutcome  String? // como terminou (M8.3)
+  closeNote     String?
+  closedAt      DateTime?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+// ---------- Agente confere o entendimento (M8.2) ----------
+model AgentDoubt {
+  id           String         @id @default(uuid())
+  initiativeId String
+  initiative   Initiative     @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  position     Int
+  question     String
+  resolved     Boolean        @default(false)
+  summary      String? // "Entendi assim…" confirmado; vira a carta de contexto
+  messages     AgentMessage[]
+  createdAt    DateTime       @default(now())
+
+  @@index([initiativeId])
+}
+
+model AgentMessage {
+  id        String     @id @default(uuid())
+  doubtId   String
+  doubt     AgentDoubt @relation(fields: [doubtId], references: [id], onDelete: Cascade)
+  role      String // USER | AGENT
+  text      String
+  createdAt DateTime   @default(now())
+
+  @@index([doubtId])
 }
 
 // ---------- Rascunhos de deck de perguntas (PRD 6.2) ----------
@@ -481,4 +517,66 @@ model EventComment {
   createdAt  DateTime    @default(now())
 
   @@index([eventId])
+}
+
+// ---------- Mesa da iniciativa (M8.3) ----------
+model ContextCard {
+  id           String     @id @default(uuid())
+  initiativeId String
+  initiative   Initiative @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  kind         String // IMPACTO | OBJETIVO | USUARIOS | METRICAS | SABEMOS | REGRAS | REFERENCIAS | TENTATIVAS | FLUXO
+  text         String     @default("")
+  links        String[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([initiativeId, kind])
+}
+
+// ---------- Anexos da mesa (M8.3) ----------
+model Attachment {
+  id           String     @id @default(uuid())
+  initiativeId String
+  initiative   Initiative @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  kind         String // carta de contexto a que pertence (ContextCard.kind)
+  name         String
+  mime         String
+  size         Int
+  key          String     @unique // caminho do objeto no bucket
+  uploaded     Boolean    @default(false) // vira true quando o navegador confirma o envio
+  uploadedById String
+  createdAt    DateTime   @default(now())
+
+  @@index([initiativeId, kind])
+}
+
+// ---------- Deck de ferramentas e deck de resposta (M8.4) ----------
+model ToolPlay {
+  id           String         @id @default(uuid())
+  initiativeId String
+  initiative   Initiative     @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  toolId       String
+  cards        ResponseCard[]
+  createdAt    DateTime       @default(now())
+
+  @@unique([initiativeId, toolId])
+}
+
+model ResponseCard {
+  id          String   @id @default(uuid())
+  playId      String
+  play        ToolPlay @relation(fields: [playId], references: [id], onDelete: Cascade)
+  position    Int
+  title       String
+  tag         String // SEGURA | MÉDIA | OUSADA
+  description String
+  impact      String
+  effort      String
+  metric      String
+  nextStep    String
+  decision    String? // KEPT | DISCARDED (nulo = pendente)
+  note        String?
+  updatedAt   DateTime @updatedAt
+
+  @@index([playId])
 }

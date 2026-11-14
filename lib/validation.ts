@@ -115,7 +115,7 @@ export const DELIVERY_STATUS = ['ENTREGUE', 'EM_ANDAMENTO', 'PAUSADA'] as const;
 export const STUDY_TYPES = ['CURSO', 'LIVRO', 'VIDEO', 'ARTIGO', 'PODCAST', 'LINK'] as const;
 export const POWERUP_TYPES = ['MENTORIA', 'CURSO', 'PROJETO'] as const;
 const day = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Data inválida');
-const urlText = text(500).refine((v) => { try { new URL(/^https?:\/\//i.test(v) ? v : `https://${v}`); return /\./.test(v); } catch { return false; } }, 'Esse link não parece válido. Confere e tenta de novo.');
+export const urlText = text(500).refine((v) => { try { new URL(/^https?:\/\//i.test(v) ? v : `https://${v}`); return /\./.test(v); } catch { return false; } }, 'Esse link não parece válido. Confere e tenta de novo.');
 export const deliverySchema = z.object({
   title: text(160).min(1, 'Dê um título à entrega para seguir.'),
   description: text(1000).optional().default(''),
@@ -199,3 +199,33 @@ export const eventSchema = z.discriminatedUnion('type', [
 export type EventInput = z.infer<typeof eventSchema>;
 export const eventCommentSchema = z.object({ text: text(1000).min(1, 'Escreva o comentário para publicar.') });
 export const EVENT_TYPE_LABEL = { CHECKIN: 'Check-in', FEEDBACK: 'Feedback', ENTREGA: 'Entrega', PROMOCAO: 'Promoção', MERITO: 'Mérito', MUDANCA_TIME: 'Mudança de time' } as const;
+
+// ---------- Iniciativas (M8.1) ----------
+export const initiativeSchema = z.object({
+  product: text(160).min(1, 'Diga qual é o produto da iniciativa para seguir.'),
+  problem: text(1000).optional().default(''),
+  need: text(1000).optional().default(''),
+});
+export type InitiativeInput = z.infer<typeof initiativeSchema>;
+
+// ---------- Mesa da iniciativa (M8.3) ----------
+export const CONTEXT_KINDS = ['IMPACTO', 'OBJETIVO', 'USUARIOS', 'METRICAS', 'SABEMOS', 'REGRAS', 'REFERENCIAS', 'TENTATIVAS', 'FLUXO'] as const;
+export const CONTEXT_META: Record<(typeof CONTEXT_KINDS)[number], { title: string; hint: string; bg: string }> = {
+  IMPACTO: { title: 'Impacto para o negócio', hint: 'O que muda para o negócio se der certo.', bg: '#F3D36B' },
+  OBJETIVO: { title: 'Objetivo e expectativa', hint: 'Onde queremos chegar e o que se espera.', bg: '#B7A6FF' },
+  USUARIOS: { title: 'Usuários', hint: 'Quem usa e em que situação.', bg: '#A9D8F5' },
+  METRICAS: { title: 'Métricas', hint: 'Os números que mostram se funcionou.', bg: '#9BE3C3' },
+  SABEMOS: { title: 'O que sabemos dos usuários', hint: 'Pesquisas, dados e relatos que já temos.', bg: '#F5A9D6' },
+  REGRAS: { title: 'Regras de negócio', hint: 'Restrições legais, técnicas e de operação.', bg: '#F5F2EC' },
+  REFERENCIAS: { title: 'Referências visuais', hint: 'Concorrentes e inspirações.', bg: '#F5A9D6' },
+  TENTATIVAS: { title: 'Tentativas anteriores', hint: 'O que já foi tentado e o que aprendemos.', bg: '#F3D36B' },
+  FLUXO: { title: 'Fluxo ou protótipo', hint: 'O fluxo atual ou um protótipo existente.', bg: '#A9D8F5' },
+};
+export const contextCardSchema = z.object({ text: text(2000).optional().default(''), links: z.array(urlText).max(10).default([]) })
+  .refine((v) => v.text || v.links.length, 'Escreva algo ou adicione um link.');
+export const closeSchema = z.object({ outcome: z.enum(['ENTREGUE', 'PARCIAL', 'CANCELADA']), note: text(1000).optional().default('') });
+
+// ---------- Anexos (M8.3) ----------
+export const attachmentRequestSchema = z.object({
+  kind: z.enum(CONTEXT_KINDS), name: text(200).min(1), mime: text(120).min(1), size: z.number().int().positive(),
+});
