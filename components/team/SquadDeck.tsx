@@ -7,7 +7,7 @@ import { Avatar, type AvatarConfig } from '../avatar/Avatar';
 import { cardInput, label } from '../ds/tokens';
 import { SQUAD_COLORS } from '@/lib/validation';
 
-export type SquadForm = { name: string; color: string; members: { personId: string; crown: boolean }[] };
+export type SquadForm = { name: string; description?: string; color: string; members: { personId: string; crown: boolean }[] };
 export type SquadDraft = Draft<SquadForm>;
 export type PersonOption = { id: string; name: string; title: string; avatar: AvatarConfig | null };
 const empty = (): SquadForm => ({ name: '', color: SQUAD_COLORS[0], members: [] });
@@ -31,7 +31,7 @@ export function SquadDeck({ projectId, persons, draft, onDraftChange, onClose, o
   const submit = async () => {
     setBusy(true); setServerError(null);
     try {
-      const r = await fetch(`/api/projects/${projectId}/squads`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name: form.name.trim(), color: form.color, members }) });
+      const r = await fetch(`/api/projects/${projectId}/squads`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name: form.name.trim(), description: (form.description ?? '').trim(), color: form.color, members }) });
       const data = await r.json();
       if (!r.ok) { setServerError(data.error ?? 'Não deu para salvar. Tente de novo.'); return; }
       d.done(); onSaved();
@@ -52,6 +52,8 @@ export function SquadDeck({ projectId, persons, draft, onDraftChange, onClose, o
     { id: 'nome', bg: '#F5A9D6', node: (<>
       <Title>Como o squad se chama?</Title><Help>O nome vira filtro e aparece na mesa do squad.</Help>
       <input type="text" aria-label="Nome do squad" placeholder="Ex.: Onboarding" value={form.name} onChange={(e) => { set({ name: e.target.value }); setErrName(false); }} style={cardInput} />
+      <label htmlFor="sq-desc" style={label()}>DESCRIÇÃO · OPCIONAL</label>
+      <textarea id="sq-desc" rows={3} maxLength={300} placeholder="Ex.: Cuida da jornada de entrada de novos clientes, do cadastro à primeira conta ativa." value={form.description ?? ''} onChange={(e) => set({ description: e.target.value })} style={{ ...cardInput, resize: 'none', fontFamily: 'inherit', lineHeight: 1.4 }} />
       {errName && <span role="alert" style={{ fontSize: 14, fontWeight: 600 }}>Escreva o nome do squad para seguir.</span>}
     </>) },
     { id: 'cor', bg: '#F3D36B', optional: true, node: (<>
@@ -79,10 +81,23 @@ export function SquadDeck({ projectId, persons, draft, onDraftChange, onClose, o
     </>) },
     { id: 'resumo', bg: '#B7A6FF', summary: true, node: (<>
       <Title>Confere o squad?</Title><Help>{members.length ? `${members.length} ${members.length === 1 ? 'pessoa' : 'pessoas'} no squad.` : 'Dá para incluir pessoas depois.'}</Help>
-      <div aria-hidden="true" style={{ alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: 12, borderRadius: 18, background: '#F5F2EC', border: '2px solid #0E0E12', padding: '14px 18px' }}>
-        <span style={{ width: 16, height: 16, borderRadius: '50%', background: form.color, border: '2px solid #0E0E12' }} />
-        <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em' }}>{form.name || 'Nome do squad'}</span>
+      <div style={{ alignSelf: 'flex-start', maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: 6, borderRadius: 18, background: '#F5F2EC', border: '2px solid #0E0E12', padding: '14px 18px' }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span aria-hidden="true" style={{ flex: 'none', width: 16, height: 16, borderRadius: '50%', background: form.color, border: '2px solid #0E0E12' }} />
+          <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em' }}>{form.name || 'Nome do squad'}</span>
+        </span>
+        {form.description?.trim() && <span style={{ fontSize: 14, lineHeight: 1.4 }}>{form.description.trim()}</span>}
       </div>
+      {members.length > 0 && <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <span style={label()}>PESSOAS NO SQUAD</span>
+        <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {members.map((m) => { const p = persons.find((x) => x.id === m.personId)!; return (
+            <li key={m.personId} style={{ display: 'flex', alignItems: 'center', gap: 8, borderRadius: 999, background: '#F5F2EC', border: '1.5px solid #0E0E12', padding: '4px 12px 4px 4px' }}>
+              <span style={{ lineHeight: 0, borderRadius: '50%', border: '2px solid #0E0E12', flex: 'none' }}><Avatar {...(p.avatar ?? {})} crown={m.crown} size={40} label="" /></span>
+              <span style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}><span style={{ fontSize: 14, fontWeight: 700 }}>{p.name}</span>{(m.crown || p.title) && <span style={{ fontSize: 11 }}>{[m.crown ? 'Referência' : '', p.title].filter(Boolean).join(' · ')}</span>}</span>
+            </li>); })}
+        </ul>
+      </div>}
     </>) },
   ];
   return (

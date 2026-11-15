@@ -10,7 +10,7 @@ import { plural } from '@/lib/format';
 const ORDER: SquadDeckId[] = ['DESAFIO', 'FRENTE', 'ESTRATEGIA', 'INDICADOR', 'ALAVANCA'];
 
 export function SquadHomeClient({ user, projectId, squad, isManager, people, counts }: {
-  user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; projectId: string; squad: { id: string; name: string; color: string }; isManager: boolean;
+  user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; projectId: string; squad: { id: string; name: string; color: string; description?: string }; isManager: boolean;
   people: { id: string; name: string; title: string; avatar: AvatarConfig | null; crown: boolean }[]; counts: Record<SquadDeckId, number>;
 }) {
   const base = `/p/${projectId}/squads/${squad.id}`;
@@ -24,6 +24,7 @@ export function SquadHomeClient({ user, projectId, squad, isManager, people, cou
             <CoopsLink href={isManager ? `/p/${projectId}/time` : '/hub'} style={{ fontSize: 14, minHeight: 44, display: 'inline-flex', alignItems: 'center', alignSelf: 'flex-start' }}>{isManager ? '← Time' : '← Hub de projetos'}</CoopsLink>
             <span style={{ ...label(12, '0.1em'), color: '#B7A6FF' }}>MESA DO TIME</span>
             <h1 style={{ margin: 0, fontSize: 'clamp(36px, 6vw, 52px)', fontWeight: 800, letterSpacing: '-0.035em', lineHeight: 1, display: 'flex', alignItems: 'center', gap: 12 }}><span aria-hidden="true" style={{ width: 18, height: 18, borderRadius: '50%', background: squad.color, border: '2px solid #0E0E12', flex: 'none' }} />{squad.name}</h1>
+            {squad.description && <p style={{ margin: 0, fontSize: 17, lineHeight: 1.45 }}>{squad.description}</p>}
             <p style={{ margin: 0, color: '#A3A1AD', fontSize: 16 }}>{people.length} {plural(people.length, 'pessoa', 'pessoas')} · {isManager ? 'você edita os decks do squad' : 'você vê como time; só o manager edita'}</p>
           </div>
           <div aria-label="Pessoas do squad" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-end', maxWidth: 420 }}>

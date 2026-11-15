@@ -74,6 +74,7 @@ export const memberSchema = z.object({
 export type MemberInput = z.infer<typeof memberSchema>;
 export const squadSchema = z.object({
   name: text(80).min(1, 'Escreva o nome do squad'),
+  description: text(300).optional().default(''),
   color: hex.default('#B7A6FF'),
   members: z.array(z.object({ personId: z.string().uuid(), crown: z.boolean().default(false) })).max(100).default([]),
 });
