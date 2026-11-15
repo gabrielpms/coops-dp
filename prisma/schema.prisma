@@ -160,6 +160,7 @@ model Squad {
   project     Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
   name        String
   color       String            @default("#B7A6FF")
+  description String?
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
   deletedAt   DateTime?
