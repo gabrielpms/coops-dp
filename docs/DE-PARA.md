@@ -16,22 +16,22 @@ Legenda: ✅ alinhado · 🟡 parcial (lacunas listadas) · ⚪ não comparado e
 | 03 Hub de projetos | `app/hub` | 🟡 | Só mensagens de validação do deck "novo projeto" divergem. |
 | 04 Novo projeto | `components/wizard/ProjectDeck.tsx` | 🟡 | Mensagens de erro por carta divergem. |
 | 05 Time (manager) | `app/p/[projectId]/time`, `components/team` | 🟡 | Mensagens de validação do convite/squad; estados vazios já existem (`ep-c1..3`). |
-| 06 Membro (manager) | `pessoas/[personId]/ProfileClient.tsx` | 🟡 | Pilhas e estados vazios alinhados; faltam linhas de resumo por deck (ex.: "4 cartas · +0,5 vs Q3", "Check-in da semana 6 esperando você") e o botão "Ver como IC". |
-| 07 Meu perfil (IC) | idem | 🟡 | Mesmas lacunas de resumo; "Autoavaliação do Q4 aberta" como alerta. |
+| 06 Membro (manager) | `pessoas/[personId]/ProfileClient.tsx` | ✅ | Pilhas, resumos por deck (saúde com delta e dimensão baixa, eventos por tipo, jornada atingidos/focos) e estados vazios. O botão "Ver como IC" do protótipo é só alternância de demonstração e não foi portado. |
+| 07 Meu perfil (IC) | idem | ✅ | Idem; "Autoavaliação do Qx aberta" no deck de Skills. |
 | 08 Iniciativas | `iniciativas/*`, `components/initiative` | 🟡 | Deck de perguntas existe; estado vazio agora segue o Coops16. |
 | 09 Agente confirma | `lib/agentStub.ts` | ⚪ | O agente é um stub; o protótipo tem animações `ag-*` já carregadas no CSS, sem tela equivalente. |
 | 10 Mesa / 10b Análise | `iniciativas/[id]/mesa` | ⚪ | Animações `an-*`, `ic-*` carregadas no CSS; tela não comparada. |
 | 11 Momento + ferramentas | `iniciativas/[id]/momento` | ⚪ | Animações `s11-*` carregadas no CSS; tela não comparada. |
-| 12 Deck · Eventos | `pessoas/[personId]/eventos`, `components/person/EventDeck.tsx` | 🟡 | Feito: banner animado, pilha de cartas com ícone por tipo, palco de celebração, carta em foco. Faltam: pilha com várias cartas ("Cartas nesta pilha"), "Registrado por", "Quem pode editar", comentários recolhíveis (`ev-com-*`), área de arrastar anexos (`fb-drop`), micro-animações nas perguntas do deck. |
+| 12 Deck · Eventos | `pessoas/[personId]/eventos`, `components/person/EventDeck.tsx` | 🟡 | Feito: banner animado, pilha com ícone por tipo, palco de celebração, carta em foco, "Registrado por", "Quem pode editar" e comentários recolhíveis. Faltam: pilha com várias cartas empilhadas, anexos por arrastar arquivo (o app só guarda links; exigiria storage) e micro-animações nas perguntas do deck. |
 | 13 Autoavaliação de skills | `pessoas/[personId]/skills` | 🟡 | Feito: cartas, painel de média, carta em foco com rubrica e evidências. Faltam: descrição da skill, comentário do manager e "Enviar autoavaliação" (sem campos no banco). |
 | 14 Deck · Brain gym | `pessoas/[personId]/brain-gym`, `components/person/StudyDecks.tsx` | 🟡 | Feito: ícone animado por tipo, blocos de progresso, carta em foco. Falta: textos de resumo do deck "novo conteúdo". |
 | 15 Deck · Jornada | `pessoas/[personId]/jornada`, `components/person/JourneyDeck.tsx` | 🟡 | Feito: ícones animados, pips numerados, carta em foco. Falta: "Ligado a quais objetivos?" nos focos e blocos de leitura do manager. |
 | 16 Estados vazios | `components/person/EmptyDeckCard.tsx`, `ProfileClient.tsx`, `IniciativasClient.tsx` | ✅ | Decks vazios (eventos, skills, brain gym, jornada) para manager e IC; iniciativas vazias. Time vazio já existia. |
-| 17 Card do time (squad) | `squads/[squadId]` | ⚪ | Resumos por deck variam por dados reais. |
-| 18a–e Decks do squad | `squads/[squadId]/[deck]`, `components/squad` | ⚪ | Os cinco protótipos compartilham o mesmo componente (~300 textos, em sua maioria dados de exemplo). Não comparados em detalhe. |
-| 18f Saúde do time | `squads/[squadId]/[deck]/SaudeTimeClient.tsx` | ⚪ | Não revisada após o ajuste da Saúde individual. |
+| 17 Card do time (squad) | `squads/[squadId]` | ✅ | Vitrine animada (`h17-*`), pilhas de decks com ícones animados e Saúde do time. |
+| 18a–e Decks do squad | `squads/[squadId]/[deck]`, `components/squad` | 🟡 | Banner `dkban`, abas de navegação entre decks e contagens portados. Cartas e carta em foco seguem a implementação anterior (comparar campo a campo). |
+| 18f Saúde do time | `squads/[squadId]/[deck]/SaudeTimeClient.tsx` | ✅ | Cartas com média e variação, painel por ciclo, dica do agente; agregado só com 3+ respostas. |
 | 19 / 19b Saúde (IC / manager) | `pessoas/[personId]/saude` | ✅ | Reescrita no padrão do protótipo; rascunho e envio persistem no banco. |
-| 20 / 20b Entregas | `pessoas/[personId]/entregas`, `components/person/DeliveryDeck.tsx` | 🟡 | Feito: ícone animado, impacto pendente, carta em foco, link "Abrir mesa da iniciativa". Falta: fluxo "importar da mesa" (`imp-*`). |
+| 20 / 20b Entregas | `pessoas/[personId]/entregas`, `components/person/DeliveryDeck.tsx` | ✅ | Ícone animado, impacto pendente/editável (`imp-cta`), carta em foco e link "Abrir mesa da iniciativa". (Correção: `imp-*` é o fluxo de impacto, não "importar da mesa".) |
 | 21 / 21b Administração | `app/admin`, `components/admin` | ⚪ | Cobertura de textos ~70–80% (restante é dados de exemplo). |
 
 ## Design system
@@ -56,8 +56,7 @@ Legenda: ✅ alinhado · 🟡 parcial (lacunas listadas) · ⚪ não comparado e
 
 ## Próximos passos sugeridos
 
-1. Resumos por deck no perfil (06/07) e botão "Ver como IC".
-2. Eventos: pilha com várias cartas, "Registrado por", "Quem pode editar", comentários recolhíveis, anexos por arrastar.
-3. Entregas: fluxo "importar da mesa".
-4. Squad (17, 18a–f): comparar com o mesmo método.
-5. Mesa, Momento e Agente (09–11): portar o markup para usar as animações já carregadas.
+1. Cartas e carta em foco dos decks do squad (18a–e): comparar campo a campo.
+2. Mesa, Momento e Agente (09–11): portar o markup para usar as animações já carregadas.
+3. Eventos: pilha com várias cartas e micro-animações nas perguntas.
+4. Administração (21/21b), Primeiro acesso (02b) e `/ds`: comparar com o mesmo método.
