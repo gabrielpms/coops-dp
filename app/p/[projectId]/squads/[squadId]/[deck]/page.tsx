@@ -31,14 +31,15 @@ export default async function SquadDeckPage({ params }: { params: Promise<{ proj
   }
   const deck = SLUG_TO_DECK[slug];
   if (!deck) notFound();
-  const [cards, members, challenges, draft] = await Promise.all([
+  const [cards, members, challenges, draft, openByDeck] = await Promise.all([
     db.squadCard.findMany({ where: { squadId, deck, deletedAt: null }, orderBy: { createdAt: 'asc' } }),
     db.squadMembership.findMany({ where: { squadId }, include: { person: { select: { id: true, name: true, avatar: true, deletedAt: true } } } }),
     db.squadCard.findMany({ where: { squadId, deck: 'DESAFIO', deletedAt: null, status: 'ABERTA' }, select: { id: true, title: true } }),
     isManager ? readDraft<any>(user.id, `squad:${deck}`, squadId) : null,
+    db.squadCard.groupBy({ by: ['deck'], where: { squadId, deletedAt: null, status: 'ABERTA' }, _count: true }),
   ]);
   return (
-    <SquadDeckClient {...header} deck={deck} isManager={isManager} draft={draft}
+    <SquadDeckClient {...header} deck={deck} deckCounts={Object.fromEntries(openByDeck.map((g) => [g.deck, g._count]))} isManager={isManager} draft={draft}
       people={members.filter((m) => !m.person.deletedAt).map((m) => ({ id: m.person.id, name: m.person.name, avatar: (m.person.avatar as any) ?? null }))}
       challenges={challenges}
       cards={cards.map((c) => ({ id: c.id, deck: c.deck, title: c.title, status: c.status, closedAt: c.closedAt ? c.closedAt.toISOString() : null, level: c.level, championPersonId: c.championPersonId, data: (c.data as any) ?? {} }))} />
