@@ -176,11 +176,138 @@ CREATE TABLE "Initiative" (
     "need" TEXT,
     "status" "InitiativeStatus" NOT NULL DEFAULT 'ABERTA',
     "moment" INTEGER,
+    "deducedNeed" TEXT,
+    "tableOpenedAt" TIMESTAMP(3),
+    "momentReason" TEXT,
+    "closeOutcome" TEXT,
+    "closeNote" TEXT,
+    "closedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Initiative_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateTable
+CREATE TABLE "AgentDoubt" (
+    "id" TEXT NOT NULL,
+    "initiativeId" TEXT NOT NULL,
+    "position" INTEGER NOT NULL,
+    "question" TEXT NOT NULL,
+    "resolved" BOOLEAN NOT NULL DEFAULT false,
+    "summary" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "AgentDoubt_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "AgentMessage" (
+    "id" TEXT NOT NULL,
+    "doubtId" TEXT NOT NULL,
+    "role" TEXT NOT NULL,
+    "text" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "AgentMessage_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE INDEX "AgentDoubt_initiativeId_idx" ON "AgentDoubt"("initiativeId");
+
+-- CreateIndex
+CREATE INDEX "AgentMessage_doubtId_idx" ON "AgentMessage"("doubtId");
+
+-- AddForeignKey
+ALTER TABLE "AgentDoubt" ADD CONSTRAINT "AgentDoubt_initiativeId_fkey" FOREIGN KEY ("initiativeId") REFERENCES "Initiative"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AgentMessage" ADD CONSTRAINT "AgentMessage_doubtId_fkey" FOREIGN KEY ("doubtId") REFERENCES "AgentDoubt"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- CreateTable
+CREATE TABLE "ContextCard" (
+    "id" TEXT NOT NULL,
+    "initiativeId" TEXT NOT NULL,
+    "kind" TEXT NOT NULL,
+    "text" TEXT NOT NULL DEFAULT '',
+    "links" TEXT[],
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ContextCard_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ContextCard_initiativeId_kind_key" ON "ContextCard"("initiativeId", "kind");
+
+-- AddForeignKey
+ALTER TABLE "ContextCard" ADD CONSTRAINT "ContextCard_initiativeId_fkey" FOREIGN KEY ("initiativeId") REFERENCES "Initiative"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- CreateTable
+CREATE TABLE "Attachment" (
+    "id" TEXT NOT NULL,
+    "initiativeId" TEXT NOT NULL,
+    "kind" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "mime" TEXT NOT NULL,
+    "size" INTEGER NOT NULL,
+    "key" TEXT NOT NULL,
+    "uploaded" BOOLEAN NOT NULL DEFAULT false,
+    "uploadedById" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Attachment_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Attachment_key_key" ON "Attachment"("key");
+
+-- CreateIndex
+CREATE INDEX "Attachment_initiativeId_kind_idx" ON "Attachment"("initiativeId", "kind");
+
+-- AddForeignKey
+ALTER TABLE "Attachment" ADD CONSTRAINT "Attachment_initiativeId_fkey" FOREIGN KEY ("initiativeId") REFERENCES "Initiative"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- CreateTable
+CREATE TABLE "ToolPlay" (
+    "id" TEXT NOT NULL,
+    "initiativeId" TEXT NOT NULL,
+    "toolId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "ToolPlay_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ResponseCard" (
+    "id" TEXT NOT NULL,
+    "playId" TEXT NOT NULL,
+    "position" INTEGER NOT NULL,
+    "title" TEXT NOT NULL,
+    "tag" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "impact" TEXT NOT NULL,
+    "effort" TEXT NOT NULL,
+    "metric" TEXT NOT NULL,
+    "nextStep" TEXT NOT NULL,
+    "decision" TEXT,
+    "note" TEXT,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ResponseCard_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ToolPlay_initiativeId_toolId_key" ON "ToolPlay"("initiativeId", "toolId");
+
+-- CreateIndex
+CREATE INDEX "ResponseCard_playId_idx" ON "ResponseCard"("playId");
+
+-- AddForeignKey
+ALTER TABLE "ToolPlay" ADD CONSTRAINT "ToolPlay_initiativeId_fkey" FOREIGN KEY ("initiativeId") REFERENCES "Initiative"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ResponseCard" ADD CONSTRAINT "ResponseCard_playId_fkey" FOREIGN KEY ("playId") REFERENCES "ToolPlay"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- CreateTable
 CREATE TABLE "Draft" (
