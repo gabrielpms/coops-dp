@@ -4,6 +4,8 @@ import { AppHeader } from '@/components/ds/AppHeader';
 import type { AvatarConfig } from '@/components/avatar/Avatar';
 import { CoopsLink, useCoopsRouter } from '@/components/nav/useCoopsRouter';
 import { BottomSheet } from '@/components/sheet/BottomSheet';
+import { OpenDeckBanner } from '@/components/ds/OpenDeckBanner';
+import { AgentCardIcon, BannerAgent, type AgentKind } from '@/components/initiative/AgentIcons';
 import { cardInput, darkBtn, label } from '@/components/ds/tokens';
 import { plural } from '@/lib/format';
 
@@ -39,8 +41,9 @@ export function ConfereClient({ user, projectId, initiative, doubts }: {
   const openTable = async () => { if (await call(`${api}/table`, 'POST')) { refresh(); push(`/p/${projectId}/iniciativas/${initiative.id}/mesa`); } };
 
   const card = { color: '#0E0E12', borderRadius: 22, border: '2px solid #0E0E12', padding: 20, display: 'flex', flexDirection: 'column', gap: 10, minHeight: 200, boxSizing: 'border-box', boxShadow: '0 16px 36px rgba(0,0,0,0.45)' } as const;
-  const info = (tag: string, bg: string, body: string, flag?: string) => (
-    <div key={tag} style={{ ...card, background: bg }}>
+  const info = (tag: string, bg: string, body: string, kind: AgentKind, flag?: string) => (
+    <div key={tag} className="coops-card" style={{ ...card, background: bg }}>
+      <AgentCardIcon kind={kind} />
       <span style={{ display: 'flex', justifyContent: 'space-between', gap: 8, ...label(11, '0.08em') }}><span>{tag}</span>{flag && <span style={{ border: '1.5px solid #0E0E12', borderRadius: 999, padding: '2px 8px' }}>{flag}</span>}</span>
       <span style={{ fontSize: 17, lineHeight: 1.35, fontWeight: 600 }}>{body}</span>
     </div>
@@ -51,25 +54,23 @@ export function ConfereClient({ user, projectId, initiative, doubts }: {
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <section style={{ display: 'flex', flexDirection: 'column', gap: 8, borderRadius: 32, background: '#17171D', border: '1px solid #2C2C36', padding: 'clamp(20px, 4vw, 36px)' }}>
-          <CoopsLink href={`/p/${projectId}/iniciativas`} style={{ fontSize: 14, minHeight: 44, display: 'inline-flex', alignItems: 'center', alignSelf: 'flex-start' }}>← Iniciativas</CoopsLink>
-          <span style={{ ...label(12, '0.1em'), color: '#9BE3C3' }}>{initiative.product.toUpperCase()}</span>
-          <h1 style={{ margin: 0, fontSize: 'clamp(36px, 6vw, 52px)', fontWeight: 800, letterSpacing: '-0.035em', lineHeight: 1 }}>Confere se entendi?</h1>
-        </section>
+        <OpenDeckBanner bg="#8FE3C8" icon={<BannerAgent />} back={{ href: `/p/${projectId}/iniciativas`, label: '← Iniciativas' }} title="Confere se entendi?" desc={missing > 0 ? `${initiative.product}: o agente tem ${missing} ${plural(missing, 'dúvida', 'dúvidas')} para o manager resolver antes de abrir a mesa.` : `${initiative.product}: tudo entendido. ${initiative.tableOpened ? 'A mesa já está aberta.' : 'Falta confirmar para abrir a mesa.'}`} />
 
         <section aria-label="O que o agente entendeu" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
-          {info('PRODUTO', '#B7A6FF', initiative.product)}
-          {info('PROBLEMA', '#F3D36B', initiative.problem || 'Ainda não informado')}
-          {info('NECESSIDADE', '#A9D8F5', initiative.need || initiative.deducedNeed, initiative.need ? undefined : 'PRECISA CONFIRMAR')}
+          {info('PRODUTO', '#B7A6FF', initiative.product, 'prod')}
+          {info('PROBLEMA', '#F3D36B', initiative.problem || 'Ainda não informado', 'prob')}
+          {info('NECESSIDADE', '#A9D8F5', initiative.need || initiative.deducedNeed, 'nec', initiative.need ? undefined : 'PRECISA CONFIRMAR')}
           {doubts.map((d, n) => d.resolved ? (
-            <div key={d.id} style={{ ...card, background: '#F5F2EC' }}>
+            <div key={d.id} className="coops-card" style={{ ...card, background: '#F5F2EC' }}>
+              <AgentCardIcon kind="ctx" />
               <span style={label(11, '0.08em')}>{String(n + 1).padStart(2, '0')} CONTEXTO · RESOLVIDO COM O AGENTE</span>
               <span style={{ fontSize: 15, fontWeight: 700, lineHeight: 1.3 }}>{d.question}</span>
               <span style={{ fontSize: 14, lineHeight: 1.4 }}>{d.summary}</span>
               {isManager && !initiative.tableOpened && <button type="button" disabled={busy} onClick={() => reopen(d.id)} style={{ ...darkBtn, marginTop: 'auto', alignSelf: 'flex-start', minHeight: 44 }}>Reabrir dúvida</button>}
             </div>
           ) : (
-            <div key={d.id} style={{ ...card, background: '#9BE3C3' }}>
+            <div key={d.id} className="coops-card" style={{ ...card, background: '#9BE3C3' }}>
+              <AgentCardIcon kind="ask" />
               <span style={label(11, '0.08em')}>DÚVIDA {n + 1}</span>
               <span style={{ fontSize: 18, fontWeight: 700, lineHeight: 1.3 }}>{d.question}</span>
               {isManager ? <button type="button" onClick={() => { setOpenId(d.id); setText(''); setError(null); }} style={{ ...darkBtn, marginTop: 'auto', alignSelf: 'flex-start', minHeight: 44 }}>Responder</button> : <span style={{ marginTop: 'auto', fontSize: 13 }}>O manager responde esta dúvida.</span>}
@@ -93,7 +94,7 @@ export function ConfereClient({ user, projectId, initiative, doubts }: {
           <p style={{ margin: 0, fontSize: 20, fontWeight: 700, lineHeight: 1.3 }}>{current.question}</p>
           <div role="log" aria-live="polite" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {current.messages.map((m) => (
-              <div key={m.id} style={{ alignSelf: m.role === 'USER' ? 'flex-end' : 'flex-start', maxWidth: '85%', borderRadius: 16, padding: '10px 14px', fontSize: 15, lineHeight: 1.45, background: m.role === 'USER' ? '#2C2C36' : '#9BE3C3', color: m.role === 'USER' ? '#F5F2EC' : '#0E0E12' }}>{m.text}</div>
+              <div key={m.id} className="ag-msg" style={{ alignSelf: m.role === 'USER' ? 'flex-end' : 'flex-start', maxWidth: '85%', borderRadius: 16, padding: '10px 14px', fontSize: 15, lineHeight: 1.45, background: m.role === 'USER' ? '#2C2C36' : '#9BE3C3', color: m.role === 'USER' ? '#F5F2EC' : '#0E0E12' }}>{m.text}</div>
             ))}
           </div>
           {lastIsAgent ? (
@@ -104,7 +105,7 @@ export function ConfereClient({ user, projectId, initiative, doubts }: {
           ) : null}
           <form onSubmit={(e) => { e.preventDefault(); void send(); }} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <textarea id="conf-reply" aria-label="Sua resposta" maxLength={2000} placeholder="Explique com suas palavras" value={text} onChange={(e) => setText(e.target.value)} style={{ ...cardInput, minHeight: 100, resize: 'vertical' }} />
-            <button type="submit" disabled={busy || !text.trim()} style={{ ...darkBtn, alignSelf: 'flex-start', minHeight: 48, opacity: text.trim() ? 1 : 0.5 }}>{busy ? 'Enviando…' : 'Enviar'}</button>
+            <button type="submit" className="ag-send" disabled={busy || !text.trim()} style={{ ...darkBtn, alignSelf: 'flex-start', minHeight: 48, opacity: text.trim() ? 1 : 0.5 }}>{busy ? 'Enviando…' : 'Enviar'}</button>
           </form>
           {error && <span role="alert" style={{ fontSize: 14, fontWeight: 600, color: '#FF8A5B' }}>{error}</span>}
         </BottomSheet>
