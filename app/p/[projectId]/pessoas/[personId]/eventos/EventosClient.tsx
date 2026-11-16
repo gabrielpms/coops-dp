@@ -84,7 +84,7 @@ export function EventosClient({ user, person, projectId, isOwn, isManager, event
         <BottomSheet tag="DECK DE EVENTOS · NOVO EVENTO" title="Que tipo de evento você quer registrar?" onClose={() => setSheet(null)}>
           <p style={{ margin: 0, fontSize: 14, color: '#A3A1AD' }}>Escolha uma carta. Depois vêm as perguntas, uma por carta.</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
-            {(['CHECKIN', 'FEEDBACK', 'PROMOCAO', 'MERITO', 'MUDANCA_TIME'] as EventKind[]).map((k) => <button key={k} type="button" onClick={() => setSheet({ k: 'new', kind: k })} className="coops-card" style={{ fontFamily: 'inherit', textAlign: 'left', minHeight: 140, borderRadius: 18, background: COLOR[k], color: '#0E0E12', border: '2px solid #0E0E12', padding: 16, display: 'flex', flexDirection: 'column', gap: 6, cursor: 'pointer' }}><span style={{ fontSize: 20, fontWeight: 700 }}>{EVENT_TYPE_LABEL[k]}</span><span style={{ fontSize: 13, lineHeight: 1.4 }}>{HINT[k]}</span></button>)}
+            {(['CHECKIN', 'FEEDBACK', 'PROMOCAO', 'MERITO', 'MUDANCA_TIME'] as EventKind[]).map((k) => <button key={k} type="button" onClick={() => setSheet({ k: 'new', kind: k })} className="coops-card ev-opt" style={{ fontFamily: 'inherit', textAlign: 'left', minHeight: 140, borderRadius: 18, background: COLOR[k], color: '#0E0E12', border: '2px solid #0E0E12', padding: 16, display: 'flex', flexDirection: 'column', gap: 6, cursor: 'pointer' }}><span style={{ fontSize: 20, fontWeight: 700 }}>{EVENT_TYPE_LABEL[k]}</span><span style={{ fontSize: 13, lineHeight: 1.4 }}>{HINT[k]}</span></button>)}
           </div>
         </BottomSheet>
       )}

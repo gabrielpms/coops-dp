@@ -489,7 +489,7 @@ section[role=dialog]{padding-left:16px!important;padding-right:16px!important}.s
 @keyframes abLt{0%{fill:#0E0E12}33%{fill:none}}
 @media (prefers-reduced-motion: reduce){.ab-sh,.ab-pp,.ab-bm,.ab-rg,.ab-lt{animation:none!important}.ab-bm{opacity:0}}
 .ev-opt{transition:transform .35s cubic-bezier(.34,1.56,.64,1),box-shadow .3s ease}
-.ev-opt:hover,.ev-opt:focus-visible{transform:translateY(-6px) rotate(-1.5deg)!important;box-shadow:6px 6px 0 #4B36B0}
+.ev-opt:hover,.ev-opt:focus-visible{transform:translateY(-6px) rotate(-1.5deg)!important;box-shadow:6px 6px 0 var(--evs,#4B36B0)}
 .ev-opt:focus-visible{outline:3px solid #F5F2EC;outline-offset:3px}
 @media (prefers-reduced-motion: reduce){.ev-opt{transition:none!important;transform:none!important}}
 .coops-focus .coops-fx-body>*{flex-shrink:0}
@@ -577,7 +577,6 @@ section[role=dialog]{padding-left:16px!important;padding-right:16px!important}.s
 .coops-card:is(:hover,:focus-within) .bgi-mic{animation:bgiMic .6s ease-in-out infinite alternate}
 @keyframes bgiMic{from{transform:translateY(0)}to{transform:translateY(-2px)}}
 @media (prefers-reduced-motion:reduce){.bgi-wv,.bgi-mic{animation:none!important;opacity:1}}
-.ev-opt:hover,.ev-opt:focus-visible{transform:translateY(-6px) rotate(-1.5deg)!important;box-shadow:6px 6px 0 #B0507F}
 /* ── Coops15-Jornada.dc.html ── */
 .jr-flag{transform-origin:0 50%}
 .coops-card:is(:hover,:focus-within) .jr-flag{animation:jrFlag .7s ease-in-out infinite alternate}
@@ -642,7 +641,6 @@ section[role=dialog]{padding-left:16px!important;padding-right:16px!important}.s
 @keyframes jrHL{0%{transform:rotate(0)}18%{transform:rotate(9deg)}38%{transform:rotate(-6deg)}56%{transform:rotate(3.5deg)}72%{transform:rotate(-1.5deg)}86%,100%{transform:rotate(0)}}
 @keyframes jrHR{0%{transform:rotate(0)}18%{transform:rotate(-7deg)}38%{transform:rotate(8deg)}56%{transform:rotate(-4deg)}72%{transform:rotate(1.5deg)}86%,100%{transform:rotate(0)}}
 @media (prefers-reduced-motion:reduce){.jr-hL,.jr-hR{animation:none!important}}
-.ev-opt:hover,.ev-opt:focus-visible{transform:translateY(-6px) rotate(-1.5deg)!important;box-shadow:6px 6px 0 #B85A34}
 .coops-wz-card [role=radio]:hover,.coops-wz-card [role=checkbox]:hover{transform:translateY(-2px)}
 .coops-wz-card input:focus-visible,.coops-wz-card textarea:focus-visible,.coops-wz-card button:focus-visible{outline:3px solid #0E0E12;outline-offset:2px}
 /* ── Coops17-Squad.dc.html ── */

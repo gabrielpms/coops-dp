@@ -96,7 +96,7 @@ export function JornadaClient({ user, person, projectId, isOwn, cycle, skills, g
           <p style={{ margin: 0, fontSize: 14, color: '#A3A1AD' }}>Escolha uma carta. Depois vêm as perguntas, uma por carta.</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
             {([['OBJETIVO', 'Objetivo', `O que ${isOwn ? 'você quer' : `${fn} quer`} alcançar no ciclo, com o sinal que vamos acompanhar.`, '#FF8A5B'], ['FOCO', 'Foco de desenvolvimento', 'A skill que vai ser treinada, do nível de hoje até a meta do ciclo.', '#F3D36B']] as [JourneyKind, string, string, string][]).map(([k, t, h, bg]) => (
-              <button key={k} type="button" onClick={() => setSheet({ k: 'new', kind: k })} className="coops-card" style={{ fontFamily: 'inherit', textAlign: 'left', minHeight: 150, borderRadius: 18, background: bg, color: '#0E0E12', border: '2px solid #0E0E12', padding: 16, display: 'flex', flexDirection: 'column', gap: 6, cursor: 'pointer' }}><span style={{ fontSize: 20, fontWeight: 700 }}>{t}</span><span style={{ fontSize: 13, lineHeight: 1.4 }}>{h}</span></button>
+              <button key={k} type="button" onClick={() => setSheet({ k: 'new', kind: k })} className="coops-card ev-opt" style={{ ['--evs' as string]: '#B85A34', fontFamily: 'inherit', textAlign: 'left', minHeight: 150, borderRadius: 18, background: bg, color: '#0E0E12', border: '2px solid #0E0E12', padding: 16, display: 'flex', flexDirection: 'column', gap: 6, cursor: 'pointer' }}><span style={{ fontSize: 20, fontWeight: 700 }}>{t}</span><span style={{ fontSize: 13, lineHeight: 1.4 }}>{h}</span></button>
             ))}
           </div>
         </BottomSheet>
