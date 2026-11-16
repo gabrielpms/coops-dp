@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
-import { OpenDeckBanner } from '@/components/ds/OpenDeckBanner';
+import { CoopsLink } from '@/components/nav/useCoopsRouter';
+import { ICP } from '@/components/squad/deckIcons';
 import { FocusCard } from '@/components/ds/FocusCard';
 import { Avatar, type AvatarConfig } from '@/components/avatar/Avatar';
 import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
@@ -16,7 +17,7 @@ const ICON: Record<SquadDeckId, () => React.ReactElement> = { DESAFIO: DiRocket,
 const TREND = { sobe: '▲ SOBE', desce: '▼ DESCE', estavel: '● ESTÁVEL' } as const;
 type Filter = 'ABERTA' | 'ENCERRADA';
 
-export function SquadDeckClient({ user, projectId, squad, deck, isManager, cards: initial, people, challenges, draft: d0 }: {
+export function SquadDeckClient({ user, projectId, squad, deck, isManager, cards: initial, people, challenges, draft: d0, deckCounts }: { deckCounts: Record<string, number>;
   user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; projectId: string; squad: { id: string; name: string }; deck: SquadDeckId; isManager: boolean;
   cards: SquadCardView[]; people: SquadPerson[]; challenges: { id: string; title: string }[]; draft: CardDraft | null;
 }) {
@@ -66,7 +67,36 @@ export function SquadDeckClient({ user, projectId, squad, deck, isManager, cards
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <OpenDeckBanner bg={meta.color} icon={<Icon />} back={{ href: `/p/${projectId}/squads/${squad.id}`, label: `← ${squad.name}` }} title={meta.title} desc={meta.desc} cta={isManager ? { label: meta.addLabel, onClick: () => setEdit({ card: null }) } : null} />
+        <section className="coops-icdemo coops-dkban" aria-labelledby="dk-title" style={{ position: 'relative', borderRadius: 28, border: '2px solid #0E0E12', background: meta.color, color: '#0E0E12', padding: '26px 30px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '24px 28px', overflow: 'hidden', boxShadow: '0 18px 40px rgba(0,0,0,0.45)' }}>
+          <span aria-hidden="true" className="coops-dkban-ring" style={{ position: 'absolute', right: -70, bottom: -110, width: 320, height: 320, borderRadius: '50%', border: '2px solid rgba(14,14,18,0.18)', boxShadow: '0 0 0 44px rgba(14,14,18,0.04)', pointerEvents: 'none' }} />
+          <div aria-hidden="true" className="coops-dkban-ic" style={{ position: 'relative', flex: 'none', width: 116, height: 116, boxSizing: 'border-box', borderRadius: 24, border: '2px solid #0E0E12', background: 'rgba(245,242,236,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="84" height="84" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ overflow: 'visible' }}>{(ICP[meta.slug] ?? []).map(([c, d], i) => <path key={i} className={c || undefined} d={d} />)}</svg>
+          </div>
+          <div style={{ position: 'relative', flex: '1 1 380px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <CoopsLink href={`/p/${projectId}/squads/${squad.id}`} className="coops-dkban-back" style={{ alignSelf: 'flex-start', fontSize: 14, color: 'rgba(14,14,18,0.72)', textDecoration: 'none', minHeight: 44, display: 'inline-flex', alignItems: 'center' }}>← {squad.name}</CoopsLink>
+            <h1 id="dk-title" style={{ margin: 0, fontSize: 'clamp(34px, 6vw, 52px)', fontWeight: 800, letterSpacing: '-0.035em', lineHeight: 1 }}>{meta.title}</h1>
+            <p style={{ margin: '0 0 8px', fontSize: 17, lineHeight: 1.4 }}>{meta.desc}</p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {[[open.length, open.length === 1 ? 'ativa' : 'ativas'], [closed.length, closed.length === 1 ? 'encerrada' : 'encerradas']].map(([n, t]) => <span key={String(t)} style={{ display: 'inline-flex', alignItems: 'baseline', gap: 6, border: '1.5px solid #0E0E12', borderRadius: 999, padding: '6px 12px', fontSize: 13, fontWeight: 600, background: 'rgba(245,242,236,0.55)' }}><span style={{ fontFamily: "'JetBrains Mono', monospace" }}>{n}</span>{t}</span>)}
+            </div>
+          </div>
+          <div style={{ position: 'relative', flex: 'none', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 14 }}>
+            <CoopsLink href={`/p/${projectId}/squads/${squad.id}`} aria-label={`Voltar para a mesa do ${squad.name}`} className="coops-mban-me" style={{ flex: 'none', width: 112, height: 84, boxSizing: 'border-box', borderRadius: 18, background: '#B7A6FF', border: '2px solid #0E0E12', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', textDecoration: 'none' }}>
+              <div aria-hidden="true" style={{ position: 'relative', width: 80, height: 78, flex: 'none' }}>
+                <span style={{ position: 'absolute', left: 10, top: 17, width: 60, height: 60, boxSizing: 'border-box', borderRadius: '50%', background: '#8B74F2', border: '1.5px solid #0E0E12' }} />
+                <span style={{ position: 'absolute', left: 10, top: 14, width: 60, height: 60, boxSizing: 'border-box', borderRadius: '50%', background: '#F5F2EC', border: '1.5px solid #0E0E12' }} />
+                {people.slice(0, 3).map((p, i) => { const pos = [{ left: 2, top: 16, size: 20 }, { left: 28, top: 0, size: 23 }, { left: 58, top: 16, size: 20 }][people.length >= 3 ? i : i === 0 ? 1 : 2]; return <div key={p.id} style={{ position: 'absolute', left: pos.left, top: pos.top, zIndex: 2, lineHeight: 0, borderRadius: '50%', border: '1.5px solid #0E0E12', boxShadow: '0 2px 0 #4B36B0' }}><Avatar {...DEFAULT_AVATAR_CFG} {...(p.avatar ?? {})} size={pos.size} label="" /></div>; })}
+              </div>
+            </CoopsLink>
+            {isManager
+              ? <button type="button" className="coops-dkban-add" onClick={() => setEdit({ card: null })} style={{ fontFamily: 'inherit', fontWeight: 600, fontSize: 15, color: '#F5F2EC', background: '#0E0E12', border: '2px solid #0E0E12', borderRadius: 14, minHeight: 48, padding: '0 20px', cursor: 'pointer' }}>{meta.addLabel}</button>
+              : <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, minHeight: 48, padding: '0 14px', borderRadius: 12, border: '1.5px solid #0E0E12', background: 'rgba(245,242,236,0.55)', fontSize: 13 }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>Só o manager cadastra {meta.one}s</span>}
+          </div>
+        </section>
+        <div role="tablist" aria-label="Decks do squad" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {([...(Object.keys(DECK_META) as (keyof typeof DECK_META)[]).map((k) => ({ k: k as string, slug: DECK_META[k].slug, label: DECK_META[k].title, color: DECK_META[k].color, n: deckCounts[k] ?? 0 })), { k: 'SAUDE', slug: 'saude', label: 'Saúde do time', color: '#A9D8F5', n: null as number | null }]).map((t) => { const on = t.slug === meta.slug; return (
+            <CoopsLink key={t.k} href={`/p/${projectId}/squads/${squad.id}/${t.slug}`} role="tab" aria-selected={on} className="coops-dktab" style={{ fontFamily: 'inherit', fontWeight: on ? 600 : 400, fontSize: 14, color: on ? '#0E0E12' : '#F5F2EC', background: on ? '#F5F2EC' : 'transparent', border: `1px solid ${on ? '#F5F2EC' : '#3A3846'}`, borderRadius: 999, minHeight: 44, padding: '0 14px 0 10px', display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}><span aria-hidden="true" style={{ width: 14, height: 14, boxSizing: 'border-box', borderRadius: 4, border: '1.5px solid #0E0E12', background: t.color }} />{t.label}{t.n !== null && <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: on ? '#0E0E12' : '#A3A1AD' }}>{t.n}</span>}</CoopsLink>); })}
+        </div>
         {!isManager && <p style={{ margin: 0, color: '#A3A1AD', fontSize: 14 }}>Você está vendo como time. Só o manager edita este deck.</p>}
         {warn && <div role="alert" style={{ borderRadius: 14, border: '1.5px solid #FF8A5B', padding: '10px 14px', fontSize: 14 }}>{warn}</div>}
         <div role="tablist" aria-label="Filtrar cartas" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
