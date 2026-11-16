@@ -1,45 +1,88 @@
 'use client';
+import type { CSSProperties, ReactNode } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
 import { Avatar, type AvatarConfig } from '@/components/avatar/Avatar';
 import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
 import { CoopsLink } from '@/components/nav/useCoopsRouter';
 import { DECK_META, type SquadDeckId } from '@/components/squad/types';
-import { label } from '@/components/ds/tokens';
+import { mono } from '@/components/ds/tokens';
 import { plural } from '@/lib/format';
 
+type Part = [string, string];
+type DeckDef = { key: string; href: string; title: string; sub: string; bg: string; b1: string; b2: string; parts: Part[]; kicker: string };
+const ICP: Record<string, Part[]> = {
+  desafios: [['ic-mount', 'M8 50 26 16l10 18 6-8 14 24z'], ['', 'M26 16v-8'], ['ic-flag', 'M26 8l8 3-8 3']],
+  frentes: [['ic-fb ic-fb1', 'M8 14h48v10H8z'], ['ic-fb ic-fb2', 'M8 30h32v10H8z'], ['ic-fb ic-fb3', 'M8 46h20v10H8z']],
+  estrategia: [['ic-ring', 'M32 6a26 26 0 1 0 0 52a26 26 0 1 0 0-52zM32 18a14 14 0 1 0 0 28a14 14 0 1 0 0-28z'], ['ic-sweep', 'M32 32 49 15'], ['ic-blip', 'M43 22h.01'], ['', 'M32 32h.01']],
+  indicadores: [['', 'M8 56h48'], ['ic-ib ic-ib1', 'M14 48V34'], ['ic-ib ic-ib2', 'M26 48V24'], ['ic-ib ic-ib3', 'M38 48V30'], ['ic-ib ic-ib4', 'M50 48V12']],
+  saude: [['ic-heart', 'M32 54S8 40 8 24a12 12 0 0 1 24-4 12 12 0 0 1 24 4c0 16-24 30-24 30z'], ['ic-ecg', 'M14 30h10l4-8 6 16 4-8h12']],
+  alavancas: [['', 'M26 34l-7 16h14z'], ['ic-arm', 'M6 42 58 22'], ['ic-w', 'M48 8h10v12H48z']],
+};
+const SUB: Record<string, string> = { desafios: 'O que trava o squad agora', frentes: 'Onde o squad está jogando as cartas', estrategia: 'Para onde o squad está indo', indicadores: 'Como o squad sabe que está indo bem', alavancas: 'O que acelera o squad', saude: 'Como o squad está se sentindo' };
+const COL: Record<string, [string, string]> = { desafios: ['#E06A3C', '#B84F26'], frentes: ['#D987B8', '#B0668F'], estrategia: ['#8B74F2', '#4B36B0'], indicadores: ['#D9B84B', '#B8962F'], saude: ['#7FB8DD', '#4F8DB3'], alavancas: ['#9FD68A', '#74B35E'] };
 const ORDER: SquadDeckId[] = ['DESAFIO', 'FRENTE', 'ESTRATEGIA', 'INDICADOR', 'ALAVANCA'];
+const STAGE_AV: { left: number; top: number; size: number; cls: string }[] = [{ left: 10, top: 78, size: 95, cls: 'h17-av h17-av1' }, { left: 135, top: -2, size: 110, cls: 'h17-av h17-av2' }, { left: 275, top: 78, size: 95, cls: 'h17-av h17-av3' }];
+const CARDS = [['#FF8A5B', 72, -16, -20, 0], ['#F5A9D6', 118, -8, -10, 40], ['#B7A6FF', 164, 0, 0, 80], ['#F3D36B', 210, 8, 10, 120], ['#C9F0B8', 256, 16, 20, 160]] as const;
 
-export function SquadHomeClient({ user, projectId, squad, isManager, people, counts }: {
+export function SquadHomeClient({ user, projectId, squad, isManager, people, counts, cycle, healthAvg, healthN }: {
   user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; projectId: string; squad: { id: string; name: string; color: string; description?: string }; isManager: boolean;
-  people: { id: string; name: string; title: string; avatar: AvatarConfig | null; crown: boolean }[]; counts: Record<SquadDeckId, number>;
+  people: { id: string; name: string; title: string; avatar: AvatarConfig | null; crown: boolean }[]; counts: Record<SquadDeckId, number>; cycle: string; healthAvg: number | null; healthN: number;
 }) {
   const base = `/p/${projectId}/squads/${squad.id}`;
-  const card = { color: '#0E0E12', textDecoration: 'none', borderRadius: 22, border: '2px solid #0E0E12', padding: 20, display: 'flex', flexDirection: 'column', gap: 10, height: 300, boxSizing: 'border-box', boxShadow: '0 16px 36px rgba(0,0,0,0.45)' } as const;
+  const decks: (DeckDef & { count: string; label: string; foot: string })[] = [
+    ...ORDER.map((d) => { const m = DECK_META[d]; const [b1, b2] = COL[m.slug]; return { key: m.slug, href: `${base}/${m.slug}`, title: m.title, sub: SUB[m.slug], bg: m.color, b1, b2, parts: ICP[m.slug], kicker: m.title.toUpperCase(), count: String(counts[d]).padStart(2, '0'), label: plural(counts[d], 'CARTA', 'CARTAS'), foot: counts[d] ? `${counts[d]} ${plural(counts[d], 'aberto', 'abertos')}` : m.empty }; }),
+    { key: 'saude', href: `${base}/saude`, title: 'Saúde do time', sub: SUB.saude, bg: '#A9D8F5', b1: COL.saude[0], b2: COL.saude[1], parts: ICP.saude, kicker: 'SAÚDE DO TIME', count: healthAvg !== null ? healthAvg.toFixed(1).replace('.', ',') : '—', label: 'MÉDIA DO TIME', foot: healthAvg !== null ? `Média de ${healthN} pessoas · 4 perguntas` : 'A média aparece a partir de 3 respostas' },
+  ];
+  const stage = [...people].sort((a, b) => Number(b.crown) - Number(a.crown));
+  // o champion/coroa fica no centro da vitrine
+  const top3 = stage.length >= 3 ? [stage[1], stage[0], stage[2]] : stage.length === 2 ? [stage[1], stage[0]] : stage;
+  const mgr = people.filter((p) => p.crown).length;
+  const layer = (bg: string, left: number, top: number, right: number, rot: number, cls: string) => <div className={cls} aria-hidden="true" style={{ position: 'absolute', left, top, right, height: 340, borderRadius: 22, background: bg, border: '2px solid #0E0E12', transform: `rotate(${rot}deg)` }} />;
+  const front: CSSProperties = { position: 'absolute', left: 0, top: 24, right: 22, height: 340, boxSizing: 'border-box', borderRadius: 22, color: '#0E0E12', textDecoration: 'none', border: '2px solid #0E0E12', padding: 20, display: 'flex', flexDirection: 'column', gap: 10, boxShadow: '0 16px 36px rgba(0,0,0,0.45)' };
   return (
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <section style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'center', borderRadius: 32, background: '#17171D', border: '1px solid #2C2C36', padding: 'clamp(20px, 4vw, 36px)' }}>
-          <div style={{ flex: '1 1 320px', display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0 }}>
-            <CoopsLink href={isManager ? `/p/${projectId}/time` : '/hub'} style={{ fontSize: 14, minHeight: 44, display: 'inline-flex', alignItems: 'center', alignSelf: 'flex-start' }}>{isManager ? '← Time' : '← Hub de projetos'}</CoopsLink>
-            <span style={{ ...label(12, '0.1em'), color: '#B7A6FF' }}>MESA DO TIME</span>
-            <h1 style={{ margin: 0, fontSize: 'clamp(36px, 6vw, 52px)', fontWeight: 800, letterSpacing: '-0.035em', lineHeight: 1, display: 'flex', alignItems: 'center', gap: 12 }}><span aria-hidden="true" style={{ width: 18, height: 18, borderRadius: '50%', background: squad.color, border: '2px solid #0E0E12', flex: 'none' }} />{squad.name}</h1>
-            {squad.description && <p style={{ margin: 0, fontSize: 17, lineHeight: 1.45 }}>{squad.description}</p>}
-            <p style={{ margin: 0, color: '#A3A1AD', fontSize: 16 }}>{people.length} {plural(people.length, 'pessoa', 'pessoas')} · {isManager ? 'você edita os decks do squad' : 'você vê como time; só o manager edita'}</p>
+        <section className="h17" aria-label={squad.name} style={{ position: 'relative', overflow: 'hidden', borderRadius: 36, background: '#B7A6FF', color: '#0E0E12', border: '2px solid #0E0E12', padding: '44px 28px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14 }}>
+          <div className="h17-ring" aria-hidden="true" style={{ position: 'absolute', left: -60, top: -60, width: 220, height: 220, borderRadius: '50%', border: '1.5px solid rgba(14,14,18,0.25)' }} />
+          <div className="h17-ring h17-ring2" aria-hidden="true" style={{ position: 'absolute', right: -80, bottom: -90, width: 280, height: 280, borderRadius: '50%', border: '1.5px solid rgba(14,14,18,0.25)' }} />
+          <CoopsLink href={isManager ? `/p/${projectId}/time` : '/hub'} style={{ position: 'relative', fontSize: 14, color: 'rgba(14,14,18,0.72)', minHeight: 44, display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}>{isManager ? '← Time' : '← Hub de projetos'}</CoopsLink>
+          <span style={{ position: 'relative', ...mono, fontSize: 12, letterSpacing: '0.1em' }}>MESA DO TIME · SQUAD</span>
+          <div style={{ position: 'relative', marginTop: 8 }}>
+            <div aria-hidden="true" style={{ position: 'relative', width: 380, maxWidth: '100%', height: 372, flex: 'none' }}>
+              <span style={{ position: 'absolute', left: 48, top: 82, width: 285, height: 285, boxSizing: 'border-box', borderRadius: '50%', background: '#8B74F2', border: '2px solid #0E0E12' }} />
+              <span className="h17-top" style={{ position: 'absolute', left: 48, top: 68, width: 285, height: 285, boxSizing: 'border-box', borderRadius: '50%', background: '#F5F2EC', border: '2px solid #0E0E12' }} />
+              {top3.map((p, i) => { const a = STAGE_AV[(top3.length >= 3 ? [0, 1, 2] : top3.length === 2 ? [0, 2] : [1])[i]]; return (
+                <div key={p.id} className={a.cls} style={{ position: 'absolute', left: a.left, top: a.top, zIndex: 2, lineHeight: 0, borderRadius: '50%', border: '2px solid #0E0E12', boxShadow: '0 8px 0 #4B36B0' }}><Avatar {...DEFAULT_AVATAR_CFG} {...(p.avatar ?? {})} crown={p.crown} size={a.size} label="" /></div>); })}
+              {CARDS.map(([bg, left, r, x, d]) => <span key={left} className="h17-card" style={{ ['--r' as string]: `${r}deg`, ['--x' as string]: `${x}px`, ['--d' as string]: `${d}ms`, position: 'absolute', left, top: 218, zIndex: 1, width: 49, height: 65, boxSizing: 'border-box', borderRadius: 10, background: bg, border: '2px solid #0E0E12', transform: 'rotate(var(--r))' } as CSSProperties} />)}
+            </div>
           </div>
-          <div aria-label="Pessoas do squad" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-end', maxWidth: 420 }}>
-            {people.slice(0, 8).map((p) => <CoopsLink key={p.id} href={isManager ? `/p/${projectId}/pessoas/${p.id}` : '#'} aria-label={p.name} title={p.name} style={{ lineHeight: 0, borderRadius: '50%', border: '2px solid #0E0E12' }}><Avatar {...DEFAULT_AVATAR_CFG} {...(p.avatar ?? {})} crown={p.crown} size={60} label={p.name} /></CoopsLink>)}
+          <h1 style={{ position: 'relative', margin: '10px 0 0', fontSize: 'clamp(36px, 7vw, 56px)', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1 }}>{squad.name}</h1>
+          {squad.description && <span style={{ position: 'relative', fontSize: 18, maxWidth: 560 }}>{squad.description}</span>}
+          <div style={{ position: 'relative', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginTop: 4 }}>
+            <span style={{ fontSize: 14, fontWeight: 600, color: '#F5F2EC', background: '#0E0E12', borderRadius: 999, padding: '8px 14px' }}>{people.length} {plural(people.length, 'pessoa', 'pessoas')}{mgr ? ` · ${mgr} champion` : ''}</span>
+            <span style={{ fontSize: 14, fontWeight: 600, color: '#0E0E12', background: '#F5F2EC', border: '1.5px solid #0E0E12', borderRadius: 999, padding: '7px 14px' }}>Ciclo {cycle.split('-')[1]} {cycle.split('-')[0]}</span>
+            <span style={{ fontSize: 14, color: 'rgba(14,14,18,0.78)', padding: '8px 4px' }}>{isManager ? 'você edita os decks do squad' : 'você vê como time; só o manager edita'}</span>
           </div>
         </section>
-        <section aria-label="Decks do squad" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
-          {ORDER.map((d) => { const m = DECK_META[d]; return (
-            <CoopsLink key={d} href={`${base}/${m.slug}`} className="coops-card" aria-label={`Abrir ${m.title}`} style={{ ...card, background: m.color }}>
-              <span style={{ display: 'flex', justifyContent: 'flex-end' }}><span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}><span style={{ fontSize: 44, fontWeight: 600, lineHeight: 1 }}>{counts[d]}</span><span style={label(11, '0')}>{plural(counts[d], 'ATIVA', 'ATIVAS')}</span></span></span>
-              <span style={{ marginTop: 'auto', ...label(11, '0.08em') }}>{m.kicker}</span><span style={{ fontSize: 22, fontWeight: 700, lineHeight: 1.15 }}>{m.title}</span><span style={{ borderTop: '1.5px solid #0E0E12', paddingTop: 10, fontSize: 13, lineHeight: 1.4 }}>{m.desc}</span>
-            </CoopsLink>); })}
-          <CoopsLink href={`${base}/saude`} className="coops-card" aria-label="Abrir Saúde do time" style={{ ...card, background: '#A9D8F5' }}>
-            <span style={{ marginTop: 'auto', ...label(11, '0.08em') }}>SAÚDE</span><span style={{ fontSize: 22, fontWeight: 700, lineHeight: 1.15 }}>Saúde do time</span><span style={{ borderTop: '1.5px solid #0E0E12', paddingTop: 10, fontSize: 13, lineHeight: 1.4 }}>O agregado dos check-ins de saúde das pessoas do squad.</span>
-          </CoopsLink>
+        <section aria-label="Decks do squad" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}><h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Decks do squad</h2><span style={{ fontSize: 14, color: '#A3A1AD' }}>Escolha um deck para ver as cartas</span></div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 28 }}>
+            {decks.map((d) => (
+              <div key={d.key} className="coops-pile" style={{ position: 'relative', height: 380 }}>
+                {layer(d.b2, 22, 0, 0, 5, 'coops-b2')}{layer(d.b1, 12, 10, 10, 2.5, 'coops-b1')}
+                <CoopsLink href={d.href} className="coops-front" aria-label={`Abrir ${d.title}`} style={{ ...front, background: d.bg }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ overflow: 'visible' }}>{d.parts.map(([c, dd], i) => <path key={i} className={c || undefined} d={dd} />)}</svg>
+                    <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}><span style={{ fontSize: 44, fontWeight: 600, lineHeight: 1 }}>{d.count}</span><span style={{ ...mono, fontSize: 11 }}>{d.label}</span></span>
+                  </div>
+                  <span style={{ marginTop: 'auto', ...mono, fontSize: 11, letterSpacing: '0.08em' }}>{d.kicker}</span>
+                  <span style={{ fontSize: 22, fontWeight: 700, lineHeight: 1.15 }}>{d.sub}</span>
+                  <span style={{ borderTop: '1.5px solid #0E0E12', paddingTop: 10, fontSize: 13, lineHeight: 1.4 }}>{d.foot}</span>
+                </CoopsLink>
+              </div>
+            ))}
+          </div>
         </section>
       </div>
     </div>
