@@ -25,11 +25,6 @@
 @media (prefers-reduced-motion:reduce){.tw-mk path{animation:none;stroke-dashoffset:0}}
 /* ── Coops08-Iniciativa.dc.html ── */
 @media (prefers-reduced-motion: reduce){.coops-mban-ring,.coops-mban-ic,.coops-mban-me,.coops-mban-btn{transition:none!important;transform:none!important}}
-<a href="Coops07-Membro-IC.dc.html" aria-label="Voltar para o seu perfil" class="coops-mban-me" style="flex: none; width: 112px; height: 84px; box-sizing: border-box; border-radius: 18px; background: #5FC4A6; border: 2px solid #0E0E12; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; text-decoration: none; line-height: 0"><dc-import name="CoopsAvatar" skin="#8D5A3B" hair-style="coque" shirt-style="blazer" bg="#5FC4A6" crown="{{ true }}
-" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #F5F2EC; background: #0E0E12; border: 2px solid #0E0E12; border-radius: 12px; min-height: 48px; padding: 0 18px; cursor: pointer">+ Entrega</button>
-
-
-.ic-fire{opacity:0;transform-origin:50% 0%}
 :is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ic-rocket{animation:icRocket .9s ease-in-out infinite}
 :is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ic-fire{animation:icFire .32s ease-in-out infinite alternate}
 :is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ic-fire2{animation-duration:.24s}
@@ -45,10 +40,6 @@
 .in-new:hover .in-plus{transform:rotate(90deg);background:#B7A6FF!important;color:#0E0E12!important;border-color:#B7A6FF!important}
 @media (prefers-reduced-motion:reduce){.in-new,.in-plus{transition:none}}
 /* ── Coops09-Agente.dc.html ── */
-" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #F5F2EC; background: #0E0E12; border: 2px solid #0E0E12; border-radius: 12px; min-height: 48px; padding: 0 18px; cursor: pointer">+ Entrega</button>
-
-
-.in-new{transition:border-color .2s ease,transform .3s cubic-bezier(.34,1.56,.64,1)}
 .ag-st{transform-box:view-box;transform-origin:32px 28px}
 :is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ag-st{animation:agSpin 2.4s cubic-bezier(.45,0,.2,1) infinite}
 @keyframes agSpin{0%{transform:rotate(0) scale(1)}40%{transform:rotate(90deg) scale(1.12)}60%,100%{transform:rotate(90deg) scale(1)}}
