@@ -38,11 +38,11 @@ export function SaudeClient({ user, person, projectId, isOwn, history }: { user:
   const { refresh } = useCoopsRouter();
   const cur = currentCycle();
   const last = history[0] ?? null;
-  const [v, setV] = useState<Record<Dim, number>>({ saude: 0, design: 0, produto: 0, negocio: 0 });
-  const [note, setNote] = useState('');
+  const [v, setV] = useState<Record<Dim, number>>(() => (isOwn && last && last.cycle === cur ? { saude: last.saude, design: last.design, produto: last.produto, negocio: last.negocio } : { saude: 0, design: 0, produto: 0, negocio: 0 }));
+  const [note, setNote] = useState(() => (isOwn && last && last.cycle === cur ? last.note : ''));
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  const [sent, setSent] = useState(false);
+  const [sent, setSent] = useState(() => isOwn && !!last && last.cycle === cur);
   const fn = firstName(person.name);
   const shown: Record<Dim, number> = isOwn ? v : last ? { saude: last.saude, design: last.design, produto: last.produto, negocio: last.negocio } : { saude: 0, design: 0, produto: 0, negocio: 0 };
   const answered = HEALTH_DIMS.every((d) => shown[d.id] > 0);
