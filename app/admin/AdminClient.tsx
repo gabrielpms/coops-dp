@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { AppHeader, DEFAULT_AVATAR } from '@/components/ds/AppHeader';
 import { AdminBanner, AdminCard, AddCard } from '@/components/admin/AdminBanner';
-import { AvatarIcon, IconBrief } from '@/components/admin/Icons';
+import { AvatarIcon, IconBrief, IconHeart, isFinSegment } from '@/components/admin/Icons';
 import { UserDeck, type UserData, type UserDraft } from '@/components/admin/UserDeck';
 import { ProjectDeck, type ProjectDraft } from '@/components/wizard/ProjectDeck';
 import { Avatar } from '@/components/avatar/Avatar';
@@ -43,7 +43,7 @@ export function AdminClient({ user, projects, projectDraft: pd0, userDraft: ud0 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
           {view === 'admin' ? <>
             {projects.map((p) => (
-              <AdminCard key={p.id} bg="#B7A6FF" icon={<IconBrief bg="#B7A6FF" />} big={pad(p.counts.squads)} bigLabel={p.counts.squads === 1 ? 'SQUAD' : 'SQUADS'} kicker={p.segment.toUpperCase()} title={p.name}
+              <AdminCard key={p.id} bg="#B7A6FF" icon={isFinSegment(p.segment) ? <IconBrief bg="#B7A6FF" /> : <IconHeart bg="#B7A6FF" />} big={pad(p.counts.squads)} bigLabel={p.counts.squads === 1 ? 'SQUAD' : 'SQUADS'} kicker={p.segment.toUpperCase()} title={p.name}
                 foot={`${p.leaderships} ${plural(p.leaderships, 'liderança', 'lideranças')} · ${p.categories} ${plural(p.categories, 'categoria', 'categorias')} de skill · Gerenciar o projeto →`} aria={`Gerenciar o projeto ${p.name}`}
                 onClick={() => go(`/admin/${p.id}`)} />
             ))}
