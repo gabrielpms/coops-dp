@@ -9,17 +9,18 @@ export default async function SkillsPage({ params }: { params: Promise<{ project
   const { projectId, personId } = await params;
   const { user, person, isOwn, isManager } = await loadPersonPage(projectId, personId);
   const cycle = currentCycle();
-  const [skills, categories, ratings] = await Promise.all([
+  const [skills, categories, ratings, study] = await Promise.all([
     db.skill.findMany({ where: { projectId }, orderBy: { position: 'asc' } }),
     db.skillCategory.findMany({ where: { projectId }, orderBy: { name: 'asc' } }),
     db.skillRating.findMany({ where: { personId, cycle } }),
+    db.studyItem.findMany({ where: { personId, deletedAt: null, skillId: { not: null } }, select: { skillId: true } }),
   ]);
   return (
     <SkillsClient
       user={{ name: user.name, email: user.email, role: user.role, avatar: user.avatar as any }}
       person={{ id: person.id, name: person.name, avatar: (person.avatar as any) ?? null }} projectId={projectId} cycle={cycle} isOwn={isOwn} canGrade={isManager && !isOwn}
       categories={categories.map((c) => ({ id: c.id, name: c.name }))}
-      skills={skills.map((s) => ({ id: s.id, name: s.name, categoryId: s.categoryId, self: ratings.find((r) => r.skillId === s.id)?.selfScore ?? 0, manager: ratings.find((r) => r.skillId === s.id)?.managerScore ?? 0 }))}
+      skills={skills.map((s) => ({ id: s.id, name: s.name, categoryId: s.categoryId, self: ratings.find((r) => r.skillId === s.id)?.selfScore ?? 0, manager: ratings.find((r) => r.skillId === s.id)?.managerScore ?? 0, gym: study.filter((x) => x.skillId === s.id).length }))}
     />
   );
 }

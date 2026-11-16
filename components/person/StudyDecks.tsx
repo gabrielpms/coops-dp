@@ -27,7 +27,7 @@ export function TypePicker({ onPick, onClose }: { onPick: (t: StudyType) => void
       <p style={{ margin: 0, fontSize: 14, color: '#A3A1AD' }}>Escolha uma carta. Depois vêm as perguntas, uma por carta.</p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
         {(Object.keys(STUDY_META) as StudyType[]).map((t) => (
-          <button key={t} type="button" onClick={() => onPick(t)} className="coops-card" style={{ fontFamily: 'inherit', textAlign: 'left', minHeight: 150, borderRadius: 18, background: '#F5A9D6', color: '#0E0E12', border: '2px solid #0E0E12', padding: 16, display: 'flex', flexDirection: 'column', gap: 6, cursor: 'pointer' }}>
+          <button key={t} type="button" onClick={() => onPick(t)} className="coops-card ev-opt" style={{ ['--evs' as string]: '#B0507F', fontFamily: 'inherit', textAlign: 'left', minHeight: 150, borderRadius: 18, background: '#F5A9D6', color: '#0E0E12', border: '2px solid #0E0E12', padding: 16, display: 'flex', flexDirection: 'column', gap: 6, cursor: 'pointer' }}>
             <span style={{ fontSize: 20, fontWeight: 700 }}>{STUDY_META[t].label}</span><span style={{ fontSize: 13, lineHeight: 1.4 }}>{STUDY_META[t].hint}</span>
           </button>
         ))}

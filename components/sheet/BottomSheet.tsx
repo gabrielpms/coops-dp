@@ -33,7 +33,7 @@ export function BottomSheet({ tag, title, onClose, children }: { tag: string; ti
               <h2 style={{ margin: 0, fontSize: 30, fontWeight: 800, letterSpacing: '-0.025em' }}>{title}</h2>
               <span style={{ fontSize: 13, color: '#A3A1AD' }}>Uma pergunta por carta.</span>
             </div>
-            <button type="button" aria-label="Fechar" onClick={onClose}
+            <button type="button" aria-label="Fechar" onClick={onClose} className="coops-x"
               style={{ flex: '0 0 44px', height: 44, borderRadius: 14, background: '#212129', border: '1.5px solid #3A3846', color: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
             </button>

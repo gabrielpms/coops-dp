@@ -2,9 +2,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
 import { OpenDeckBanner } from '@/components/ds/OpenDeckBanner';
-import { FocusCard } from '@/components/ds/FocusCard';
+import { FocusCard, FocusClose } from '@/components/ds/FocusCard';
 import { DeliveryDeck, type DeliveryDraft, type DeliveryView } from '@/components/person/DeliveryDeck';
 import { DiRocket } from '@/components/person/DeckIcons';
+import { BannerDelivery } from '@/components/person/BannerIcons';
 import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
 import { useCoopsRouter } from '@/components/nav/useCoopsRouter';
 import { label } from '@/components/ds/tokens';
@@ -25,6 +26,7 @@ export function EntregasClient({ user, person, projectId, isOwn, initiatives, de
   const [focus, setFocus] = useState<{ d: DeliveryView; rect: DOMRect | null } | null>(null);
   const [deck, setDeck] = useState<{ editing: DeliveryView | null } | null>(null);
   const [draft, setDraft] = useState(d0);
+  const [impOpen, setImpOpen] = useState(false);
   const [impact, setImpact] = useState('');
   const [impactErr, setImpactErr] = useState(false);
   const fn = firstName(person.name);
@@ -34,7 +36,7 @@ export function EntregasClient({ user, person, projectId, isOwn, initiatives, de
   const count = (f: Filter) => (f === 'todas' ? deliveries.length : deliveries.filter((d) => d.status === f).length);
   const shown = filter === 'todas' ? deliveries : deliveries.filter((d) => d.status === filter);
   const done = () => { setDeck(null); refresh(); };
-  const open = (d: DeliveryView, el: HTMLElement) => { last.current = el; setImpact(''); setImpactErr(false); setFocus({ d, rect: el.getBoundingClientRect() }); };
+  const open = (d: DeliveryView, el: HTMLElement) => { last.current = el; setImpOpen(false); setImpact(''); setImpactErr(false); setFocus({ d, rect: el.getBoundingClientRect() }); };
   const saveImpact = async () => {
     if (!focus) return;
     if (!impact.trim()) { setImpactErr(true); return; }
@@ -48,7 +50,7 @@ export function EntregasClient({ user, person, projectId, isOwn, initiatives, de
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <OpenDeckBanner bg="#8FE3C8" icon={<DiRocket />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `← ${isOwn ? 'Meu perfil' : person.name}` }}
+        <OpenDeckBanner bg="#8FE3C8" icon={<BannerDelivery />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} avatarBg="#5FC4A6" avatarCrown avatarHref={`/p/${projectId}/pessoas/${person.id}`} back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `← ${isOwn ? 'Meu perfil' : person.name}` }}
           title={isOwn ? 'Suas entregas' : `Entregas ${fn.endsWith('a') ? 'da' : 'do'} ${fn}`} desc={isOwn ? 'O que você entregou nas iniciativas do squad, com o impacto de cada entrega.' : `O que ${fn} entregou nas iniciativas do squad, com o impacto de cada entrega.`}
           cta={isOwn ? { label: '+ Nova entrega', onClick: () => setDeck({ editing: null }) } : null} />
         <div role="tablist" aria-label="Filtrar entregas" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -59,7 +61,7 @@ export function EntregasClient({ user, person, projectId, isOwn, initiatives, de
             <button key={d.id} type="button" className="coops-card" aria-label={`Abrir a entrega ${d.title}`} onClick={(e) => open(d, e.currentTarget)}
               style={{ fontFamily: 'inherit', textAlign: 'left', height: 340, boxSizing: 'border-box', borderRadius: 22, background: '#8FE3C8', color: '#0E0E12', border: '2px solid #0E0E12', padding: 20, display: 'flex', flexDirection: 'column', gap: 10, cursor: 'pointer', boxShadow: '0 16px 36px rgba(0,0,0,0.45)' }}>
               <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>
-                <DiRocket />
+                <BannerDelivery size={56} />
                 <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}><span style={{ fontSize: 44, fontWeight: 600, lineHeight: 1, letterSpacing: '-0.03em' }}>{d.date.slice(8, 10)}</span><span style={label(11, '0')}>{MONTHS[Number(d.date.slice(5, 7)) - 1]}</span></span>
               </span>
               <span style={{ marginTop: 'auto', ...label(11, '0.08em') }}>ENTREGA · {STATUS_LABEL[d.status]}</span>
@@ -79,12 +81,20 @@ export function EntregasClient({ user, person, projectId, isOwn, initiatives, de
 
       {focus && cur && (
         <FocusCard origin={focus.rect} bg="#8FE3C8" ariaLabel={`Entrega ${cur.title}`} onClose={() => { setFocus(null); last.current?.focus?.(); }}>
-          <span style={label(11, '0.08em')}>ENTREGAS {isOwn ? 'SUAS' : `DE ${fn.toUpperCase()}`} · {day} {MONTHS[Number(m) - 1]}</span>
-          <h2 style={{ margin: 0, fontSize: 30, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }}>{cur.title}</h2>
-          {cur.description && <p style={{ margin: 0, fontSize: 15, lineHeight: 1.5 }}>{cur.description}</p>}
+          <div className="coops-fx-body" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <span style={label(11, '0.08em')}>ENTREGAS {isOwn ? 'SUAS' : `DE ${fn.toUpperCase()}`} · {day} {MONTHS[Number(m) - 1]}</span>
+              <h2 style={{ margin: 0, fontSize: 30, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }}>{cur.title}</h2>
+            </div>
+            <FocusClose onClick={() => { setFocus(null); last.current?.focus?.(); }} />
+          </div>
+          {cur.description && <p className="ent-desc" style={{ margin: 0, fontSize: 15, lineHeight: 1.5 }}>{cur.description}</p>}
           <div style={{ borderRadius: 14, background: 'rgba(245,242,236,0.6)', border: '1.5px solid #0E0E12', padding: 14, display: 'flex', flexDirection: 'column', gap: 6 }}>
             <span style={label(10)}>IMPACTO</span>
-            {cur.impact ? <span style={{ fontSize: 15, lineHeight: 1.45 }}>{cur.impact}</span> : isOwn ? (<>
+            {cur.impact ? <span style={{ fontSize: 15, lineHeight: 1.45 }}>{cur.impact}</span> : isOwn && !impOpen ? (
+              <button type="button" className="imp-cta" onClick={() => setImpOpen(true)} style={{ fontFamily: 'inherit', textAlign: 'left', color: '#0E0E12', background: 'rgba(245,242,236,0.7)', border: '1.5px dashed #0E0E12', borderRadius: 12, padding: 12, display: 'flex', flexDirection: 'column', gap: 4, cursor: 'pointer' }}><span style={label(10)}>IMPACTO · PENDENTE</span><span style={{ fontSize: 14, lineHeight: 1.4 }}>Já dá para ver o que mudou? Registre o número ou o sinal concreto.</span><span style={{ fontSize: 14, fontWeight: 700 }}>+ Inserir impacto</span></button>
+            ) : isOwn ? (<>
               <span style={{ fontSize: 13, fontWeight: 600 }}>Impacto pendente</span>
               <textarea aria-label="Impacto da entrega" value={impact} onChange={(e) => { setImpact(e.target.value); setImpactErr(false); }} placeholder="O que mudou por causa dessa entrega?" style={{ fontFamily: 'inherit', fontSize: 15, borderRadius: 10, border: '1.5px solid rgba(14,14,18,0.3)', background: '#F5F2EC', padding: '10px 12px', minHeight: 80, resize: 'vertical', boxSizing: 'border-box', width: '100%' }} />
               {impactErr && <span role="alert" style={{ fontSize: 13, fontWeight: 600 }}>Escreva o impacto para salvar.</span>}
@@ -98,6 +108,7 @@ export function EntregasClient({ user, person, projectId, isOwn, initiatives, de
           </div>
           <span style={{ fontSize: 13 }}>{cur.initiativeTitle ? `Ligada à iniciativa “${cur.initiativeTitle}”` : 'Sem iniciativa ligada'}</span>
           {isOwn && <button type="button" onClick={() => { const e = cur; setFocus(null); setDeck({ editing: e }); }} style={{ alignSelf: 'flex-start', fontFamily: 'inherit', fontWeight: 600, fontSize: 14, color: '#0E0E12', background: 'transparent', border: '1.5px solid #0E0E12', borderRadius: 12, minHeight: 44, padding: '0 16px', cursor: 'pointer' }}>Editar entrega</button>}
+          </div>
         </FocusCard>
       )}
       {deck && <DeliveryDeck key={deck.editing?.id ?? 'new'} personId={person.id} editing={deck.editing} initiatives={initiatives} draft={draft} onDraftChange={setDraft} onClose={() => setDeck(null)} onSaved={done} />}
