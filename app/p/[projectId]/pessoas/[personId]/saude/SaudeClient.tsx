@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
 import { OpenDeckBanner } from '@/components/ds/OpenDeckBanner';
 import { Spinner } from '@/components/ds/ScreenLoader';
@@ -34,15 +34,23 @@ function DimIcon({ id, ink, bg }: { id: Dim; ink: string; bg: string }) {
 
 const BannerHeart = () => <svg width="84" height="84" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ overflow: 'visible' }}><path className="ic-heart" d="M32 54S8 40 8 24a12 12 0 0 1 24-4 12 12 0 0 1 24 4c0 16-24 30-24 30z" /><path className="ic-ecg" d="M14 30h10l4-8 6 16 4-8h12" /></svg>;
 
-export function SaudeClient({ user, person, projectId, isOwn, history }: { user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; person: { id: string; name: string; avatar: AvatarConfig | null }; projectId: string; isOwn: boolean; history: H[] }) {
+export function SaudeClient({ user, person, projectId, isOwn, history, draft }: { draft: { v: Record<string, number>; note: string } | null; user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; person: { id: string; name: string; avatar: AvatarConfig | null }; projectId: string; isOwn: boolean; history: H[] }) {
   const { refresh } = useCoopsRouter();
   const cur = currentCycle();
   const last = history[0] ?? null;
-  const [v, setV] = useState<Record<Dim, number>>({ saude: 0, design: 0, produto: 0, negocio: 0 });
-  const [note, setNote] = useState('');
+  const [v, setV] = useState<Record<Dim, number>>(() => (draft ? { saude: draft.v.saude ?? 0, design: draft.v.design ?? 0, produto: draft.v.produto ?? 0, negocio: draft.v.negocio ?? 0 } : isOwn && last && last.cycle === cur ? { saude: last.saude, design: last.design, produto: last.produto, negocio: last.negocio } : { saude: 0, design: 0, produto: 0, negocio: 0 }));
+  const [note, setNote] = useState(() => (draft ? draft.note : isOwn && last && last.cycle === cur ? last.note : ''));
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  const [sent, setSent] = useState(false);
+  const [sent, setSent] = useState(() => !draft && isOwn && !!last && last.cycle === cur);
+  const dirty = useRef(false), timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  // Rascunho: cada nota/comentário é salvo no banco (debounce) até o envio.
+  useEffect(() => {
+    if (!isOwn || !dirty.current) return;
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => { fetch('/api/drafts', { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ scope: 'health', entityId: person.id, payload: { form: { v, note } } }) }).catch(() => {}); }, 400);
+    return () => clearTimeout(timer.current);
+  }, [v, note, isOwn, person.id]);
   const fn = firstName(person.name);
   const shown: Record<Dim, number> = isOwn ? v : last ? { saude: last.saude, design: last.design, produto: last.produto, negocio: last.negocio } : { saude: 0, design: 0, produto: 0, negocio: 0 };
   const answered = HEALTH_DIMS.every((d) => shown[d.id] > 0);
@@ -69,7 +77,7 @@ export function SaudeClient({ user, person, projectId, isOwn, history }: { user:
       const r = await fetch(`/api/people/${person.id}/health`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...v, note }) });
       const j = await r.json();
       if (!r.ok) { setErr(j.error ?? 'Não deu para enviar. Tente de novo.'); return; }
-      setSent(true); refresh();
+      dirty.current = false; clearTimeout(timer.current); await fetch(`/api/drafts?scope=health&entityId=${person.id}`, { method: 'DELETE' }).catch(() => {}); setSent(true); refresh();
     } catch { setErr('Sem conexão. Tente de novo.'); } finally { setBusy(false); }
   };
 
@@ -104,7 +112,7 @@ export function SaudeClient({ user, person, projectId, isOwn, history }: { user:
                             const filled = n <= val;
                             const st = { fontFamily: mono, fontSize: 13, fontWeight: 700, height: isOwn ? 44 : 40, borderRadius: 11, background: filled ? '#0E0E12' : 'transparent', color: filled ? '#A9D8F5' : ink, border: `2px solid ${on ? '#0E0E12' : '#4A4858'}`, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' } as const;
                             return isOwn
-                              ? <button key={n} type="button" aria-label={`${q.title}: nota ${n}`} aria-pressed={val === n} onClick={() => { setV({ ...v, [q.id]: n }); setSent(false); setErr(null); }} style={{ ...st, cursor: 'pointer' }}>{n}</button>
+                              ? <button key={n} type="button" aria-label={`${q.title}: nota ${n}`} aria-pressed={val === n} onClick={() => { dirty.current = true; setV({ ...v, [q.id]: n }); setSent(false); setErr(null); }} style={{ ...st, cursor: 'pointer' }}>{n}</button>
                               : <span key={n} role="img" aria-label={`${q.title}: nota ${n}${val === n ? ' (resposta)' : ''}`} style={st}>{n}</span>;
                           })}
                         </div>
@@ -137,7 +145,7 @@ export function SaudeClient({ user, person, projectId, isOwn, history }: { user:
               {isOwn ? <>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   <label htmlFor="sd-nota" style={{ fontSize: 14, color: '#A3A1AD' }}>Quer contar algo para o manager? (opcional)</label>
-                  <textarea id="sd-nota" rows={4} value={note} onChange={(e) => { setNote(e.target.value); setSent(false); }} placeholder="Como foram as últimas semanas" style={{ fontFamily: 'inherit', fontSize: 16, lineHeight: 1.5, color: '#F5F2EC', background: '#17171D', border: '1.5px solid #2C2C36', borderRadius: 12, padding: '12px 14px', resize: 'vertical', boxSizing: 'border-box', width: '100%' }} />
+                  <textarea id="sd-nota" rows={4} value={note} onChange={(e) => { dirty.current = true; setNote(e.target.value); setSent(false); }} placeholder="Como foram as últimas semanas" style={{ fontFamily: 'inherit', fontSize: 16, lineHeight: 1.5, color: '#F5F2EC', background: '#17171D', border: '1.5px solid #2C2C36', borderRadius: 12, padding: '12px 14px', resize: 'vertical', boxSizing: 'border-box', width: '100%' }} />
                 </div>
                 {err && <span role="alert" style={{ fontSize: 14, fontWeight: 600, color: '#FF8A5B' }}>{err}</span>}
                 <button type="button" disabled={busy} onClick={send} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 52, color: '#0E0E12', background: sent ? '#F5F2EC' : '#B7A6FF', border: 0, fontFamily: 'inherit', fontWeight: 600, fontSize: 16, borderRadius: 14, cursor: busy ? 'wait' : 'pointer', opacity: busy ? 0.7 : 1 }}>{busy && <Spinner />}{busy ? 'Enviando…' : sent ? 'Check-in enviado ✓' : 'Enviar check-in de saúde'}</button>
