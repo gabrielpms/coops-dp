@@ -5,6 +5,7 @@ import { Avatar, type AvatarConfig } from '@/components/avatar/Avatar';
 import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
 import { CoopsLink, useCoopsRouter } from '@/components/nav/useCoopsRouter';
 import { PowerUpDeck, type PowerUpDraft } from '@/components/person/PowerUpDeck';
+import { EmptyDeckCard } from '@/components/person/EmptyDeckCard';
 import { PiBrain, PiEntregas, PiEventos, PiJornada, PiSaude, PiSkills } from '@/components/person/ProfileIcons';
 import { label } from '@/components/ds/tokens';
 import { firstName, plural, tenureLong } from '@/lib/format';
@@ -30,6 +31,8 @@ export function ProfileClient({ user, project, person, isOwn, isManager, powerUp
   const [sticky, setSticky] = useState(false);
   const decksRef = useRef<HTMLElement>(null);
   const fn = firstName(person.name);
+  const asManager = isManager && !isOwn;
+  const nSkills = skillsSummary.total;
   const cfg = { ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) };
   const base = `/p/${project.id}/pessoas/${person.id}`;
 
@@ -134,21 +137,21 @@ export function ProfileClient({ user, project, person, isOwn, isManager, powerUp
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, lineHeight: 1.45 }}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>Só a pessoa e o manager veem</span>
               {rule(healthSummary ? `Ciclo ${healthSummary.cycle}` : 'Quatro perguntas, uma por dimensão')}
             </>)}
-            {pile(`${base}/eventos`, 'Abrir o deck de Eventos', '#B7A6FF', { b2: '#4B36B0', b1: '#8B74F2' }, <PiEventos />, String(eventSummary.total), plural(eventSummary.total, 'CARTA', 'CARTAS'), <>
+            {eventSummary.total === 0 ? <EmptyDeckCard kind="eventos" asManager={asManager} skillCount={nSkills} href={`${base}/eventos`} /> : pile(`${base}/eventos`, 'Abrir o deck de Eventos', '#B7A6FF', { b2: '#4B36B0', b1: '#8B74F2' }, <PiEventos />, String(eventSummary.total), plural(eventSummary.total, 'CARTA', 'CARTAS'), <>
               {kicker(eventSummary.last ? `EVENTOS · ${eventSummary.last.type.replace('_', ' ')}` : 'EVENTOS')}{title(eventSummary.last?.title ?? 'Nenhum evento ainda')}
               {rule('Check-ins, feedbacks, promoções e méritos')}
             </>)}
-            {pile(`${base}/skills`, 'Abrir o deck de Skills', '#F3D36B', { b2: '#B8962F', b1: '#D9B84B' }, <PiSkills />, skillsSummary.rated ? dec(skillsSummary.avg) : '—', 'MÉDIA / 5', <>
+            {skillsSummary.rated === 0 ? <EmptyDeckCard kind="skills" asManager={asManager} skillCount={nSkills} href={`${base}/skills`} /> : pile(`${base}/skills`, 'Abrir o deck de Skills', '#F3D36B', { b2: '#B8962F', b1: '#D9B84B' }, <PiSkills />, skillsSummary.rated ? dec(skillsSummary.avg) : '—', 'MÉDIA / 5', <>
               {kicker('SKILLS')}
               {skillsSummary.top.length > 0 && <div aria-hidden="true" style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 14 }}>{skillsSummary.top.map((sk) => <span key={sk.name} style={{ display: 'flex', justifyContent: 'space-between' }}><span>{sk.name}</span><span style={{ fontFamily: "'JetBrains Mono', monospace" }}>{'●'.repeat(sk.self)}{'○'.repeat(5 - sk.self)}</span></span>)}</div>}
               {rule(`${skillsSummary.total} ${plural(skillsSummary.total, 'skill do projeto', 'skills do projeto')} · ${isOwn ? 'autoavaliação' : 'ver notas'}`)}
             </>)}
-            {pile(`${base}/brain-gym`, 'Abrir o deck de Brain gym', '#F5A9D6', { b1: '#D884B6' }, <PiBrain />, String(studySummary.active), 'ESTUDANDO', <>
+            {studySummary.total === 0 ? <EmptyDeckCard kind="gym" asManager={asManager} skillCount={nSkills} href={`${base}/brain-gym`} /> : pile(`${base}/brain-gym`, 'Abrir o deck de Brain gym', '#F5A9D6', { b1: '#D884B6' }, <PiBrain />, String(studySummary.active), 'ESTUDANDO', <>
               {kicker(studySummary.latest ? `BRAIN GYM · ${STUDY_LABEL[studySummary.latest.type] ?? ''}` : 'BRAIN GYM')}{title(studySummary.latest?.title ?? 'Nada no deck ainda')}
               {studySummary.latest && <div aria-hidden="true" style={{ display: 'grid', gridTemplateColumns: 'repeat(10, minmax(0, 1fr))', gap: 3 }}>{Array.from({ length: 10 }, (_, i) => <span key={i} style={{ height: 14, borderRadius: 4, border: '1.5px solid #0E0E12', ...(i < Math.round(studySummary.latest!.pct / 10) ? { background: '#0E0E12' } : {}) }} />)}</div>}
               {rule(studySummary.latest ? `${studySummary.latest.pct}% · ${studySummary.total} ${plural(studySummary.total, 'conteúdo', 'conteúdos')}` : 'Livros, cursos e vídeos ligados às suas skills')}
             </>)}
-            {pile(`${base}/jornada`, 'Abrir o deck de Jornada', '#FF8A5B', {}, <PiJornada />, journeySummary.goals ? `${journeySummary.avg}%` : String(journeySummary.total), journeySummary.goals ? 'DO CICLO' : plural(journeySummary.total, 'CARTA', 'CARTAS'), <>
+            {journeySummary.total === 0 ? <EmptyDeckCard kind="jornada" asManager={asManager} skillCount={nSkills} href={`${base}/jornada`} /> : pile(`${base}/jornada`, 'Abrir o deck de Jornada', '#FF8A5B', {}, <PiJornada />, journeySummary.goals ? `${journeySummary.avg}%` : String(journeySummary.total), journeySummary.goals ? 'DO CICLO' : plural(journeySummary.total, 'CARTA', 'CARTAS'), <>
               {kicker('JORNADA · OBJETIVOS')}{title(journeySummary.first ?? 'Jornada do ciclo vazia')}
               {rule(`${journeySummary.total} ${plural(journeySummary.total, 'carta', 'cartas')} no ciclo`)}
             </>)}

@@ -36,8 +36,19 @@ export function IniciativasClient({ user, project, items, draft: d0 }: {
             <button type="button" role="tab" aria-selected={tab === 'ENCERRADA'} onClick={() => setTab('ENCERRADA')} style={pill(tab === 'ENCERRADA')}>Encerradas · {count('ENCERRADA')}</button>
           </div>
         </section>
+        {items.length === 0 && (
+          <section aria-label="Nenhuma iniciativa" style={{ borderRadius: 30, background: '#17171D', border: '1px solid #2C2C36', padding: 32, display: 'flex', flexWrap: 'wrap', gap: 28, alignItems: 'center' }}>
+            <div aria-hidden="true" className="coops-card" style={{ width: 120, height: 160, borderRadius: 20, border: '2px dashed #B7A6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#B7A6FF" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="3 3"><path d="M32 6c10 8 14 20 10 34H22C18 26 22 14 32 6z" /><circle cx="32" cy="24" r="5" /></svg></div>
+            <div style={{ flex: '1 1 260px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <span style={{ ...label(11, '0.06em'), color: '#B7A6FF' }}>INICIATIVAS · NENHUMA</span>
+              <span style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }}>A mesa está limpa</span>
+              <span style={{ fontSize: 15, color: '#A3A1AD', lineHeight: 1.5 }}>{isManager ? 'Comece pela carta da iniciativa: o que é, qual problema e qual necessidade.' : 'Seu manager ainda não abriu nenhuma iniciativa neste projeto.'}</span>
+              {isManager && <button type="button" onClick={() => setDeck(true)} style={{ alignSelf: 'flex-start', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', minHeight: 48, color: '#0E0E12', background: '#B7A6FF', border: 0, fontWeight: 600, fontSize: 15, borderRadius: 14, padding: '0 18px', cursor: 'pointer' }}>Nova iniciativa</button>}
+            </div>
+          </section>
+        )}
         <section aria-label="Lista de iniciativas" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
-          {isManager && tab === 'ABERTA' && (
+          {isManager && tab === 'ABERTA' && items.length > 0 && (
             <button type="button" onClick={() => setDeck(true)} className="coops-card" aria-label="Nova iniciativa" style={{ ...card, background: 'transparent', color: '#F5F2EC', border: '2px dashed #4A4858', boxShadow: 'none', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontFamily: 'inherit' }}>
               <span aria-hidden="true" style={{ fontSize: 40, lineHeight: 1 }}>+</span><span style={{ fontSize: 20, fontWeight: 700 }}>Nova iniciativa</span>
               {draft && <span style={{ ...label(11, '0.06em'), color: '#B7A6FF' }}>RASCUNHO SALVO</span>}
@@ -50,9 +61,9 @@ export function IniciativasClient({ user, project, items, draft: d0 }: {
               <span style={{ borderTop: '1.5px solid #0E0E12', paddingTop: 10, fontSize: 13, lineHeight: 1.4 }}>{i.problem || 'Problema ainda não informado.'}</span>
             </CoopsLink>
           ))}
-          {shown.length === 0 && !(isManager && tab === 'ABERTA') && <p style={{ margin: 0, color: '#A3A1AD', fontSize: 16 }}>Nenhuma iniciativa {tab === 'ABERTA' ? 'em andamento' : 'encerrada'} ainda.</p>}
+          {shown.length === 0 && items.length > 0 && !(isManager && tab === 'ABERTA') && <p style={{ margin: 0, color: '#A3A1AD', fontSize: 16 }}>Nenhuma iniciativa {tab === 'ABERTA' ? 'em andamento' : 'encerrada'} ainda.</p>}
         </section>
-        <p style={{ margin: 0, color: '#A3A1AD', fontSize: 14 }}>{items.length} {plural(items.length, 'iniciativa', 'iniciativas')} no projeto. A mesa e o deck de ferramentas entram nos próximos passos do Marco 4.</p>
+        <p style={{ margin: 0, color: '#A3A1AD', fontSize: 14 }}>{items.length} {plural(items.length, 'iniciativa', 'iniciativas')} no projeto.</p>
       </div>
       {deck && <InitiativeDeck projectId={project.id} draft={draft} onDraftChange={setDraft} onClose={() => setDeck(false)} onSaved={(id) => { setDeck(false); push(`/p/${project.id}/iniciativas/${id}`); }} />}
     </div>

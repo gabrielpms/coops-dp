@@ -4,6 +4,7 @@ import '@/styles/tokens.css';
 import '@/styles/motion.css';
 import '@/styles/base.css';
 import '@/styles/profile.css';
+import '@/styles/prototype.css';
 import { CurtainGuard } from '@/components/nav/useCoopsRouter';
 
 export const metadata: Metadata = { title: 'Coops · your design companion', description: 'Gestão de time e iniciativas com agente, em cartas.' };
