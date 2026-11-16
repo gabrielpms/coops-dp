@@ -10,6 +10,8 @@ import { PiBrain, PiEntregas, PiEventos, PiJornada, PiSaude, PiSkills } from '@/
 import { label } from '@/components/ds/tokens';
 import { firstName, plural, tenureLong } from '@/lib/format';
 
+const MONTHS_UP = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+const qOf = (c: string) => c.split('-')[1] ?? c;
 type PU = { id: string; type: string; name: string; skill: string; frequency: string; progress: number };
 const TYPE_LABEL: Record<string, string> = { MENTORIA: 'MENTORIA', CURSO: 'CURSO', PROJETO: 'PROJETO PARALELO' };
 const STUDY_LABEL: Record<string, string> = { CURSO: 'CURSO', LIVRO: 'LIVRO', VIDEO: 'VÍDEO', ARTIGO: 'ARTIGO', PODCAST: 'PODCAST', LINK: 'LINK' };
@@ -18,11 +20,11 @@ export function ProfileClient({ user, project, person, isOwn, isManager, powerUp
   user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; project: { id: string; name: string; skills: string[] };
   person: { id: string; name: string; title: string; avatar: AvatarConfig | null; mainSkill: string; joinedAt: string | null; squads: { id: string; name: string; color: string }[] };
   isOwn: boolean; isManager: boolean; powerUps: PU[];
-  skillsSummary: { total: number; top: { name: string; self: number }[]; avg: number; rated: number };
+  skillsSummary: { cycle: string; total: number; top: { name: string; self: number }[]; avg: number; rated: number };
   studySummary: { total: number; active: number; latest: { title: string; type: string; pct: number } | null };
   deliverySummary: { total: number; delivered: number; paused: number; latest: { title: string } | null };
-  journeySummary: { total: number; goals: number; avg: number; first: string | null }; healthSummary: { avg: number; cycle: string } | null;
-  eventSummary: { total: number; last: { title: string; type: string } | null };
+  journeySummary: { done: number; focos: string[]; total: number; goals: number; avg: number; first: string | null }; healthSummary: { avg: number; cycle: string; current: boolean; low: string | null; delta: number | null; prevCycle: string | null } | null;
+  eventSummary: { total: number; last: { title: string; type: string; date: string } | null; checkins: number; feedbacks: number };
   draft: PowerUpDraft | null;
 }) {
   const { refresh } = useCoopsRouter();
@@ -31,6 +33,7 @@ export function ProfileClient({ user, project, person, isOwn, isManager, powerUp
   const [sticky, setSticky] = useState(false);
   const decksRef = useRef<HTMLElement>(null);
   const fn = firstName(person.name);
+  const curCycle = skillsSummary.cycle;
   const asManager = isManager && !isOwn;
   const nSkills = skillsSummary.total;
   const cfg = { ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) };
@@ -133,18 +136,18 @@ export function ProfileClient({ user, project, person, isOwn, isManager, powerUp
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}><h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>{isOwn ? 'Meus decks' : `Decks da ${fn}`}</h2><span style={{ fontSize: 14, color: '#A3A1AD' }}>Toque num deck para abrir as cartas</span></div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 28 }}>
             {pile(`${base}/saude`, 'Abrir o deck de Saúde', '#A9D8F5', { b2: '#4F8DB3', b1: '#7FB8DD' }, <PiSaude />, healthSummary ? dec(healthSummary.avg) : '—', 'MÉDIA / 5', <>
-              {kicker('SAÚDE · CHECK-IN')}{title(healthSummary ? 'Último check-in' : 'Sem check-in ainda')}
+              {kicker('SAÚDE · CHECK-IN')}{title(healthSummary ? (healthSummary.low && (asManager || healthSummary.current) ? healthSummary.low : isOwn && !healthSummary.current ? `Check-in do ${qOf(curCycle)} esperando você` : 'Último check-in') : 'Sem check-in ainda')}
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, lineHeight: 1.45 }}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>Só a pessoa e o manager veem</span>
-              {rule(healthSummary ? `Ciclo ${healthSummary.cycle}` : 'Quatro perguntas, uma por dimensão')}
+              {rule(healthSummary ? `Respondido no ${qOf(healthSummary.cycle)}${healthSummary.delta !== null ? ` · ${healthSummary.delta > 0 ? '+' : healthSummary.delta < 0 ? '−' : ''}${Math.abs(healthSummary.delta).toFixed(1).replace('.', ',')} vs ${qOf(healthSummary.prevCycle!)}` : ''}` : 'Quatro perguntas, uma por dimensão')}
             </>)}
-            {eventSummary.total === 0 ? <EmptyDeckCard kind="eventos" asManager={asManager} skillCount={nSkills} href={`${base}/eventos`} /> : pile(`${base}/eventos`, 'Abrir o deck de Eventos', '#B7A6FF', { b2: '#4B36B0', b1: '#8B74F2' }, <PiEventos />, String(eventSummary.total), plural(eventSummary.total, 'CARTA', 'CARTAS'), <>
+            {eventSummary.total === 0 ? <EmptyDeckCard kind="eventos" asManager={asManager} skillCount={nSkills} href={`${base}/eventos`} /> : pile(`${base}/eventos`, 'Abrir o deck de Eventos', '#B7A6FF', { b2: '#4B36B0', b1: '#8B74F2' }, <PiEventos />, eventSummary.last ? eventSummary.last.date.slice(8, 10) : String(eventSummary.total), eventSummary.last ? MONTHS_UP[Number(eventSummary.last.date.slice(5, 7)) - 1] : plural(eventSummary.total, 'CARTA', 'CARTAS'), <>
               {kicker(eventSummary.last ? `EVENTOS · ${eventSummary.last.type.replace('_', ' ')}` : 'EVENTOS')}{title(eventSummary.last?.title ?? 'Nenhum evento ainda')}
-              {rule('Check-ins, feedbacks, promoções e méritos')}
+              {rule(`${eventSummary.total} ${plural(eventSummary.total, 'carta', 'cartas')} · ${eventSummary.checkins} ${plural(eventSummary.checkins, 'check-in', 'check-ins')} · ${eventSummary.feedbacks} ${plural(eventSummary.feedbacks, 'feedback', 'feedbacks')}`)}
             </>)}
             {skillsSummary.rated === 0 ? <EmptyDeckCard kind="skills" asManager={asManager} skillCount={nSkills} href={`${base}/skills`} /> : pile(`${base}/skills`, 'Abrir o deck de Skills', '#F3D36B', { b2: '#B8962F', b1: '#D9B84B' }, <PiSkills />, skillsSummary.rated ? dec(skillsSummary.avg) : '—', 'MÉDIA / 5', <>
               {kicker('SKILLS')}
               {skillsSummary.top.length > 0 && <div aria-hidden="true" style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 14 }}>{skillsSummary.top.map((sk) => <span key={sk.name} style={{ display: 'flex', justifyContent: 'space-between' }}><span>{sk.name}</span><span style={{ fontFamily: "'JetBrains Mono', monospace" }}>{'●'.repeat(sk.self)}{'○'.repeat(5 - sk.self)}</span></span>)}</div>}
-              {rule(`${skillsSummary.total} ${plural(skillsSummary.total, 'skill do projeto', 'skills do projeto')} · ${isOwn ? 'autoavaliação' : 'ver notas'}`)}
+              {rule(isOwn && skillsSummary.rated < skillsSummary.total ? `Autoavaliação do ${qOf(skillsSummary.cycle)} aberta` : `${skillsSummary.total} ${plural(skillsSummary.total, 'skill do projeto', 'skills do projeto')} · ${isOwn ? 'autoavaliação' : asManager ? 'avaliar' : 'ver notas'}`)}
             </>)}
             {studySummary.total === 0 ? <EmptyDeckCard kind="gym" asManager={asManager} skillCount={nSkills} href={`${base}/brain-gym`} /> : pile(`${base}/brain-gym`, 'Abrir o deck de Brain gym', '#F5A9D6', { b1: '#D884B6' }, <PiBrain />, String(studySummary.active), 'ESTUDANDO', <>
               {kicker(studySummary.latest ? `BRAIN GYM · ${STUDY_LABEL[studySummary.latest.type] ?? ''}` : 'BRAIN GYM')}{title(studySummary.latest?.title ?? 'Nada no deck ainda')}
@@ -153,7 +156,8 @@ export function ProfileClient({ user, project, person, isOwn, isManager, powerUp
             </>)}
             {journeySummary.total === 0 ? <EmptyDeckCard kind="jornada" asManager={asManager} skillCount={nSkills} href={`${base}/jornada`} /> : pile(`${base}/jornada`, 'Abrir o deck de Jornada', '#FF8A5B', {}, <PiJornada />, journeySummary.goals ? `${journeySummary.avg}%` : String(journeySummary.total), journeySummary.goals ? 'DO CICLO' : plural(journeySummary.total, 'CARTA', 'CARTAS'), <>
               {kicker('JORNADA · OBJETIVOS')}{title(journeySummary.first ?? 'Jornada do ciclo vazia')}
-              {rule(`${journeySummary.total} ${plural(journeySummary.total, 'carta', 'cartas')} no ciclo`)}
+              {journeySummary.goals > 0 && <span style={{ fontSize: 13, lineHeight: 1.45 }}>{journeySummary.goals} {plural(journeySummary.goals, 'objetivo', 'objetivos')} no ciclo · {journeySummary.done} de {journeySummary.goals} {plural(journeySummary.done, 'atingido', 'atingidos')}</span>}
+              {rule(journeySummary.focos.length ? `${journeySummary.focos.length} ${plural(journeySummary.focos.length, 'foco', 'focos')} · ${journeySummary.focos.join(' e ')}` : `${journeySummary.total} ${plural(journeySummary.total, 'carta', 'cartas')} no ciclo`)}
             </>)}
             {pile(`${base}/entregas`, 'Abrir o deck de Entregas', '#8FE3C8', { b1: '#5FC4A6' }, <PiEntregas />, String(deliverySummary.delivered), plural(deliverySummary.delivered, 'ENTREGUE', 'ENTREGUES'), <>
               {kicker('ENTREGAS')}{title(deliverySummary.latest?.title ?? 'Nenhuma entrega ainda')}
