@@ -1,4 +1,5 @@
 'use client';
+import { AnalysisOverlay } from '@/components/initiative/AnalysisOverlay';
 import { useState } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
 import type { AvatarConfig } from '@/components/avatar/Avatar';
@@ -67,7 +68,9 @@ export function MesaClient({ user, projectId, initiative, cards, attachments, re
     } catch { setError('Sem conexão. Tente de novo.'); } finally { setUploading(false); }
   };
   const removeFile = async (id: string) => { if (await call(`/api/attachments/${id}`, 'DELETE')) refresh(); };
-  const identify = async () => { if (await call(`${api}/moment`, 'POST')) go(`/p/${projectId}/iniciativas/${initiative.id}/momento`); };
+  const [analysing, setAnalysing] = useState<'off' | 'running' | 'ready'>('off');
+  // O agente analisa com animação (Coops10b) enquanto a identificação do momento roda no servidor.
+  const identify = async () => { setAnalysing('running'); if (await call(`${api}/moment`, 'POST')) setAnalysing((a) => (a === 'running' ? 'ready' : a)); else setAnalysing('off'); };
   const finish = async () => { if (await call(`${api}/close`, 'POST', { outcome, note })) { setClosing(false); refresh(); } };
   const reopen = async () => { if (await call(`${api}/close`, 'DELETE')) refresh(); };
 
@@ -164,6 +167,7 @@ export function MesaClient({ user, projectId, initiative, cards, attachments, re
           <button type="button" disabled={busy} onClick={finish} style={{ ...primary, alignSelf: 'flex-start' }}>{busy ? 'Salvando…' : 'Finalizar e registrar no perfil'}</button>
         </BottomSheet>
       )}
+      {analysing !== 'off' && <AnalysisOverlay contextCount={cards.length} resolvedCount={resolved.length} ready={analysing === 'ready'} onDone={() => go(`/p/${projectId}/iniciativas/${initiative.id}/momento`)} onCancel={() => setAnalysing('off')} />}
     </div>
   );
 }
