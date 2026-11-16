@@ -2,13 +2,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
 import { OpenDeckBanner } from '@/components/ds/OpenDeckBanner';
-import { BottomSheet } from '@/components/sheet/BottomSheet';
-import { DiBook } from '@/components/person/DeckIcons';
+import { FocusCard, FocusClose } from '@/components/ds/FocusCard';
+import { StudyTypeIcon } from '@/components/person/StudyTypeIcon';
 import { BannerBrain } from '@/components/person/BannerIcons';
 import { StudyDeck, TypePicker, STUDY_META, type StudyDraft, type StudyType, type StudyView } from '@/components/person/StudyDecks';
 import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
 import { useCoopsRouter } from '@/components/nav/useCoopsRouter';
-import { label } from '@/components/ds/tokens';
+import { label, mono } from '@/components/ds/tokens';
 import { firstName, plural } from '@/lib/format';
 import type { AvatarConfig } from '@/components/avatar/Avatar';
 
@@ -27,7 +27,7 @@ export function BrainGymClient({ user, person, projectId, isOwn, skills, items: 
   const latest = useRef(initial); // sempre o valor mais recente: cliques rápidos não perdem incrementos
   useEffect(() => { setItems(initial); latest.current = initial; }, [initial]);
   const [filter, setFilter] = useState<Filter>('todos');
-  const [sheet, setSheet] = useState<{ k: 'pick' } | { k: 'new'; type: StudyType } | { k: 'detail'; id: string } | null>(null);
+  const [sheet, setSheet] = useState<{ k: 'pick' } | { k: 'new'; type: StudyType } | { k: 'detail'; id: string; rect: DOMRect | null } | null>(null);
   const [draft, setDraft] = useState(d0);
   const [warn, setWarn] = useState<string | null>(null);
   const [notes, setNotes] = useState('');
@@ -48,18 +48,32 @@ export function BrainGymClient({ user, person, projectId, isOwn, skills, items: 
   };
   const saveNotes = async () => { if (!cur) return; await fetch(`/api/people/${person.id}/study/${cur.id}`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ notes }) }); setItems((all) => all.map((x) => (x.id === cur.id ? { ...x, notes } : x))); setSheet(null); };
   const remove = async () => { if (!cur || !window.confirm('Remover este conteúdo do deck?')) return; await fetch(`/api/people/${person.id}/study/${cur.id}`, { method: 'DELETE' }); setSheet(null); refresh(); };
-  const Controls = ({ it, big }: { it: StudyView; big?: boolean }) => (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <div role="img" aria-label={`${it.progress} de ${it.total} ${STUDY_META[it.type].unit}`} style={{ flex: 1, display: 'grid', gridTemplateColumns: `repeat(${it.total}, 1fr)`, gap: 3 }}>{Array.from({ length: it.total }, (_, k) => <span key={k} style={{ height: big ? 14 : 10, borderRadius: 3, border: '1.5px solid #0E0E12', background: k < it.progress ? '#0E0E12' : 'transparent' }} />)}</div>
-      {isOwn && <><button type="button" aria-label="Diminuir progresso" onClick={(e) => { e.stopPropagation(); void step(it, -1); }} style={{ width: 44, height: 44, borderRadius: 12, border: '1.5px solid #0E0E12', background: 'transparent', cursor: 'pointer', fontSize: 20, fontFamily: 'inherit' }}>−</button><button type="button" aria-label="Aumentar progresso" onClick={(e) => { e.stopPropagation(); void step(it, 1); }} style={{ width: 44, height: 44, borderRadius: 12, border: '1.5px solid #0E0E12', background: '#0E0E12', color: '#F5F2EC', cursor: 'pointer', fontSize: 20, fontFamily: 'inherit' }}>+</button></>}
-    </div>
-  );
+  const setTo = (it: StudyView, n: number) => { const c = latest.current.find((x) => x.id === it.id) ?? it; void step(it, (c.progress === n ? n - 1 : n) - c.progress); };
+  const Controls = ({ it, onCard }: { it: StudyView; onCard?: boolean }) => {
+    const stepTxt = `${it.progress} de ${it.total} ${STUDY_META[it.type].unit}`;
+    return (
+      <>
+        <div role="group" aria-label={`Progresso de ${it.title}`} style={{ display: 'grid', gridTemplateColumns: `repeat(${it.total}, minmax(0, 1fr))`, gap: 3 }}>
+          {Array.from({ length: it.total }, (_, k) => isOwn
+            ? <button key={k} type="button" className="bg-blk" aria-label={`Marcar ${k + 1} de ${it.total}`} onClick={(e) => { e.stopPropagation(); setTo(it, k + 1); }} style={{ height: onCard ? 30 : 36, padding: 0, borderRadius: 6, background: k < it.progress ? '#0E0E12' : 'transparent', border: '2px solid #0E0E12', cursor: 'pointer' }} />
+            : <span key={k} style={{ height: onCard ? 30 : 36, borderRadius: 6, background: k < it.progress ? '#0E0E12' : 'transparent', border: '2px solid #0E0E12' }} />)}
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, borderTop: '1.5px solid #0E0E12', paddingTop: 10 }}>
+          <span style={{ ...mono, fontSize: 11 }}>{stepTxt}</span>
+          {isOwn && <span style={{ display: 'flex', gap: 6 }}>
+            <button type="button" className="bg-step" aria-label={`Diminuir progresso de ${it.title}`} onClick={(e) => { e.stopPropagation(); void step(it, -1); }} style={{ width: 40, height: 40, borderRadius: 11, background: 'transparent', border: '2px solid #0E0E12', color: '#0E0E12', fontFamily: 'inherit', fontSize: 18, fontWeight: 600, cursor: 'pointer' }}>−</button>
+            <button type="button" className="bg-step" aria-label={`Aumentar progresso de ${it.title}`} onClick={(e) => { e.stopPropagation(); void step(it, 1); }} style={{ width: 40, height: 40, borderRadius: 11, background: '#0E0E12', border: '2px solid #0E0E12', color: '#F5A9D6', fontFamily: 'inherit', fontSize: 18, fontWeight: 600, cursor: 'pointer' }}>+</button>
+          </span>}
+        </div>
+      </>
+    );
+  };
 
   return (
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <OpenDeckBanner bg="#F5A9D6" icon={<BannerBrain />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `← ${isOwn ? 'Meu perfil' : person.name}` }}
+        <OpenDeckBanner bg="#F5A9D6" icon={<BannerBrain />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} avatarBg="#D987B8" avatarCrown avatarHref={`/p/${projectId}/pessoas/${person.id}`} back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `← ${isOwn ? 'Meu perfil' : person.name}` }}
           title="Brain gym" desc={isOwn ? 'Livros, cursos e vídeos ligados às skills que você quer subir. Avance em blocos.' : `O que ${fn} está estudando, com o progresso de cada conteúdo.`} cta={isOwn ? { label: '+ Conteúdo', onClick: () => setSheet({ k: 'pick' }) } : null} />
         {warn && <div role="alert" style={{ borderRadius: 14, border: '1.5px solid #FF8A5B', padding: '10px 14px', fontSize: 14 }}>{warn}</div>}
         <div role="tablist" aria-label="Filtrar conteúdos" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -69,14 +83,16 @@ export function BrainGymClient({ user, person, projectId, isOwn, skills, items: 
           {shown.map((it) => {
             const pct = Math.round((it.progress / it.total) * 100), st = state(it);
             return (
-              <article key={it.id} className="coops-card" style={{ height: 340, boxSizing: 'border-box', borderRadius: 22, background: st === 'concluido' ? '#A3A1AD' : '#F5A9D6', color: '#0E0E12', border: '2px solid #0E0E12', padding: 20, display: 'flex', flexDirection: 'column', gap: 10, boxShadow: '0 16px 36px rgba(0,0,0,0.45)' }}>
-                <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}><DiBook /><span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}><span style={{ fontSize: 44, fontWeight: 600, lineHeight: 1 }}>{pct}%</span><span style={label(11, '0')}>{STATE_LABEL[st]}</span></span></span>
-                <button type="button" onClick={() => { setNotes(it.notes); setSheet({ k: 'detail', id: it.id }); }} aria-label={`Abrir ${it.title}`} style={{ marginTop: 'auto', fontFamily: 'inherit', textAlign: 'left', background: 'none', border: 0, padding: 0, color: 'inherit', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 8, minHeight: 44 }}>
-                  <span style={label(11, '0.08em')}>BRAIN GYM · {STUDY_META[it.type].label.toUpperCase()}</span>
-                  <span style={{ fontSize: 21, fontWeight: 600, lineHeight: 1.2, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{it.title}</span>
+              <article key={it.id} className="coops-card" style={{ borderRadius: 24, background: st === 'concluido' ? '#A3A1AD' : '#F5A9D6', color: '#0E0E12', border: '2px solid #0E0E12', padding: 18, display: 'flex', flexDirection: 'column', gap: 12, minHeight: 340, boxSizing: 'border-box' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                  <span className="bgi-wrap" style={{ flex: 'none', width: 56, height: 56, lineHeight: 0 }}><span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap' }}>{STUDY_META[it.type].label}</span><StudyTypeIcon type={it.type} /></span>
+                  <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}><span style={{ fontSize: 38, fontWeight: 600, lineHeight: 1, letterSpacing: '-0.03em' }}>{pct}%</span><span style={{ ...mono, fontSize: 10 }}>{STATE_LABEL[st]}</span></span>
+                </div>
+                <button type="button" onClick={(e) => { setNotes(it.notes); setSheet({ k: 'detail', id: it.id, rect: (e.currentTarget.closest('.coops-card') ?? e.currentTarget).getBoundingClientRect() }); }} aria-label={`Abrir ${it.title}`} style={{ fontFamily: 'inherit', textAlign: 'left', background: 'transparent', border: 0, color: '#0E0E12', padding: 0, display: 'flex', flexDirection: 'column', gap: 6, cursor: 'pointer', marginTop: 'auto' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 21, fontWeight: 700, lineHeight: 1.15 }}>{it.title}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6" /></svg></span>
+                  <span style={{ fontSize: 13, lineHeight: 1.45, opacity: 0.85 }}>{STUDY_META[it.type].label}{it.skillName ? ` · ${it.skillName}` : ''}</span>
                 </button>
-                <span style={{ fontSize: 13 }}>{it.skillName ? `Ligado a ${it.skillName}` : 'Sem skill ligada'} · {it.progress} de {it.total} {STUDY_META[it.type].unit}</span>
-                <div style={{ borderTop: '1.5px solid #0E0E12', paddingTop: 10 }}><Controls it={it} /></div>
+                <Controls it={it} onCard />
               </article>
             );
           })}
@@ -92,19 +108,28 @@ export function BrainGymClient({ user, person, projectId, isOwn, skills, items: 
       {sheet?.k === 'pick' && <TypePicker onPick={(type) => setSheet({ k: 'new', type })} onClose={() => setSheet(null)} />}
       {sheet?.k === 'new' && <StudyDeck personId={person.id} type={sheet.type} skills={skills} draft={draft} onDraftChange={setDraft} onChangeType={() => setSheet({ k: 'pick' })} onClose={() => setSheet(null)} onSaved={() => { setSheet(null); refresh(); }} />}
       {sheet?.k === 'detail' && cur && (
-        <BottomSheet tag={`BRAIN GYM › ${STUDY_META[cur.type].label.toUpperCase()}`} title={cur.title} onClose={() => setSheet(null)}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <span style={label(11)}>PROGRESSO · {Math.round((cur.progress / cur.total) * 100)}%</span>
-            <div style={{ borderRadius: 16, background: '#F5A9D6', color: '#0E0E12', border: '2px solid #0E0E12', padding: 14 }}><Controls it={cur} big /></div>
-            <span style={{ fontSize: 14, color: '#A3A1AD' }}>Skill: {cur.skillName || 'nenhuma'}{cur.url && <> · <a href={/^https?:\/\//i.test(cur.url) ? cur.url : `https://${cur.url}`} target="_blank" rel="noopener noreferrer">abrir conteúdo ↗</a></>}</span>
-            <label htmlFor="bg-notas" style={label(11)}>ANOTAÇÕES</label>
-            <textarea id="bg-notas" readOnly={!isOwn} value={notes} onChange={(e) => setNotes(e.target.value)} style={{ fontFamily: 'inherit', fontSize: 16, color: '#F5F2EC', background: '#17171D', border: '1.5px solid #2C2C36', borderRadius: 12, padding: '12px 14px', minHeight: 120, resize: 'vertical', boxSizing: 'border-box', width: '100%' }} />
+        <FocusCard origin={sheet.rect} bg="#F5A9D6" ariaLabel={cur.title} onClose={() => setSheet(null)}>
+          <div className="coops-fx-body" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <span style={{ ...mono, fontSize: 12, color: 'rgba(14,14,18,0.68)' }}>BRAIN GYM › {STUDY_META[cur.type].label.toUpperCase()}</span>
+                <h2 style={{ margin: 0, fontSize: 30, fontWeight: 800, letterSpacing: '-0.025em', lineHeight: 1.1 }}>{cur.title}</h2>
+              </div>
+              <FocusClose onClick={() => setSheet(null)} />
+            </div>
+            <div style={{ borderRadius: 16, background: 'rgba(245,242,236,0.55)', border: '1.5px solid #0E0E12', padding: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', ...mono, fontSize: 11 }}><span>PROGRESSO</span><span>{Math.round((cur.progress / cur.total) * 100)}%</span></div>
+              <Controls it={cur} />
+            </div>
+            <span style={{ fontSize: 14 }}><b>Skill </b>{cur.skillName || 'nenhuma'}{cur.url && <> · <a href={/^https?:\/\//i.test(cur.url) ? cur.url : `https://${cur.url}`} target="_blank" rel="noopener noreferrer" style={{ color: '#0E0E12', fontWeight: 600 }}>abrir conteúdo ↗</a></>}</span>
+            <label htmlFor="bg-notas" style={{ ...mono, fontSize: 11, color: 'rgba(14,14,18,0.68)' }}>ANOTAÇÕES</label>
+            <textarea id="bg-notas" rows={4} readOnly={!isOwn} value={notes} onChange={(e) => setNotes(e.target.value)} style={{ fontFamily: 'inherit', fontSize: 16, lineHeight: 1.5, color: '#0E0E12', background: 'rgba(245,242,236,0.65)', border: '1.5px solid rgba(14,14,18,0.3)', borderRadius: 12, padding: '12px 14px', resize: 'vertical', boxSizing: 'border-box', width: '100%' }} />
             {isOwn && <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, justifyContent: 'space-between' }}>
-              <button type="button" onClick={remove} style={{ fontFamily: 'inherit', fontWeight: 600, fontSize: 14, color: '#F5F2EC', background: 'transparent', border: '1.5px solid #4A4858', borderRadius: 12, minHeight: 48, padding: '0 16px', cursor: 'pointer' }}>Remover do deck</button>
-              <button type="button" onClick={saveNotes} style={{ fontFamily: 'inherit', fontWeight: 600, fontSize: 15, color: '#0E0E12', background: '#B7A6FF', border: 0, borderRadius: 14, minHeight: 48, padding: '0 22px', cursor: 'pointer' }}>Salvar</button>
+              <button type="button" onClick={remove} style={{ fontFamily: 'inherit', fontWeight: 600, fontSize: 14, color: '#0E0E12', background: 'transparent', border: '1.5px solid #0E0E12', borderRadius: 12, minHeight: 48, padding: '0 16px', cursor: 'pointer' }}>Remover do deck</button>
+              <button type="button" onClick={saveNotes} style={{ fontFamily: 'inherit', fontWeight: 600, fontSize: 15, color: '#F5F2EC', background: '#0E0E12', border: 0, borderRadius: 14, minHeight: 48, padding: '0 22px', cursor: 'pointer' }}>Salvar</button>
             </div>}
           </div>
-        </BottomSheet>
+        </FocusCard>
       )}
     </div>
   );
