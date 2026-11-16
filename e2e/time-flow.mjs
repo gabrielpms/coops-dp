@@ -22,7 +22,7 @@ await p.click('button:text-is("Coque")'); await p.click('button:text-is("Blazer"
 await p.click('button:text-is("Próxima")'); await p.waitForTimeout(650); // skill
 await p.click('button:text-is("Pesquisa com usuários")');
 await p.click('button:text-is("Próxima")'); await p.waitForTimeout(650); // entrada
-await p.fill('input[aria-label="Data de entrada"]', '2024-03-10');
+await p.selectOption('select[aria-label="Ano"]', '2024'); await p.selectOption('select[aria-label="Mês"]', '2'); await p.click('button[aria-label="10 de março de 2024"]');
 await p.click('button:text-is("Próxima")'); await p.waitForTimeout(650); // email
 await p.click('button:text-is("Próxima")'); await p.waitForTimeout(400); console.log('e-mail obrigatório:', await p.locator('span[role=alert]').innerText());
 await p.fill('input[aria-label="E-mail da pessoa"]', convidado);

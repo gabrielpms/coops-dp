@@ -1,4 +1,6 @@
 'use client';
+import { DateCalendar } from './DateCalendar';
+import { tenureLong } from '@/lib/format';
 import { useState, type ReactNode } from 'react';
 import { BottomSheet } from '../sheet/BottomSheet';
 import { QuestionDeck, type DeckCard } from '../wizard/QuestionDeck';
@@ -68,8 +70,9 @@ export function MemberDeck({ projectId, skills, draft, onDraftChange, onClose, o
         <div role="group" aria-label="Sugestões de skill" style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{skills.map((s) => <button key={s} type="button" aria-pressed={form.mainSkill === s} className="tw-chip" onClick={() => set({ mainSkill: s })} style={chipStyle(form.mainSkill === s)}>{s}</button>)}</div></>}
     </>) },
     { id: 'entrada', bg: '#F5A9D6', optional: true, node: (<>
-      <Title>Quando a pessoa entrou?</Title><Help>A data calcula o tempo de casa na carta.</Help>
-      <input type="date" aria-label="Data de entrada" max={new Date().toISOString().slice(0, 10)} value={form.joinedAt} onChange={(e) => set({ joinedAt: e.target.value })} style={cardInput} />
+      <Title>Quando a pessoa entrou?</Title><Help>Escolha o dia no calendário. A data calcula o tempo de casa na carta.</Help>
+      <DateCalendar value={form.joinedAt} onChange={(iso) => set({ joinedAt: iso })} max={new Date().toISOString().slice(0, 10)} />
+      <span style={{ fontSize: 14, fontWeight: 600 }}>{form.joinedAt ? `Tempo de casa: ${tenureLong(form.joinedAt).replace(' de casa', '')}` : 'Escolha a data para calcular o tempo de casa.'}</span>
     </>) },
     { id: 'email', bg: '#A9D8F5', node: (<>
       <Title>Para qual e-mail vai o convite?</Title><Help>A pessoa recebe o convite para entrar no Coops e completar o perfil.</Help>
