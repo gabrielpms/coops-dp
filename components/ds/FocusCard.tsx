@@ -5,7 +5,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type 
  * Carta em foco: abre a partir da posição da carta clicada (`coopsFocusIn`/`coopsFocusOut` com --fdx, --fdy, --fs)
  * e volta para ela ao fechar. Esc e clique fora fecham.
  */
-export function FocusCard({ origin, bg, ariaLabel, onClose, children }: { origin: DOMRect | null; bg: string; ariaLabel: string; onClose: () => void; children: ReactNode }) {
+export function FocusCard({ origin, bg, ariaLabel, onClose, children, extraClass }: { origin: DOMRect | null; bg: string; ariaLabel: string; onClose: () => void; children: ReactNode; extraClass?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [vars, setVars] = useState<CSSProperties>({});
   const [leaving, setLeaving] = useState(false);
@@ -37,7 +37,7 @@ export function FocusCard({ origin, bg, ariaLabel, onClose, children }: { origin
     <>
       <button type="button" aria-label="Fechar" onClick={close} className="coops-overlay" style={{ position: 'fixed', inset: 0, zIndex: 90, border: 0, padding: 0, background: 'rgba(14,14,18,0.78)', backdropFilter: 'blur(3px)', cursor: 'pointer' }} />
       <div style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, pointerEvents: 'none' }}>
-        <div ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-label={ariaLabel} className="coops-focus"
+        <div ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-label={ariaLabel} className={`coops-focus${extraClass ? ` ${extraClass}` : ''}`}
           style={{ ...vars, ['--fbg' as string]: bg, pointerEvents: 'auto', width: 'min(560px, 100%)', maxHeight: 'calc(100vh - 32px)', overflowY: 'auto', boxSizing: 'border-box', borderRadius: 26, background: bg, color: '#0E0E12', border: '2px solid #0E0E12', padding: 28, display: 'flex', flexDirection: 'column', gap: 14, boxShadow: '0 30px 80px rgba(0,0,0,0.6)', outline: 'none',
             animation: leaving ? 'coopsFocusOut 260ms cubic-bezier(.65,0,.25,1) both' : origin ? 'coopsFocusIn 420ms cubic-bezier(.22,1,.36,1) both' : 'coopsRise 320ms ease both' }}>
           {children}
