@@ -1,0 +1,695 @@
+/* Gerado a partir de docs/referencia: regras de animação/interação ainda não cobertas por tokens/motion/profile/base. */
+/* ── Coops01f-Landing-WishList.dc.html ── */
+.coops-sheet-body{animation:coopsRise 420ms cubic-bezier(.22,1,.36,1) 160ms both}
+@media (prefers-reduced-motion: reduce){[role=dialog],.coops-overlay,.coops-sheet-body{animation:none!important}}
+/* ── Coops02-Cadastro.dc.html ── */
+@media (prefers-reduced-motion: reduce){aside *{transition:none!important;animation:none!important}}
+/* ── Coops02b-PrimeiroAcesso.dc.html ── */
+.coops-wz-card input:focus-visible,.coops-wz-card textarea:focus-visible{outline:3px solid #0E0E12;outline-offset:2px}
+/* ── Coops05-Time.dc.html ── */
+.tw-day{transition:transform .14s ease,background .18s ease}
+.tw-day:not([disabled]):hover{background:rgba(14,14,18,.12)!important}
+.tw-day[aria-pressed="true"]:hover{background:#0E0E12!important}
+.tw-day:active{transform:scale(.92)}
+.tw-day:focus-visible,.tw-calnav:focus-visible{outline:3px solid #0E0E12;outline-offset:2px}
+.tw-calnav{transition:transform .16s ease,background .18s ease}
+.tw-calnav:hover{background:rgba(14,14,18,.1)!important}
+.tw-calnav:active{transform:scale(.92)}
+@media (prefers-reduced-motion:reduce){.tw-day,.tw-calnav{transition:none}}
+.tw-mk{position:absolute;left:50%;top:50%;width:52px;height:46px;margin:-23px 0 0 -26px;overflow:visible;z-index:1;pointer-events:none}
+.tw-mk path{stroke-dasharray:170;stroke-dashoffset:170;animation:twDraw .55s cubic-bezier(.6,0,.3,1) forwards}
+@keyframes twDraw{to{stroke-dashoffset:0}}
+.tw-ul{position:absolute;left:50%;margin-left:-11px;bottom:2px;height:6px;width:22px;z-index:1;pointer-events:none}
+.tw-day:not([disabled]):hover{background:rgba(14,14,18,.1)!important}
+.tw-day[aria-pressed="true"]:hover{background:transparent!important}
+@media (prefers-reduced-motion:reduce){.tw-mk path{animation:none;stroke-dashoffset:0}}
+/* ── Coops08-Iniciativa.dc.html ── */
+@media (prefers-reduced-motion: reduce){.coops-mban-ring,.coops-mban-ic,.coops-mban-me,.coops-mban-btn{transition:none!important;transform:none!important}}
+<a href="Coops07-Membro-IC.dc.html" aria-label="Voltar para o seu perfil" class="coops-mban-me" style="flex: none; width: 112px; height: 84px; box-sizing: border-box; border-radius: 18px; background: #5FC4A6; border: 2px solid #0E0E12; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; text-decoration: none; line-height: 0"><dc-import name="CoopsAvatar" skin="#8D5A3B" hair-style="coque" shirt-style="blazer" bg="#5FC4A6" crown="{{ true }}
+" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #F5F2EC; background: #0E0E12; border: 2px solid #0E0E12; border-radius: 12px; min-height: 48px; padding: 0 18px; cursor: pointer">+ Entrega</button>
+
+
+.ic-fire{opacity:0;transform-origin:50% 0%}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ic-rocket{animation:icRocket .9s ease-in-out infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ic-fire{animation:icFire .32s ease-in-out infinite alternate}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ic-fire2{animation-duration:.24s}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ic-tw{animation:icTw 1.1s linear infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ic-tw2{animation-delay:.3s}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ic-tw3{animation-delay:.55s}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ic-tw4{animation-delay:.8s}
+@media (prefers-reduced-motion:reduce){.ic-rocket,.ic-fire,.ic-tw{animation:none!important}}
+.in-new{transition:border-color .2s ease,transform .3s cubic-bezier(.34,1.56,.64,1)}
+.in-new:hover{border-color:#B7A6FF!important;transform:translateY(-6px)}
+.in-new:focus-visible{outline:3px solid #B7A6FF;outline-offset:3px}
+.in-plus{transition:transform .45s cubic-bezier(.34,1.56,.64,1),background .2s ease}
+.in-new:hover .in-plus{transform:rotate(90deg);background:#B7A6FF!important;color:#0E0E12!important;border-color:#B7A6FF!important}
+@media (prefers-reduced-motion:reduce){.in-new,.in-plus{transition:none}}
+/* ── Coops09-Agente.dc.html ── */
+" style="font-family: inherit; font-weight: 600; font-size: 14px; color: #F5F2EC; background: #0E0E12; border: 2px solid #0E0E12; border-radius: 12px; min-height: 48px; padding: 0 18px; cursor: pointer">+ Entrega</button>
+
+
+.in-new{transition:border-color .2s ease,transform .3s cubic-bezier(.34,1.56,.64,1)}
+.ag-st{transform-box:view-box;transform-origin:32px 28px}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ag-st{animation:agSpin 2.4s cubic-bezier(.45,0,.2,1) infinite}
+@keyframes agSpin{0%{transform:rotate(0) scale(1)}40%{transform:rotate(90deg) scale(1.12)}60%,100%{transform:rotate(90deg) scale(1)}}
+.ag-tw{opacity:.0}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ag-tw{animation:agTw 1.2s ease-in-out infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ag-tw2{animation-delay:.4s}
+@keyframes agTw{0%,100%{opacity:0;transform:scale(.6)}50%{opacity:1;transform:scale(1)}}
+.ag-tw{transform-box:fill-box;transform-origin:50% 50%}
+.ag-ln{stroke-dasharray:14;stroke-dashoffset:0}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ag-ln{animation:agLn 1.6s ease infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ag-ln2{animation-delay:.15s}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ag-ln3{animation-delay:.3s}
+@keyframes agLn{0%,15%{stroke-dashoffset:14}55%,100%{stroke-dashoffset:0}}
+.ag-wb{transform-box:view-box;transform-origin:32px 52px}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ag-wb{animation:agWob .9s cubic-bezier(.36,.07,.19,.97) infinite}
+@keyframes agWob{0%,60%,100%{transform:rotate(0)}10%{transform:rotate(-7deg)}25%{transform:rotate(6deg)}40%{transform:rotate(-3deg)}50%{transform:rotate(2deg)}}
+.ag-hb{transform-box:view-box;transform-origin:32px 12px}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ag-hb{animation:agBeat 1.1s ease-in-out infinite}
+@keyframes agBeat{0%,100%{transform:scale(1) translateY(0)}20%{transform:scale(1.18) translateY(-2px)}40%{transform:scale(.95)}60%{transform:scale(1.08) translateY(-1px)}}
+.ag-bb{transform-box:view-box;transform-origin:20px 50px}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ag-bb{animation:agBob 1.4s ease-in-out infinite}
+@keyframes agBob{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg) translateY(-2px)}}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ag-d{animation:agDot 1s ease-in-out infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ag-d2{animation-delay:.15s}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ag-d3{animation-delay:.3s}
+.ag-d{transform-box:fill-box;transform-origin:50% 50%}
+@keyframes agDot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
+.ag-bulb{transform-box:view-box;transform-origin:32px 50px}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ag-bulb{animation:agBulb 1.6s ease-in-out infinite}
+@keyframes agBulb{0%,100%{transform:rotate(0)}30%{transform:rotate(-5deg)}60%{transform:rotate(4deg)}}
+.ag-ray{opacity:0;stroke-dasharray:4 30}
+:is(.coops-mban:hover,.coops-mban:focus-within,.coops-card:hover,.coops-card:focus-visible) .ag-ray{animation:agRay 1.6s ease-in-out infinite}
+@keyframes agRay{0%,100%{opacity:0}40%,70%{opacity:1}}
+.ag-send{transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.ag-send:hover{transform:translateY(-2px)}
+.ag-send:active{transform:scale(.96)}
+.ag-send:focus-visible{outline:3px solid #0E0E12;outline-offset:2px}
+@keyframes agIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ag-msg{animation:agIn .32s cubic-bezier(.22,1,.36,1) both}
+@media (prefers-reduced-motion:reduce){.ag-bulb,.ag-ray,.ag-msg{animation:none!important}.ag-ray{opacity:1}}
+@media (prefers-reduced-motion:reduce){.ag-st,.ag-tw,.ag-ln,.ag-wb,.ag-hb,.ag-bb,.ag-d{animation:none!important}.ag-tw{opacity:1}}
+/* ── Coops10-Mesa.dc.html ── */
+.coops-pile svg,.coops-card svg,.coops-icdemo svg,.coops-ichov svg{overflow:visible}
+.coops-pile svg *,.coops-card svg *,.coops-icdemo svg *,.coops-ichov svg *{transform-box:fill-box}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-heart{animation:icBeat 1s ease-in-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-ecg{animation:icDraw60 1s ease-in-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-peg{animation:icPeg 1.2s cubic-bezier(.34,1.6,.64,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-peg2{animation-delay:.1s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-day{animation:icDay 2.6s cubic-bezier(.34,1.6,.64,1) infinite both}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-star{animation:icBurst 1.8s cubic-bezier(.34,1.4,.64,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-shard{animation:icShard 1.8s cubic-bezier(.2,.8,.3,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-leaf{animation:icLeaf 1.3s cubic-bezier(.45,0,.35,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-leaf2{animation-delay:.45s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-bgx{animation:icRot 4.2s cubic-bezier(.34,1.3,.64,1) infinite both}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-bgx2{animation-delay:1.4s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-bgx3{animation-delay:2.8s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-knob{animation:icKnob 1.4s linear 1.4s infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-playt{animation:icPlay .7s ease-in-out infinite alternate}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-wave{animation:icWav .7s ease-in-out infinite alternate}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-path{animation:icDraw70 1.2s cubic-bezier(.65,0,.25,1) both}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-jflag{animation:icWave .5s ease-in-out .6s infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-rocket{animation:icRocket .9s ease-in-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-fire{animation:icFire .32s ease-in-out infinite alternate}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-fire2{animation-duration:.24s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-tw{animation:icTw 1.1s linear infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-tw2{animation-delay:.3s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-tw3{animation-delay:.55s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-tw4{animation-delay:.8s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-flag{animation:icWave .45s ease-in-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-mount{transform:translateY(-2px)}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-fb{animation:icFb 1.4s cubic-bezier(.34,1.5,.64,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-fb2{animation-delay:.1s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-fb3{animation-delay:.2s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-fb1{--s:.8}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-fb2{--s:1.3}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-fb3{--s:2}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-sweep{animation:icSweep 1.8s linear infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-blip{animation:icBlip 1.8s ease-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-ring{animation:icPing 1.8s ease-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-ib{animation:icBars 1.6s ease-in-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-arm{animation:icSee 1.6s cubic-bezier(.45,0,.55,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-w{animation:icSeeW 1.6s cubic-bezier(.45,0,.55,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-scan{animation:icScan 1.6s ease-in-out infinite}
+@keyframes icScan{0%,100%{transform:translate(0,0)}25%{transform:translate(-4px,-3px)}50%{transform:translate(3px,-5px)}75%{transform:translate(4px,2px)}}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-pa{animation:icNod 1.2s ease-in-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-pb{animation-delay:.3s}
+@keyframes icNod{0%,60%,100%{transform:none}30%{transform:translateY(-4px)}}
+.ic-ray{opacity:0;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-bulb{animation:icGlow .9s ease-in-out infinite alternate}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-ray{animation:icRay .9s ease-in-out infinite alternate}
+@keyframes icGlow{from{fill:transparent}to{fill:rgba(255,255,255,.65)}}
+@keyframes icRay{from{opacity:.2;transform:scale(.85)}to{opacity:1;transform:scale(1.1)}}
+.ic-hg{transform-box:view-box!important;transform-origin:32px 32px}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-hg{animation:icHg 1.8s cubic-bezier(.65,0,.35,1) infinite}
+@keyframes icHg{0%,40%{transform:rotate(0)}60%,100%{transform:rotate(180deg)}}
+.ic-br{stroke-dasharray:50}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-br{animation:icDraw50 1.4s cubic-bezier(.65,0,.25,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-br2{animation-delay:.15s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-up{animation:icUp 1.4s cubic-bezier(.34,1.6,.64,1) infinite}
+@keyframes icDraw50{0%{stroke-dashoffset:50}50%,100%{stroke-dashoffset:0}}
+@keyframes icUp{0%,45%,100%{transform:none}60%{transform:translateY(-5px)}}
+.ic-zap{transform-origin:50% 50%}
+.ic-zsp{opacity:0;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-zap{animation:icZap 1.4s steps(1,end) infinite,icZShake .14s linear infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-zsp{animation:icZs .7s ease-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-zsp2{animation-delay:.18s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-zsp3{animation-delay:.36s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-zsp4{animation-delay:.52s}
+@keyframes icZap{0%{fill:transparent}6%{fill:#F5F2EC}11%{fill:transparent}17%,82%{fill:rgba(255,255,255,.55)}88%{fill:#F5F2EC}94%,100%{fill:rgba(255,255,255,.55)}}
+@keyframes icZShake{0%,100%{transform:scale(1.08) rotate(0)}25%{transform:scale(1.08) translate(.6px,-.5px) rotate(2deg)}50%{transform:scale(1.08) translate(-.6px,.5px) rotate(-2deg)}75%{transform:scale(1.08) translate(.5px,.6px)}}
+@keyframes icZs{0%{opacity:0;transform:scale(.3)}30%{opacity:1;transform:scale(1.2)}100%{opacity:0;transform:scale(.6)}}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-m1{animation:icCmp 1.4s ease-in-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-m2{animation-delay:-.7s}
+@keyframes icCmp{0%,100%{transform:none}50%{transform:translateY(-5px)}}
+.ic-chk{stroke-dasharray:24}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-chk{animation:icDraw24 1.2s cubic-bezier(.65,0,.25,1) infinite}
+@keyframes icDraw24{0%{stroke-dashoffset:24}45%,100%{stroke-dashoffset:0}}
+.ic-needle{transform-box:view-box!important;transform-origin:32px 44px}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-needle{animation:icNeedle 1.6s cubic-bezier(.34,1.4,.64,1) infinite}
+@keyframes icNeedle{0%,100%{transform:rotate(-80deg)}50%{transform:rotate(10deg)}62%{transform:rotate(0)}}
+.ic-ln{stroke-dasharray:30}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-ln{animation:icDraw30b 1.4s ease infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-ln2{animation-delay:.25s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-bub{animation:icBob 1.4s ease-in-out infinite}
+@keyframes icDraw30b{0%{stroke-dashoffset:30}40%,100%{stroke-dashoffset:0}}
+@keyframes icBob{0%,100%{transform:none}50%{transform:translateY(-2px)}}
+.ic-sg1{transform-box:view-box!important;transform-origin:30px 20px}
+.ic-sg2{transform-box:view-box!important;transform-origin:30px 38px}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-sg1{animation:icSw1 1.4s ease-in-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-sg2{animation:icSw2 1.4s ease-in-out infinite}
+@keyframes icSw1{0%,100%{transform:rotate(0)}50%{transform:rotate(-9deg)}}
+@keyframes icSw2{0%,100%{transform:rotate(0)}50%{transform:rotate(9deg)}}
+.ic-eb{transform-origin:50% 50%}
+.ic-esp{opacity:0;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-eb{animation:icEb 1.4s steps(1,end) infinite,icEbShake .14s linear infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-esp{animation:icEsp .7s ease-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-esp2{animation-delay:.18s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-esp3{animation-delay:.36s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-esp4{animation-delay:.52s}
+@keyframes icEb{0%{fill:transparent;filter:none}6%{fill:#F5F2EC;filter:drop-shadow(0 0 6px rgba(255,255,255,.9))}11%{fill:transparent;filter:none}17%{fill:#FFD9C8;filter:drop-shadow(0 0 5px rgba(255,255,255,.7))}23%{fill:transparent;filter:none}28%,82%{fill:#FFD9C8;filter:drop-shadow(0 0 6px rgba(255,255,255,.8))}88%{fill:#F5F2EC;filter:drop-shadow(0 0 8px rgba(255,255,255,.95))}94%,100%{fill:#FFD9C8;filter:drop-shadow(0 0 6px rgba(255,255,255,.8))}}
+@keyframes icEbShake{0%,100%{transform:scale(1.1) rotate(0)}25%{transform:scale(1.1) translate(.6px,-.5px) rotate(2deg)}50%{transform:scale(1.1) translate(-.6px,.5px) rotate(-2deg)}75%{transform:scale(1.1) translate(.5px,.6px) rotate(1deg)}}
+@keyframes icEsp{0%{opacity:0;transform:scale(.3)}30%{opacity:1;transform:scale(1.2)}100%{opacity:0;transform:scale(.6)}}
+.ic-steam{stroke-dasharray:21 21}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-steam{animation:icSteam 1.8s linear infinite both}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-steam2{animation-delay:.6s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-steam3{animation-delay:1.2s}
+@keyframes icSteam{0%{stroke-dashoffset:21;transform:translateY(3px);opacity:1}45%{stroke-dashoffset:0;transform:translateY(0);opacity:1}100%{stroke-dashoffset:-21;transform:translateY(-5px);opacity:.4}}
+.ic-q{transform-origin:50% 50%}
+.ic-qx{opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-q{animation:icQ 1.6s cubic-bezier(.34,1.6,.64,1) infinite both}
+@keyframes icQ{0%{opacity:0;transform:scale(.3) rotate(-15deg)}14%{opacity:1;transform:scale(1.15) rotate(6deg)}24%,68%{opacity:1;transform:scale(1) rotate(0)}84%,100%{opacity:0;transform:scale(.6)}}
+.ic-glim{transform-origin:50% 50%}
+.ic-glimx{opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-glim{animation:icGlim 1.4s ease-in-out infinite both}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-orb{animation:icOrb 1.4s ease-in-out infinite alternate}
+@keyframes icGlim{0%,100%{opacity:0;transform:scale(.2) rotate(0)}40%{opacity:1;transform:scale(1.15) rotate(45deg)}60%{opacity:1;transform:scale(1) rotate(60deg)}}
+@keyframes icOrb{from{fill:transparent}to{fill:rgba(255,255,255,.35)}}
+.ic-agent{transform-box:fill-box;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover,.coops-ichov:hover,.coops-ichov:focus-visible) .ic-agent{animation:icTwinkle 1.2s ease-in-out infinite}
+@keyframes icTwinkle{0%,100%{transform:rotate(0) scale(1)}50%{transform:rotate(90deg) scale(1.25)}}
+@media (prefers-reduced-motion: reduce){.coops-pile svg *,.coops-card svg *,.coops-icdemo svg *,.coops-ichov svg *{animation:none!important;transition:none!important}}
+.ag-hv{transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.ag-hv:hover,.ag-hv:focus-visible{transform:translateY(-6px) rotate(-1deg);outline:none}
+.ag-hv:hover .ag-bulb,.ag-hv:focus-visible .ag-bulb{animation:agBulb 1.6s ease-in-out infinite}
+.ag-hv:hover .ag-ray,.ag-hv:focus-visible .ag-ray{animation:agRay 1.6s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.ag-hv,.ag-bulb,.ag-ray{animation:none!important;transition:none!important}.ag-ray{opacity:1}}
+.an-wrap{animation:coopsFadeIn .35s ease both}
+.an-stage{position:relative;width:440px;max-width:100%;height:270px;perspective:1000px}
+.an-3d{position:absolute;left:50%;top:52%;width:0;height:0;transform-style:preserve-3d;transform:rotateX(-12deg)}
+.an-ring{position:absolute;left:0;top:0;transform-style:preserve-3d;animation:anSpin 7.0s linear infinite}
+@keyframes anSpin{from{transform:rotateY(0)}to{transform:rotateY(-360deg)}}
+.an-oc,.an-lil{position:absolute;left:-36px;top:-50px;width:72px;height:100px;transform-style:preserve-3d}
+.an-dim,.an-lildim{position:absolute;inset:0;transform-style:preserve-3d}
+.an-dim>.an-f,.an-dim>.an-b{animation:anDim 7.0s linear infinite;animation-delay:inherit}
+@keyframes anDim{0%,100%{filter:brightness(1)}50%{filter:brightness(.62)}}
+.an-f,.an-b{position:absolute;inset:0;box-sizing:border-box;border-radius:11px;border:2px solid #0E0E12;color:#0E0E12;padding:7px;display:flex;flex-direction:column;gap:5px;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 10px 22px rgba(0,0,0,.45)}
+.an-b{transform:rotateY(180deg);background:#2A2240;padding:5px}
+.an-b>span{flex:1;border-radius:7px;border:1.5px solid #B7A6FF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:#F5F2EC;background:repeating-linear-gradient(45deg,transparent 0 6px,rgba(183,166,255,.14) 6px 7px)}
+.an-b em{font-style:normal;color:#B7A6FF}
+.an-lil{animation:anLil 7.0s infinite}
+@keyframes anLil{0%,16%{transform:rotateY(0deg) translateZ(180px) scale(1);animation-timing-function:cubic-bezier(.55,0,.35,1)}30%{transform:rotateY(-180deg) translateZ(150px) scale(1);animation-timing-function:linear}80%{transform:rotateY(-360deg) translateZ(150px) scale(1);animation-timing-function:cubic-bezier(.55,0,.35,1)}92%,100%{transform:rotateY(-360deg) translateZ(180px) scale(1)}}
+.an-lildim>.an-f,.an-lildim>.an-b{animation:anLilDim 7.0s linear infinite}
+@keyframes anLilDim{0%,16%{filter:brightness(1)}30%{filter:brightness(.62)}55%{filter:brightness(.8)}80%,100%{filter:brightness(1)}}
+.an-spark{position:absolute;left:50%;top:52%;margin:-22px 0 0 -22px;z-index:5;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5));animation:anSpk 7.0s cubic-bezier(.45,0,.2,1) infinite}
+@keyframes anSpk{0%,14%{transform:translate(0,-104px) rotate(0) scale(1)}30%{transform:translate(0,-4px) rotate(180deg) scale(1.4)}55%{transform:translate(0,-4px) rotate(360deg) scale(1.2)}78%{transform:translate(0,-4px) rotate(540deg) scale(1.4)}92%,100%{transform:translate(0,-104px) rotate(720deg) scale(1)}}
+.an-spin{animation:anRot .8s linear infinite}
+@keyframes anRot{to{transform:rotate(360deg)}}
+.an-ok{animation:anPop .4s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes anPop{from{transform:scale(.3)}to{transform:none}}
+.an-bar{transition:width .8s cubic-bezier(.22,1,.36,1)}
+.an-go{transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.an-go:hover{transform:translateY(-2px)}
+.an-go:active{transform:scale(.96)}
+.an-cancel:hover{color:#F5F2EC!important;border-color:#4A4858!important}
+.an-cancel:focus-visible,.an-go:focus-visible{outline:3px solid #8FE3C8;outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.an-ring,.an-dim,.an-lil,.an-lildim,.an-spark,.an-spin,.an-ok,.an-wrap{animation:none!important}.an-bar{transition:none}}
+/* ── Coops11-Momento.dc.html ── */
+.s11-sep{display:block}
+li:last-child>.s11-sep{display:none}
+.s11-btn{transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.s11-btn:hover{transform:translateY(-2px)}
+.s11-btn:active{transform:scale(.96)}
+.s11-btn:focus-visible,.s11-fan:focus-visible,.s11-mini:focus-visible,.s11-side:focus-visible,.s11-facet:focus-visible{outline:3px solid #B7A6FF!important;outline-offset:3px}
+.s11-table{flex:1 0 auto;display:flex;flex-direction:column;justify-content:center;min-height:560px}
+.s11-table:has(.s11-stage){justify-content:flex-start;padding-top:8px}
+.s11-fanwrap{--sp:262px;position:relative;height:430px;margin-top:8px}
+.s11-fan{position:absolute;left:50%;top:40px;width:240px;height:330px;margin-left:-120px;box-sizing:border-box;border-radius:24px;border:2px solid #0E0E12;color:#0E0E12;padding:18px;display:flex;flex-direction:column;gap:10px;text-align:left;font-family:inherit;cursor:pointer;box-shadow:0 18px 40px rgba(0,0,0,.5);transform:translate(calc(var(--o) * var(--sp)), calc(var(--a) * 22px)) rotate(calc(var(--o) * 5deg));transition:translate .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;animation:s11Deal .6s cubic-bezier(.22,1,.36,1) both}
+.s11-fan:hover{translate:0 -22px;box-shadow:0 30px 60px rgba(0,0,0,.6)}
+@keyframes s11Deal{from{opacity:0;transform:translate(0,260px) rotate(0) scale(.6)}}
+.s11-stage{display:grid;grid-template-columns:140px minmax(0,1fr) 140px;width:100%;max-width:1120px;margin:0 auto;box-sizing:border-box;align-items:start;gap:28px;padding-top:4px}
+.s11-focus{border-radius:26px;border:2px solid #0E0E12;color:#0E0E12;overflow:hidden;animation:s11In .5s cubic-bezier(.22,1,.36,1) both}
+@keyframes s11In{from{opacity:0;transform:translateY(80px) rotateX(14deg) scale(.8)}}
+.s11-focus.s11-out-k{animation:s11OutK .4s cubic-bezier(.55,0,.7,.4) both}
+@keyframes s11OutK{to{opacity:0;transform:translate(420px,420px) rotate(14deg) scale(.25)}}
+.s11-focus.s11-out-x{animation:s11OutX .4s cubic-bezier(.55,0,.7,.4) both}
+@keyframes s11OutX{to{opacity:0;transform:translate(-420px,420px) rotate(-14deg) scale(.25)}}
+.s11-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:4px}
+.s11-facet{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:13.5px;font-weight:600;color:#0E0E12;background:transparent;border:1.5px solid #0E0E12;border-radius:999px;padding:7px 13px;cursor:pointer;transition:background .15s,color .15s}
+.s11-facet[aria-selected="true"]{background:#0E0E12;color:#F5F2EC}
+#s11-fbody>*{animation:s11Sw .3s ease both}
+@keyframes s11Sw{from{opacity:0;transform:translateX(12px)}}
+.s11-side{position:sticky;top:20px;margin-top:150px;height:220px;box-sizing:border-box;border-radius:22px;border:2px dashed #3A3846;background:transparent;color:#A3A1AD;font-family:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:14px;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.s11-side b{color:#F5F2EC;font-size:15px}
+.s11-sidetx{font-size:12.5px;line-height:1.35}
+.s11-key{font-size:11px;border:1.5px solid currentColor;border-radius:6px;padding:1px 6px;opacity:.7}
+.s11-ico{transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.s11-side-x:hover{border-color:#A3A1AD;color:#F5F2EC;background:#1C1C24}
+.s11-side-x:hover .s11-ico{transform:rotate(-12deg) translateY(4px)}
+.s11-side-k{border-color:#8FE3C8;color:#8FE3C8}
+.s11-side-k:hover{background:#8FE3C8;color:#0E0E12}
+.s11-side-k:hover b{color:#0E0E12}
+.s11-side-k:hover .s11-ico{transform:translateY(-6px)}
+.s11-side-k[aria-pressed="true"]{background:#8FE3C8;color:#0E0E12}
+.s11-side-k[aria-pressed="true"] b{color:#0E0E12}
+.s11-side-x[aria-pressed="true"]{background:#2C2C36;color:#F5F2EC}
+.s11-dock{position:sticky;bottom:-40px;z-index:5;margin:auto -40px -40px;padding:14px 40px 22px;background:#0B0B0F;border-top:1.5px solid #24242C;display:flex;align-items:center;gap:20px}
+.s11-pile{flex:0 0 150px;display:flex;align-items:center;gap:10px}
+.s11-pile.s11-bump .s11-stk{animation:s11Bump .5s ease}
+@keyframes s11Bump{40%{transform:scale(1.18) rotate(-5deg)}}
+.s11-stk{position:relative;width:50px;height:68px;flex:none}
+.s11-minis{flex:1;display:flex;justify-content:center;gap:12px}
+.s11-mini{position:relative;width:92px;height:112px;box-sizing:border-box;border-radius:14px;border:2px solid #0E0E12;color:#0E0E12;padding:9px;display:flex;flex-direction:column;gap:4px;text-align:left;font-family:inherit;cursor:pointer;transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s}
+.s11-mini:hover{transform:translateY(-6px)}
+.s11-mini[aria-selected="true"]{transform:translateY(-10px);box-shadow:0 0 0 3px #0E0E12,0 0 0 6px #B7A6FF}
+.s11-minit{margin-top:auto;font-size:10.5px;font-weight:600;line-height:1.2;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+@media (max-width:900px){
+.s11-fanwrap{--sp:46px;height:360px}.s11-fan{width:190px;height:270px;margin-left:-95px;top:20px;padding:14px}.s11-fanbody{display:none}
+.s11-stage{grid-template-columns:1fr 1fr;gap:12px}.s11-focus{grid-column:1/-1;grid-row:1}.s11-side{position:static;margin:0;height:auto;min-height:64px;flex-direction:row}.s11-sidetx,.s11-key{display:none}.s11-side .s11-ico{width:26px;height:26px}
+.s11-kpis{grid-template-columns:1fr 1fr}.s11-kpis>:last-child{grid-column:1/-1}
+section[role=dialog]{padding-left:16px!important;padding-right:16px!important}.s11-dock{margin:8px -16px -40px;padding:12px 16px 22px;gap:8px}.s11-pile{flex:0 0 auto}.s11-stk{display:none}.s11-mini{width:52px;height:70px;padding:6px}.s11-minit{display:none}.s11-mk{top:auto!important;bottom:5px;right:5px!important;width:15px!important;height:15px!important;font-size:8px!important}.s11-minis{gap:6px}}
+@media (prefers-reduced-motion:reduce){.s11-fan,.s11-focus,.s11-mini,.s11-side,.s11-btn,#s11-fbody>*,.s11-stk{animation:none!important;transition:none!important}}
+/* ── Coops12-Deck-Eventos.dc.html ── */
+#fb-file:focus-visible + .fb-drop { outline: 3px solid #0E0E12; outline-offset: 3px; }
+.fb-drop:hover { background: rgba(14,14,18,0.06); }
+.md-sw{transform-box:view-box!important;transform-origin:32px 4px}
+.md-st{transform-box:fill-box!important;transform-origin:50% 55%}
+.md-sp{opacity:0;transform-box:fill-box!important;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .md-sw{animation:mdSw 2s ease-in-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .md-st{animation:mdSt 2s cubic-bezier(.34,1.5,.64,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .md-sp{animation:mdSp 2s ease-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .md-sp2{animation-delay:.25s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .md-sp3{animation-delay:.5s}
+@keyframes mdSw{0%,100%{transform:rotate(0)}15%{transform:rotate(9deg)}35%{transform:rotate(-7deg)}55%{transform:rotate(4deg)}72%{transform:rotate(-2deg)}85%{transform:rotate(0)}}
+@keyframes mdSt{0%,40%{transform:none}55%{transform:scale(1.25) rotate(72deg)}70%,100%{transform:rotate(72deg)}}
+@keyframes mdSp{0%,45%{opacity:0;transform:scale(.3) rotate(0)}60%{opacity:1;transform:scale(1.15) rotate(45deg)}85%,100%{opacity:0;transform:scale(.6) rotate(90deg)}}
+.cp-bt{transform-box:view-box!important;transform-origin:32px 62px}
+.cp-ck{transform-box:view-box!important;transform-origin:32px 14px}
+.cp-fm{opacity:0;transform-box:fill-box!important;transform-origin:50% 100%}
+.cp-dr{opacity:0;transform-box:fill-box!important;transform-origin:50% 50%}
+.cp-cf{opacity:0;transform-box:fill-box!important;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .cp-bt{animation:cpBt 2.4s ease-in-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .cp-ck{animation:cpCk 2.4s cubic-bezier(.3,.7,.4,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .cp-fm{animation:cpFm 2.4s ease-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .cp-dr{animation:cpDr 2.4s cubic-bezier(.2,.8,.4,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .cp-cf{animation:cpCf 2.4s cubic-bezier(.2,.8,.4,1) infinite}
+@keyframes cpBt{0%,4%{transform:none}10%{transform:rotate(-2deg)}15%{transform:rotate(2deg)}20%{transform:rotate(-3deg)}25%{transform:rotate(3deg)}30%{transform:rotate(-1deg)}34%{transform:translateY(3px) rotate(-5deg)}44%{transform:rotate(1deg)}52%,100%{transform:none}}
+@keyframes cpCk{0%,4%{transform:none;opacity:1}12%{transform:translateY(-1px) rotate(-6deg)}20%{transform:translateY(-2px) rotate(6deg)}28%{transform:translateY(-3px) rotate(-4deg)}32%{transform:translateY(-4px)}44%{transform:translate(6px,-30px) rotate(180deg);opacity:1}56%{transform:translate(10px,-38px) rotate(300deg);opacity:0}90%{transform:none;opacity:0}100%{transform:none;opacity:1}}
+@keyframes cpFm{0%,32%{opacity:0;transform:scale(.3)}38%{opacity:1;transform:scale(1.15)}70%{opacity:1;transform:scale(1)}84%,100%{opacity:0;transform:scale(.8)}}
+@keyframes cpDr{0%,32%{opacity:0;transform:translate(0,0) scale(.4)}40%{opacity:1}68%{opacity:1;transform:translate(var(--dx),var(--dy)) scale(1)}80%,100%{opacity:0;transform:translate(var(--dx),calc(var(--dy) + 4px)) scale(.6)}}
+@keyframes cpCf{0%,34%{opacity:0;transform:translate(0,0) rotate(0) scale(.3)}42%{opacity:1}70%{opacity:1;transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(1)}88%,100%{opacity:0;transform:translate(var(--x),calc(var(--y) + 10px)) rotate(var(--r))}}
+.c3-b{transform-box:fill-box;transform-origin:50% 100%}
+.c3-d{opacity:.3}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .c3-l{animation:c3A 1.6s ease-in-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .c3-r{animation:c3A 1.6s ease-in-out .8s infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .c3-b{animation:c3B 1.6s ease-in-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .c3-d{animation:c3D .9s ease-in-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .c3-d2{animation-delay:.15s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .c3-d3{animation-delay:.3s}
+@keyframes c3A{0%,60%,100%{transform:none}20%{transform:translateY(-4px) rotate(-3deg)}40%{transform:translateY(0)}}
+@keyframes c3B{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes c3D{0%,100%{opacity:.3;transform:none}50%{opacity:1;transform:translateY(-1.5px)}}
+.e3-b{transform-box:view-box!important;transform-origin:32px 56px}
+.e3-ok{opacity:0;transform-box:fill-box;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .e3-b{animation:e3B 1.8s cubic-bezier(.45,0,.55,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .e3-ok{animation:e3O 1.8s cubic-bezier(.34,1.6,.64,1) infinite}
+@keyframes e3B{0%,100%{transform:none}10%{transform:scaleY(.86) scaleX(1.08)}22%{transform:translateY(-12px) scaleY(1.08) scaleX(.95)}34%{transform:scaleY(.9) scaleX(1.06)}44%{transform:translateY(-7px) scaleY(1.04)}54%{transform:scaleY(.95) scaleX(1.03)}62%{transform:none}}
+@keyframes e3O{0%,50%{opacity:0;transform:scale(.3)}62%,88%{opacity:1;transform:scale(1)}96%,100%{opacity:0}}
+.p-1,.p-2{opacity:0;transform-box:fill-box}
+.p-1{transform-origin:0 100%}
+.p-2{transform-origin:100% 100%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .p-1{animation:pB 2s cubic-bezier(.34,1.5,.64,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .p-2{animation:pB 2s cubic-bezier(.34,1.5,.64,1) 1s infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .p-a{animation:pN 2s ease-in-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .p-b{animation:pN 2s ease-in-out 1s infinite}
+@keyframes pB{0%{opacity:0;transform:scale(.3)}12%,42%{opacity:1;transform:scale(1)}52%,100%{opacity:0;transform:scale(.8)}}
+@keyframes pN{0%,50%,100%{transform:none}15%{transform:translateY(-2px)}30%{transform:translateY(1px)}}
+.hs-l2{opacity:0}
+.hs-all{transform-box:view-box;transform-origin:32px 37px}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .hs-all{animation:hsShake .45s ease-in-out infinite alternate}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .hs-l2{animation:hsL .9s ease-out infinite}
+@keyframes hsShake{from{transform:translateY(-3px) rotate(-2deg)}to{transform:translateY(3px) rotate(2deg)}}
+@keyframes hsL{0%{opacity:0;transform:translateY(3px)}30%{opacity:1}100%{opacity:0;transform:translateY(-4px)}}
+.bx-poof,.bx-chk{opacity:0}
+.bx-chk{stroke-dasharray:14;stroke-dashoffset:14}
+.bx-lid{transform-box:view-box;transform-origin:12px 32px}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .bx-lid{animation:bxLid 1.8s cubic-bezier(.5,0,.5,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .bx-poof{animation:bxPoof 1.8s ease-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .bx-chk{animation:bxChk 1.8s ease infinite}
+@keyframes bxLid{0%,30%{transform:translateY(-12px) rotate(-8deg)}45%{transform:translateY(0) rotate(0)}52%{transform:translateY(-2px)}58%,88%{transform:none}100%{transform:translateY(-12px) rotate(-8deg)}}
+@keyframes bxPoof{0%,44%{opacity:0;transform:scale(.6)}50%{opacity:1;transform:scale(1)}66%,100%{opacity:0;transform:scale(1.2)}}
+@keyframes bxChk{0%,55%{opacity:1;stroke-dashoffset:14}68%,88%{opacity:1;stroke-dashoffset:0}96%,100%{opacity:0;stroke-dashoffset:0}}
+.fb-a,.fb-b,.fb-c{transform-box:fill-box}
+.fb-a{transform-origin:0% 100%}
+.fb-b{transform-origin:100% 100%}
+.fb-c{transform-origin:0% 100%;opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .fb-a{animation:fbA 2.6s cubic-bezier(.34,1.5,.64,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .fb-b{animation:fbB 2.6s cubic-bezier(.34,1.5,.64,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .fb-c{animation:fbC 2.6s cubic-bezier(.34,1.5,.64,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .fb-d{animation:fbD .6s ease-in-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .fb-d2{animation-delay:.15s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .fb-d3{animation-delay:.3s}
+@keyframes fbA{0%{opacity:0;transform:scale(.2)}8%,62%{opacity:1;transform:scale(1)}72%,100%{opacity:0;transform:scale(.8) translateY(-4px)}}
+@keyframes fbB{0%,22%{opacity:0;transform:scale(.2)}30%,78%{opacity:1;transform:scale(1)}88%,100%{opacity:0;transform:scale(.8) translateY(-4px)}}
+@keyframes fbC{0%,44%{opacity:0;transform:scale(.2)}52%,90%{opacity:1;transform:scale(1)}98%,100%{opacity:0}}
+@keyframes fbD{0%,100%{opacity:.3}50%{opacity:1}}
+.coops-pile svg,.coops-icdemo svg{overflow:visible}
+.ev-hs{transform-box:view-box;transform-origin:32px 34px}
+.ev-hs-l{opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-hs{animation:evShake .5s ease-in-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-hs-l{animation:evHsL 1s ease-out infinite}
+@keyframes evShake{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-5px) rotate(-4deg)}}
+@keyframes evHsL{0%{opacity:0;transform:translateY(3px)}30%{opacity:1}100%{opacity:0;transform:translateY(-4px)}}
+.ev-flap{transform-box:fill-box;transform-origin:50% 100%}
+.ev-tape{opacity:0}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-flap1{animation:evFlap 2s cubic-bezier(.65,0,.35,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-flap2{animation:evFlap 2s cubic-bezier(.65,0,.35,1) .15s infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-tape{animation:evTape 2s ease infinite}
+@keyframes evFlap{0%,8%{transform:scaleY(1)}35%,80%{transform:scaleY(-.08)}95%,100%{transform:scaleY(1)}}
+@keyframes evTape{0%,40%{opacity:0;transform:scaleX(0)}50%,78%{opacity:1;transform:scaleX(1)}86%,100%{opacity:0}}
+.ev-tape{transform-box:fill-box;transform-origin:50% 50%;fill:rgba(14,14,18,.85)}
+.ev-q{transform-box:fill-box;transform-origin:50% 100%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-bub{animation:evBob 1.2s ease-in-out infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-q{animation:evQ 1.2s cubic-bezier(.34,1.6,.64,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-q2{animation-delay:.15s}
+@keyframes evBob{0%,100%{transform:none}50%{transform:translateY(-2px)}}
+@keyframes evQ{0%,60%,100%{transform:none}25%{transform:translateY(-4px) scale(1.15)}}
+.ev-cork{transform-box:fill-box;transform-origin:50% 100%}
+.ev-fz{opacity:0}
+.ev-fz *{transform-box:fill-box;transform-origin:50% 50%}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-cork{animation:evCork 1.8s cubic-bezier(.3,.8,.4,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ev-fz{animation:evFz 1.8s ease-out infinite}
+@keyframes evCork{0%{transform:none;opacity:1}8%{transform:rotate(-8deg)}14%{transform:rotate(8deg)}20%{transform:rotate(-6deg)}26%{transform:none}40%{transform:translate(4px,-22px) rotate(50deg);opacity:1}55%,85%{transform:translate(8px,-34px) rotate(120deg);opacity:0}86%{transform:none;opacity:0}100%{transform:none;opacity:1}}
+@keyframes evFz{0%,26%{opacity:0;transform:translateY(6px) scale(.4)}40%{opacity:1;transform:translateY(-2px) scale(1)}75%{opacity:.9;transform:translateY(-8px) scale(1.1)}90%,100%{opacity:0;transform:translateY(-12px) scale(1.15)}}
+@media (prefers-reduced-motion: reduce){.coops-pile svg *{animation:none!important;transition:none!important}}
+@property --prA{syntax:'<angle>';inherits:false;initial-value:0deg}
+.ev-promo::after{content:"";position:absolute;inset:-3px;border-radius:inherit;padding:4px;background:conic-gradient(from var(--prA),transparent 0deg 220deg,rgba(255,250,230,.12) 270deg,rgba(255,252,240,.45) 320deg,rgba(255,255,255,.75) 345deg,rgba(255,250,230,.2) 356deg,transparent 360deg);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;filter:drop-shadow(0 0 6px rgba(255,248,220,.6));animation:prGlow 6s linear infinite,prBreath 6s ease-in-out infinite;pointer-events:none;z-index:2}
+@keyframes prGlow{to{--prA:360deg}}
+@keyframes prBreath{0%,100%{opacity:.55}50%{opacity:1}}
+@media (prefers-reduced-motion: reduce){.ev-promo::after{animation:none;opacity:0}}
+.coops-focus{transform-origin:50% 0}
+.coops-focus .coops-fx-body{animation:coopsFadeIn 260ms 200ms ease both}
+.coops-x{transition:background-color .2s ease,color .2s ease,transform .18s cubic-bezier(.34,1.56,.64,1)}
+.coops-x svg{transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.coops-x:hover,.coops-x:focus-visible{background:#0E0E12!important;color:var(--fbg,#F5F2EC)!important}
+.coops-x:hover svg,.coops-x:focus-visible svg{transform:rotate(90deg)}
+.coops-x:active{transform:scale(.88)}
+.coops-x:active svg{transform:rotate(90deg) scale(.9)}
+.coops-x:focus-visible{outline:3px solid #0E0E12;outline-offset:2px}
+.coops-focus button:not(.coops-x):focus-visible,.coops-focus a:focus-visible{outline:3px solid #0E0E12;outline-offset:2px}
+@media (prefers-reduced-motion: reduce){.coops-focus,.coops-focus .coops-fx-body{animation:none!important}.coops-x,.coops-x svg{transition:none!important;transform:none!important}}
+.coops-mban svg *{transform-box:fill-box}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-peg{animation:icPeg 1.2s cubic-bezier(.34,1.6,.64,1) infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-peg2{animation-delay:.1s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-day{animation:icDay 2.6s cubic-bezier(.34,1.6,.64,1) infinite both}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-star{animation:icBurst 1.8s cubic-bezier(.34,1.4,.64,1) infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-shard{animation:icShard 1.8s cubic-bezier(.2,.8,.3,1) infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-leaf{animation:icLeaf 1.3s cubic-bezier(.45,0,.35,1) infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-leaf2{animation-delay:.45s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-bgx{animation:icRot 4.2s cubic-bezier(.34,1.3,.64,1) infinite both}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-bgx2{animation-delay:1.4s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-bgx3{animation-delay:2.8s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-knob{animation:icKnob 1.4s linear 1.4s infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-playt{animation:icPlay .7s ease-in-out infinite alternate}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-wave{animation:icWav .7s ease-in-out infinite alternate}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-path{animation:icDraw70 1.2s cubic-bezier(.65,0,.25,1) both}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-jflag{animation:icWave .5s ease-in-out .6s infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-rocket{animation:icRocket .9s ease-in-out infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fire{animation:icFire .32s ease-in-out infinite alternate}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fire2{animation-duration:.24s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-tw{animation:icTw 1.1s linear infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-tw2{animation-delay:.3s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-tw3{animation-delay:.55s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-tw4{animation-delay:.8s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-flag{animation:icWave .45s ease-in-out infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-mount{transform:translateY(-2px)}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb{animation:icFb 1.4s cubic-bezier(.34,1.5,.64,1) infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb2{animation-delay:.1s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb3{animation-delay:.2s}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb1{--s:.8}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb2{--s:1.3}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-fb3{--s:2}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-sweep{animation:icSweep 1.8s linear infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-blip{animation:icBlip 1.8s ease-out infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-ring{animation:icPing 1.8s ease-out infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-ib{animation:icBars 1.6s ease-in-out infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-arm{animation:icSee 1.6s cubic-bezier(.45,0,.55,1) infinite}
+:is(.coops-mban:hover,.coops-mban:focus-within) .ic-w{animation:icSeeW 1.6s cubic-bezier(.45,0,.55,1) infinite}
+@media (prefers-reduced-motion: reduce){.coops-mban svg *{animation:none!important;transition:none!important}}
+.coops-mban a:focus-visible,.coops-mban button:focus-visible{outline:3px solid #0E0E12;outline-offset:3px}
+.ab-sh{transform-box:view-box!important;transform-origin:32px 18px}
+.ab-pp{transform-box:view-box!important;transform-origin:32px 46px}
+.ab-bm{opacity:0}
+.ab-rg{opacity:0;transform-box:view-box!important;transform-origin:32px 30px}
+.ab-lt{fill:none}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ab-sh{animation:abSh 3.6s cubic-bezier(.45,0,.55,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ab-bm{animation:abBm 3.6s linear infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ab-rg{animation:abRg .9s linear infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ab-rg2{animation-delay:-.3s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ab-rg3{animation-delay:-.6s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ab-pp{animation:abPp 3.6s cubic-bezier(.45,0,.55,1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ab-lt{animation:abLt 1.2s steps(1) infinite}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ab-lt2{animation-delay:.4s}
+:is(.coops-pile:hover,.coops-card:hover,.coops-front:focus-visible,.coops-card:focus-visible,.coops-icdemo:hover) .ab-lt3{animation-delay:.8s}
+@keyframes abRg{0%{opacity:0;transform:translateY(0) scale(.95)}12%{opacity:1}80%{opacity:.9}100%{opacity:0;transform:translateY(26px) scale(1.75)}}
+@keyframes abBm{0%,6%{opacity:0}12%,52%{opacity:1}57%,100%{opacity:0}}
+@keyframes abPp{0%,30%{transform:translateY(0) scale(1);opacity:1}52%{transform:translateY(-21px) scale(.6);opacity:1}55%{transform:translateY(-22px) scale(.55);opacity:0}86%{transform:translateY(0) scale(1);opacity:0}96%,100%{transform:translateY(0) scale(1);opacity:1}}
+@keyframes abSh{0%,56%{transform:translate(0,0) rotate(0);opacity:1}20%,44%{transform:translate(0,-1px) rotate(0)}60%{transform:translate(-2px,1px) rotate(-4deg);opacity:1}76%{transform:translate(30px,-12px) rotate(10deg);opacity:0}77%{transform:translate(-30px,-8px) rotate(-6deg);opacity:0}90%,100%{transform:translate(0,0) rotate(0);opacity:1}}
+@keyframes abLt{0%{fill:#0E0E12}33%{fill:none}}
+@media (prefers-reduced-motion: reduce){.ab-sh,.ab-pp,.ab-bm,.ab-rg,.ab-lt{animation:none!important}.ab-bm{opacity:0}}
+.ev-opt{transition:transform .35s cubic-bezier(.34,1.56,.64,1),box-shadow .3s ease}
+.ev-opt:hover,.ev-opt:focus-visible{transform:translateY(-6px) rotate(-1.5deg)!important;box-shadow:6px 6px 0 #4B36B0}
+.ev-opt:focus-visible{outline:3px solid #F5F2EC;outline-offset:3px}
+@media (prefers-reduced-motion: reduce){.ev-opt{transition:none!important;transform:none!important}}
+.coops-focus .coops-fx-body>*{flex-shrink:0}
+.coops-focus.ev-promo::after{inset:-4px;border-radius:28px;z-index:3}
+.cel-cf{position:absolute;top:-16px;opacity:0;animation:celCf 2.6s linear infinite;animation-delay:var(--d)}
+@keyframes celCf{0%{opacity:0;transform:translateY(0) rotate(0)}10%{opacity:1}85%{opacity:1}100%{opacity:0;transform:translateY(190px) rotate(var(--r))}}
+.cel-a{animation:celHop 1.8s cubic-bezier(.34,1.4,.64,1) infinite}
+.cel-a2{animation-delay:.9s}
+@keyframes celHop{0%,40%,100%{transform:translateY(0) rotate(0)}15%{transform:translateY(-14px) rotate(-4deg)}28%{transform:translateY(0) rotate(2deg)}}
+.cel-obj{overflow:visible}
+.cel-obj *{transform-box:fill-box}
+.cel-fl1{transform-origin:50% 100%;animation:celFl1 1.8s ease-in-out infinite}
+.cel-fl2{transform-origin:50% 100%;animation:celFl2 1.8s ease-in-out infinite}
+@keyframes celFl1{0%,100%{transform:rotate(-6deg) translateX(-2px)}45%,55%{transform:rotate(10deg) translateX(3px)}}
+@keyframes celFl2{0%,100%{transform:rotate(6deg) translateX(2px)}45%,55%{transform:rotate(-10deg) translateX(-3px)}}
+.cel-clk{opacity:0;animation:celClk 1.8s ease infinite}
+@keyframes celClk{0%,42%{opacity:0;transform:scale(.6)}50%{opacity:1;transform:scale(1.1)}70%,100%{opacity:0;transform:scale(1)}}
+.cel-md{transform-box:view-box!important;transform-origin:32px 4px;animation:celMd 1.8s ease-in-out infinite}
+@keyframes celMd{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+@media (prefers-reduced-motion: reduce){.cel-cf,.cel-a,.cel-fl1,.cel-fl2,.cel-clk,.cel-md{animation:none!important}.cel-cf{opacity:1;top:14px}.cel-clk{opacity:1}}
+@keyframes evComIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.ev-com-tg:hover .ev-com-ic,.ev-com-tg:focus-visible .ev-com-ic{animation:evComBob .9s ease-in-out infinite}
+.ev-com-tg:hover .ev-com-dots,.ev-com-tg:focus-visible .ev-com-dots{animation:evComDots .9s steps(1) infinite}
+@keyframes evComBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px) rotate(-4deg)}}
+@keyframes evComDots{0%{opacity:1}50%{opacity:.25}}
+.ev-com-tg:focus-visible{outline:2px solid #0E0E12;outline-offset:3px;border-radius:12px}
+@media (prefers-reduced-motion:reduce){.ev-com-tg *{animation:none!important}}
+.coops-focus .coops-fx-body{scrollbar-width:thin;scrollbar-color:rgba(14,14,18,.38) transparent}
+.coops-focus .coops-fx-body::-webkit-scrollbar{width:8px}
+.coops-focus .coops-fx-body::-webkit-scrollbar-track{background:transparent;margin:56px 0 64px}
+.coops-focus .coops-fx-body::-webkit-scrollbar-thumb{background:rgba(14,14,18,.32);border-radius:999px}
+.coops-focus .coops-fx-body::-webkit-scrollbar-thumb:hover{background:rgba(14,14,18,.55)}
+.coops-focus .coops-fx-body>:first-child{position:sticky;top:var(--fx-st,0px);z-index:5;background:var(--fbg);padding-bottom:12px;margin-bottom:-12px;box-shadow:0 12px 12px -12px rgba(14,14,18,.28)}
+.coops-focus .coops-fx-foot{position:sticky;bottom:var(--fx-sb,0px);z-index:5;background:var(--fbg);padding-bottom:2px;box-shadow:0 -12px 12px -12px rgba(14,14,18,.28)}
+/* ── Coops14-BrainGym.dc.html ── */
+.bg-blk{transition:transform .18s cubic-bezier(.34,1.56,.64,1),background-color .16s ease}
+.bg-blk:hover{transform:translateY(-3px)}
+.bg-blk:active{transform:scale(.9)}
+.bg-step{transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.bg-step:hover{transform:translateY(-2px)}
+.bg-step:active{transform:scale(.92)}
+.bg-blk:focus-visible,.bg-step:focus-visible{outline:3px solid #0E0E12;outline-offset:2px}
+@media (prefers-reduced-motion: reduce){.bg-blk,.bg-step{transition:none!important;transform:none!important}}
+.bgi *{transform-box:fill-box}
+.coops-card:is(:hover,:focus-within) .bgi-pg{animation:bgiPg 1.8s cubic-bezier(.45,0,.55,1) infinite}
+.bgi-pg{transform-origin:0 50%}
+@keyframes bgiPg{0%,15%{transform:scaleX(1)}50%{transform:scaleX(-1)}50.01%,100%{transform:scaleX(-1);opacity:0}}
+.coops-card:is(:hover,:focus-within) .bgi-ln{animation:bgiBlink 1.8s steps(1) infinite}
+@keyframes bgiBlink{0%,49%{opacity:1}50%,100%{opacity:.35}}
+.bgi-play{transform-origin:50% 50%}
+.coops-card:is(:hover,:focus-within) .bgi-play{animation:bgiPlay 1s ease-in-out infinite}
+@keyframes bgiPlay{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+.bgi-bar{stroke-dasharray:40;stroke-dashoffset:40}
+.coops-card:is(:hover,:focus-within) .bgi-bar{animation:bgiBar 2.4s linear infinite}
+@keyframes bgiBar{to{stroke-dashoffset:0}}
+.coops-card:is(:hover,:focus-within) .bgi-dot{animation:bgiDot 2.4s linear infinite}
+@keyframes bgiDot{to{transform:translateX(40px)}}
+.bgi-w{stroke-dasharray:24;stroke-dashoffset:0}
+.coops-card:is(:hover,:focus-within) .bgi-w{animation:bgiW 2.4s ease infinite}
+.coops-card:is(:hover,:focus-within) .bgi-w2{animation-delay:.25s}
+.coops-card:is(:hover,:focus-within) .bgi-w3{animation-delay:.5s}
+.coops-card:is(:hover,:focus-within) .bgi-w4{animation-delay:.75s}
+@keyframes bgiW{0%{stroke-dashoffset:24}30%,85%{stroke-dashoffset:0}100%{stroke-dashoffset:0;opacity:0}}
+.bgi-cap{transform-origin:50% 100%}
+.coops-card:is(:hover,:focus-within) .bgi-cap{animation:bgiCap 1.6s cubic-bezier(.34,1.4,.64,1) infinite}
+@keyframes bgiCap{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-6px) rotate(-6deg)}55%{transform:translateY(0) rotate(0)}}
+.bgi-ts{transform-origin:50% 0}
+.coops-card:is(:hover,:focus-within) .bgi-ts{animation:bgiTs .8s ease-in-out infinite alternate}
+@keyframes bgiTs{from{transform:rotate(14deg)}to{transform:rotate(-14deg)}}
+.coops-card:is(:hover,:focus-within) .bgi-l1{animation:bgiL1 1.6s cubic-bezier(.45,0,.55,1) infinite}
+.coops-card:is(:hover,:focus-within) .bgi-l2{animation:bgiL2 1.6s cubic-bezier(.45,0,.55,1) infinite}
+.coops-card:is(:hover,:focus-within) .bgi-mid{animation:bgiMid 1.6s ease infinite}
+.bgi-sp{opacity:0;transform-origin:50% 50%}
+.coops-card:is(:hover,:focus-within) .bgi-sp{animation:bgiSp 1.6s ease infinite}
+@keyframes bgiL1{0%,100%{transform:translate(0,0)}40%,55%{transform:translate(-4px,4px)}}
+@keyframes bgiL2{0%,100%{transform:translate(0,0)}40%,55%{transform:translate(4px,-4px)}}
+@keyframes bgiMid{0%,30%{opacity:1}40%,60%{opacity:0}75%,100%{opacity:1}}
+@keyframes bgiSp{0%,70%{opacity:0;transform:scale(.6)}80%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.bgi *{animation:none!important}}
+.bgi-wv{opacity:.35;transform-origin:50% 50%}
+.coops-card:is(:hover,:focus-within) .bgi-wv{animation:bgiWv 1.2s ease-out infinite}
+.coops-card:is(:hover,:focus-within) .bgi-wv2{animation-delay:.25s}
+@keyframes bgiWv{0%{opacity:0;transform:scale(.85)}35%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.12)}}
+.bgi-mic{transform-origin:50% 100%}
+.coops-card:is(:hover,:focus-within) .bgi-mic{animation:bgiMic .6s ease-in-out infinite alternate}
+@keyframes bgiMic{from{transform:translateY(0)}to{transform:translateY(-2px)}}
+@media (prefers-reduced-motion:reduce){.bgi-wv,.bgi-mic{animation:none!important;opacity:1}}
+.ev-opt:hover,.ev-opt:focus-visible{transform:translateY(-6px) rotate(-1.5deg)!important;box-shadow:6px 6px 0 #B0507F}
+/* ── Coops15-Jornada.dc.html ── */
+.jr-flag{transform-origin:0 50%}
+.coops-card:is(:hover,:focus-within) .jr-flag{animation:jrFlag .7s ease-in-out infinite alternate}
+@keyframes jrFlag{from{transform:scaleX(1) skewY(0)}to{transform:scaleX(.78) skewY(-10deg)}}
+.jr-route{stroke-dasharray:4 0}
+.coops-card:is(:hover,:focus-within) .jr-route{stroke-dasharray:4 4;animation:jrRoute .8s linear infinite}
+@keyframes jrRoute{to{stroke-dashoffset:-16}}
+.coops-card:is(:hover,:focus-within) .jr-dot{animation:jrDot 2.4s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes jrDot{0%,8%{transform:translate(0,0)}22%{transform:translate(12px,-12px)}36%{transform:translate(24px,-24px)}50%,80%{transform:translate(36px,-36px)}100%{transform:translate(0,0)}}
+.jr-star{opacity:0;transform-origin:50% 50%}
+.coops-card:is(:hover,:focus-within) .jr-star{animation:jrStar 2.4s ease infinite}
+@keyframes jrStar{0%,48%{opacity:0;transform:scale(.4)}58%{opacity:1;transform:scale(1.2)}80%{opacity:1;transform:scale(1)}92%,100%{opacity:0}}
+.jr-ring{transition:stroke-dasharray .6s cubic-bezier(.22,1,.36,1)}
+.jr-open:focus-visible,.jr-tg:focus-visible{outline:3px solid #0E0E12;outline-offset:3px;border-radius:8px}
+.jr-tg{transition:transform .16s ease,background .2s ease}
+.jr-tg:hover{background:rgba(245,242,236,.45)!important}
+.jr-tg:active{transform:scale(.96)}
+@media (prefers-reduced-motion:reduce){.jr-flag,.jr-route,.jr-dot,.jr-star{animation:none!important}.jr-ring{transition:none}}
+.coops-card:is(:hover,:focus-visible) .jr-ring{animation:jrRing 1.6s cubic-bezier(.22,1,.36,1) infinite}
+@keyframes jrRing{0%{stroke-dashoffset:40}60%,100%{stroke-dashoffset:0}}
+.jr-tick{stroke-dasharray:20;stroke-dashoffset:0}
+.coops-card:is(:hover,:focus-visible) .jr-tick{animation:jrTick 1.6s ease infinite}
+@keyframes jrTick{0%,45%{stroke-dashoffset:20}70%,100%{stroke-dashoffset:0}}
+.jr-chk{transform-origin:50% 50%}
+.coops-card:is(:hover,:focus-visible) .jr-chk{animation:jrChk 1.6s cubic-bezier(.34,1.6,.64,1) infinite}
+@keyframes jrChk{0%,20%{transform:scale(.7)}40%,100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.jr-ring,.jr-tick,.jr-chk{animation:none!important}}
+.jr-pip{transition:transform .16s ease}
+.jr-pip:hover{transform:translateY(-2px)}
+.jr-pip:active{transform:scale(.94)}
+.jr-pip:focus-visible{outline:3px solid #0E0E12;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.jr-arw,.jr-tg-r{animation:none!important}.jr-pip{transition:none}}
+.coops-card:is(:hover,:focus-within) .jr-glv{animation:jrGlv 1.1s cubic-bezier(.5,0,.2,1) infinite}
+@keyframes jrGlv{0%,15%{transform:translateX(0) rotate(0)}35%{transform:translateX(-4px) rotate(-6deg)}50%{transform:translateX(7px) rotate(2deg)}62%,100%{transform:translateX(0) rotate(0)}}
+.jr-pow{opacity:0;transform-origin:0 50%}
+.coops-card:is(:hover,:focus-within) .jr-pow{animation:jrPow 1.1s ease infinite}
+@keyframes jrPow{0%,45%{opacity:0;transform:scale(.4)}52%{opacity:1;transform:scale(1.15)}75%,100%{opacity:0;transform:scale(1)}}
+.jr-seg{stroke-dasharray:0 200;opacity:0}
+.coops-card:is(:hover,:focus-within) .jr-seg0{animation:jrSeg0 3s cubic-bezier(.22,1,.36,1) infinite}
+.coops-card:is(:hover,:focus-within) .jr-seg1{animation:jrSeg1 3s cubic-bezier(.22,1,.36,1) infinite}
+.coops-card:is(:hover,:focus-within) .jr-seg2{animation:jrSeg2 3s cubic-bezier(.22,1,.36,1) infinite}
+@keyframes jrSeg0{0%{stroke-dasharray:0 200;opacity:0}1%{opacity:1}20%,90%{stroke-dasharray:var(--l) 200;opacity:1}99%{stroke-dasharray:0 200;opacity:1}100%{opacity:0}}
+@keyframes jrSeg1{0%,20%{stroke-dasharray:0 200;opacity:0}21%{opacity:1;stroke-dasharray:0 200}40%,90%{stroke-dasharray:var(--l) 200;opacity:1}99%{stroke-dasharray:0 200;opacity:1}100%{opacity:0}}
+@keyframes jrSeg2{0%,40%{stroke-dasharray:0 200;opacity:0}41%{opacity:1;stroke-dasharray:0 200}60%,90%{stroke-dasharray:var(--l) 200;opacity:1}99%{stroke-dasharray:0 200;opacity:1}100%{opacity:0}}
+.jr-cyc{transform-origin:50% 50%}
+.coops-card:is(:hover,:focus-within) .jr-cyc{animation:jrCyc 3s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes jrCyc{0%{transform:rotate(0)}60%,100%{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.jr-glv,.jr-pow,.jr-seg,.jr-cyc{animation:none!important}.jr-pow{opacity:0}}
+.jr-tr{transform-origin:50% 100%}
+.coops-card:is(:hover,:focus-within) .jr-tr{animation:jrTr 2.4s cubic-bezier(.34,1.4,.64,1) infinite}
+@keyframes jrTr{0%,8%{transform:translateY(0)}20%{transform:translateY(-3px) scale(1.04)}34%,100%{transform:translateY(0) scale(1)}}
+.jr-shn{stroke-dasharray:8;stroke-dashoffset:0}
+.coops-card:is(:hover,:focus-within) .jr-shn{animation:jrShn 2.4s ease infinite}
+@keyframes jrShn{0%,20%{stroke-dashoffset:8;opacity:0}32%,80%{stroke-dashoffset:0;opacity:1}100%{opacity:0}}
+.jr-cf{opacity:0;transform-box:fill-box;transform-origin:50% 50%}
+.coops-card:is(:hover,:focus-within) .jr-cf{animation:jrCf 2.4s cubic-bezier(.2,.7,.3,1) infinite}
+@keyframes jrCf{0%,14%{opacity:0;transform:translate(0,4px) rotate(0) scale(.4)}22%{opacity:1}55%{opacity:1;transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(1)}80%,100%{opacity:0;transform:translate(var(--x),calc(var(--y) + 8px)) rotate(var(--r)) scale(1)}}
+@media (prefers-reduced-motion:reduce){.jr-tr,.jr-shn,.jr-cf{animation:none!important}.jr-cf{opacity:0}}
+.jr-hL,.jr-hR{transform-box:view-box!important;transform-origin:32px 6px}
+.coops-card:is(:hover,:focus-within) .jr-hL{animation:jrHL 2.4s cubic-bezier(.45,0,.55,1) infinite}
+.coops-card:is(:hover,:focus-within) .jr-hR{animation:jrHR 2.4s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes jrHL{0%{transform:rotate(0)}18%{transform:rotate(9deg)}38%{transform:rotate(-6deg)}56%{transform:rotate(3.5deg)}72%{transform:rotate(-1.5deg)}86%,100%{transform:rotate(0)}}
+@keyframes jrHR{0%{transform:rotate(0)}18%{transform:rotate(-7deg)}38%{transform:rotate(8deg)}56%{transform:rotate(-4deg)}72%{transform:rotate(1.5deg)}86%,100%{transform:rotate(0)}}
+@media (prefers-reduced-motion:reduce){.jr-hL,.jr-hR{animation:none!important}}
+.ev-opt:hover,.ev-opt:focus-visible{transform:translateY(-6px) rotate(-1.5deg)!important;box-shadow:6px 6px 0 #B85A34}
+.coops-wz-card [role=radio]:hover,.coops-wz-card [role=checkbox]:hover{transform:translateY(-2px)}
+.coops-wz-card input:focus-visible,.coops-wz-card textarea:focus-visible,.coops-wz-card button:focus-visible{outline:3px solid #0E0E12;outline-offset:2px}
+/* ── Coops17-Squad.dc.html ── */
+.h17-ring{transition:transform .9s cubic-bezier(.22,1,.36,1)}
+.h17:hover .h17-ring{transform:scale(1.18) translate(14px,14px)}
+.h17:hover .h17-ring2{transform:scale(1.12) translate(-14px,-10px)}
+.h17-top{transition:transform .6s cubic-bezier(.34,1.3,.64,1)}
+.h17:hover .h17-top{transform:translateY(-4px)}
+.h17-card{transition:transform .55s cubic-bezier(.34,1.5,.64,1) var(--d)}
+.h17:hover .h17-card{transform:translate(var(--x),-16px) rotate(calc(var(--r) * 1.7))!important}
+.h17:hover .h17-av{animation:h17Bob 1.8s ease-in-out infinite}
+.h17:hover .h17-av2{animation-delay:.25s}
+.h17:hover .h17-av3{animation-delay:.5s}
+@keyframes h17Bob{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-12px) rotate(-4deg)}60%{transform:translateY(-4px) rotate(3deg)}}
+.h17 h1{transition:letter-spacing .5s ease}
+.h17:hover h1{letter-spacing:-0.03em}
+@media (prefers-reduced-motion: reduce){.h17 *{animation:none!important;transition:none!important}}
+/* ── Coops18a-Squad-Desafios.dc.html ── */
+.coops-dkban-ring{transition:transform .8s cubic-bezier(.22,1,.36,1)}
+.coops-dkban:hover .coops-dkban-ring{transform:scale(1.12) translate(-14px,-10px)}
+.coops-dkban-ic{transition:transform .45s cubic-bezier(.34,1.56,.64,1)}
+.coops-dkban:hover .coops-dkban-ic{transform:rotate(-4deg) scale(1.04)}
+.coops-dkban-back:hover{color:#0E0E12!important;text-decoration:underline!important}
+.coops-dkban-add{transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.coops-dkban-add:hover{transform:translateY(-2px)}
+.coops-dkban-add:active{transform:scale(.96)}
+.coops-dkban a:focus-visible,.coops-dkban button:focus-visible{outline:3px solid #0E0E12;outline-offset:3px}
+.coops-dktab:hover{border-color:#F5F2EC!important}
+.coops-dktab:focus-visible{outline:3px solid #B7A6FF;outline-offset:3px}
+@media (prefers-reduced-motion: reduce){.coops-dkban-ring,.coops-dkban-ic,.coops-dkban-add{transition:none!important;transform:none!important}}
+/* ── Coops20-Entregas.dc.html ── */
+.coops-focus .coops-fx-body>:first-child{padding-bottom:20px;margin-bottom:2px;box-shadow:none;border-bottom:1.5px solid rgba(14,14,18,.2)}
+.coops-focus .ent-desc{margin:0;font-size:17px;line-height:1.6;max-width:56ch}
+/* ── Coops20b-Entregas-IC.dc.html ── */
+.imp-cta{transition:background 200ms ease,transform 200ms ease}
+.imp-cta:hover{background:rgba(245,242,236,0.45)!important;transform:translateY(-2px)}
+.imp-cta:active{transform:scale(.98)}
+.imp-cta:hover .imp-ic,.imp-cta:focus-visible .imp-ic{animation:impUp .9s ease-in-out infinite}
+@keyframes impUp{0%,100%{transform:translate(0,0)}50%{transform:translate(1px,-2px)}}
+.imp-cta:focus-visible,.ent-link:focus-visible{outline:3px solid #0E0E12;outline-offset:3px}
+.ent-link{transition:transform 160ms ease}
+.ent-link:hover{transform:translateY(-2px)}
+@media (prefers-reduced-motion:reduce){.imp-ic{animation:none!important}.imp-cta,.ent-link{transition:none}}
+.mesa-cta{transition:transform 180ms ease}
+.mesa-cta:hover{transform:translateY(-2px)}
+.mesa-cta:active{transform:scale(.97)}
+.mesa-cta:focus-visible{outline:3px solid #0E0E12;outline-offset:3px}
+.mesa-cta:hover .mesa-cd,.mesa-cta:focus-visible .mesa-cd{animation:mesaCd .9s ease-in-out infinite}
+@keyframes mesaCd{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@media (prefers-reduced-motion:reduce){.mesa-cta,.mesa-cd{transition:none;animation:none!important}}

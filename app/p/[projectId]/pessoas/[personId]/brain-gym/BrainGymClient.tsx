@@ -4,6 +4,7 @@ import { AppHeader } from '@/components/ds/AppHeader';
 import { OpenDeckBanner } from '@/components/ds/OpenDeckBanner';
 import { BottomSheet } from '@/components/sheet/BottomSheet';
 import { DiBook } from '@/components/person/DeckIcons';
+import { BannerBrain } from '@/components/person/BannerIcons';
 import { StudyDeck, TypePicker, STUDY_META, type StudyDraft, type StudyType, type StudyView } from '@/components/person/StudyDecks';
 import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
 import { useCoopsRouter } from '@/components/nav/useCoopsRouter';
@@ -58,7 +59,7 @@ export function BrainGymClient({ user, person, projectId, isOwn, skills, items: 
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <OpenDeckBanner bg="#F5A9D6" icon={<DiBook />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `← ${isOwn ? 'Meu perfil' : person.name}` }}
+        <OpenDeckBanner bg="#F5A9D6" icon={<BannerBrain />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `← ${isOwn ? 'Meu perfil' : person.name}` }}
           title="Brain gym" desc={isOwn ? 'Livros, cursos e vídeos ligados às skills que você quer subir. Avance em blocos.' : `O que ${fn} está estudando, com o progresso de cada conteúdo.`} cta={isOwn ? { label: '+ Conteúdo', onClick: () => setSheet({ k: 'pick' }) } : null} />
         {warn && <div role="alert" style={{ borderRadius: 14, border: '1.5px solid #FF8A5B', padding: '10px 14px', fontSize: 14 }}>{warn}</div>}
         <div role="tablist" aria-label="Filtrar conteúdos" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>

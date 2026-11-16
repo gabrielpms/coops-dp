@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
 import { OpenDeckBanner } from '@/components/ds/OpenDeckBanner';
 import { DiStar } from '@/components/person/DeckIcons';
+import { BannerStar } from '@/components/person/BannerIcons';
 import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
 import { CoopsLink } from '@/components/nav/useCoopsRouter';
 import { label } from '@/components/ds/tokens';
@@ -52,7 +53,7 @@ export function SkillsClient({ user, person, projectId, cycle, isOwn, canGrade, 
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <OpenDeckBanner bg="#F3D36B" icon={<DiStar />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `← ${isOwn ? 'Meu perfil' : person.name}` }}
+        <OpenDeckBanner bg="#F3D36B" icon={<BannerStar />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `← ${isOwn ? 'Meu perfil' : person.name}` }}
           title={isOwn ? 'Autoavaliação de skills' : `Skills ${fn.endsWith('a') ? 'da' : 'do'} ${fn}`} desc={`Nota de 1 a 5 por skill, lado a lado com a nota do manager. Ciclo ${cycleLabel(cycle)}.${canGrade ? ' Você dá a nota do manager.' : ''}`} />
         {warn && <div role="alert" style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', borderRadius: 14, border: '1.5px solid #FF8A5B', padding: '10px 14px', fontSize: 14 }}>{warn.msg}<button type="button" onClick={warn.retry} style={{ fontFamily: 'inherit', fontWeight: 600, color: '#0E0E12', background: '#FF8A5B', border: 0, borderRadius: 10, minHeight: 44, padding: '0 14px', cursor: 'pointer' }}>Tentar de novo</button></div>}
         {skills.length === 0 ? (

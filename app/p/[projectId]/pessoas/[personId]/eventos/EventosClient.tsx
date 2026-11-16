@@ -7,6 +7,7 @@ import { BottomSheet } from '@/components/sheet/BottomSheet';
 import { Spinner } from '@/components/ds/ScreenLoader';
 import { CoopsLink, useCoopsRouter } from '@/components/nav/useCoopsRouter';
 import { DiPeople } from '@/components/person/DeckIcons';
+import { BannerEvents } from '@/components/person/BannerIcons';
 import { EventDeck, type EventDraft, type EventKind } from '@/components/person/EventDeck';
 import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
 import { label } from '@/components/ds/tokens';
@@ -56,7 +57,7 @@ export function EventosClient({ user, person, projectId, isOwn, isManager, event
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <OpenDeckBanner bg="#B7A6FF" icon={<DiPeople />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `← ${isOwn ? 'Meu perfil' : person.name}` }}
+        <OpenDeckBanner bg="#B7A6FF" icon={<BannerEvents />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `← ${isOwn ? 'Meu perfil' : person.name}` }}
           title="Eventos" desc={isOwn ? 'Check-ins, feedbacks, entregas, promoções e méritos do seu caminho.' : `O caminho de ${fn}: check-ins, feedbacks, entregas, promoções e méritos.`} cta={canNew ? { label: '+ Evento', onClick: open } : null} />
         <div role="tablist" aria-label="Filtrar eventos" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
           {types.map(([f, t, n]) => { const on = filter === f; return <button key={f} type="button" role="tab" aria-selected={on} onClick={() => pick(f)} style={{ fontFamily: 'inherit', fontWeight: on ? 600 : 400, fontSize: 14, color: on ? '#0E0E12' : '#F5F2EC', background: on ? '#F5F2EC' : 'transparent', border: on ? 0 : '1px solid #4A4858', borderRadius: 999, minHeight: 44, padding: '0 16px', cursor: 'pointer' }}>{t} · {n}</button>; })}
