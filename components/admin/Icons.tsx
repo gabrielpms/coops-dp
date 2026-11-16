@@ -11,7 +11,7 @@ export const IconBuild = () => (
   <svg className="ad-ic" {...base}><path d="M16 54V12h22v42M38 26h12v28M10 54h44" />{[['21', '18', ''], ['29', '18', 'ad-w2'], ['21', '27', 'ad-w3'], ['29', '27', 'ad-w4'], ['21', '36', 'ad-w5'], ['29', '36', 'ad-w6']].map(([x, y, c]) => <rect key={x + y} className={`ad-w ${c}`} x={x} y={y} width="4" height="4" />)}<path d="M24 54v-8h6v8M42 32h4M42 40h4" /></svg>
 );
 export const IconBars = () => (
-  <svg className="ad-ic" {...base}><path d="M10 54h44" /><rect className="ad-bar" x="14" y="38" width="8" height="16" rx="1.5" /><rect className="ad-bar ad-bar2" x="28" y="30" width="8" height="24" rx="1.5" /><rect className="ad-bar ad-bar3" x="42" y="22" width="8" height="32" rx="1.5" /><path className="ad-tr" d="M12 26l12-8 8 5 18-13" /><path className="ad-tr" d="M42 10h8v8" /></svg>
+  <svg className="ad-ic" {...base}><path d="M10 54h44" /><rect className="ad-bar" x="14" y="38" width="8" height="16" rx="1.5" /><rect className="ad-bar ad-bar2" x="28" y="30" width="8" height="24" rx="1.5" /><rect className="ad-bar ad-bar3" x="42" y="22" width="8" height="32" rx="1.5" /><path className="ad-tr" d="M12 26l12-8 8 5 18-13" /><path className="ad-tr ad-trh" d="M42 10h8v8" /></svg>
 );
 
 /** Ícone grande do banner. */
@@ -30,3 +30,9 @@ export const IconBino = ({ bg }: { bg: string }) => (
 export const AvatarIcon = ({ children, bg }: { children: React.ReactNode; bg: string }) => (
   <span className="ad-av" style={{ display: 'block', width: 56, height: 56, borderRadius: '50%', overflow: 'hidden', border: '2px solid #0E0E12', boxSizing: 'border-box', lineHeight: 0, background: bg }}>{children}</span>
 );
+
+export const IconHeart = ({ bg }: { bg: string }) => (
+  <svg className="ad-ic" {...base}><g className="ad-hb"><path d="M32 54S10 40 10 24a11 11 0 0 1 22-3 11 11 0 0 1 22 3c0 16-22 30-22 30z" fill={bg} /></g><path className="ad-pl" d="M18 30h8l3-6 5 12 3-6h9" /></svg>
+);
+/** Segmento financeiro usa a maleta; os demais, o coração (Coops21). */
+export const isFinSegment = (segment: string) => /financ|banc|pagament|fintech|seguro|cr[eé]dito/i.test(segment);

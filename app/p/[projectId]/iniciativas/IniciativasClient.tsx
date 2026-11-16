@@ -49,9 +49,11 @@ export function IniciativasClient({ user, project, items, draft: d0 }: {
         )}
         <section aria-label="Lista de iniciativas" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
           {isManager && tab === 'ABERTA' && items.length > 0 && (
-            <button type="button" onClick={() => setDeck(true)} className="coops-card" aria-label="Nova iniciativa" style={{ ...card, background: 'transparent', color: '#F5F2EC', border: '2px dashed #4A4858', boxShadow: 'none', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontFamily: 'inherit' }}>
-              <span aria-hidden="true" style={{ fontSize: 40, lineHeight: 1 }}>+</span><span style={{ fontSize: 20, fontWeight: 700 }}>Nova iniciativa</span>
-              {draft && <span style={{ ...label(11, '0.06em'), color: '#B7A6FF' }}>RASCUNHO SALVO</span>}
+            <button type="button" onClick={() => setDeck(true)} className="in-new" aria-label="Nova iniciativa" style={{ ...card, background: 'transparent', color: '#F5F2EC', border: '1.5px dashed #4A4858', boxShadow: 'none', alignItems: 'flex-start', justifyContent: 'flex-start', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left' }}>
+              <span className="in-plus" aria-hidden="true" style={{ width: 56, height: 56, boxSizing: 'border-box', borderRadius: 16, border: '1.5px solid #4A4858', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></span>
+              <span style={{ marginTop: 'auto', ...label(11, '0.08em'), color: '#B7A6FF' }}>NOVA INICIATIVA</span>
+              <span style={{ fontSize: 21, fontWeight: 600, lineHeight: 1.2 }}>Comece pela carta da iniciativa</span>
+              <span style={{ width: '100%', boxSizing: 'border-box', fontSize: 13, lineHeight: 1.4, borderTop: '1.5px solid #4A4858', paddingTop: 10, color: '#A3A1AD' }}>{draft ? 'Rascunho salvo: continue de onde parou' : 'O agente ajuda a amadurecer a demanda antes de abrir a mesa'}</span>
             </button>
           )}
           {shown.map((i) => (
