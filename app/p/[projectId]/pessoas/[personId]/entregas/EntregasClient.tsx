@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
 import { OpenDeckBanner } from '@/components/ds/OpenDeckBanner';
+import { CoopsLink } from '@/components/nav/useCoopsRouter';
 import { FocusCard, FocusClose } from '@/components/ds/FocusCard';
 import { DeliveryDeck, type DeliveryDraft, type DeliveryView } from '@/components/person/DeliveryDeck';
 import { DiRocket } from '@/components/person/DeckIcons';
@@ -107,7 +108,10 @@ export function EntregasClient({ user, person, projectId, isOwn, initiatives, de
             {person.squad && <span><b>Squad </b>{person.squad}</span>}<span><b>Status </b>{STATUS_LONG[cur.status]}</span>
           </div>
           <span style={{ fontSize: 13 }}>{cur.initiativeTitle ? `Ligada à iniciativa “${cur.initiativeTitle}”` : 'Sem iniciativa ligada'}</span>
-          {isOwn && <button type="button" onClick={() => { const e = cur; setFocus(null); setDeck({ editing: e }); }} style={{ alignSelf: 'flex-start', fontFamily: 'inherit', fontWeight: 600, fontSize: 14, color: '#0E0E12', background: 'transparent', border: '1.5px solid #0E0E12', borderRadius: 12, minHeight: 44, padding: '0 16px', cursor: 'pointer' }}>Editar entrega</button>}
+          <div className="coops-fx-foot" style={{ display: 'flex', gap: 10, flexWrap: 'wrap', borderTop: '1.5px solid rgba(14,14,18,0.25)', paddingTop: 16 }}>
+            {cur.initiativeId ? <CoopsLink href={`/p/${projectId}/iniciativas/${cur.initiativeId}/mesa`} className="mesa-cta" style={{ flex: '1 1 180px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, minHeight: 48, boxSizing: 'border-box', borderRadius: 12, background: '#0E0E12', color: '#F5F2EC', textDecoration: 'none', fontWeight: 600, fontSize: 14, padding: '0 14px' }}>Abrir mesa da iniciativa</CoopsLink> : <span style={{ flex: '1 1 180px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minHeight: 48, fontSize: 13, color: 'rgba(14,14,18,0.68)' }}>Sem iniciativa vinculada</span>}
+            {isOwn && <button type="button" onClick={() => { const e = cur; setFocus(null); setDeck({ editing: e }); }} style={{ flex: '1 1 180px', fontFamily: 'inherit', fontWeight: 600, fontSize: 14, color: '#0E0E12', background: 'transparent', border: '1.5px solid #0E0E12', borderRadius: 12, minHeight: 48, padding: '0 14px', cursor: 'pointer' }}>Editar entrega</button>}
+          </div>
           </div>
         </FocusCard>
       )}
