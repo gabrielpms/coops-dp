@@ -17,10 +17,17 @@ export default async function SquadDeckPage({ params }: { params: Promise<{ proj
   if (slug === 'saude') {
     const members = await db.squadMembership.findMany({ where: { squadId }, select: { personId: true } });
     const ids = members.map((m) => m.personId);
-    const latest = await Promise.all(ids.map((personId) => db.healthCheckin.findFirst({ where: { personId }, orderBy: { createdAt: 'desc' } })));
-    const rows = latest.filter((x): x is NonNullable<typeof x> => !!x);
-    const avg = (k: 'saude' | 'design' | 'produto' | 'negocio') => rows.reduce((a, r) => a + r[k], 0) / (rows.length || 1);
-    return <SaudeTimeClient {...header} total={ids.length} answers={rows.length} enough={rows.length >= MIN_ANSWERS} min={MIN_ANSWERS} avgs={{ saude: avg('saude'), design: avg('design'), produto: avg('produto'), negocio: avg('negocio') }} />;
+    const all = await db.healthCheckin.findMany({ where: { personId: { in: ids } }, orderBy: { createdAt: 'desc' } });
+    type K = 'saude' | 'design' | 'produto' | 'negocio';
+    const cycles = [...new Set(all.map((r) => r.cycle))].sort().slice(-4);
+    // um check-in por pessoa por ciclo (o mais recente); o agregado só aparece com respostas suficientes
+    const series = cycles.map((cycle) => {
+      const rows = ids.map((id) => all.find((r) => r.personId === id && r.cycle === cycle)).filter((x): x is NonNullable<typeof x> => !!x);
+      const avg = (k: K) => rows.reduce((a, r) => a + r[k], 0) / (rows.length || 1);
+      return { cycle, n: rows.length, avgs: rows.length >= MIN_ANSWERS ? { saude: avg('saude'), design: avg('design'), produto: avg('produto'), negocio: avg('negocio') } : null };
+    });
+    const cur = series[series.length - 1] ?? null;
+    return <SaudeTimeClient {...header} total={ids.length} answers={cur?.n ?? 0} enough={!!cur?.avgs} min={MIN_ANSWERS} series={series} />;
   }
   const deck = SLUG_TO_DECK[slug];
   if (!deck) notFound();
