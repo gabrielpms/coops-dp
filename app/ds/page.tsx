@@ -2,7 +2,7 @@ import { Avatar, BGS, HAIRS, SHIRTS, SKINS } from '@/components/avatar/Avatar';
 import { label, mono, chipStyle } from '@/components/ds/tokens';
 import { OpenDeckBanner } from '@/components/ds/OpenDeckBanner';
 import { DsDemos } from './DsDemos';
-import { BannerBrain, BannerDelivery, BannerEvents, BannerJourney, BannerStar } from '@/components/person/BannerIcons';
+import { BannerBrain, BannerDelivery, BannerEvents, BannerJourney, BannerStar, DeliveryCardIcon } from '@/components/person/BannerIcons';
 import { BannerHeart, DimIcon } from '@/components/person/HealthIcons';
 import { StudyTypeIcon } from '@/components/person/StudyTypeIcon';
 import { EventTypeIcon } from '@/components/person/EventTypeIcon';
@@ -57,6 +57,7 @@ export default function DS() {
       <Sec t="Saúde · um ícone por pergunta"><div style={row}>{(['saude', 'design', 'produto', 'negocio'] as const).map((k) => <Cell key={k} bg="#A9D8F5" name={k}><DimIcon id={k} ink="#0E0E12" bg="#A9D8F5" /></Cell>)}</div></Sec>
       <Sec t="Brain gym · tipos de estudo"><div style={row}>{study.map((t) => <Cell key={t} bg="#F5A9D6" name={t.toLowerCase()}><StudyTypeIcon type={t} /></Cell>)}</div></Sec>
       <Sec t="Deck de eventos · tipos de carta"><div style={row}>{events.map((t) => <Cell key={t} bg="#B7A6FF" name={t.toLowerCase()}><EventTypeIcon type={t} /></Cell>)}</div></Sec>
+      <Sec t="Entregas · carta de entrega"><div style={row}><Cell bg="#8FE3C8" name="entrega"><DeliveryCardIcon bg="#8FE3C8" /></Cell></div></Sec>
       <Sec t="Jornada · objetivo e foco"><div style={row}>{(['prog', 'goal', 'foco', 'past'] as const).map((k) => <Cell key={k} bg="#FF8A5B" name={k}><JourneyCardIcon kind={k} /></Cell>)}</div></Sec>
       <Sec t="Mesa do time · decks do squad"><div style={row}>{Object.entries(ICP).map(([k, parts]) => <Cell key={k} bg="#B7A6FF" name={k}><svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ overflow: 'visible' }}>{parts.map(([c, d], i) => <path key={i} className={c || undefined} d={d} />)}</svg></Cell>)}</div></Sec>
       <Sec t="Agente · confere o entendimento"><div style={row}>{agentKinds.map((k) => <Cell key={k} bg="#8FE3C8" name={k}><AgentCardIcon kind={k} /></Cell>)}</div></Sec>
