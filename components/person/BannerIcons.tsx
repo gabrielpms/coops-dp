@@ -15,3 +15,8 @@ export const BannerDelivery = ({ size = 84 }: { size?: number }) => (
 export const BannerEvents = ({ size = 84 }: { size?: number }) => (
   <svg aria-hidden="true" width={size} height={size} viewBox="0 0 64 64" fill="none" stroke="#0E0E12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ overflow: 'visible' }}><rect x="10" y="14" width="44" height="40" rx="4" /><path d="M10 24h44" /><path className="ic-peg" d="M22 8v10" /><path className="ic-peg ic-peg2" d="M42 8v10" /><rect className="ic-day" style={{ animationDelay: '0.00s' }} x="13.5" y="29" width="9" height="8" rx="2" /><rect className="ic-day" style={{ animationDelay: '0.22s' }} x="27.5" y="29" width="9" height="8" rx="2" /><rect className="ic-day" style={{ animationDelay: '0.44s' }} x="41.5" y="29" width="9" height="8" rx="2" /><rect className="ic-day" style={{ animationDelay: '0.66s' }} x="13.5" y="41" width="9" height="8" rx="2" /><rect className="ic-day" style={{ animationDelay: '0.88s' }} x="27.5" y="41" width="9" height="8" rx="2" /><rect className="ic-day" style={{ animationDelay: '1.10s' }} x="41.5" y="41" width="9" height="8" rx="2" /></svg>
 );
+
+/** Ícone da carta de entrega (Coops20): caixa com selo de conferido; anima no hover/foco da carta (`e3-*`). */
+export const DeliveryCardIcon = ({ bg = '#F5F2EC' }: { bg?: string }) => (
+  <svg aria-hidden="true" width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ overflow: 'visible' }}><g className="e3-b"><path d="M14 30h36v26H14z" fill={bg} /><path d="M14 30l4-7h28l4 7M32 23v7" /><path d="M24 42h16" /></g><g className="e3-ok"><circle cx="52" cy="14" r="8" /><path d="M48 14l3 3 5-6" /></g></svg>
+);

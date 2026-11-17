@@ -6,7 +6,7 @@ import { CoopsLink } from '@/components/nav/useCoopsRouter';
 import { FocusCard, FocusClose } from '@/components/ds/FocusCard';
 import { DeliveryDeck, type DeliveryDraft, type DeliveryView } from '@/components/person/DeliveryDeck';
 import { DiRocket } from '@/components/person/DeckIcons';
-import { BannerDelivery } from '@/components/person/BannerIcons';
+import { BannerDelivery, DeliveryCardIcon } from '@/components/person/BannerIcons';
 import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
 import { useCoopsRouter } from '@/components/nav/useCoopsRouter';
 import { label } from '@/components/ds/tokens';
@@ -62,7 +62,7 @@ export function EntregasClient({ user, person, projectId, isOwn, initiatives, de
             <button key={d.id} type="button" className="coops-card" aria-label={`Abrir a entrega ${d.title}`} onClick={(e) => open(d, e.currentTarget)}
               style={{ fontFamily: 'inherit', textAlign: 'left', height: 340, boxSizing: 'border-box', borderRadius: 22, background: '#8FE3C8', color: '#0E0E12', border: '2px solid #0E0E12', padding: 20, display: 'flex', flexDirection: 'column', gap: 10, cursor: 'pointer', boxShadow: '0 16px 36px rgba(0,0,0,0.45)' }}>
               <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>
-                <BannerDelivery size={56} />
+                <DeliveryCardIcon />
                 <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}><span style={{ fontSize: 44, fontWeight: 600, lineHeight: 1, letterSpacing: '-0.03em' }}>{d.date.slice(8, 10)}</span><span style={label(11, '0')}>{MONTHS[Number(d.date.slice(5, 7)) - 1]}</span></span>
               </span>
               <span style={{ marginTop: 'auto', ...label(11, '0.08em') }}>ENTREGA · {STATUS_LABEL[d.status]}</span>
