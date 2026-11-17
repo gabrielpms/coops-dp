@@ -1,7 +1,9 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { Avatar, type AvatarConfig } from '../avatar/Avatar';
-import { useCoopsRouter } from '../nav/useCoopsRouter';
+import { usePathname } from 'next/navigation';
+import { CoopsLink, useCoopsRouter } from '../nav/useCoopsRouter';
+import { useProject } from './ProjectContext';
 import { label } from './tokens';
 
 export const DEFAULT_AVATAR: AvatarConfig = { skin: '#E0B08A', hairStyle: 'longo', shirtStyle: 'blazer', bg: '#F3D36B' };
@@ -10,6 +12,8 @@ export function AppHeader({ name, email, role, avatar }: { name: string; email: 
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   const { go } = useCoopsRouter();
+  const project = useProject();
+  const path = usePathname() ?? '';
   useEffect(() => {
     if (!open) return;
     const away = (e: MouseEvent) => { if (!box.current?.contains(e.target as Node)) setOpen(false); };
@@ -22,7 +26,21 @@ export function AppHeader({ name, email, role, avatar }: { name: string; email: 
 
   return (
     <header style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
-      <span style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.03em' }}>coops<span style={{ color: '#B7A6FF' }}>.</span></span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
+        <CoopsLink href="/hub" aria-label="Ir para o hub de projetos" style={{ color: '#F5F2EC', textDecoration: 'none', fontSize: 26, fontWeight: 800, letterSpacing: '-0.03em' }}>coops<span style={{ color: '#B7A6FF' }}>.</span></CoopsLink>
+        {project && (() => {
+          const base = `/p/${project.id}`;
+          const items: { key: string; label: string; href: string; on: boolean }[] = role === 'MANAGER'
+            ? [{ key: 'time', label: 'Time', href: `${base}/time`, on: /^\/p\/[^/]+\/(time|squads|pessoas)(\/|$)/.test(path) }, { key: 'ini', label: 'Iniciativas', href: `${base}/iniciativas`, on: /^\/p\/[^/]+\/iniciativas(\/|$)/.test(path) }]
+            : [...(project.mePersonId ? [{ key: 'me', label: 'Meu perfil', href: `${base}/pessoas/${project.mePersonId}`, on: /^\/p\/[^/]+\/pessoas(\/|$)/.test(path) }] : []), { key: 'ini', label: 'Iniciativas', href: `${base}/iniciativas`, on: /^\/p\/[^/]+\/iniciativas(\/|$)/.test(path) }];
+          return (<>
+            <span style={{ fontSize: 14, color: '#A3A1AD', border: '1px solid #2C2C36', borderRadius: 999, padding: '8px 12px' }}>{project.name}</span>
+            <nav aria-label="Produtos" style={{ display: 'flex', gap: 4, background: '#17171D', border: '1px solid #2C2C36', borderRadius: 14, padding: 4 }}>
+              {items.map((i) => <CoopsLink key={i.key} href={i.href} aria-current={i.on ? 'page' : undefined} style={{ color: i.on ? '#0E0E12' : '#A3A1AD', background: i.on ? '#B7A6FF' : 'transparent', textDecoration: 'none', fontWeight: i.on ? 600 : 400, fontSize: 14, borderRadius: 10, padding: '10px 16px', minHeight: 20 }}>{i.label}</CoopsLink>)}
+            </nav>
+          </>);
+        })()}
+      </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <span style={{ ...label(12, '0'), color: '#0E0E12', background: '#B7A6FF', borderRadius: 999, padding: '6px 10px' }}>{role}</span>
         <div ref={box} style={{ position: 'relative' }}>
