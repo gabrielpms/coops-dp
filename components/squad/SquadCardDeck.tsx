@@ -15,12 +15,12 @@ export type CardDraft = Draft<CardForm>;
 const defaults = (deck: SquadDeckId): CardForm => ({
   DESAFIO: { title: '', cenario: '', complexidade: 3, evidencias: [], abordagem: '', acoes: [] },
   FRENTE: { title: '', oque: '', impacto: '', nivel: 1, evidencias: [], acoes: [], championPersonId: null },
-  ESTRATEGIA: { title: '', texto: '' },
-  INDICADOR: { title: '', valor: '', variacao: 'estavel', challengeId: null },
-  ALAVANCA: { title: '', descricao: '' },
+  ESTRATEGIA: { title: '', texto: '', agora: '', futuro: '', h1: '', h2: '', h3: '', acoes: [] },
+  INDICADOR: { title: '', porque: '', meta: '', progresso: 0, evidencias: [], acoes: [], valor: '', variacao: 'estavel', challengeId: null },
+  ALAVANCA: { title: '', objetivo: '', descricao: '', status: 'COMECANDO', resultados: '' },
 }[deck]);
-export const formOf = (c: SquadCardView): CardForm => ({ title: c.title, ...c.data, ...(c.deck === 'DESAFIO' ? { complexidade: c.level ?? 3 } : {}), ...(c.deck === 'FRENTE' ? { nivel: c.level ?? 1, championPersonId: c.championPersonId } : {}) });
-const LASTS: Record<SquadDeckId, number> = { DESAFIO: 5, FRENTE: 7, ESTRATEGIA: 2, INDICADOR: 3, ALAVANCA: 2 };
+export const formOf = (c: SquadCardView): CardForm => ({ ...defaults(c.deck), title: c.title, ...c.data, ...(c.deck === 'DESAFIO' ? { complexidade: c.level ?? 3 } : {}), ...(c.deck === 'FRENTE' ? { nivel: c.level ?? 1, championPersonId: c.championPersonId } : {}) });
+const LASTS: Record<SquadDeckId, number> = { DESAFIO: 5, FRENTE: 7, ESTRATEGIA: 6, INDICADOR: 7, ALAVANCA: 5 };
 
 // ---- peças com estado próprio (definidas fora do deck para não perder o foco)
 function Bars({ value, onPick, aria, lo, hi }: { value: number; onPick: (n: number) => void; aria: string; lo: string; hi: string }) {
@@ -105,20 +105,31 @@ export function SquadCardDeck({ squadId, deck, editing, people, challenges, draf
     summary([['FRENTE', form.title || '—'], ['NÍVEL', `${form.nivel} de 5`], ['CHAMPION', people.find((p) => p.id === form.championPersonId)?.name ?? 'Sem champion'], ['AÇÕES', `${form.acoes.length}`]]),
   ];
   if (deck === 'ESTRATEGIA') cards = [
-    nameCard('Qual é o item de estratégia?', 'Um título curto.', 'Ex.: Reduzir o abandono no cadastro', 'Dê um título ao item de estratégia.', '#B7A6FF'),
-    area('tx', '#F5F2EC', 'Explique o item', 'O que ele significa para o squad.', 'texto', 'Texto da estratégia'),
-    summary([['ITEM', form.title || '—'], ['TEXTO', form.texto || 'Sem texto']]),
+    nameCard('Qual o nome da estratégia?', 'Um título curto, do jeito que o squad fala.', 'Ex.: Reduzir o abandono no cadastro', 'Dê um título ao item de estratégia.', '#B7A6FF'),
+    area('tx', '#F5F2EC', 'Qual a declaração da estratégia?', 'A frase que resume para onde o squad vai.', 'texto', 'Declaração da estratégia'),
+    area('ag', '#F5A9D6', 'Como o time se parece agora?', 'O ponto de partida, sem filtro.', 'agora', 'Como o time se parece agora'),
+    area('fu', '#8FE3C8', 'E como ele vai se parecer no futuro?', 'Onde o squad quer chegar.', 'futuro', 'Como o time vai se parecer no futuro'),
+    { id: 'hz', bg: '#F3D36B', optional: true, node: (<><Title>O que faremos em cada etapa?</Title><Help>Horizontes: H1 é o mais próximo, H3 o mais distante.</Help>{(['h1', 'h2', 'h3'] as const).map((k, i) => <span key={k} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}><label htmlFor={`es-${k}`} style={label()}>{`O QUE FAREMOS NO H${i + 1}`}</label><textarea id={`es-${k}`} aria-label={`H${i + 1}`} value={form[k]} onChange={(e) => set({ [k]: e.target.value })} style={{ ...cardInput, minHeight: 64, resize: 'vertical' }} /></span>)}</>) },
+    { id: 'ac', bg: '#A9D8F5', optional: true, node: (<><Title>Que ações estamos fazendo?</Title><ActionEditor items={form.acoes} onChange={(v) => set({ acoes: v })} people={people} /></>) },
+    summary([['ITEM', form.title || '—'], ['DECLARAÇÃO', form.texto || 'Sem declaração'], ['HORIZONTES', [form.h1, form.h2, form.h3].filter(Boolean).length + ' de 3'], ['AÇÕES', `${form.acoes.length}`]]),
   ];
   if (deck === 'INDICADOR') cards = [
-    nameCard('Qual o indicador?', 'O nome do número que o squad acompanha.', 'Ex.: Ativação em 7 dias', 'Dê um nome ao indicador.', '#F3D36B'),
-    { id: 'vl', bg: '#F5F2EC', optional: true, node: (<><Title>Qual o valor atual?</Title><Help>Escreva como aparece no dashboard.</Help><input type="text" aria-label="Valor" placeholder="Ex.: 42%" value={form.valor} onChange={(e) => set({ valor: e.target.value })} style={cardInput} /><span style={label()}>VARIAÇÃO</span><div role="radiogroup" aria-label="Variação" style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>{([['sobe', '▲ Sobe'], ['estavel', '● Estável'], ['desce', '▼ Desce']] as const).map(([v, t]) => <button key={v} type="button" role="radio" aria-checked={form.variacao === v} className="tw-chip" onClick={() => set({ variacao: v })} style={chipStyle(form.variacao === v)}>{t}</button>)}</div></>) },
+    nameCard('Qual o nome do indicador?', 'O número que o squad acompanha.', 'Ex.: Ativação em 7 dias', 'Dê um nome ao indicador.', '#F3D36B'),
+    area('pq', '#F5F2EC', 'Por que escolhemos esse indicador?', 'O que ele mostra sobre o resultado do squad.', 'porque', 'Por que escolhemos esse indicador'),
+    { id: 'vl', bg: '#F5A9D6', optional: true, node: (<><Title>Qual a meta do quarter?</Title><Help>Escreva como aparece no dashboard.</Help><label htmlFor="ind-meta" style={label()}>META</label><input id="ind-meta" type="text" aria-label="Meta" placeholder="Ex.: 80% até dezembro" value={form.meta} onChange={(e) => set({ meta: e.target.value })} style={cardInput} /><label htmlFor="ind-valor" style={label()}>VALOR ATUAL</label><input id="ind-valor" type="text" aria-label="Valor" placeholder="Ex.: 42%" value={form.valor} onChange={(e) => set({ valor: e.target.value })} style={cardInput} /><span style={label()}>VARIAÇÃO</span><div role="radiogroup" aria-label="Variação" style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>{([['sobe', 'Sobe'], ['estavel', 'Estável'], ['desce', 'Desce']] as const).map(([k, t]) => <button key={k} type="button" role="radio" aria-checked={form.variacao === k} className="tw-chip" onClick={() => set({ variacao: k })} style={chipStyle(form.variacao === k)}>{t}</button>)}</div></>) },
+    { id: 'pg', bg: '#8FE3C8', optional: true, node: (<><Title>Quanto da meta já alcançamos?</Title><Help>De 0 a 100%. Arraste ou digite.</Help><input type="range" min={0} max={100} step={5} aria-label="Progresso da meta" value={form.progresso} onChange={(e) => set({ progresso: Number(e.target.value) })} style={{ width: '100%', accentColor: '#0E0E12', minHeight: 44 }} /><span style={{ fontSize: 44, fontWeight: 600, lineHeight: 1 }}>{form.progresso}%</span></>) },
+    ev(),
+    { id: 'ac', bg: '#A9D8F5', optional: true, node: (<><Title>Que ações estamos fazendo?</Title><ActionEditor items={form.acoes} onChange={(v) => set({ acoes: v })} people={people} /></>) },
     { id: 'lg', bg: '#FF8A5B', optional: true, node: (<><Title>Ligado a qual desafio?</Title><Help>Opcional. Mostra qual desafio esse número ajuda a medir.</Help><div role="radiogroup" aria-label="Desafio" style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}><button type="button" role="radio" aria-checked={!form.challengeId} className="tw-chip" onClick={() => set({ challengeId: null })} style={chipStyle(!form.challengeId)}>Nenhum</button>{challenges.map((c) => <button key={c.id} type="button" role="radio" aria-checked={form.challengeId === c.id} className="tw-chip" onClick={() => set({ challengeId: c.id })} style={chipStyle(form.challengeId === c.id)}>{c.title}</button>)}</div></>) },
-    summary([['INDICADOR', form.title || '—'], ['VALOR', `${form.valor || '—'} · ${form.variacao}`], ['DESAFIO', challenges.find((c) => c.id === form.challengeId)?.title ?? 'Nenhum']]),
+    summary([['INDICADOR', form.title || '—'], ['META', form.meta || '—'], ['ATUAL', `${form.valor || '—'} · ${form.progresso}% da meta`], ['DESAFIO', challenges.find((c) => c.id === form.challengeId)?.title ?? 'Nenhum']]),
   ];
   if (deck === 'ALAVANCA') cards = [
-    nameCard('Qual é a alavanca?', 'O que o squad pode mexer para mudar o resultado.', 'Ex.: Reduzir campos do formulário', 'Dê um nome à alavanca.', '#C9F0B8'),
-    area('ds', '#F5F2EC', 'Como ela funciona?', 'Por que ela deve mexer no resultado.', 'descricao', 'Descrição da alavanca'),
-    summary([['ALAVANCA', form.title || '—'], ['DESCRIÇÃO', form.descricao || 'Sem descrição']]),
+    nameCard('Qual o nome da alavanca?', 'O que o squad pode mexer para mudar o resultado.', 'Ex.: Reduzir campos do formulário', 'Dê um nome à alavanca.', '#C9F0B8'),
+    area('ob', '#F5F2EC', 'Qual o objetivo dela?', 'O que ela quer destravar.', 'objetivo', 'Objetivo da alavanca'),
+    area('ds', '#F5A9D6', 'Como ela funciona?', 'Por que ela deve mexer no resultado.', 'descricao', 'Como a alavanca funciona'),
+    { id: 'st', bg: '#F3D36B', optional: true, node: (<><Title>Qual o status?</Title><div role="radiogroup" aria-label="Status" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>{([['COMECANDO', 'Começando'], ['EM_TESTE', 'Em teste'], ['EM_USO', 'Em uso'], ['CONCLUIDA', 'Concluída']] as const).map(([k, t]) => <button key={k} type="button" role="radio" aria-checked={form.status === k} className="tw-chip" onClick={() => set({ status: k })} style={{ ...chipStyle(form.status === k), minHeight: 48 }}>{t}</button>)}</div></>) },
+    area('rs', '#8FE3C8', 'Que resultados coletamos até aqui?', 'Números, falas ou o que mudou desde que começou.', 'resultados', 'Resultados até aqui'),
+    summary([['ALAVANCA', form.title || '—'], ['OBJETIVO', form.objetivo || 'Sem objetivo'], ['STATUS', ({ COMECANDO: 'Começando', EM_TESTE: 'Em teste', EM_USO: 'Em uso', CONCLUIDA: 'Concluída' } as Record<string, string>)[form.status] ?? '—'], ['RESULTADOS', form.resultados ? 'Registrados' : 'Ainda não']]),
   ];
   return (
     <BottomSheet tag={TAG} title={editing ? `Editar ${meta.one}` : `Novo ${meta.one}`} onClose={onClose}>

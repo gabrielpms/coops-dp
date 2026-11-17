@@ -12,7 +12,7 @@ Legenda: ✅ alinhado · 🟡 parcial (lacunas listadas) · ⚪ não comparado e
 |---|---|---|---|
 | 01f Landing + wish list | `app/page.tsx`, `components/landing/*` | ✅ | Cobertura de textos 100%. |
 | 02 Cadastro | `app/cadastro`, `app/entrar` | ✅ | Cobertura de textos 100%. |
-| 02b Primeiro acesso | `app/primeiro-acesso`, `components/wizard` | 🟡 | Conferir passos 2 e 3 (textos "Escolha por onde seguir", "Organize quem você convidou em squads") e as validações por carta. |
+| 02b Primeiro acesso | `app/primeiro-acesso`, `components/wizard` | ✅ | Já era um porte fiel (classes `fa-*`, passos, cartas). Ajustados os subtítulos dos passos por estado e o aviso "Tudo isso fica na administração do projeto". |
 | 03 Hub de projetos | `app/hub` | 🟡 | Só mensagens de validação do deck "novo projeto" divergem. |
 | 04 Novo projeto | `components/wizard/ProjectDeck.tsx` | 🟡 | Mensagens de erro por carta divergem. |
 | 05 Time (manager) | `app/p/[projectId]/time`, `components/team` | ✅ | Calendário de data de entrada (`DateCalendar`, com seletores de mês/ano além do protótipo); estados vazios. |
@@ -20,15 +20,15 @@ Legenda: ✅ alinhado · 🟡 parcial (lacunas listadas) · ⚪ não comparado e
 | 07 Meu perfil (IC) | idem | ✅ | Idem; "Autoavaliação do Qx aberta" no deck de Skills. |
 | 08 Iniciativas | `iniciativas/*`, `components/initiative` | ✅ | Deck de perguntas, carta "Nova iniciativa" animada (`in-new`/`in-plus`) e estado vazio. |
 | 09 Agente confirma | `iniciativas/[id]/ConfereClient.tsx`, `lib/agentStub.ts` | 🟡 | Banner, cartas com ícones animados e chat com as classes do protótipo. O agente segue como stub (respostas fixas). |
-| 10 Mesa / 10b Análise | `iniciativas/[id]/mesa`, `components/initiative/AnalysisOverlay.tsx` | 🟡 | Overlay do agente analisando o momento (palco 3D, progresso, passos). Faltam a carta da iniciativa com hover `coops-ichov` e o `ag-hv` nas dúvidas resolvidas. |
+| 10 Mesa / 10b Análise | `iniciativas/[id]/mesa`, `components/initiative/AnalysisOverlay.tsx` | ✅ | Overlay do agente analisando o momento e carta da iniciativa em destaque (`coops-ichov`, foguete animado, contador de contextos). As dúvidas resolvidas seguem agrupadas na carta da iniciativa (o protótipo as mostra como cartas separadas). |
 | 11 Momento + ferramentas | `iniciativas/[id]/momento/MomentoClient.tsx`, `lib/toolIcons.ts` | 🟡 | Hero do agente, deck de ferramentas em leque com ícones animados por tipo, deck de resposta no palco (`s11-*`): carta em foco com impacto/esforço, descartar/mesa, leque de cartas, dock e resumo final. Faltam facetas ricas (evidências, passos, riscos, fontes), "Pedir variação" e a referência visual — o app só guarda título, tag, descrição, impacto, esforço, métrica e próximo passo. |
-| 12 Deck · Eventos | `pessoas/[personId]/eventos`, `components/person/EventDeck.tsx` | 🟡 | Feito: banner animado, pilha com ícone por tipo, palco de celebração, carta em foco, "Registrado por", "Quem pode editar" e comentários recolhíveis. Faltam: pilha com várias cartas empilhadas, anexos por arrastar arquivo (o app só guarda links; exigiria storage) e micro-animações nas perguntas do deck. |
+| 12 Deck · Eventos | `pessoas/[personId]/eventos`, `components/person/EventDeck.tsx` | ✅ | Banner animado, pilha com ícone por tipo, palco de celebração, carta em foco com rodapé fixo, "Registrado por", "Quem pode editar" e comentários recolhíveis. Fora de escopo: "cartas nesta pilha" (o protótipo só empilha registros dentro de um feedback; o app não tem esse dado) e anexos por arrastar arquivo (`fb-drop`; o app só guarda links e não há storage para eventos). |
 | 13 Autoavaliação de skills | `pessoas/[personId]/skills` | 🟡 | Feito: cartas, painel de média, carta em foco com rubrica e evidências. Faltam: descrição da skill, comentário do manager e "Enviar autoavaliação" (sem campos no banco). |
 | 14 Deck · Brain gym | `pessoas/[personId]/brain-gym`, `components/person/StudyDecks.tsx` | 🟡 | Feito: ícone animado por tipo, blocos de progresso, carta em foco. Falta: textos de resumo do deck "novo conteúdo". |
 | 15 Deck · Jornada | `pessoas/[personId]/jornada`, `components/person/JourneyDeck.tsx` | 🟡 | Feito: ícones animados, pips numerados, carta em foco. Falta: "Ligado a quais objetivos?" nos focos e blocos de leitura do manager. |
 | 16 Estados vazios | `components/person/EmptyDeckCard.tsx`, `ProfileClient.tsx`, `IniciativasClient.tsx` | ✅ | Decks vazios (eventos, skills, brain gym, jornada) para manager e IC; iniciativas vazias. Time vazio já existia. |
 | 17 Card do time (squad) | `squads/[squadId]` | ✅ | Vitrine animada (`h17-*`), pilhas de decks com ícones animados e Saúde do time. |
-| 18a–e Decks do squad | `squads/[squadId]/[deck]`, `components/squad` | 🟡 | Banner `dkban`, abas de navegação entre decks e contagens portados. Cartas e carta em foco seguem a implementação anterior (comparar campo a campo). |
+| 18a–e Decks do squad | `squads/[squadId]/[deck]`, `components/squad`, `lib/validation.ts` | ✅ | Banner `dkban` e abas entre decks. Cartas e perguntas alinhadas campo a campo: Estratégia (declaração, hoje, futuro, H1–H3, ações), Indicador (por que, meta, valor/variação, % da meta, evidências, ações, desafio) e Alavanca (objetivo, como funciona, status, resultados). Cartas antigas continuam abrindo (campos novos vazios). Fora de escopo: o texto do "agente" por carta e o CTA contextual do protótipo. |
 | 18f Saúde do time | `squads/[squadId]/[deck]/SaudeTimeClient.tsx` | ✅ | Cartas com média e variação, painel por ciclo, dica do agente; agregado só com 3+ respostas. |
 | 19 / 19b Saúde (IC / manager) | `pessoas/[personId]/saude` | ✅ | Reescrita no padrão do protótipo; rascunho e envio persistem no banco. |
 | 20 / 20b Entregas | `pessoas/[personId]/entregas`, `components/person/DeliveryDeck.tsx` | ✅ | Ícone animado, impacto pendente/editável (`imp-cta`), carta em foco e link "Abrir mesa da iniciativa". (Correção: `imp-*` é o fluxo de impacto, não "importar da mesa".) |
@@ -38,7 +38,7 @@ Legenda: ✅ alinhado · 🟡 parcial (lacunas listadas) · ⚪ não comparado e
 
 | Protótipo | App | Status |
 |---|---|---|
-| DS Fundamentos / Componentes | `app/ds` | ⚪ O `/ds` cobre cores, botões e avatares; não inclui a biblioteca completa de cartas e animações. |
+| DS Fundamentos / Componentes | `app/ds` (só em desenvolvimento) | ✅ | Showcase com os componentes reais: cores, tipografia, botões, seleção e campos, calendário, carta em foco, overlay do agente, avatares, banner do deck e todos os ícones animados (banner, saúde, brain gym, eventos, jornada, squad, agente, ferramentas), cartas, pilha e estados vazios. Fora: ilustração de carta e profundidade do `Fundamentos`. |
 | Avatares (v1, v2) | `components/avatar` | ✅ |
 
 ## Mecanismos e arquitetura
@@ -57,7 +57,4 @@ Legenda: ✅ alinhado · 🟡 parcial (lacunas listadas) · ⚪ não comparado e
 ## Próximos passos sugeridos
 
 1. Momento: facetas ricas do deck de resposta (exigem dados do agente real, M9).
-2. Cartas e carta em foco dos decks do squad (18a–e): comparar campo a campo.
-3. Eventos: pilha com várias cartas e micro-animações nas perguntas.
-4. Mesa: hover `coops-ichov` na carta da iniciativa.
-5. Primeiro acesso (02b) e `/ds`: comparar com o mesmo método.
+2. Eventos: anexos de arquivo (precisa de storage por evento).

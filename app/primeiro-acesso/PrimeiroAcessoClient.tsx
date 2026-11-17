@@ -8,9 +8,9 @@ import { label, segmentIcon } from '@/components/ds/tokens';
 type P = { id: string; name: string; segment: string; tagline: string; strategy: string; indicators: string[]; competitors: string[]; links: string[]; skills: string[]; invites: { name: string; email: string; position: 'IC' | 'MANAGER' }[]; counts: { squads: number; people: number; initiatives: number }; pendingInvites: number };
 
 const STEPS = ['Conta criada', 'Primeiro projeto', 'Time e iniciativas'];
-const SUBS = ['Seu perfil já existe', 'Empresa, skills e convites', 'Squads, pessoas e a primeira demanda'];
 
-function Steps({ now }: { now: 2 | 3 }) {
+function Steps({ now, projectName }: { now: 2 | 3; projectName?: string }) {
+  const subs = ['Seu perfil já existe', now === 2 ? 'Empresa, estratégia e time' : projectName ?? 'Primeiro projeto', now === 3 ? 'Escolha por onde seguir' : 'Depois do projeto'];
   return (
     <div role="list" aria-label="Seu começo" style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
       {STEPS.map((t, i) => {
@@ -19,7 +19,7 @@ function Steps({ now }: { now: 2 | 3 }) {
         return (
           <div role="listitem" key={t} style={{ flex: '1 1 220px', display: 'flex', alignItems: 'center', gap: 14, borderRadius: 18, background: bg, color: state === 'later' ? '#A3A1AD' : '#0E0E12', border: state === 'later' ? '2px dashed #4A4858' : '2px solid #0E0E12', padding: '14px 16px' }}>
             <span style={{ flex: 'none', width: 40, height: 40, borderRadius: 12, border: `2px solid ${state === 'later' ? '#4A4858' : '#0E0E12'}`, background: state === 'later' ? 'transparent' : '#F5F2EC', color: state === 'later' ? '#A3A1AD' : '#0E0E12', display: 'flex', alignItems: 'center', justifyContent: 'center', ...label(13, '0'), fontWeight: 700 }}>{n}</span>
-            <span style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0, flex: 1 }}><b style={{ fontSize: 16 }}>{t}</b><span style={{ fontSize: 13 }}>{SUBS[i]}</span></span>
+            <span style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0, flex: 1 }}><b style={{ fontSize: 16 }}>{t}</b><span style={{ fontSize: 13 }}>{subs[i]}</span></span>
             <span style={{ flex: 'none', ...label(10, '0.06em'), fontWeight: 700, border: `1.5px solid ${state === 'later' ? '#4A4858' : '#0E0E12'}`, borderRadius: 999, padding: '3px 8px', background: state === 'done' ? '#F5F2EC' : 'transparent' }}>{state === 'done' ? 'FEITO ✓' : state === 'now' ? 'AGORA' : 'DEPOIS'}</span>
           </div>
         );
@@ -79,13 +79,14 @@ export function PrimeiroAcessoClient({ user, project: initial, createDraft: init
                     </li>
                   ))}
                 </ol>
+                <p style={{ margin: 0, fontSize: 14, lineHeight: 1.5, color: '#A3A1AD', borderTop: '1px solid #2C2C36', paddingTop: 12 }}>Tudo isso fica na administração do projeto. Dá para mudar quando quiser.</p>
               </div>
             </div>
           </div>
         ) : (
           <div className="fa-in" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
             <Intro step={3} title="Projeto criado. Bora pro time?" sub={project.pendingInvites ? `${project.name} está no ar e ${project.pendingInvites} ${project.pendingInvites === 1 ? 'convite foi enviado' : 'convites foram enviados'}. Agora monte os squads.` : `${project.name} está no ar. Monte os squads e chame o time quando quiser.`} />
-            <Steps now={3} />
+            <Steps now={3} projectName={project.name} />
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'flex-end' }}>
               <div className="fa-pop" style={{ flex: '0 1 360px', position: 'relative', padding: '14px 18px 0 0' }}>
                 <div aria-hidden="true" style={{ position: 'absolute', left: 18, top: 0, right: 0, bottom: 18, borderRadius: 26, background: '#4B36B0', border: '2px solid #0E0E12', transform: 'rotate(3deg)' }} />
