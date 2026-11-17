@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { BottomSheet } from '../sheet/BottomSheet';
-import { chipStyle, darkBtn, label } from '../ds/tokens';
+import { darkBtn, label } from '../ds/tokens';
 import { CYCLE_MONTHS, CYCLE_NAME, currentCycleFor, cycleSpan, type CycleMonths } from '@/lib/cycles';
 import { cycleLabel } from '@/lib/format';
 
@@ -20,10 +20,14 @@ export function CycleDeck({ projectId, current, onClose, onSaved }: { projectId:
     } catch { setErr('Sem conexão. Tente de novo.'); } finally { setBusy(false); }
   };
   return (
-    <BottomSheet tag="PROJETO · CICLOS" title="Duração dos ciclos" onClose={onClose}>
+    <BottomSheet tag="PROJETO · CICLOS" title="Duração dos ciclos" sub="Escolha quanto dura cada ciclo." onClose={onClose}>
       <p style={{ margin: 0, fontSize: 15, lineHeight: 1.5, color: '#A3A1AD', maxWidth: 560 }}>Skills, saúde e jornada são respondidas por ciclo. Quando um ciclo termina, tudo dele fica guardado no histórico de ciclos, do squad e de cada pessoa.</p>
       <div role="radiogroup" aria-label="Duração do ciclo" style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-        {CYCLE_MONTHS.map((m) => <button key={m} type="button" role="radio" aria-checked={months === m} className="tw-chip" onClick={() => setMonths(m)} style={{ ...chipStyle(months === m), minHeight: 64, padding: '8px 18px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}><b style={{ fontSize: 17 }}>{m} meses</b><span style={{ fontSize: 12 }}>{CYCLE_NAME[m]}</span></button>)}
+        {CYCLE_MONTHS.map((m) => { const on = months === m; return (
+          <button key={m} type="button" role="radio" aria-checked={on} onClick={() => setMonths(m)} style={{ fontFamily: 'inherit', flex: '0 1 150px', minWidth: 120, minHeight: 96, boxSizing: 'border-box', borderRadius: 14, padding: '12px 14px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'space-between', gap: 6, cursor: 'pointer', textAlign: 'left', background: on ? '#8FE3C8' : 'transparent', color: on ? '#0E0E12' : '#F5F2EC', border: `2px solid ${on ? '#0E0E12' : '#4A4858'}`, boxShadow: on ? '4px 4px 0 #3E9A80' : 'none', transition: 'background .18s ease, border-color .18s ease, transform .18s ease' }}>
+            <span style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}><b style={{ fontSize: 34, fontWeight: 600, lineHeight: 1, letterSpacing: '-0.03em' }}>{m}</b><span style={{ ...label(11, '0.06em') }}>MESES</span></span>
+            <span style={{ fontSize: 13, fontWeight: 600 }}>{CYCLE_NAME[m]}</span>
+          </button>); })}
       </div>
       <div style={{ borderRadius: 14, border: '1.5px dashed #4A4858', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 4 }}>
         <span style={label(10)}>CICLO ATUAL COM ESSA DURAÇÃO</span>
