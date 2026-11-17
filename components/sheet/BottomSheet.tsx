@@ -5,7 +5,7 @@ import { label } from '../ds/tokens';
 /** Um sheet por vez: o componente é montado por quem o controla; este contador garante o aviso em dev. */
 let openSheets = 0;
 
-export function BottomSheet({ tag, title, onClose, children }: { tag: string; title: string; onClose: () => void; children: ReactNode }) {
+export function BottomSheet({ tag, title, onClose, children, sub = 'Uma pergunta por carta.' }: { tag: string; title: string; onClose: () => void; children: ReactNode; sub?: string }) {
   const ref = useRef<HTMLElement>(null);
   // onClose costuma ser uma função nova a cada render do pai (ex.: rascunho salvo); guardá-la em ref evita reexecutar o efeito e roubar o foco do campo.
   const closeRef = useRef(onClose);
@@ -34,7 +34,7 @@ export function BottomSheet({ tag, title, onClose, children }: { tag: string; ti
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <span style={{ ...label(12, '0'), color: '#B7A6FF' }}>{tag}</span>
               <h2 style={{ margin: 0, fontSize: 30, fontWeight: 800, letterSpacing: '-0.025em' }}>{title}</h2>
-              <span style={{ fontSize: 13, color: '#A3A1AD' }}>Uma pergunta por carta.</span>
+              <span style={{ fontSize: 13, color: '#A3A1AD' }}>{sub}</span>
             </div>
             <button type="button" aria-label="Fechar" onClick={onClose} className="coops-x"
               style={{ flex: '0 0 44px', height: 44, borderRadius: 14, background: '#212129', border: '1.5px solid #3A3846', color: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
