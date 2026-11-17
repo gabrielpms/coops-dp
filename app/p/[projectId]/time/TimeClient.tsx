@@ -9,7 +9,7 @@ import { SquadDeck, type SquadDraft } from '@/components/team/SquadDeck';
 import { label } from '@/components/ds/tokens';
 
 export type TimePerson = { id: string; name: string; title: string; avatar: AvatarConfig | null; mainSkill: string; joinedAt: string | null; isMe: boolean; invited: boolean; squadIds: string[] };
-export type TimeSquad = { id: string; name: string; color: string; members: { personId: string; crown: boolean }[] };
+export type TimeSquad = { id: string; name: string; color: string; description?: string; members: { personId: string; crown: boolean }[] };
 
 /** Tempo de casa: "3m" até 11 meses, "2a" depois. */
 function tenure(iso: string | null): string {
@@ -94,13 +94,22 @@ export function TimeClient({ user, project, persons, squads, memberDraft: md0, s
             const ppl = s.members.map((m) => persons.find((p) => p.id === m.personId)).filter(Boolean) as TimePerson[];
             return (
               <CoopsLink key={s.id} className="coops-m" href={`/p/${project.id}/squads/${s.id}`} aria-label={`Abrir a mesa do time ${s.name}`} style={{ color: '#0E0E12', textDecoration: 'none', borderRadius: 24, background: '#B7A6FF', border: '2px solid #0E0E12', overflow: 'hidden', display: 'flex', flexDirection: 'column', minHeight: 360, boxShadow: '6px 6px 0 #4B36B0' }}>
-                <div style={{ padding: '14px 16px 0', display: 'flex', justifyContent: 'space-between', ...label(11, '0.06em') }}><span>MESA DO TIME</span><span>{ppl.length} {ppl.length === 1 ? 'PESSOA' : 'PESSOAS'}</span></div>
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1, minHeight: 170 }} aria-hidden="true">
+                <div style={{ padding: '14px 16px 0', display: 'flex', justifyContent: 'space-between', ...label(11, '0.06em') }}><span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><span aria-hidden="true" style={{ width: 10, height: 10, borderRadius: '50%', background: s.color, border: '1.5px solid #0E0E12' }} />MESA DO TIME</span><span>{ppl.length} {ppl.length === 1 ? 'PESSOA' : 'PESSOAS'}</span></div>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1, minHeight: 190, padding: '8px 0' }} aria-hidden="true">
                   {ppl.length === 0 ? <span style={{ width: 120, height: 120, borderRadius: '50%', border: '2px dashed #0E0E12', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, textAlign: 'center', padding: 12 }}>Sem pessoas ainda</span>
-                    : ppl.slice(0, 4).map((p, i) => <span key={p.id} style={{ lineHeight: 0, marginLeft: i ? -22 : 0, borderRadius: '50%', border: '2px solid #0E0E12', boxShadow: '0 3px 0 #4B36B0', position: 'relative', zIndex: 4 - i }}><Avatar {...(p.avatar ?? DEFAULT_AVATAR_CFG)} size={64} label="" /></span>)}
+                    : ppl.length === 1 ? <span style={{ lineHeight: 0, borderRadius: '50%', border: '2px solid #0E0E12', boxShadow: '0 4px 0 #4B36B0' }}><Avatar {...(ppl[0].avatar ?? DEFAULT_AVATAR_CFG)} size={96} label="" /></span>
+                    : (
+                      // mesa: as pessoas sentadas em volta (até 6) e o resto num contador; cartas no centro
+                      <div style={{ position: 'relative', width: 190, height: 190, flex: 'none' }}>
+                        {ppl.slice(0, ppl.length > 6 ? 6 : ppl.length).map((p, i, arr) => { const a = (-90 + (360 / Math.max(arr.length + (ppl.length > 6 ? 1 : 0), 3)) * (i + (ppl.length > 6 ? 1 : 0))) * (Math.PI / 180); return <span key={p.id} style={{ position: 'absolute', left: 95 + Math.cos(a) * 68 - 21, top: 95 + Math.sin(a) * 68 - 21, zIndex: 2, lineHeight: 0, borderRadius: '50%', border: '2px solid #0E0E12', boxShadow: '0 3px 0 #4B36B0' }}><Avatar {...(p.avatar ?? DEFAULT_AVATAR_CFG)} size={38} label="" /></span>; })}
+                        {ppl.length > 6 && <span style={{ position: 'absolute', left: 95 - 21, top: 95 - 68 - 21, zIndex: 2, width: 38, height: 38, boxSizing: 'content-box', borderRadius: '50%', background: '#0E0E12', color: '#F5F2EC', border: '2px solid #0E0E12', boxShadow: '0 3px 0 #4B36B0', display: 'flex', alignItems: 'center', justifyContent: 'center', ...label(14, '0') }}>+{ppl.length - 6}</span>}
+                        {[['#FF8A5B', 60, -14], ['#F5A9D6', 80, -4], ['#B7A6FF', 100, 6], ['#F3D36B', 120, 16]].map(([c, l, r]) => <span key={String(l)} style={{ position: 'absolute', left: Number(l) - 0, top: 82, zIndex: 1, width: 20, height: 27, boxSizing: 'border-box', borderRadius: 4, background: String(c), border: '2px solid #0E0E12', transform: `rotate(${r}deg)` }} />)}
+                      </div>
+                    )}
                 </div>
-                <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 4 }}>
-                  <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1, display: 'inline-flex', alignItems: 'center', gap: 8 }}><span aria-hidden="true" style={{ width: 12, height: 12, borderRadius: '50%', background: s.color, border: '2px solid #0E0E12' }} />{s.name}</span>
+                <div style={{ flex: 'none', padding: '0 16px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 4 }}>
+                  <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1, overflowWrap: 'anywhere' }}>{s.name}</span>
+                  {s.description && <span style={{ fontSize: 14, lineHeight: 1.35 }}>{s.description}</span>}
                   <span style={{ marginTop: 10, display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 600, color: '#F5F2EC', background: '#0E0E12', borderRadius: 999, padding: '7px 12px' }}>Sentar à mesa →</span>
                 </div>
               </CoopsLink>
