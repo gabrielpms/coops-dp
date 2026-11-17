@@ -1,6 +1,6 @@
 import { db } from '@/lib/db';
 import { loadPersonPage } from '@/lib/person';
-import { currentCycle } from '@/lib/validation';
+import { projectCycle } from '@/lib/projectCycle';
 import { SkillsClient } from './SkillsClient';
 
 export const dynamic = 'force-dynamic';
@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 export default async function SkillsPage({ params }: { params: Promise<{ projectId: string; personId: string }> }) {
   const { projectId, personId } = await params;
   const { user, person, isOwn, isManager } = await loadPersonPage(projectId, personId);
-  const cycle = currentCycle();
+  const { cycle } = await projectCycle(projectId);
   const [skills, categories, ratings, study] = await Promise.all([
     db.skill.findMany({ where: { projectId }, orderBy: { position: 'asc' } }),
     db.skillCategory.findMany({ where: { projectId }, orderBy: { name: 'asc' } }),

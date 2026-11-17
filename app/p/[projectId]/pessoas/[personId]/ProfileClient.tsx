@@ -144,7 +144,7 @@ export function ProfileClient({ user, project, person, champions, isOwn, isManag
         </section>
 
         <section id="mb-decks" ref={decksRef} aria-label={`Decks de ${fn}`} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}><h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>{isOwn ? 'Meus decks' : `Decks da ${fn}`}</h2><span style={{ fontSize: 14, color: '#A3A1AD' }}>Toque num deck para abrir as cartas</span></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}><h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>{isOwn ? 'Meus decks' : `Decks da ${fn}`}</h2><span style={{ fontSize: 14, color: '#A3A1AD', display: 'inline-flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>Toque num deck para abrir as cartas<CoopsLink href={`${base}/ciclos`} style={{ fontWeight: 600, color: '#B7A6FF', minHeight: 44, display: 'inline-flex', alignItems: 'center' }}>Histórico de ciclos →</CoopsLink></span></div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 28 }}>
             {pile(`${base}/saude`, 'Abrir o deck de Saúde', '#A9D8F5', { b2: '#4F8DB3', b1: '#7FB8DD' }, <PiSaude />, healthSummary ? dec(healthSummary.avg) : '—', 'MÉDIA / 5', <>
               {kicker('SAÚDE · CHECK-IN')}{title(healthSummary ? (healthSummary.low && (asManager || healthSummary.current) ? healthSummary.low : isOwn && !healthSummary.current ? `Check-in do ${qOf(curCycle)} esperando você` : 'Último check-in') : 'Sem check-in ainda')}

@@ -55,7 +55,7 @@ export function SquadHomeClient({ user, projectId, squad, isManager, people, cou
           </div>
         </section>
         <section aria-label="Decks do squad" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}><h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Decks do squad</h2><span style={{ fontSize: 14, color: '#A3A1AD' }}>Escolha um deck para ver as cartas</span></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}><h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Decks do squad</h2><span style={{ fontSize: 14, color: '#A3A1AD', display: 'inline-flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>Escolha um deck para ver as cartas<CoopsLink href={`${base}/ciclos`} style={{ fontWeight: 600, color: '#B7A6FF', minHeight: 44, display: 'inline-flex', alignItems: 'center' }}>Histórico de ciclos →</CoopsLink></span></div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 28 }}>
             {decks.map((d) => (
               <div key={d.key} className="coops-pile" style={{ position: 'relative', height: 380 }}>
