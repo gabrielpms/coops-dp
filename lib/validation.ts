@@ -82,6 +82,17 @@ export const squadSchema = z.object({
 export type SquadInput = z.infer<typeof squadSchema>;
 
 // ---------- Administração (M4) ----------
+/** Edição de um usuário do projeto por um manager: tudo é opcional; senha só muda se enviada. */
+export const adminUserPatchSchema = z.object({
+  name: text(120).min(1, 'Escreva o nome').optional(),
+  title: text(120).optional(),
+  phone: text(40).optional(),
+  email: text(200).toLowerCase().regex(EMAIL_RE, 'Coloque um e-mail válido').optional(),
+  role: z.enum(['IC', 'MANAGER']).optional(),
+  avatar: avatarSchema.optional(),
+  password: z.string().min(8, 'A senha precisa ter pelo menos 8 caracteres').max(128, 'A senha pode ter no máximo 128 caracteres').optional(),
+  blocked: z.boolean().optional(),
+});
 export const userPatchSchema = z.object({
   name: text(120).min(1, 'Escreva seu nome').optional(),
   title: text(120).optional(),
