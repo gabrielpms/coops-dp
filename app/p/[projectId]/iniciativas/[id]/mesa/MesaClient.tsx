@@ -97,8 +97,12 @@ export function MesaClient({ user, projectId, initiative, cards, attachments, re
         </section>
 
         <section aria-label="Cartas da mesa" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
-          <div style={{ ...box, background: '#F5F2EC' }}>
-            <span style={label(11, '0.08em')}>A INICIATIVA</span>
+          <div className="coops-ichov" tabIndex={0} style={{ ...box, background: '#B7A6FF', gridColumn: 'span 2', minHeight: 300, borderRadius: 30, boxShadow: '12px 12px 0 #4B36B0', margin: '0 12px 12px 0', padding: 24 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <svg width="60" height="60" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path className="ic-tw" d="M12 10v6M9 13h6" /><path className="ic-tw ic-tw2" d="M53 26v5M50.5 28.5h5" /><path className="ic-tw ic-tw3" d="M10 36h.01" /><path className="ic-tw ic-tw4" d="M55 8h.01" /><g className="ic-rocket"><path d="M32 6c10 8 14 20 10 34H22C18 26 22 14 32 6z" /><circle cx="32" cy="24" r="5" /><path d="M22 40l-8 10h12M42 40l8 10H38" /></g><path className="ic-fire" d="M26 42c0 7 3 11 6 19 3-8 6-12 6-19" /><path className="ic-fire ic-fire2" d="M29.5 42c0 4 1 7 2.5 11 1.5-4 2.5-7 2.5-11" /></svg>
+              <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}><span style={{ fontSize: 44, fontWeight: 600, lineHeight: 1 }}>{String(CONTEXT_KINDS.filter((k) => onTable(k)).length).padStart(2, '0')}</span><span style={label(11, '0')}>CONTEXTOS</span></span>
+            </div>
+            <span style={{ marginTop: 'auto', ...label(11, '0.08em') }}>A INICIATIVA</span>
             <span style={{ fontSize: 22, fontWeight: 800, lineHeight: 1.1 }}>{initiative.product}</span>
             {initiative.problem && <span style={{ fontSize: 14, lineHeight: 1.4 }}><b>Problema:</b> {initiative.problem}</span>}
             <span style={{ fontSize: 14, lineHeight: 1.4 }}><b>Necessidade:</b> {initiative.need}</span>
