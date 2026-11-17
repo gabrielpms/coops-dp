@@ -75,6 +75,7 @@ model Project {
   segment   String
   tagline   String?
   strategy  String?
+  cycleMonths Int     @default(3) // duração dos ciclos: 3, 4 ou 6 meses
   ownerId   String
   owner     User      @relation(fields: [ownerId], references: [id])
   createdAt DateTime  @default(now())
