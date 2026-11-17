@@ -35,7 +35,9 @@ export function SkillsClient({ user, person, projectId, cycle, isOwn, canGrade, 
       if (!r.ok) throw new Error();
     } catch { setSkills(prev); setWarn({ msg: 'Não deu para salvar a nota.', retry: () => grade(s, kind, n) }); }
   };
-  const shown = skills.filter((s) => cat === 'todas' || (cat === 'sem' ? !s.categoryId : s.categoryId === cat));
+  // Skills já avaliadas vêm primeiro (pelo que está salvo ao abrir a tela, para a carta não pular enquanto a pessoa dá a nota); a ordem original se mantém dentro de cada grupo.
+  const [wasRated] = useState(() => new Set(initial.filter((x) => x.self > 0 || x.manager > 0).map((x) => x.id)));
+  const shown = skills.filter((s) => cat === 'todas' || (cat === 'sem' ? !s.categoryId : s.categoryId === cat)).map((s, i) => ({ s, i })).sort((a, b) => Number(wasRated.has(b.s.id)) - Number(wasRated.has(a.s.id)) || a.i - b.i).map((x) => x.s);
   const rated = skills.filter((s) => s.self > 0), mrated = skills.filter((s) => s.manager > 0);
   const avg = rated.length ? rated.reduce((t, s) => t + s.self, 0) / rated.length : 0;
   const mavg = mrated.length ? mrated.reduce((t, s) => t + s.manager, 0) / mrated.length : 0;
