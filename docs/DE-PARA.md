@@ -12,7 +12,7 @@ Legenda: ✅ alinhado · 🟡 parcial (lacunas listadas) · ⚪ não comparado e
 |---|---|---|---|
 | 01f Landing + wish list | `app/page.tsx`, `components/landing/*` | ✅ | Cobertura de textos 100%. |
 | 02 Cadastro | `app/cadastro`, `app/entrar` | ✅ | Cobertura de textos 100%. |
-| 02b Primeiro acesso | `app/primeiro-acesso`, `components/wizard` | 🟡 | Conferir passos 2 e 3 (textos "Escolha por onde seguir", "Organize quem você convidou em squads") e as validações por carta. |
+| 02b Primeiro acesso | `app/primeiro-acesso`, `components/wizard` | ✅ | Já era um porte fiel (classes `fa-*`, passos, cartas). Ajustados os subtítulos dos passos por estado e o aviso "Tudo isso fica na administração do projeto". |
 | 03 Hub de projetos | `app/hub` | 🟡 | Só mensagens de validação do deck "novo projeto" divergem. |
 | 04 Novo projeto | `components/wizard/ProjectDeck.tsx` | 🟡 | Mensagens de erro por carta divergem. |
 | 05 Time (manager) | `app/p/[projectId]/time`, `components/team` | ✅ | Calendário de data de entrada (`DateCalendar`, com seletores de mês/ano além do protótipo); estados vazios. |
@@ -20,7 +20,7 @@ Legenda: ✅ alinhado · 🟡 parcial (lacunas listadas) · ⚪ não comparado e
 | 07 Meu perfil (IC) | idem | ✅ | Idem; "Autoavaliação do Qx aberta" no deck de Skills. |
 | 08 Iniciativas | `iniciativas/*`, `components/initiative` | ✅ | Deck de perguntas, carta "Nova iniciativa" animada (`in-new`/`in-plus`) e estado vazio. |
 | 09 Agente confirma | `iniciativas/[id]/ConfereClient.tsx`, `lib/agentStub.ts` | 🟡 | Banner, cartas com ícones animados e chat com as classes do protótipo. O agente segue como stub (respostas fixas). |
-| 10 Mesa / 10b Análise | `iniciativas/[id]/mesa`, `components/initiative/AnalysisOverlay.tsx` | 🟡 | Overlay do agente analisando o momento (palco 3D, progresso, passos). Faltam a carta da iniciativa com hover `coops-ichov` e o `ag-hv` nas dúvidas resolvidas. |
+| 10 Mesa / 10b Análise | `iniciativas/[id]/mesa`, `components/initiative/AnalysisOverlay.tsx` | ✅ | Overlay do agente analisando o momento e carta da iniciativa em destaque (`coops-ichov`, foguete animado, contador de contextos). As dúvidas resolvidas seguem agrupadas na carta da iniciativa (o protótipo as mostra como cartas separadas). |
 | 11 Momento + ferramentas | `iniciativas/[id]/momento/MomentoClient.tsx`, `lib/toolIcons.ts` | 🟡 | Hero do agente, deck de ferramentas em leque com ícones animados por tipo, deck de resposta no palco (`s11-*`): carta em foco com impacto/esforço, descartar/mesa, leque de cartas, dock e resumo final. Faltam facetas ricas (evidências, passos, riscos, fontes), "Pedir variação" e a referência visual — o app só guarda título, tag, descrição, impacto, esforço, métrica e próximo passo. |
 | 12 Deck · Eventos | `pessoas/[personId]/eventos`, `components/person/EventDeck.tsx` | ✅ | Banner animado, pilha com ícone por tipo, palco de celebração, carta em foco com rodapé fixo, "Registrado por", "Quem pode editar" e comentários recolhíveis. Fora de escopo: "cartas nesta pilha" (o protótipo só empilha registros dentro de um feedback; o app não tem esse dado) e anexos por arrastar arquivo (`fb-drop`; o app só guarda links e não há storage para eventos). |
 | 13 Autoavaliação de skills | `pessoas/[personId]/skills` | 🟡 | Feito: cartas, painel de média, carta em foco com rubrica e evidências. Faltam: descrição da skill, comentário do manager e "Enviar autoavaliação" (sem campos no banco). |
@@ -58,5 +58,4 @@ Legenda: ✅ alinhado · 🟡 parcial (lacunas listadas) · ⚪ não comparado e
 
 1. Momento: facetas ricas do deck de resposta (exigem dados do agente real, M9).
 2. Eventos: anexos de arquivo (precisa de storage por evento).
-4. Mesa: hover `coops-ichov` na carta da iniciativa.
-5. Primeiro acesso (02b) e `/ds`: comparar com o mesmo método.
+4. `/ds`: ampliar com a biblioteca de cartas e animações (hoje cobre cores, botões e avatares).
