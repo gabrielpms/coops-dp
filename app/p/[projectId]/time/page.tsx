@@ -34,7 +34,7 @@ export default async function TimePage({ params }: { params: Promise<{ projectId
     squadIds: p.squads.filter((m) => !m.squad.deletedAt).map((m) => m.squad.id),
   }));
   const squadList: TimeSquad[] = squads.map((s) => ({
-    id: s.id, name: s.name, color: s.color,
+    id: s.id, name: s.name, color: s.color, description: s.description ?? '',
     members: s.members.filter((m) => !m.person.deletedAt).map((m) => ({ personId: m.personId, crown: m.crown })),
   }));
   return (
