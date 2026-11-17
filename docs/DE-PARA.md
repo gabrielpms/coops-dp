@@ -38,7 +38,7 @@ Legenda: ✅ alinhado · 🟡 parcial (lacunas listadas) · ⚪ não comparado e
 
 | Protótipo | App | Status |
 |---|---|---|
-| DS Fundamentos / Componentes | `app/ds` | ⚪ O `/ds` cobre cores, botões e avatares; não inclui a biblioteca completa de cartas e animações. |
+| DS Fundamentos / Componentes | `app/ds` (só em desenvolvimento) | ✅ | Showcase com os componentes reais: cores, tipografia, botões, seleção e campos, calendário, carta em foco, overlay do agente, avatares, banner do deck e todos os ícones animados (banner, saúde, brain gym, eventos, jornada, squad, agente, ferramentas), cartas, pilha e estados vazios. Fora: ilustração de carta e profundidade do `Fundamentos`. |
 | Avatares (v1, v2) | `components/avatar` | ✅ |
 
 ## Mecanismos e arquitetura
@@ -58,4 +58,3 @@ Legenda: ✅ alinhado · 🟡 parcial (lacunas listadas) · ⚪ não comparado e
 
 1. Momento: facetas ricas do deck de resposta (exigem dados do agente real, M9).
 2. Eventos: anexos de arquivo (precisa de storage por evento).
-4. `/ds`: ampliar com a biblioteca de cartas e animações (hoje cobre cores, botões e avatares).
