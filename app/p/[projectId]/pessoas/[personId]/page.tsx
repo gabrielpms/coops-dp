@@ -10,7 +10,7 @@ export default async function PessoaPage({ params }: { params: Promise<{ project
   const { projectId, personId } = await params;
   const { user, person, isOwn, isManager } = await loadPersonPage(projectId, personId);
   const cycle = currentCycle();
-  const [project, powerUps, deliveries, study, ratings, draft, goalsAll, healthRows, eventsByType, lastEvent, focos] = await Promise.all([
+  const [project, powerUps, deliveries, study, ratings, draft, goalsAll, healthRows, eventsByType, lastEvent, focos, champFrentes] = await Promise.all([
     db.project.findUniqueOrThrow({ where: { id: projectId }, include: { skills: { orderBy: { position: 'asc' } } } }),
     db.powerUp.findMany({ where: { personId, deletedAt: null }, orderBy: { createdAt: 'desc' } }),
     db.delivery.findMany({ where: { personId, deletedAt: null }, orderBy: { date: 'desc' }, select: { title: true, status: true } }),
@@ -22,6 +22,7 @@ export default async function PessoaPage({ params }: { params: Promise<{ project
     db.personEvent.groupBy({ by: ['type'], where: { personId, archivedAt: null }, _count: { _all: true } }),
     db.personEvent.findFirst({ where: { personId, archivedAt: null }, orderBy: { date: 'desc' }, select: { title: true, type: true, date: true } }),
     db.journeyGoal.findMany({ where: { personId, deletedAt: null, cycle, kind: 'FOCO' }, select: { title: true } }),
+    db.squadCard.findMany({ where: { deck: 'FRENTE', championPersonId: personId, deletedAt: null, status: 'ABERTA', squad: { projectId, deletedAt: null } }, orderBy: { createdAt: 'asc' }, select: { id: true, title: true, level: true, squad: { select: { id: true, name: true } } } }),
   ]);
   const eventCount = eventsByType.reduce((a, g) => a + g._count._all, 0);
   const nEv = (t: string) => eventsByType.find((g) => g.type === t)?._count._all ?? 0;
@@ -36,7 +37,8 @@ export default async function PessoaPage({ params }: { params: Promise<{ project
     <ProfileClient
       user={{ name: user.name, email: user.email, role: user.role, avatar: user.avatar as any }}
       project={{ id: projectId, name: project.name, skills: project.skills.map((s) => s.name) }}
-      person={{ id: person.id, name: person.name, title: person.title ?? '', avatar: (person.avatar as any) ?? null, mainSkill: person.mainSkill ?? '', joinedAt: person.joinedAt ? person.joinedAt.toISOString() : null, squads: person.squads.filter((m) => !m.squad.deletedAt).map((m) => ({ id: m.squad.id, name: m.squad.name, color: m.squad.color })) }}
+      person={{ id: person.id, name: person.name, title: person.title ?? '', avatar: (person.avatar as any) ?? null, mainSkill: person.mainSkill ?? '', joinedAt: person.joinedAt ? person.joinedAt.toISOString() : null, createdAt: person.createdAt.toISOString(), squads: person.squads.filter((m) => !m.squad.deletedAt).map((m) => ({ id: m.squad.id, name: m.squad.name, color: m.squad.color, crown: m.crown })) }}
+      champions={champFrentes.map((c) => ({ id: c.id, title: c.title, pct: (c.level ?? 1) * 20, squadId: c.squad.id, squadName: c.squad.name }))}
       isOwn={isOwn} isManager={isManager}
       powerUps={powerUps.map((p) => ({ id: p.id, type: p.type, name: p.name, skill: p.skill ?? '', frequency: p.frequency ?? '', progress: p.progress }))}
       skillsSummary={{ cycle, total: skills.length, top: rated.slice(0, 3), avg: rated.length ? rated.reduce((a, s) => a + s.self, 0) / rated.length : 0, rated: rated.length }}

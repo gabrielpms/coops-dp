@@ -7,6 +7,9 @@ let openSheets = 0;
 
 export function BottomSheet({ tag, title, onClose, children }: { tag: string; title: string; onClose: () => void; children: ReactNode }) {
   const ref = useRef<HTMLElement>(null);
+  // onClose costuma ser uma função nova a cada render do pai (ex.: rascunho salvo); guardá-la em ref evita reexecutar o efeito e roubar o foco do campo.
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
   useEffect(() => {
     openSheets++;
     if (process.env.NODE_ENV !== 'production' && openSheets > 1) console.error('[coops] dois bottom sheets abertos ao mesmo tempo');
@@ -14,10 +17,10 @@ export function BottomSheet({ tag, title, onClose, children }: { tag: string; ti
     const body = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     ref.current?.focus();
-    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') closeRef.current(); };
     window.addEventListener('keydown', esc);
     return () => { openSheets--; document.body.style.overflow = body; window.removeEventListener('keydown', esc); prev?.focus?.(); };
-  }, [onClose]);
+  }, []);
   return (
     <>
       <button type="button" aria-label="Fechar" onClick={onClose} className="coops-overlay"

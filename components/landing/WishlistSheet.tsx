@@ -31,16 +31,18 @@ export function WishlistSheet({ seed, onClose }: { seed: WishSeed; onClose: () =
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
   const ref = useRef<HTMLElement>(null);
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose; // evita reexecutar o efeito (e roubar o foco do campo) quando o pai passa uma função nova
   const set = (p: Partial<Form>) => setF((x) => ({ ...x, ...p }));
 
   useEffect(() => {
     const prev = document.activeElement as HTMLElement | null;
     const ov = document.body.style.overflow; document.body.style.overflow = 'hidden';
     ref.current?.focus();
-    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') closeRef.current(); };
     window.addEventListener('keydown', esc);
     return () => { document.body.style.overflow = ov; window.removeEventListener('keydown', esc); prev?.focus?.(); };
-  }, [onClose]);
+  }, []);
 
   // Reabrir no mesmo navegador traz as respostas de volta (e-mail + token guardados).
   useEffect(() => {
