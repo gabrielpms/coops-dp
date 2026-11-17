@@ -36,3 +36,7 @@ export const IconHeart = ({ bg }: { bg: string }) => (
 );
 /** Segmento financeiro usa a maleta; os demais, o coração (Coops21). */
 export const isFinSegment = (segment: string) => /financ|banc|pagament|fintech|seguro|cr[eé]dito/i.test(segment);
+
+export const IconCycle = ({ bg }: { bg: string }) => (
+  <svg className="ad-ic" {...base}><rect x="10" y="14" width="44" height="40" rx="4" fill={bg} /><path d="M10 26h44M22 8v10M42 8v10" /><path className="ad-pl" d="M32 34a8 8 0 1 0 8 8M40 36v6h-6" /></svg>
+);

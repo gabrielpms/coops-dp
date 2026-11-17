@@ -8,7 +8,7 @@ import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
 import { useCoopsRouter } from '@/components/nav/useCoopsRouter';
 import { label } from '@/components/ds/tokens';
 import { cycleLabel, firstName } from '@/lib/format';
-import { HEALTH_DIMS, currentCycle } from '@/lib/validation';
+import { HEALTH_DIMS } from '@/lib/validation';
 import type { AvatarConfig } from '@/components/avatar/Avatar';
 
 type H = { id: string; cycle: string; saude: number; design: number; produto: number; negocio: number; note: string; at: string };
@@ -24,9 +24,9 @@ const MGR_TIPS: Record<Dim, (fn: string) => string> = {
 
 const mono = "'JetBrains Mono', ui-monospace, monospace";
 const TAG: Record<Dim, string> = { saude: 'BEM-ESTAR', design: 'CLAREZA', produto: 'CLAREZA', negocio: 'CLAREZA' };
-export function SaudeClient({ user, person, projectId, isOwn, history, draft }: { draft: { v: Record<string, number>; note: string } | null; user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; person: { id: string; name: string; avatar: AvatarConfig | null }; projectId: string; isOwn: boolean; history: H[] }) {
+export function SaudeClient({ user, person, projectId, isOwn, history, draft, cycle }: { cycle: string; draft: { v: Record<string, number>; note: string } | null; user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; person: { id: string; name: string; avatar: AvatarConfig | null }; projectId: string; isOwn: boolean; history: H[] }) {
   const { refresh } = useCoopsRouter();
-  const cur = currentCycle();
+  const cur = cycle;
   const last = history[0] ?? null;
   const [v, setV] = useState<Record<Dim, number>>(() => (draft ? { saude: draft.v.saude ?? 0, design: draft.v.design ?? 0, produto: draft.v.produto ?? 0, negocio: draft.v.negocio ?? 0 } : isOwn && last && last.cycle === cur ? { saude: last.saude, design: last.design, produto: last.produto, negocio: last.negocio } : { saude: 0, design: 0, produto: 0, negocio: 0 }));
   const [note, setNote] = useState(() => (draft ? draft.note : isOwn && last && last.cycle === cur ? last.note : ''));

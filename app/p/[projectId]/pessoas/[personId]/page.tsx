@@ -1,7 +1,7 @@
 import { db } from '@/lib/db';
 import { loadPersonPage } from '@/lib/person';
 import { readDraft } from '@/lib/drafts';
-import { currentCycle } from '@/lib/validation';
+import { projectCycle } from '@/lib/projectCycle';
 import { ProfileClient } from './ProfileClient';
 
 export const dynamic = 'force-dynamic';
@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 export default async function PessoaPage({ params }: { params: Promise<{ projectId: string; personId: string }> }) {
   const { projectId, personId } = await params;
   const { user, person, isOwn, isManager } = await loadPersonPage(projectId, personId);
-  const cycle = currentCycle();
+  const { cycle } = await projectCycle(projectId);
   const [project, powerUps, deliveries, study, ratings, draft, goalsAll, healthRows, eventsByType, lastEvent, focos, champFrentes] = await Promise.all([
     db.project.findUniqueOrThrow({ where: { id: projectId }, include: { skills: { orderBy: { position: 'asc' } } } }),
     db.powerUp.findMany({ where: { personId, deletedAt: null }, orderBy: { createdAt: 'desc' } }),

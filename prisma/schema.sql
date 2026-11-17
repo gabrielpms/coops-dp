@@ -60,6 +60,7 @@ CREATE TABLE "Project" (
     "segment" TEXT NOT NULL,
     "tagline" TEXT,
     "strategy" TEXT,
+    "cycleMonths" INTEGER NOT NULL DEFAULT 3,
     "ownerId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,

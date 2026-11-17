@@ -2,6 +2,7 @@ import { notFound, redirect } from 'next/navigation';
 import { currentUser } from '@/lib/session';
 import { db } from '@/lib/db';
 import { readDrafts } from '@/lib/drafts';
+import { asCycleMonths } from '@/lib/cycles';
 import { AdminProjectClient } from './AdminProjectClient';
 
 export const dynamic = 'force-dynamic';
@@ -28,7 +29,7 @@ export default async function AdminProjectPage({ params }: { params: Promise<{ p
   return (
     <AdminProjectClient
       user={{ id: u.id, name: u.name, email: u.email, title: u.title ?? '', phone: u.phone ?? '', avatar: u.avatar as any, role: u.role }}
-      project={{ id: project.id, name: project.name, segment: project.segment, indicators: project.indicators.map((i) => i.name), competitors: project.competitors.map((c) => c.name) }}
+      project={{ id: project.id, name: project.name, segment: project.segment, indicators: project.indicators.map((i) => i.name), competitors: project.competitors.map((c) => c.name), cycleMonths: asCycleMonths(project.cycleMonths) }}
       categories={project.skillCategories.map((c) => ({ id: c.id, name: c.name, skills: c.skills.map((s) => s.name) }))}
       looseSkills={project.skills.filter((s) => !s.categoryId).map((s) => s.name)}
       leaderships={leaderships.map((l) => ({ id: l.id, personId: l.personId, name: l.person.name, title: l.person.title ?? '', email: l.person.email ?? '', avatar: l.person.avatar as any, squadIds: l.squads.map((s) => s.squadId), memberIds: l.members.map((m) => m.personId), invited: !l.person.userId }))}
