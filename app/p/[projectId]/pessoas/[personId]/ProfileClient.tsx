@@ -16,9 +16,10 @@ type PU = { id: string; type: string; name: string; skill: string; frequency: st
 const TYPE_LABEL: Record<string, string> = { MENTORIA: 'MENTORIA', CURSO: 'CURSO', PROJETO: 'PROJETO PARALELO' };
 const STUDY_LABEL: Record<string, string> = { CURSO: 'CURSO', LIVRO: 'LIVRO', VIDEO: 'VÍDEO', ARTIGO: 'ARTIGO', PODCAST: 'PODCAST', LINK: 'LINK' };
 
-export function ProfileClient({ user, project, person, isOwn, isManager, powerUps, skillsSummary, studySummary, deliverySummary, journeySummary, healthSummary, eventSummary, draft: d0 }: {
+export function ProfileClient({ user, project, person, champions, isOwn, isManager, powerUps, skillsSummary, studySummary, deliverySummary, journeySummary, healthSummary, eventSummary, draft: d0 }: {
   user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; project: { id: string; name: string; skills: string[] };
-  person: { id: string; name: string; title: string; avatar: AvatarConfig | null; mainSkill: string; joinedAt: string | null; squads: { id: string; name: string; color: string }[] };
+  person: { id: string; name: string; title: string; avatar: AvatarConfig | null; mainSkill: string; joinedAt: string | null; createdAt: string; squads: { id: string; name: string; color: string; crown: boolean }[] };
+  champions: { id: string; title: string; pct: number; squadId: string; squadName: string }[];
   isOwn: boolean; isManager: boolean; powerUps: PU[];
   skillsSummary: { cycle: string; total: number; top: { name: string; self: number }[]; avg: number; rated: number };
   studySummary: { total: number; active: number; latest: { title: string; type: string; pct: number } | null };
@@ -66,7 +67,9 @@ export function ProfileClient({ user, project, person, isOwn, isManager, powerUp
   const dec = (n: number) => n.toFixed(1).replace('.', ',');
   const squadLine = person.squads.length ? person.squads.map((q) => q.name.toUpperCase()).join(' · ') : project.name.toUpperCase();
   const chips = [['-156px', '-12px', '-16deg', '0ms', '#A9D8F5', '0ms'], ['-128px', '48px', '-6deg', '50ms', '#F3D36B', '180ms'], ['-118px', '-72px', '-24deg', '100ms', '#8FE3C8', '360ms'], ['128px', '-52px', '12deg', '150ms', '#F5A9D6', '540ms'], ['126px', '62px', '20deg', '200ms', '#FF8A5B', '720ms'], ['172px', '22px', '8deg', '250ms', '#D9CFFF', '900ms']];
-  const pillTenure = person.joinedAt ? tenureLong(person.joinedAt) : null;
+  // Sem data de entrada definida pelo manager, mostra o tempo de Coops (a partir do cadastro) para o tempo de casa nunca ficar vazio.
+  const pillTenure = person.joinedAt ? tenureLong(person.joinedAt) : tenureLong(person.createdAt).replace(/ de casa$/, ' no Coops');
+  const leads = person.squads.some((q) => q.crown);
   const pillMain = person.mainSkill ? `Skill principal · ${person.mainSkill}` : null;
   const back = isManager && !isOwn ? { href: `/p/${project.id}/time`, text: '← Time' } : { href: '/hub', text: '← Hub de projetos' };
   const barCta = isOwn ? { href: `${base}/saude`, text: 'Fazer check-in' } : { href: `${base}/eventos`, text: '+ Check-in' };
@@ -92,7 +95,7 @@ export function ProfileClient({ user, project, person, isOwn, isManager, powerUp
         <section className="h06" aria-label={`Perfil de ${person.name}`} style={{ position: 'relative', overflow: 'hidden', borderRadius: 36, background: '#B7A6FF', color: '#0E0E12', border: '2px solid #0E0E12', padding: '44px 28px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14 }}>
           <div className="h06-ring" aria-hidden="true" style={{ position: 'absolute', left: -60, top: -60, width: 220, height: 220, borderRadius: '50%', border: '1.5px solid rgba(14,14,18,0.25)' }} />
           <div className="h06-ring h06-ring2" aria-hidden="true" style={{ position: 'absolute', right: -80, bottom: -90, width: 280, height: 280, borderRadius: '50%', border: '1.5px solid rgba(14,14,18,0.25)' }} />
-          <span style={{ position: 'relative', ...mono(12, '0.1em') }}>{isOwn ? `MEU PERFIL · ${person.squads.length ? `SQUAD ${squadLine}` : squadLine}` : person.squads.length ? `SQUAD ${squadLine}` : squadLine}</span>
+          <span style={{ position: 'relative', ...mono(12, '0.1em') }}>{(isOwn ? 'MEU PERFIL · ' : '') + (person.squads.length ? `SQUAD ${squadLine}` : squadLine) + (leads ? ' · LIDERADA' : '')}</span>
           <div className="h06-stage" style={{ position: 'relative' }}>
             {chips.map(([x, y, r, d, c, ad], i) => <span key={i} className="h06-chip" aria-hidden="true" style={{ '--x': x, '--y': y, '--r': r, '--d': d } as React.CSSProperties}><span className="h06-chipin" style={{ background: c, animationDelay: ad }} /></span>)}
             <div className="h06-av" style={{ position: 'relative', zIndex: 1, borderRadius: '50%', border: '2px solid #0E0E12', boxShadow: '8px 8px 0 #0E0E12', lineHeight: 0 }}><Avatar {...cfg} bg="#F5F2EC" size={168} label={person.name} /></div>
@@ -104,6 +107,14 @@ export function ProfileClient({ user, project, person, isOwn, isManager, powerUp
             {pillTenure && <span className="h06-pill h06-pill2" style={{ fontSize: 14, fontWeight: 600, color: '#F5F2EC', background: '#0E0E12', borderRadius: 999, padding: '8px 14px' }}>{pillTenure}</span>}
           </div>
         </section>
+
+        {champions.map((c) => (
+          <CoopsLink key={c.id} href={`/p/${project.id}/squads/${c.squadId}/frentes`} className="coops-card" aria-label={`Ver a frente ${c.title}`} style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', borderRadius: 22, background: '#F5A9D6', color: '#0E0E12', border: '2px solid #0E0E12', padding: '14px 18px', textDecoration: 'none', boxShadow: '0 12px 28px rgba(0,0,0,0.4)' }}>
+            <span aria-hidden="true" style={{ flex: '0 0 44px', height: 44, borderRadius: 12, border: '1.5px solid #0E0E12', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 8l4 4 5-7 5 7 4-4-2 10H5z" /></svg></span>
+            <span style={{ flex: '1 1 220px', display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}><span style={{ ...mono(11, '0.08em') }}>CHAMPION DA FRENTE · {c.squadName.toUpperCase()}</span><span style={{ fontSize: 20, fontWeight: 700, lineHeight: 1.2 }}>{c.title} · {c.pct}%</span></span>
+            <span style={{ fontWeight: 600, fontSize: 15 }}>Ver frente →</span>
+          </CoopsLink>
+        ))}
 
         <section aria-label="Power ups" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}><h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Power ups</h2><span style={{ fontSize: 14, color: '#A3A1AD' }}>Mentorias, cursos e projetos paralelos</span></div>
