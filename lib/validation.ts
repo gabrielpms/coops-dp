@@ -69,7 +69,8 @@ export const memberSchema = z.object({
   avatar: avatarSchema.optional(),
   mainSkill: text(80).optional().default(''),
   joinedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Data inválida').optional().or(z.literal('')).default(''),
-  email: text(200).toLowerCase().regex(EMAIL_RE, 'Coloque um e-mail válido para enviar o convite'),
+  email: text(200).toLowerCase().regex(EMAIL_RE, 'Coloque um e-mail válido para o acesso da pessoa'),
+  password: z.string().min(8, 'A senha precisa ter pelo menos 8 caracteres').max(128, 'A senha pode ter no máximo 128 caracteres'),
 });
 export type MemberInput = z.infer<typeof memberSchema>;
 export const squadSchema = z.object({
@@ -99,7 +100,8 @@ const ids = z.array(z.string().uuid()).max(200).default([]);
 export const leadershipSchema = z.object({
   name: text(120).min(1, 'Escreva o nome para seguir'),
   title: text(120).optional().default(''),
-  email: text(200).toLowerCase().regex(EMAIL_RE, 'Coloque um e-mail válido para enviar o convite').optional(),
+  email: text(200).toLowerCase().regex(EMAIL_RE, 'Coloque um e-mail válido para o acesso da pessoa').optional(),
+  password: z.string().min(8, 'A senha precisa ter pelo menos 8 caracteres').max(128, 'A senha pode ter no máximo 128 caracteres').optional(),
   avatar: avatarSchema.optional(),
   squadIds: ids,
   memberIds: ids,

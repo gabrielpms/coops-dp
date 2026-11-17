@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { BottomSheet } from '../sheet/BottomSheet';
+import { AccessFields, MIN_PASSWORD } from '../team/AccessFields';
 import { QuestionDeck, type DeckCard } from '../wizard/QuestionDeck';
 import { useDeckDraft, type Draft } from '../wizard/useDeckDraft';
 import { Err, Help, SummaryRow, Title } from '../wizard/parts';
@@ -24,7 +25,8 @@ export function LeadershipDeck({ projectId, editing, squads, people, draft, onDr
     : { name: '', title: '', email: '', avatar: { ...DEFAULT_AVATAR_CFG, crown: true }, squadIds: [], memberIds: [] };
   const d = useDeckDraft<LeadershipForm>({ scope: 'leadership', entityId: projectId, empty, draft: editing ? null : draft, last: LAST, onDraftChange, persist: !editing });
   const { form, set } = d;
-  const [errs, setErrs] = useState<{ name?: boolean; email?: boolean }>({});
+  const [errs, setErrs] = useState<{ name?: boolean; email?: boolean; password?: boolean }>({});
+  const [password, setPassword] = useState(''); // fora do rascunho: a senha nunca é salva no banco como rascunho
   const [busy, setBusy] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const TAG = editing ? 'ADMINISTRAÇÃO · EDITAR LIDERANÇA' : 'ADMINISTRAÇÃO · NOVA LIDERANÇA';
@@ -42,14 +44,14 @@ export function LeadershipDeck({ projectId, editing, squads, people, draft, onDr
 
   const validate = (to: number) => {
     if (to > 0 && !form.name.trim()) return { at: 0, flags: { name: true } };
-    if (to > 0 && !editing && !self && !EMAIL_RE.test(form.email.trim())) return { at: 0, flags: { email: true } };
+    if (to > 0 && !editing && !self && (!EMAIL_RE.test(form.email.trim()) || password.length < MIN_PASSWORD)) return { at: 0, flags: { email: !EMAIL_RE.test(form.email.trim()), password: password.length < MIN_PASSWORD } };
     return null;
   };
   const call = async (method: 'POST' | 'PATCH' | 'DELETE') => {
     setBusy(true); setServerError(null);
     try {
       const url = editing ? `/api/projects/${projectId}/leaderships/${editing.id}` : `/api/projects/${projectId}/leaderships`;
-      const r = await fetch(url, { method, headers: { 'content-type': 'application/json' }, ...(method === 'DELETE' ? {} : { body: JSON.stringify({ name: form.name.trim(), title: form.title.trim(), ...(editing || self ? {} : { email: form.email.trim() }), ...(self ? { self: true } : {}), avatar: { ...form.avatar, crown: true }, squadIds: form.squadIds, memberIds: form.memberIds }) }) });
+      const r = await fetch(url, { method, headers: { 'content-type': 'application/json' }, ...(method === 'DELETE' ? {} : { body: JSON.stringify({ name: form.name.trim(), title: form.title.trim(), ...(editing || self ? {} : { email: form.email.trim(), password }), ...(self ? { self: true } : {}), avatar: { ...form.avatar, crown: true }, squadIds: form.squadIds, memberIds: form.memberIds }) }) });
       const data = await r.json();
       if (!r.ok) { setServerError(data.error ?? 'Não deu para salvar. Tente de novo.'); return; }
       d.done(); onSaved();
@@ -84,9 +86,10 @@ export function LeadershipDeck({ projectId, editing, squads, people, draft, onDr
       <input id="lw-cargo" type="text" placeholder="Ex.: Head de Design" value={form.title} onChange={(e) => set({ title: e.target.value })} style={cardInput} />
       <div role="group" aria-label="Sugestões de cargo" style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{LEADER_TITLES.map((t) => <button key={t} type="button" aria-pressed={form.title === t} className="tw-chip" onClick={() => set({ title: t })} style={chipStyle(form.title === t)}>{t}</button>)}</div>
       {!self && <>
-      <label htmlFor="lw-email" style={label()}>E-MAIL PARA O CONVITE</label>
+      <label htmlFor="lw-email" style={label()}>E-MAIL DE ACESSO</label>
       <input id="lw-email" type="email" placeholder="nome@empresa.com" value={form.email} readOnly={!!editing} onChange={(e) => { set({ email: e.target.value }); setErrs((x) => ({ ...x, email: false })); }} style={{ ...cardInput, ...(editing ? { opacity: 0.6 } : {}) }} />
-      <Err show={errs.email}>Coloque um e-mail válido para enviar o convite.</Err>
+      <Err show={errs.email}>Coloque um e-mail válido para o acesso.</Err>
+      {!editing && <AccessFields id="lw-senha" email={form.email.trim()} password={password} onPassword={(v) => { setPassword(v); setErrs((x) => ({ ...x, password: false })); }} error={errs.password} />}
       </>}
     </>) },
     { id: 'avatar', bg: '#F5F2EC', node: (<><Title>Monte o avatar</Title><Help>Ele aparece na carta de liderança e no topo da plataforma para essa pessoa.</Help><AvatarEditor value={form.avatar} onChange={(avatar) => set({ avatar: { ...avatar, crown: true } })} /></>) },
@@ -112,7 +115,7 @@ export function LeadershipDeck({ projectId, editing, squads, people, draft, onDr
     </>) },
     { id: 'resumo', bg: '#B7A6FF', summary: true, node: (<>
       <Title>Confere a liderança?</Title>
-      <Help>{editing ? 'Squads e pessoas escolhidos saem da liderança anterior.' : self ? 'Squads e pessoas escolhidos saem da liderança anterior.' : `Ao confirmar, o convite vai para ${form.email.trim() || 'o e-mail informado'}. Squads e pessoas escolhidos saem da liderança anterior.`}</Help>
+      <Help>{editing ? 'Squads e pessoas escolhidos saem da liderança anterior.' : self ? 'Squads e pessoas escolhidos saem da liderança anterior.' : `Ao confirmar, a pessoa já pode entrar com ${form.email.trim() || 'o e-mail informado'} e a senha que você criou. Squads e pessoas escolhidos saem da liderança anterior.`}</Help>
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'flex-start' }}>
         <span style={{ lineHeight: 0, borderRadius: '50%', border: '2px solid #0E0E12' }} aria-hidden="true"><Avatar {...form.avatar} crown size={110} label="" /></span>
         <div style={{ flex: '1 1 220px', display: 'flex', flexDirection: 'column', gap: 8 }}>

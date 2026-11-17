@@ -1,4 +1,5 @@
 'use client';
+import { AccessFields, MIN_PASSWORD } from './AccessFields';
 import { DateCalendar } from './DateCalendar';
 import { tenureLong } from '@/lib/format';
 import { useState, type ReactNode } from 'react';
@@ -25,21 +26,22 @@ export function MemberDeck({ projectId, skills, draft, onDraftChange, onClose, o
 }) {
   const d = useDeckDraft<MemberForm>({ scope: 'member', entityId: projectId, empty: empty(), draft, last: LAST, onDraftChange });
   const { form, set } = d;
-  const [errs, setErrs] = useState<{ name?: boolean; email?: boolean }>({});
+  const [errs, setErrs] = useState<{ name?: boolean; email?: boolean; password?: boolean }>({});
+  const [password, setPassword] = useState(''); // fora do rascunho: a senha nunca é salva no banco como rascunho
   const [busy, setBusy] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
   const emailOk = EMAIL_RE.test(form.email.trim());
   const validate = (to: number) => {
     if (to > 0 && !form.name.trim()) return { at: 0, flags: { name: true } };
-    if (to > 4 && !emailOk) return { at: 4, flags: { email: true } };
+    if (to > 4 && (!emailOk || password.length < MIN_PASSWORD)) return { at: 4, flags: { email: !emailOk, password: password.length < MIN_PASSWORD } };
     return null;
   };
   const submit = async () => {
     setBusy(true); setServerError(null);
     try {
       const r = await fetch(`/api/projects/${projectId}/members`, { method: 'POST', headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ name: form.name.trim(), title: form.title.trim(), avatar: form.avatar, mainSkill: form.mainSkill.trim(), joinedAt: form.joinedAt, email: form.email.trim() }) });
+        body: JSON.stringify({ name: form.name.trim(), title: form.title.trim(), avatar: form.avatar, mainSkill: form.mainSkill.trim(), joinedAt: form.joinedAt, email: form.email.trim(), password }) });
       const data = await r.json();
       if (!r.ok) { setServerError(data.error ?? 'Não deu para salvar. Tente de novo.'); return; }
       d.done(); onSaved();
@@ -75,12 +77,13 @@ export function MemberDeck({ projectId, skills, draft, onDraftChange, onClose, o
       <span style={{ fontSize: 14, fontWeight: 600 }}>{form.joinedAt ? `Tempo de casa: ${tenureLong(form.joinedAt).replace(' de casa', '')}` : 'Escolha a data para calcular o tempo de casa.'}</span>
     </>) },
     { id: 'email', bg: '#A9D8F5', node: (<>
-      <Title>Para qual e-mail vai o convite?</Title><Help>A pessoa recebe o convite para entrar no Coops e completar o perfil.</Help>
+      <Title>Qual o acesso da pessoa?</Title><Help>Ela entra no Coops com este e-mail e a senha que você criar aqui. Passe os dois para ela.</Help>
       <input type="email" aria-label="E-mail da pessoa" placeholder="nome@empresa.com" value={form.email} onChange={(e) => { set({ email: e.target.value }); setErrs((x) => ({ ...x, email: false })); }} style={cardInput} />
-      <Err show={errs.email}>Coloque um e-mail válido para enviar o convite.</Err>
+      <Err show={errs.email}>Coloque um e-mail válido para o acesso.</Err>
+      <AccessFields id="mb-senha" email={form.email.trim()} password={password} onPassword={(v) => { setPassword(v); setErrs((x) => ({ ...x, password: false })); }} error={errs.password} />
     </>) },
     { id: 'resumo', bg: '#B7A6FF', summary: true, node: (<>
-      <Title>Confere a carta?</Title><Help>Ao criar, a carta entra no time e o convite vai para {form.email.trim() || 'o e-mail informado'}.</Help>
+      <Title>Confere a carta?</Title><Help>Ao criar, a carta entra no time e a pessoa já pode entrar com {form.email.trim() || 'o e-mail informado'} e a senha <b style={{ fontFamily: "'JetBrains Mono', monospace" }}>{password || 'definida'}</b>.</Help>
       <div aria-hidden="true" style={{ alignSelf: 'flex-start', width: 220, borderRadius: 20, background: '#17171D', color: '#F5F2EC', border: '2px solid #0E0E12', overflow: 'hidden' }}>
         <div style={{ background: form.avatar.bg ?? '#B7A6FF', padding: '14px 14px 0', display: 'flex', justifyContent: 'center', borderBottom: '1.5px solid #0E0E12' }}><Avatar {...form.avatar} size={120} label="" /></div>
         <div style={{ padding: 14, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, textAlign: 'center' }}>
@@ -93,7 +96,7 @@ export function MemberDeck({ projectId, skills, draft, onDraftChange, onClose, o
   ];
   return (
     <BottomSheet tag={TAG} title="Novo membro" onClose={onClose}>
-      <QuestionDeck tag={TAG} cards={cards} step={d.step} onGo={go} busy={busy} busyLabel="Criando carta…" error={serverError} nextLabel={d.step === LAST ? 'Criar e convidar' : 'Próxima'} />
+      <QuestionDeck tag={TAG} cards={cards} step={d.step} onGo={go} busy={busy} busyLabel="Criando carta…" error={serverError} nextLabel={d.step === LAST ? 'Criar e liberar acesso' : 'Próxima'} />
     </BottomSheet>
   );
 }
