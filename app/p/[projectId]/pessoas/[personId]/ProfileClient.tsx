@@ -118,9 +118,9 @@ export function ProfileClient({ user, project, person, champions, isOwn, isManag
 
         <section aria-label="Power ups" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}><h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Power ups</h2><span style={{ fontSize: 14, color: '#A3A1AD' }}>Mentorias, cursos e projetos paralelos</span></div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
             {powerUps.map((u) => (
-              <div key={u.id} className="coops-pu" tabIndex={0} style={{ flex: '1 1 260px', borderRadius: 18, background: '#17171D', border: '1px solid #2C2C36', padding: 16, display: 'flex', gap: 14, alignItems: 'center' }}>
+              <div key={u.id} className="coops-pu" tabIndex={0} style={{ minWidth: 0, borderRadius: 18, background: '#17171D', border: '1px solid #2C2C36', padding: 16, display: 'flex', gap: 14, alignItems: 'center' }}>
                 <span className="pu-tile" aria-hidden="true" style={{ flex: '0 0 44px', height: 44, borderRadius: 12, background: '#8FE3C8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path className="pu-spk" d="M3.5 5.5 6 7" /><path className="pu-spk pu-spk2" d="M20.5 3.5 18.5 6" /><path className="pu-spk pu-spk3" d="M21 17.5 18.5 16.5" /><path className="pu-spk pu-spk4" d="M3 18.5 5.5 17" /><path className="pu-bolt" d="M13 2 4 14h7l-1 8 9-12h-7z" /></svg>
                 </span>
@@ -133,13 +133,17 @@ export function ProfileClient({ user, project, person, champions, isOwn, isManag
                 <button type="button" aria-label={`Remover ${u.name}`} onClick={() => removePU(u.id)} style={{ width: 44, height: 44, margin: '-8px -8px -8px 0', border: 0, background: 'transparent', cursor: 'pointer', color: '#A3A1AD', flex: 'none' }}>✕</button>
               </div>
             ))}
-            {powerUps.length === 0 && (
-              <div style={{ flex: '1 1 260px', display: 'flex', gap: 12, alignItems: 'center', borderRadius: 18, border: '1.5px dashed #4A4858', padding: '16px 18px' }}>
-                <span aria-hidden="true" style={{ flex: '0 0 40px', height: 40, borderRadius: 12, border: '1.5px dashed #8FE3C8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8FE3C8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z" /></svg></span>
-                <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}><span style={{ fontWeight: 600 }}>Nenhum power up ainda</span><span style={{ fontSize: 14, color: '#A3A1AD' }}>Cursos e mentorias em andamento aparecem aqui.</span></span>
+            {/* espaços vazios do mesmo tamanho: o primeiro adiciona, os demais só indicam que cabem mais power ups */}
+            {Array.from({ length: powerUps.length < 3 ? 3 - powerUps.length : 1 }, (_, i) => i === 0 ? (
+              <button key="add" type="button" onClick={() => setDeck(true)} className="tw-add" style={{ fontFamily: 'inherit', minHeight: 76, minWidth: 0, borderRadius: 18, background: 'transparent', border: '1.5px dashed #4A4858', color: '#F5F2EC', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>+ Power up</button>
+            ) : (
+              <div key={`ph${i}`} aria-hidden={powerUps.length > 0} style={{ minHeight: 76, minWidth: 0, boxSizing: 'border-box', borderRadius: 18, border: '1.5px dashed #2C2C36', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12, color: '#A3A1AD' }}>
+                {powerUps.length === 0 && i === 1 ? (<>
+                  <span aria-hidden="true" style={{ flex: '0 0 40px', height: 40, borderRadius: 12, border: '1.5px dashed #8FE3C8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8FE3C8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z" /></svg></span>
+                  <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}><span style={{ fontWeight: 600, color: '#F5F2EC' }}>Nenhum power up ainda</span><span style={{ fontSize: 13 }}>Cursos e mentorias em andamento aparecem aqui.</span></span>
+                </>) : <span aria-hidden="true" style={{ flex: '0 0 40px', height: 40, borderRadius: 12, border: '1.5px dashed #2C2C36' }} />}
               </div>
-            )}
-            <button type="button" onClick={() => setDeck(true)} style={{ fontFamily: 'inherit', flex: '0 1 200px', minHeight: 76, borderRadius: 18, background: 'transparent', border: '1.5px dashed #4A4858', color: '#F5F2EC', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>+ Power up</button>
+            ))}
           </div>
         </section>
 
