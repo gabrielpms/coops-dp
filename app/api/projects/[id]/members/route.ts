@@ -2,11 +2,11 @@ import { db } from '@/lib/db';
 import { fail, isResponse, json, parse } from '@/lib/api/http';
 import { memberSchema } from '@/lib/validation';
 import { requireManagerOfProject } from '@/lib/team';
-import { sendMail } from '@/lib/mail';
+import { hashPassword } from '@/lib/password';
 
 type Ctx = { params: Promise<{ id: string }> };
 
-// Nova pessoa: cria a carta no Time e o convite por e-mail.
+// Nova pessoa: cria a conta (e-mail + senha definida por quem cadastra) e a carta no Time, já vinculadas. Sem convite por e-mail.
 export async function POST(req: Request, { params }: Ctx) {
   const { id } = await params;
   const ctx = await requireManagerOfProject(id);
@@ -15,12 +15,13 @@ export async function POST(req: Request, { params }: Ctx) {
   if (isResponse(body)) return body;
   const dupe = await db.person.findFirst({ where: { projectId: id, email: body.email, deletedAt: null } });
   if (dupe) return fail(409, 'Já existe uma pessoa com esse e-mail neste projeto.');
+  if (await db.user.findUnique({ where: { email: body.email } })) return fail(409, 'Esse e-mail já tem uma conta no Coops. Use outro e-mail ou peça para a pessoa entrar com a conta dela.');
   const person = await db.$transaction(async (tx) => {
-    const p = await tx.person.create({ data: { projectId: id, name: body.name, title: body.title || null, email: body.email, mainSkill: body.mainSkill || null, joinedAt: body.joinedAt ? new Date(body.joinedAt) : null, avatar: body.avatar ?? undefined } });
-    await tx.invite.upsert({ where: { projectId_email: { projectId: id, email: body.email } }, create: { projectId: id, name: body.name, email: body.email, position: 'IC' }, update: {} });
+    const u = await tx.user.create({ data: { name: body.name, email: body.email, passwordHash: hashPassword(body.password), role: 'IC', onboardingStep: 3, title: body.title || null, avatar: body.avatar ?? undefined } });
+    const p = await tx.person.create({ data: { projectId: id, userId: u.id, name: body.name, title: body.title || null, email: body.email, mainSkill: body.mainSkill || null, joinedAt: body.joinedAt ? new Date(body.joinedAt) : null, avatar: body.avatar ?? undefined } });
+    await tx.invite.updateMany({ where: { projectId: id, email: body.email, status: 'PENDING' }, data: { status: 'ACCEPTED' } });
     return p;
   });
   await db.draft.deleteMany({ where: { userId: ctx.user.id, scope: 'member', entityId: id } });
-  await sendMail(body.email, `${ctx.user.name} convidou você para a Coops`, `Você foi convidado(a) para ${ctx.project.name}. Crie sua conta com este e-mail: ${process.env.APP_URL}/cadastro`);
   return json({ person: { id: person.id } }, 201);
 }

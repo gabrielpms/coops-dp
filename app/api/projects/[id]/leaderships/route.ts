@@ -3,7 +3,7 @@ import { fail, isResponse, json, parse } from '@/lib/api/http';
 import { leadershipSchema } from '@/lib/validation';
 import { requireManagerOfProject } from '@/lib/team';
 import { setLeadershipLinks } from '@/lib/leadership';
-import { sendMail } from '@/lib/mail';
+import { hashPassword } from '@/lib/password';
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -42,19 +42,22 @@ export async function POST(req: Request, { params }: Ctx) {
   const body = await parse(req, leadershipSchema);
   if (isResponse(body)) return body;
   if (body.self) return createSelfLeadership(id, ctx, body);
-  if (!body.email) return fail(400, 'Coloque um e-mail válido para enviar o convite');
-  const email = body.email;
+  if (!body.email) return fail(400, 'Coloque um e-mail válido para o acesso da pessoa');
+  if (!body.password) return fail(400, 'Crie uma senha de acesso com pelo menos 8 caracteres');
+  const email = body.email, password = body.password;
   if (await db.person.findFirst({ where: { projectId: id, email, deletedAt: null } })) return fail(409, 'Já existe uma pessoa com esse e-mail neste projeto.');
+  if (await db.user.findUnique({ where: { email } })) return fail(409, 'Esse e-mail já tem uma conta no Coops. Use outro e-mail ou peça para a pessoa entrar com a conta dela.');
   try {
     const lead = await db.$transaction(async (tx) => {
-      const person = await tx.person.create({ data: { projectId: id, name: body.name, title: body.title || null, email, avatar: { ...(body.avatar ?? {}), crown: true } } });
-      await tx.invite.upsert({ where: { projectId_email: { projectId: id, email } }, create: { projectId: id, name: body.name, email, position: 'MANAGER' }, update: {} });
+      const avatar = { ...(body.avatar ?? {}), crown: true };
+      const u = await tx.user.create({ data: { name: body.name, email, passwordHash: hashPassword(password), role: 'MANAGER', onboardingStep: 3, title: body.title || null, avatar } });
+      const person = await tx.person.create({ data: { projectId: id, userId: u.id, name: body.name, title: body.title || null, email, avatar } });
+      await tx.invite.updateMany({ where: { projectId: id, email, status: 'PENDING' }, data: { status: 'ACCEPTED' } });
       const l = await tx.leadership.create({ data: { projectId: id, personId: person.id } });
       await setLeadershipLinks(tx, l.id, id, body.squadIds, body.memberIds.filter((m) => m !== person.id));
       return l;
     });
     await db.draft.deleteMany({ where: { userId: ctx.user.id, scope: 'leadership', entityId: id } });
-    await sendMail(email, `${ctx.user.name} convidou você para liderar na Coops`, `Você foi convidado(a) como manager de ${ctx.project.name}. Crie sua conta com este e-mail: ${process.env.APP_URL}/cadastro`);
     return json({ leadership: { id: lead.id } }, 201);
   } catch (e) {
     if ((e as Error).message === 'INVALID_LINKS') return fail(400, 'Algum squad ou pessoa escolhido não faz parte deste projeto.');

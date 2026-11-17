@@ -57,7 +57,7 @@ export function AdminProjectClient({ user, project, categories, looseSkills, lea
               <AdminCard key={l.id} bg="#F3D36B" icon={<AvatarIcon bg={(l.avatar as AvatarConfig | null)?.bg ?? '#B7A6FF'}><Avatar {...DEFAULT_AVATAR_CFG} {...(l.avatar ?? {})} crown={false} size={52} label="" /></AvatarIcon>}
                 big={pad(l.memberIds.length)} bigLabel={l.memberIds.length === 1 ? 'PESSOA REPORTA' : 'PESSOAS REPORTAM'} tag={l.invited ? 'CONVITE ENVIADO' : undefined} kicker="LIDERANÇA" title={l.name} foot={leadFoot(l)} aria={`Associar squads e pessoas a ${l.name}`} onClick={() => setDeck({ kind: 'lead', editing: l })} />
             ))}
-            <AddCard title="Adicionar liderança" sub="Convide uma pessoa e associe squads e membros" onClick={() => setDeck({ kind: 'lead', editing: null })} />
+            <AddCard title="Adicionar liderança" sub="Crie o acesso de uma pessoa e associe squads e membros" onClick={() => setDeck({ kind: 'lead', editing: null })} />
           </>}
           {tab === 'hab' && <>
             {categories.map((c) => (

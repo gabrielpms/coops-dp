@@ -67,7 +67,7 @@ export function TimeClient({ user, project, persons, squads, memberDraft: md0, s
 
         {(!hasOthers || noSquads) && (
           <section aria-label="Primeiros passos do time" style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
-            {!hasOthers && emptyPanel('p', 'GESTÃO DE TIME · SEM CONVIDADOS', 'Seu time ainda não tem cartas', 'Adicione pessoas, monte o avatar delas e envie o convite por e-mail. Cada pessoa ganha os próprios decks.', '+ Convidar primeira pessoa', () => setDeck('member'),
+            {!hasOthers && emptyPanel('p', 'GESTÃO DE TIME · SEM PESSOAS', 'Seu time ainda não tem cartas', 'Adicione pessoas, monte o avatar delas e crie o acesso (e-mail e senha). Cada pessoa ganha os próprios decks.', '+ Adicionar primeira pessoa', () => setDeck('member'),
               <div style={{ position: 'relative', width: 170, height: 210 }}>
                 <div style={{ position: 'absolute', left: 30, top: 0, width: 130, height: 180, borderRadius: 20, border: '2px dashed #4A4858', transform: 'rotate(8deg)' }} className="ep-c3" />
                 <div style={{ position: 'absolute', left: 14, top: 10, width: 130, height: 180, borderRadius: 20, border: '2px dashed #6E6C7A', transform: 'rotate(3deg)' }} className="ep-c2" />
