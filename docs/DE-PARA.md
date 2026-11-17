@@ -28,7 +28,7 @@ Legenda: ✅ alinhado · 🟡 parcial (lacunas listadas) · ⚪ não comparado e
 | 15 Deck · Jornada | `pessoas/[personId]/jornada`, `components/person/JourneyDeck.tsx` | 🟡 | Feito: ícones animados, pips numerados, carta em foco. Falta: "Ligado a quais objetivos?" nos focos e blocos de leitura do manager. |
 | 16 Estados vazios | `components/person/EmptyDeckCard.tsx`, `ProfileClient.tsx`, `IniciativasClient.tsx` | ✅ | Decks vazios (eventos, skills, brain gym, jornada) para manager e IC; iniciativas vazias. Time vazio já existia. |
 | 17 Card do time (squad) | `squads/[squadId]` | ✅ | Vitrine animada (`h17-*`), pilhas de decks com ícones animados e Saúde do time. |
-| 18a–e Decks do squad | `squads/[squadId]/[deck]`, `components/squad` | 🟡 | Banner `dkban`, abas de navegação entre decks e contagens portados. Cartas e carta em foco seguem a implementação anterior (comparar campo a campo). |
+| 18a–e Decks do squad | `squads/[squadId]/[deck]`, `components/squad`, `lib/validation.ts` | ✅ | Banner `dkban` e abas entre decks. Cartas e perguntas alinhadas campo a campo: Estratégia (declaração, hoje, futuro, H1–H3, ações), Indicador (por que, meta, valor/variação, % da meta, evidências, ações, desafio) e Alavanca (objetivo, como funciona, status, resultados). Cartas antigas continuam abrindo (campos novos vazios). Fora de escopo: o texto do "agente" por carta e o CTA contextual do protótipo. |
 | 18f Saúde do time | `squads/[squadId]/[deck]/SaudeTimeClient.tsx` | ✅ | Cartas com média e variação, painel por ciclo, dica do agente; agregado só com 3+ respostas. |
 | 19 / 19b Saúde (IC / manager) | `pessoas/[personId]/saude` | ✅ | Reescrita no padrão do protótipo; rascunho e envio persistem no banco. |
 | 20 / 20b Entregas | `pessoas/[personId]/entregas`, `components/person/DeliveryDeck.tsx` | ✅ | Ícone animado, impacto pendente/editável (`imp-cta`), carta em foco e link "Abrir mesa da iniciativa". (Correção: `imp-*` é o fluxo de impacto, não "importar da mesa".) |
@@ -57,7 +57,6 @@ Legenda: ✅ alinhado · 🟡 parcial (lacunas listadas) · ⚪ não comparado e
 ## Próximos passos sugeridos
 
 1. Momento: facetas ricas do deck de resposta (exigem dados do agente real, M9).
-2. Cartas e carta em foco dos decks do squad (18a–e): comparar campo a campo.
-3. Eventos: anexos de arquivo (precisa de storage por evento).
+2. Eventos: anexos de arquivo (precisa de storage por evento).
 4. Mesa: hover `coops-ichov` na carta da iniciativa.
 5. Primeiro acesso (02b) e `/ds`: comparar com o mesmo método.
