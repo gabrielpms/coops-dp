@@ -22,7 +22,7 @@ Legenda: ✅ alinhado · 🟡 parcial (lacunas listadas) · ⚪ não comparado e
 | 09 Agente confirma | `iniciativas/[id]/ConfereClient.tsx`, `lib/agentStub.ts` | 🟡 | Banner, cartas com ícones animados e chat com as classes do protótipo. O agente segue como stub (respostas fixas). |
 | 10 Mesa / 10b Análise | `iniciativas/[id]/mesa`, `components/initiative/AnalysisOverlay.tsx` | 🟡 | Overlay do agente analisando o momento (palco 3D, progresso, passos). Faltam a carta da iniciativa com hover `coops-ichov` e o `ag-hv` nas dúvidas resolvidas. |
 | 11 Momento + ferramentas | `iniciativas/[id]/momento/MomentoClient.tsx`, `lib/toolIcons.ts` | 🟡 | Hero do agente, deck de ferramentas em leque com ícones animados por tipo, deck de resposta no palco (`s11-*`): carta em foco com impacto/esforço, descartar/mesa, leque de cartas, dock e resumo final. Faltam facetas ricas (evidências, passos, riscos, fontes), "Pedir variação" e a referência visual — o app só guarda título, tag, descrição, impacto, esforço, métrica e próximo passo. |
-| 12 Deck · Eventos | `pessoas/[personId]/eventos`, `components/person/EventDeck.tsx` | 🟡 | Feito: banner animado, pilha com ícone por tipo, palco de celebração, carta em foco, "Registrado por", "Quem pode editar" e comentários recolhíveis. Faltam: pilha com várias cartas empilhadas, anexos por arrastar arquivo (o app só guarda links; exigiria storage) e micro-animações nas perguntas do deck. |
+| 12 Deck · Eventos | `pessoas/[personId]/eventos`, `components/person/EventDeck.tsx` | ✅ | Banner animado, pilha com ícone por tipo, palco de celebração, carta em foco com rodapé fixo, "Registrado por", "Quem pode editar" e comentários recolhíveis. Fora de escopo: "cartas nesta pilha" (o protótipo só empilha registros dentro de um feedback; o app não tem esse dado) e anexos por arrastar arquivo (`fb-drop`; o app só guarda links e não há storage para eventos). |
 | 13 Autoavaliação de skills | `pessoas/[personId]/skills` | 🟡 | Feito: cartas, painel de média, carta em foco com rubrica e evidências. Faltam: descrição da skill, comentário do manager e "Enviar autoavaliação" (sem campos no banco). |
 | 14 Deck · Brain gym | `pessoas/[personId]/brain-gym`, `components/person/StudyDecks.tsx` | 🟡 | Feito: ícone animado por tipo, blocos de progresso, carta em foco. Falta: textos de resumo do deck "novo conteúdo". |
 | 15 Deck · Jornada | `pessoas/[personId]/jornada`, `components/person/JourneyDeck.tsx` | 🟡 | Feito: ícones animados, pips numerados, carta em foco. Falta: "Ligado a quais objetivos?" nos focos e blocos de leitura do manager. |
@@ -58,6 +58,6 @@ Legenda: ✅ alinhado · 🟡 parcial (lacunas listadas) · ⚪ não comparado e
 
 1. Momento: facetas ricas do deck de resposta (exigem dados do agente real, M9).
 2. Cartas e carta em foco dos decks do squad (18a–e): comparar campo a campo.
-3. Eventos: pilha com várias cartas e micro-animações nas perguntas.
+3. Eventos: anexos de arquivo (precisa de storage por evento).
 4. Mesa: hover `coops-ichov` na carta da iniciativa.
 5. Primeiro acesso (02b) e `/ds`: comparar com o mesmo método.
