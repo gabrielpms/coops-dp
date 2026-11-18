@@ -90,7 +90,7 @@ export function AdminProjectClient({ user, project, categories, looseSkills, lea
                   <button key={m.id} type="button" onClick={() => setDeck({ kind: 'muser', user: m })} aria-label={`Editar o usuário ${m.name}`} className="coops-pu" style={{ fontFamily: 'inherit', textAlign: 'left', color: '#F5F2EC', minWidth: 0, borderRadius: 18, background: '#17171D', border: `1px solid ${m.blocked ? '#FF8A5B' : '#2C2C36'}`, padding: 16, display: 'flex', gap: 14, alignItems: 'center', cursor: 'pointer' }}>
                     <span style={{ lineHeight: 0, borderRadius: '50%', border: '2px solid #0E0E12', flex: 'none', opacity: m.blocked ? 0.5 : 1 }}><Avatar {...DEFAULT_AVATAR_CFG} {...(m.avatar ?? {})} crown={m.role === 'MANAGER'} size={52} label="" /></span>
                     <span style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 3 }}>
-                      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.08em', color: m.blocked ? '#FF8A5B' : '#8FE3C8' }}>{m.role === 'MANAGER' ? 'MANAGER' : 'IC'} · {m.blocked ? 'BLOQUEADO' : 'ATIVO'}</span>
+                      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.08em', color: m.blocked ? '#FF8A5B' : m.pending ? '#F3D36B' : '#8FE3C8' }}>{m.role === 'MANAGER' ? 'MANAGER' : 'IC'} · {m.blocked ? 'BLOQUEADO' : m.pending ? 'SEM ACESSO' : 'ATIVO'}</span>
                       <b style={{ fontSize: 16, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.name}</b>
                       <span style={{ fontSize: 13, color: '#A3A1AD', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.email}</span>
                     </span>
