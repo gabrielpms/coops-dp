@@ -93,6 +93,15 @@ export const adminUserPatchSchema = z.object({
   password: z.string().min(8, 'A senha precisa ter pelo menos 8 caracteres').max(128, 'A senha pode ter no máximo 128 caracteres').optional(),
   blocked: z.boolean().optional(),
 });
+/** Cria o acesso (conta + senha) de uma pessoa do projeto que ainda não tinha conta. */
+export const adminAccountSchema = z.object({
+  name: text(120).min(1, 'Escreva o nome'),
+  title: text(120).optional(),
+  email: text(200).toLowerCase().regex(EMAIL_RE, 'Coloque um e-mail válido'),
+  role: z.enum(['IC', 'MANAGER']).default('IC'),
+  avatar: avatarSchema.optional(),
+  password: z.string().min(8, 'A senha precisa ter pelo menos 8 caracteres').max(128, 'A senha pode ter no máximo 128 caracteres'),
+});
 export const userPatchSchema = z.object({
   name: text(120).min(1, 'Escreva seu nome').optional(),
   title: text(120).optional(),
