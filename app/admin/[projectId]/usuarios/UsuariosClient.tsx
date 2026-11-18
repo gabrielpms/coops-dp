@@ -4,6 +4,7 @@ import { AppHeader, DEFAULT_AVATAR } from '@/components/ds/AppHeader';
 import { AdminBanner, AdminCard } from '@/components/admin/AdminBanner';
 import { AvatarIcon } from '@/components/admin/Icons';
 import { AdminUserDeck, type ManagedUser } from '@/components/admin/AdminUserDeck';
+import type { SquadOpt } from '@/components/team/SquadChoice';
 import { Avatar, type AvatarConfig } from '@/components/avatar/Avatar';
 import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
 import { useCoopsRouter } from '@/components/nav/useCoopsRouter';
@@ -11,7 +12,7 @@ import { useCoopsRouter } from '@/components/nav/useCoopsRouter';
 const status = (u: ManagedUser) => (u.blocked ? 'BLOQUEADO' : u.pending ? 'SEM ACESSO' : 'ATIVO');
 const bgOf = (u: ManagedUser) => (u.blocked ? '#FF8A5B' : u.pending ? '#F3D36B' : '#B7A6FF');
 
-export function UsuariosClient({ user, project, users }: { user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; project: { id: string; name: string }; users: ManagedUser[] }) {
+export function UsuariosClient({ user, project, users, squads }: { user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; project: { id: string; name: string }; users: ManagedUser[]; squads: SquadOpt[] }) {
   const { refresh } = useCoopsRouter();
   const [open, setOpen] = useState<ManagedUser | null>(null);
   const meAvatar = { ...DEFAULT_AVATAR_CFG, ...(user.avatar ?? DEFAULT_AVATAR) };
@@ -23,7 +24,7 @@ export function UsuariosClient({ user, project, users }: { user: { name: string;
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
           {users.map((m) => (
             <AdminCard key={m.id} bg={bgOf(m)} icon={<AvatarIcon bg={(m.avatar as AvatarConfig | null)?.bg ?? '#F5F2EC'}><Avatar {...DEFAULT_AVATAR_CFG} {...(m.avatar ?? {})} crown={m.role === 'MANAGER'} size={52} label="" /></AvatarIcon>}
-              big={m.role === 'MANAGER' ? 'MGR' : 'IC'} bigLabel={status(m)} kicker="USUÁRIO" title={m.name} foot={m.email || 'Sem e-mail'} aria={`Abrir o usuário ${m.name}`} onClick={() => setOpen(m)} />
+              big={m.role === 'MANAGER' ? 'MGR' : 'IC'} bigLabel={status(m)} kicker="USUÁRIO" title={m.name} foot={`${squads.find((q) => q.id === m.squadId)?.name ?? 'Sem squad'} · ${m.email || 'Sem e-mail'}`} aria={`Abrir o usuário ${m.name}`} onClick={() => setOpen(m)} />
           ))}
           {users.length === 0 && (
             <div style={{ height: 340, boxSizing: 'border-box', borderRadius: 22, border: '1.5px dashed #4A4858', color: '#F5F2EC', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, padding: 20 }}>
@@ -34,7 +35,7 @@ export function UsuariosClient({ user, project, users }: { user: { name: string;
           )}
         </div>
       </div>
-      {open && <AdminUserDeck key={open.id} projectId={project.id} user={open} onClose={() => setOpen(null)} onSaved={() => { setOpen(null); refresh(); }} />}
+      {open && <AdminUserDeck key={open.id} projectId={project.id} user={open} squads={squads} onClose={() => setOpen(null)} onSaved={() => { setOpen(null); refresh(); }} />}
     </div>
   );
 }

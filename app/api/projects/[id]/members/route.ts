@@ -4,6 +4,7 @@ import { memberSchema } from '@/lib/validation';
 import { requireManagerOfProject } from '@/lib/team';
 import { hashPassword } from '@/lib/password';
 import { sealSecret } from '@/lib/secret';
+import { placeInSquad, squadInProject } from '@/lib/squadMembership';
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -17,10 +18,12 @@ export async function POST(req: Request, { params }: Ctx) {
   const dupe = await db.person.findFirst({ where: { projectId: id, email: body.email, deletedAt: null } });
   if (dupe) return fail(409, 'Já existe uma pessoa com esse e-mail neste projeto.');
   if (await db.user.findUnique({ where: { email: body.email } })) return fail(409, 'Esse e-mail já tem uma conta no Coops. Use outro e-mail ou peça para a pessoa entrar com a conta dela.');
+  if (body.squadId && !(await squadInProject(id, body.squadId))) return fail(400, 'Esse squad não existe neste projeto.');
   const person = await db.$transaction(async (tx) => {
     const u = await tx.user.create({ data: { name: body.name, email: body.email, passwordHash: hashPassword(body.password), accessPassword: sealSecret(body.password), role: 'IC', onboardingStep: 3, title: body.title || null, avatar: body.avatar ?? undefined } });
     const p = await tx.person.create({ data: { projectId: id, userId: u.id, name: body.name, title: body.title || null, email: body.email, mainSkill: body.mainSkill || null, joinedAt: body.joinedAt ? new Date(body.joinedAt) : null, avatar: body.avatar ?? undefined } });
     await tx.invite.updateMany({ where: { projectId: id, email: body.email, status: 'PENDING' }, data: { status: 'ACCEPTED' } });
+    if (body.squadId) await placeInSquad(tx, id, p.id, body.squadId);
     return p;
   });
   await db.draft.deleteMany({ where: { userId: ctx.user.id, scope: 'member', entityId: id } });

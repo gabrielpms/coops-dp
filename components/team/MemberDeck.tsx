@@ -10,21 +10,25 @@ import { Avatar, type AvatarConfig } from '../avatar/Avatar';
 import { AvatarEditor, DEFAULT_AVATAR_CFG } from '../avatar/AvatarEditor';
 import { cardInput, chipStyle, label } from '../ds/tokens';
 import { EMAIL_RE } from '@/lib/validation';
+import { SquadChoice, type SquadOpt } from './SquadChoice';
 
-export type MemberForm = { name: string; title: string; avatar: AvatarConfig; mainSkill: string; joinedAt: string; email: string };
+export type MemberForm = { name: string; title: string; avatar: AvatarConfig; mainSkill: string; joinedAt: string; email: string; squadId: string | null };
 export type MemberDraft = Draft<MemberForm>;
-const empty = (): MemberForm => ({ name: '', title: '', avatar: { ...DEFAULT_AVATAR_CFG }, mainSkill: '', joinedAt: '', email: '' });
-const LAST = 5;
+const empty = (squadId: string | null): MemberForm => ({ name: '', title: '', avatar: { ...DEFAULT_AVATAR_CFG }, mainSkill: '', joinedAt: '', email: '', squadId });
 const TAG = 'TIME · NOVO MEMBRO';
 
 const Title = ({ children }: { children: ReactNode }) => <span style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.15 }}>{children}</span>;
 const Help = ({ children }: { children: ReactNode }) => <span style={{ fontSize: 14, lineHeight: 1.45 }}>{children}</span>;
 const Err = ({ show, children }: { show?: boolean; children: ReactNode }) => (show ? <span role="alert" style={{ fontSize: 14, fontWeight: 600 }}>{children}</span> : null);
 
-export function MemberDeck({ projectId, skills, draft, onDraftChange, onClose, onSaved }: {
-  projectId: string; skills: string[]; draft: MemberDraft | null; onDraftChange: (d: MemberDraft | null) => void; onClose: () => void; onSaved: () => void;
+export function MemberDeck({ projectId, skills, squads = [], defaultSquadId = null, lockedSquad, draft, onDraftChange, onClose, onSaved }: {
+  projectId: string; skills: string[]; squads?: SquadOpt[]; defaultSquadId?: string | null; /** quando o cadastro começa dentro de um squad: não pergunta, a pessoa já entra nele */ lockedSquad?: { id: string; name: string };
+  draft: MemberDraft | null; onDraftChange: (d: MemberDraft | null) => void; onClose: () => void; onSaved: () => void;
 }) {
-  const d = useDeckDraft<MemberForm>({ scope: 'member', entityId: projectId, empty: empty(), draft, last: LAST, onDraftChange });
+  const askSquad = !lockedSquad && squads.length > 0;
+  const EMAIL_AT = askSquad ? 5 : 4; // posição da carta de e-mail e senha
+  const LAST = EMAIL_AT + 1;
+  const d = useDeckDraft<MemberForm>({ scope: 'member', entityId: projectId, empty: empty(lockedSquad?.id ?? defaultSquadId), draft, last: LAST, onDraftChange });
   const { form, set } = d;
   const [errs, setErrs] = useState<{ name?: boolean; email?: boolean; password?: boolean }>({});
   const [password, setPassword] = useState(''); // fora do rascunho: a senha nunca é salva no banco como rascunho
@@ -34,14 +38,14 @@ export function MemberDeck({ projectId, skills, draft, onDraftChange, onClose, o
   const emailOk = EMAIL_RE.test(form.email.trim());
   const validate = (to: number) => {
     if (to > 0 && !form.name.trim()) return { at: 0, flags: { name: true } };
-    if (to > 4 && (!emailOk || password.length < MIN_PASSWORD)) return { at: 4, flags: { email: !emailOk, password: password.length < MIN_PASSWORD } };
+    if (to > EMAIL_AT && (!emailOk || password.length < MIN_PASSWORD)) return { at: EMAIL_AT, flags: { email: !emailOk, password: password.length < MIN_PASSWORD } };
     return null;
   };
   const submit = async () => {
     setBusy(true); setServerError(null);
     try {
       const r = await fetch(`/api/projects/${projectId}/members`, { method: 'POST', headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ name: form.name.trim(), title: form.title.trim(), avatar: form.avatar, mainSkill: form.mainSkill.trim(), joinedAt: form.joinedAt, email: form.email.trim(), password }) });
+        body: JSON.stringify({ name: form.name.trim(), title: form.title.trim(), avatar: form.avatar, mainSkill: form.mainSkill.trim(), joinedAt: form.joinedAt, email: form.email.trim(), password, squadId: lockedSquad ? lockedSquad.id : askSquad ? form.squadId : null }) });
       const data = await r.json();
       if (!r.ok) { setServerError(data.error ?? 'Não deu para salvar. Tente de novo.'); return; }
       d.done(); onSaved();
@@ -76,6 +80,10 @@ export function MemberDeck({ projectId, skills, draft, onDraftChange, onClose, o
       <DateCalendar value={form.joinedAt} onChange={(iso) => set({ joinedAt: iso })} max={new Date().toISOString().slice(0, 10)} />
       <span style={{ fontSize: 14, fontWeight: 600 }}>{form.joinedAt ? `Tempo de casa: ${tenureLong(form.joinedAt).replace(' de casa', '')}` : 'Escolha a data para calcular o tempo de casa.'}</span>
     </>) },
+    ...(askSquad ? [{ id: 'squad', bg: '#8FE3C8', optional: true, node: (<>
+      <Title>Em qual squad entra?</Title><Help>A pessoa senta à mesa do squad escolhido. Quem já estava em outro squad muda para este. Dá para mudar depois.</Help>
+      <SquadChoice squads={squads} value={form.squadId} onChange={(id) => set({ squadId: id })} />
+    </>) } as DeckCard] : []),
     { id: 'email', bg: '#A9D8F5', node: (<>
       <Title>Qual o acesso da pessoa?</Title><Help>Ela entra no Coops com este e-mail e a senha que você criar aqui. Passe os dois para ela.</Help>
       <input type="email" aria-label="E-mail da pessoa" placeholder="nome@empresa.com" value={form.email} onChange={(e) => { set({ email: e.target.value }); setErrs((x) => ({ ...x, email: false })); }} style={cardInput} />
@@ -90,6 +98,7 @@ export function MemberDeck({ projectId, skills, draft, onDraftChange, onClose, o
           <span style={{ fontSize: 18, fontWeight: 700 }}>{form.name || 'Nome da pessoa'}</span>
           <span style={{ fontSize: 13, color: '#A3A1AD' }}>{form.title || 'Cargo'}</span>
           {form.mainSkill && <span style={{ marginTop: 6, fontSize: 12, fontWeight: 600, color: '#0E0E12', background: '#F3D36B', borderRadius: 999, padding: '4px 10px' }}>{form.mainSkill}</span>}
+          {(lockedSquad?.name ?? squads.find((q) => q.id === form.squadId)?.name) && <span style={{ marginTop: 6, ...label(10, '0.06em') }}>SQUAD · {(lockedSquad?.name ?? squads.find((q) => q.id === form.squadId)?.name ?? '').toUpperCase()}</span>}
         </div>
       </div>
     </>) },

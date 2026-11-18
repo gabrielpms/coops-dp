@@ -132,3 +132,14 @@ describe('deck de ferramentas (M8.4)', () => {
   it('ids de ferramenta são únicos', () => expect(new Set(TOOLS.map((t) => t.id)).size).toBe(TOOLS.length));
   it('o deck de resposta tem 3 cartas e não inventa números', () => { const r = responseFor(toolById('jtbd')!, 'Conta'); expect(r).toHaveLength(3); expect(r.map((c) => c.tag)).toEqual(['SEGURA', 'MÉDIA', 'OUSADA']); expect(r.every((c) => c.metric.startsWith('[CONFIRMAR'))).toBe(true); });
 });
+
+describe('squad da pessoa', () => {
+  const id = '3f1c9f0e-6a58-4b0e-9d52-0b7d3f6a9c11';
+  it('aceita um squad ou null (sem squad) e recusa o resto', async () => {
+    const { personSquadSchema } = await import('@/lib/validation');
+    expect(personSquadSchema.safeParse({ squadId: id }).success).toBe(true);
+    expect(personSquadSchema.safeParse({ squadId: null }).success).toBe(true);
+    expect(personSquadSchema.safeParse({ squadId: 'x' }).success).toBe(false);
+    expect(personSquadSchema.safeParse({}).success).toBe(false);
+  });
+});

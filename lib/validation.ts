@@ -71,6 +71,7 @@ export const memberSchema = z.object({
   joinedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Data inválida').optional().or(z.literal('')).default(''),
   email: text(200).toLowerCase().regex(EMAIL_RE, 'Coloque um e-mail válido para o acesso da pessoa'),
   password: z.string().min(8, 'A senha precisa ter pelo menos 8 caracteres').max(128, 'A senha pode ter no máximo 128 caracteres'),
+  squadId: z.string().uuid().nullable().optional(),
 });
 export type MemberInput = z.infer<typeof memberSchema>;
 export const squadSchema = z.object({
@@ -79,6 +80,8 @@ export const squadSchema = z.object({
   color: hex.default('#B7A6FF'),
   members: z.array(z.object({ personId: z.string().uuid(), crown: z.boolean().default(false) })).max(100).default([]),
 });
+/** Coloca uma pessoa que já está no projeto em um squad (ou tira de todos com null). */
+export const personSquadSchema = z.object({ squadId: z.string().uuid().nullable() });
 export type SquadInput = z.infer<typeof squadSchema>;
 
 // ---------- Administração (M4) ----------
@@ -92,6 +95,7 @@ export const adminUserPatchSchema = z.object({
   avatar: avatarSchema.optional(),
   password: z.string().min(8, 'A senha precisa ter pelo menos 8 caracteres').max(128, 'A senha pode ter no máximo 128 caracteres').optional(),
   blocked: z.boolean().optional(),
+  squadId: z.string().uuid().nullable().optional(),
 });
 /** Cria o acesso (conta + senha) de uma pessoa do projeto que ainda não tinha conta. */
 export const adminAccountSchema = z.object({
@@ -101,6 +105,7 @@ export const adminAccountSchema = z.object({
   role: z.enum(['IC', 'MANAGER']).default('IC'),
   avatar: avatarSchema.optional(),
   password: z.string().min(8, 'A senha precisa ter pelo menos 8 caracteres').max(128, 'A senha pode ter no máximo 128 caracteres'),
+  squadId: z.string().uuid().nullable().optional(),
 });
 export const userPatchSchema = z.object({
   name: text(120).min(1, 'Escreva seu nome').optional(),
