@@ -76,7 +76,6 @@ export function AdminProjectClient({ user, project, categories, looseSkills, lea
         </div>
         {tab === 'dados' && (
           <section aria-label="Usuários da plataforma" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}><h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Usuários</h2><span style={{ fontSize: 14, color: '#A3A1AD' }}>Edite dados e senha, bloqueie o acesso ou exclua</span></div>
             {managedUsers.length === 0 ? (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
                 <div style={{ height: 340, boxSizing: 'border-box', borderRadius: 22, border: '1.5px dashed #4A4858', color: '#F5F2EC', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, padding: 20 }}>
