@@ -1,9 +1,11 @@
 'use client';
-import type { CSSProperties, ReactNode } from 'react';
+import { useState, type CSSProperties, type ReactNode } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
 import { Avatar, type AvatarConfig } from '@/components/avatar/Avatar';
 import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
-import { CoopsLink } from '@/components/nav/useCoopsRouter';
+import { CoopsLink, useCoopsRouter } from '@/components/nav/useCoopsRouter';
+import { AddToSquadSheet, type Candidate } from '@/components/team/AddToSquadSheet';
+import { MemberDeck, type MemberDraft } from '@/components/team/MemberDeck';
 import { DECK_META, type SquadDeckId } from '@/components/squad/types';
 import { mono } from '@/components/ds/tokens';
 import { plural } from '@/lib/format';
@@ -13,10 +15,14 @@ const ORDER: SquadDeckId[] = ['DESAFIO', 'FRENTE', 'ESTRATEGIA', 'INDICADOR', 'A
 const STAGE_AV: { left: number; top: number; size: number; cls: string }[] = [{ left: 10, top: 78, size: 95, cls: 'h17-av h17-av1' }, { left: 135, top: -2, size: 110, cls: 'h17-av h17-av2' }, { left: 275, top: 78, size: 95, cls: 'h17-av h17-av3' }];
 const CARDS = [['#FF8A5B', 72, -16, -20, 0], ['#F5A9D6', 118, -8, -10, 40], ['#B7A6FF', 164, 0, 0, 80], ['#F3D36B', 210, 8, 10, 120], ['#C9F0B8', 256, 16, 20, 160]] as const;
 
-export function SquadHomeClient({ user, projectId, squad, isManager, people, counts, cycle, healthAvg, healthN }: {
+export function SquadHomeClient({ user, projectId, squad, isManager, people, counts, cycle, healthAvg, healthN, candidates, skills, memberDraft: md0 }: {
+  /** pessoas do projeto que ainda não estão neste squad (só o manager recebe) */ candidates: Candidate[]; skills: string[]; memberDraft: MemberDraft | null;
   user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; projectId: string; squad: { id: string; name: string; color: string; description?: string }; isManager: boolean;
   people: { id: string; name: string; title: string; avatar: AvatarConfig | null; crown: boolean }[]; counts: Record<SquadDeckId, number>; cycle: string; healthAvg: number | null; healthN: number;
 }) {
+  const { refresh } = useCoopsRouter();
+  const [add, setAdd] = useState<null | 'choice' | 'member'>(null);
+  const [memberDraft, setMemberDraft] = useState(md0);
   const base = `/p/${projectId}/squads/${squad.id}`;
   const decks: (DeckDef & { count: string; label: string; foot: string })[] = [
     ...ORDER.map((d) => { const m = DECK_META[d]; const [b1, b2] = COL[m.slug]; return { key: m.slug, href: `${base}/${m.slug}`, title: m.title, sub: SUB[m.slug], bg: m.color, b1, b2, parts: ICP[m.slug], kicker: m.title.toUpperCase(), count: String(counts[d]).padStart(2, '0'), label: plural(counts[d], 'CARTA', 'CARTAS'), foot: counts[d] ? `${counts[d]} ${plural(counts[d], 'aberto', 'abertos')}` : m.empty }; }),
@@ -51,6 +57,7 @@ export function SquadHomeClient({ user, projectId, squad, isManager, people, cou
           <div style={{ position: 'relative', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginTop: 4 }}>
             <span style={{ fontSize: 14, fontWeight: 600, color: '#F5F2EC', background: '#0E0E12', borderRadius: 999, padding: '8px 14px' }}>{people.length} {plural(people.length, 'pessoa', 'pessoas')}{mgr ? ` · ${mgr} champion` : ''}</span>
             <span style={{ fontSize: 14, fontWeight: 600, color: '#0E0E12', background: '#F5F2EC', border: '1.5px solid #0E0E12', borderRadius: 999, padding: '7px 14px' }}>Ciclo {cycle.split('-')[1]} {cycle.split('-')[0]}</span>
+            {isManager && <button type="button" onClick={() => setAdd('choice')} className="coops-card" style={{ fontFamily: 'inherit', fontSize: 14, fontWeight: 600, color: '#0E0E12', background: 'transparent', border: '1.5px dashed #0E0E12', borderRadius: 999, minHeight: 44, padding: '0 16px', cursor: 'pointer' }}>+ Adicionar pessoa</button>}
             <span style={{ fontSize: 14, color: 'rgba(14,14,18,0.78)', padding: '8px 4px' }}>{isManager ? 'você edita os decks do squad' : 'você vê como time; só o manager edita'}</span>
           </div>
         </section>
@@ -74,6 +81,8 @@ export function SquadHomeClient({ user, projectId, squad, isManager, people, cou
           </div>
         </section>
       </div>
+      {add === 'choice' && <AddToSquadSheet projectId={projectId} squad={squad} candidates={candidates} onNew={() => setAdd('member')} onClose={() => setAdd(null)} onSaved={() => { setAdd(null); refresh(); }} />}
+      {add === 'member' && <MemberDeck projectId={projectId} skills={skills} lockedSquad={{ id: squad.id, name: squad.name }} draft={memberDraft} onDraftChange={setMemberDraft} onClose={() => setAdd(null)} onSaved={() => { setAdd(null); refresh(); }} />}
     </div>
   );
 }

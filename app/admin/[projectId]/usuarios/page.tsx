@@ -13,6 +13,6 @@ export default async function AdminUsuariosPage({ params }: { params: Promise<{ 
   if (u.role !== 'MANAGER') redirect('/admin');
   const project = await db.project.findFirst({ where: { id: projectId, deletedAt: null, OR: [{ ownerId: u.id }, { persons: { some: { userId: u.id, deletedAt: null } } }] }, select: { id: true, name: true, ownerId: true } });
   if (!project) notFound();
-  const users = await loadManagedUsers(projectId, u.id, project.ownerId);
-  return <UsuariosClient user={{ name: u.name, email: u.email, role: u.role, avatar: u.avatar as any }} project={{ id: project.id, name: project.name }} users={users} />;
+  const [users, squads] = await Promise.all([loadManagedUsers(projectId, u.id, project.ownerId), db.squad.findMany({ where: { projectId, deletedAt: null }, orderBy: { createdAt: 'asc' }, select: { id: true, name: true, color: true } })]);
+  return <UsuariosClient user={{ name: u.name, email: u.email, role: u.role, avatar: u.avatar as any }} project={{ id: project.id, name: project.name }} users={users} squads={squads} />;
 }

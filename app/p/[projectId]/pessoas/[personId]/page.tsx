@@ -10,7 +10,8 @@ export default async function PessoaPage({ params }: { params: Promise<{ project
   const { projectId, personId } = await params;
   const { user, person, isOwn, isManager } = await loadPersonPage(projectId, personId);
   const { cycle } = await projectCycle(projectId);
-  const [project, powerUps, deliveries, study, ratings, draft, goalsAll, healthRows, eventsByType, lastEvent, focos, champFrentes] = await Promise.all([
+  const [squadOptions, project, powerUps, deliveries, study, ratings, draft, goalsAll, healthRows, eventsByType, lastEvent, focos, champFrentes] = await Promise.all([
+    isManager && !isOwn ? db.squad.findMany({ where: { projectId, deletedAt: null }, orderBy: { createdAt: 'asc' }, select: { id: true, name: true, color: true } }) : Promise.resolve([] as { id: string; name: string; color: string }[]),
     db.project.findUniqueOrThrow({ where: { id: projectId }, include: { skills: { orderBy: { position: 'asc' } } } }),
     db.powerUp.findMany({ where: { personId, deletedAt: null }, orderBy: { createdAt: 'desc' } }),
     db.delivery.findMany({ where: { personId, deletedAt: null }, orderBy: { date: 'desc' }, select: { title: true, status: true } }),
@@ -39,7 +40,7 @@ export default async function PessoaPage({ params }: { params: Promise<{ project
       project={{ id: projectId, name: project.name, skills: project.skills.map((s) => s.name) }}
       person={{ id: person.id, name: person.name, title: person.title ?? '', avatar: (person.avatar as any) ?? null, mainSkill: person.mainSkill ?? '', joinedAt: person.joinedAt ? person.joinedAt.toISOString() : null, createdAt: person.createdAt.toISOString(), squads: person.squads.filter((m) => !m.squad.deletedAt).map((m) => ({ id: m.squad.id, name: m.squad.name, color: m.squad.color, crown: m.crown })) }}
       champions={champFrentes.map((c) => ({ id: c.id, title: c.title, pct: (c.level ?? 1) * 20, squadId: c.squad.id, squadName: c.squad.name }))}
-      isOwn={isOwn} isManager={isManager}
+      isOwn={isOwn} isManager={isManager} squadOptions={squadOptions}
       powerUps={powerUps.map((p) => ({ id: p.id, type: p.type, name: p.name, skill: p.skill ?? '', frequency: p.frequency ?? '', progress: p.progress }))}
       skillsSummary={{ cycle, total: skills.length, top: rated.slice(0, 3), avg: rated.length ? rated.reduce((a, s) => a + s.self, 0) / rated.length : 0, rated: rated.length }}
       studySummary={{ total: study.length, active: study.filter((s) => s.progress < s.total).length, latest: study[0] ? { title: study[0].title, type: study[0].type, pct: Math.round((study[0].progress / study[0].total) * 100) } : null }}

@@ -8,6 +8,7 @@ import { MemberDeck, type MemberDraft } from '@/components/team/MemberDeck';
 import { SquadDeck, type SquadDraft } from '@/components/team/SquadDeck';
 import { label } from '@/components/ds/tokens';
 import { SquadTableCard } from '@/components/team/SquadTableCard';
+import { PersonCard } from '@/components/team/PersonCard';
 
 export type TimePerson = { id: string; name: string; title: string; avatar: AvatarConfig | null; mainSkill: string; joinedAt: string | null; isMe: boolean; invited: boolean; squadIds: string[] };
 export type TimeSquad = { id: string; name: string; color: string; description?: string; members: { personId: string; crown: boolean }[] };
@@ -95,26 +96,11 @@ export function TimeClient({ user, project, persons, squads, memberDraft: md0, s
             <SquadTableCard key={s.id} href={`/p/${project.id}/squads/${s.id}`} squad={s}
               seats={[...s.members].sort((x, y) => Number(y.crown) - Number(x.crown)).map((m) => ({ avatar: persons.find((p) => p.id === m.personId)?.avatar ?? null, crown: m.crown }))} />
           ))}
-          {shown.map((p) => {
-            const cfg = p.isMe ? { ...DEFAULT_AVATAR_CFG, ...(user.avatar ?? DEFAULT_AVATAR) } : { ...DEFAULT_AVATAR_CFG, ...(p.avatar ?? {}) }; // o dono usa o mesmo avatar do cabeçalho
-            return (
-              <CoopsLink key={p.id} className="coops-m" href={`/p/${project.id}/pessoas/${p.id}`} aria-label={`Abrir ${p.name}`} style={{ color: '#F5F2EC', textDecoration: 'none', borderRadius: 24, background: '#17171D', border: '1.5px solid #2C2C36', overflow: 'hidden', display: 'flex', flexDirection: 'column', minHeight: 360 }}>
-                <div style={{ background: cfg.bg, padding: '16px 16px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, borderBottom: '1.5px solid #0E0E12' }}>
-                  <span style={{ alignSelf: 'stretch', display: 'flex', justifyContent: 'space-between', gap: 8, ...label(11, '0'), color: '#0E0E12' }}>
-                    <span>{(p.squadIds[0] ? squadName(p.squadIds[0]) : 'SEM SQUAD').toUpperCase()}</span><span>{p.isMe ? 'VOCÊ' : tenure(p.joinedAt)}</span>
-                  </span>
-                  <span className="coops-av"><Avatar {...cfg} size={150} label={p.name} /></span>
-                </div>
-                <div style={{ flex: 1, padding: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 4 }}>
-                  <span style={{ fontSize: 20, fontWeight: 700, lineHeight: 1.15 }}>{p.name}</span>
-                  <span style={{ fontSize: 14, color: '#A3A1AD' }}>{p.title || 'Sem cargo ainda'}</span>
-                  {p.mainSkill && <span style={{ marginTop: 10, fontSize: 12, fontWeight: 600, color: '#0E0E12', background: '#F3D36B', borderRadius: 999, padding: '5px 10px' }}>{p.mainSkill}</span>}
-                  {p.invited && <span style={{ marginTop: 8, ...label(10, '0.06em'), color: '#FFC2A6', border: '1.5px dashed #FFC2A6', borderRadius: 999, padding: '4px 8px' }}>CONVITE ENVIADO</span>}
-                  <span role="img" aria-label="4 decks" style={{ marginTop: 'auto', paddingTop: 14, display: 'flex', gap: 4 }}>{['#B7A6FF', '#F3D36B', '#F5A9D6', '#FF8A5B'].map((c) => <span key={c} style={{ width: 10, height: 14, borderRadius: 3, background: c }} />)}</span>
-                </div>
-              </CoopsLink>
-            );
-          })}
+          {shown.map((p) => (
+            <PersonCard key={p.id} href={`/p/${project.id}/pessoas/${p.id}`} ariaLabel={`Abrir ${p.name}`}
+              person={{ id: p.id, name: p.name, title: p.title, mainSkill: p.mainSkill, invited: p.invited, avatar: p.isMe ? { ...DEFAULT_AVATAR_CFG, ...(user.avatar ?? DEFAULT_AVATAR) } : p.avatar }} // o dono usa o mesmo avatar do cabeçalho
+              top={(p.squadIds[0] ? squadName(p.squadIds[0]) : 'SEM SQUAD').toUpperCase()} topRight={p.isMe ? 'VOCÊ' : tenure(p.joinedAt)} />
+          ))}
           <button type="button" onClick={() => setDeck('member')} className="tw-add" style={{ fontFamily: 'inherit', minHeight: 360, borderRadius: 24, background: 'transparent', border: '1.5px dashed #4A4858', color: '#F5F2EC', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, cursor: 'pointer' }}>
             <span style={{ width: 52, height: 52, borderRadius: '50%', border: '1.5px solid #4A4858', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></span>
             <span style={{ fontSize: 17, fontWeight: 600 }}>Adicionar membro</span>
@@ -122,7 +108,7 @@ export function TimeClient({ user, project, persons, squads, memberDraft: md0, s
           </button>
         </div>
       </div>
-      {deck === 'member' && <MemberDeck projectId={project.id} skills={project.skills} draft={memberDraft} onDraftChange={setMemberDraft} onClose={() => setDeck(null)} onSaved={closeAndRefresh} />}
+      {deck === 'member' && <MemberDeck projectId={project.id} skills={project.skills} squads={squads.map((q) => ({ id: q.id, name: q.name, color: q.color }))} defaultSquadId={filter !== 'todos' ? filter : null} draft={memberDraft} onDraftChange={setMemberDraft} onClose={() => setDeck(null)} onSaved={closeAndRefresh} />}
       {deck === 'squad' && <SquadDeck projectId={project.id} persons={persons.map((p) => ({ id: p.id, name: p.name, title: p.title, avatar: p.avatar }))} draft={squadDraft} onDraftChange={setSquadDraft} onClose={() => setDeck(null)} onSaved={closeAndRefresh} />}
     </div>
   );
