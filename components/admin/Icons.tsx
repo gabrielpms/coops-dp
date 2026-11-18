@@ -41,12 +41,13 @@ export const isFinSegment = (segment: string) => /financ|banc|pagament|fintech|s
 export const IconCycle = ({ bg }: { bg: string }) => (
   <svg className="ad-ic" {...base}><rect x="10" y="14" width="44" height="40" rx="4" fill={bg} /><path d="M10 26h44M22 8v10M42 8v10" /><path className="ad-pl" d="M32 34a8 8 0 1 0 8 8M40 36v6h-6" /></svg>
 );
-/** Usuários: bonequinhos se multiplicam atrás do principal e somem (classes `ad-u*` em styles/motion.css). */
+/** Usuários: dois bonequinhos saem de trás do principal e voltam a sumir (`ad-u1`/`ad-u2` em styles/motion.css). */
 export const IconUsers = ({ bg }: { bg: string }) => {
   const person = (<><circle cx="32" cy="22" r="8" fill={bg} /><path d="M17 52c0-10 6.5-16 15-16s15 6 15 16z" fill={bg} /></>);
   return (
     <svg className="ad-ic" {...base}>
-      {['ad-u1', 'ad-u2', 'ad-u3', 'ad-u4'].map((c) => <g key={c} className={`ad-u ${c}`}>{person}</g>)}
+      <g className="ad-u ad-u1">{person}</g>
+      <g className="ad-u ad-u2">{person}</g>
       <g>{person}</g>
     </svg>
   );
