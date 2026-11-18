@@ -105,12 +105,18 @@
 @keyframes adKey{0%,100%{transform:rotate(0)}35%,60%{transform:rotate(-35deg)}}
 .ad-back{transition:transform .2s ease}.ad-back:hover{transform:translateX(-4px)}
 .ad-back:focus-visible,.ad-cta:focus-visible{outline:3px solid #B7A6FF;outline-offset:3px}
-/* Usuários: dois bonequinhos saem de trás do principal e somem de volta atrás dele */
-.ad-u{opacity:0;transform-origin:32px 52px}
-.ad-hv:hover .ad-u1,.ad-hv:focus-visible .ad-u1{animation:adU1 2.2s cubic-bezier(.34,1.4,.64,1) infinite}
-.ad-hv:hover .ad-u2,.ad-hv:focus-visible .ad-u2{animation:adU2 2.2s cubic-bezier(.34,1.4,.64,1) .25s infinite}
-@keyframes adU1{0%,100%{opacity:0;transform:translateX(0) scale(.9)}35%,65%{opacity:1;transform:translateX(-19px) scale(.82)}}
-@keyframes adU2{0%,100%{opacity:0;transform:translateX(0) scale(.9)}35%,65%{opacity:1;transform:translateX(19px) scale(.82)}}
+/* Usuários (mitose): o boneco se divide em dois, cada um em dois, e os quatro voltam a ser um */
+.ad-m{transform-origin:32px 52px}
+.ad-m2,.ad-m3,.ad-m4{opacity:0}
+.ad-hv:hover .ad-m,.ad-hv:focus-visible .ad-m{animation:2.6s cubic-bezier(.34,1.3,.64,1) infinite}
+.ad-hv:hover .ad-m1,.ad-hv:focus-visible .ad-m1{animation-name:adM1}
+.ad-hv:hover .ad-m2,.ad-hv:focus-visible .ad-m2{animation-name:adM2}
+.ad-hv:hover .ad-m3,.ad-hv:focus-visible .ad-m3{animation-name:adM3}
+.ad-hv:hover .ad-m4,.ad-hv:focus-visible .ad-m4{animation-name:adM4}
+@keyframes adM1{0%,12%,100%{transform:translateX(0) scale(1)}32%,40%{transform:translateX(-14px) scale(.84)}58%,76%{transform:translateX(-28px) scale(.66)}92%{transform:translateX(0) scale(1)}}
+@keyframes adM2{0%,38%,100%{opacity:0;transform:translateX(-14px) scale(.84)}40%{opacity:1}58%,76%{opacity:1;transform:translateX(-9px) scale(.66)}90%{opacity:0;transform:translateX(0) scale(1)}}
+@keyframes adM3{0%,12%,100%{opacity:0;transform:translateX(0) scale(1)}14%{opacity:1}32%,40%{opacity:1;transform:translateX(14px) scale(.84)}58%,76%{opacity:1;transform:translateX(9px) scale(.66)}90%{opacity:0;transform:translateX(0) scale(1)}}
+@keyframes adM4{0%,38%,100%{opacity:0;transform:translateX(14px) scale(.84)}40%{opacity:1}58%,76%{opacity:1;transform:translateX(28px) scale(.66)}90%{opacity:0;transform:translateX(0) scale(1)}}
 @media (prefers-reduced-motion:reduce){.ad-hv *,.ad-static *{animation:none!important;transition:none!important}}
 .coops-mban svg{overflow:visible}
 .coops-mban-ring{transition:transform .8s cubic-bezier(.22,1,.36,1)}
