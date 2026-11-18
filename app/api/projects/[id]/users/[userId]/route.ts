@@ -4,6 +4,7 @@ import { adminUserPatchSchema } from '@/lib/validation';
 import { requireManagerOfProject } from '@/lib/team';
 import { hashPassword } from '@/lib/password';
 import { sealSecret } from '@/lib/secret';
+import { placeInSquad, squadInProject } from '@/lib/squadMembership';
 
 type Ctx = { params: Promise<{ id: string; userId: string }> };
 
@@ -27,6 +28,7 @@ export async function PATCH(req: Request, { params }: Ctx) {
   if (isResponse(body)) return body;
   if (body.email && body.email !== t.user.email && (await db.user.findUnique({ where: { email: body.email } }))) return fail(409, 'Esse e-mail já tem uma conta no Coops.');
   if (body.email && body.email !== t.person.email && (await db.person.findFirst({ where: { projectId: id, email: body.email, deletedAt: null, NOT: { id: t.person.id } } }))) return fail(409, 'Já existe uma pessoa com esse e-mail neste projeto.');
+  if (body.squadId && !(await squadInProject(id, body.squadId))) return fail(400, 'Esse squad não existe neste projeto.');
   await db.$transaction([
     db.user.update({ where: { id: userId }, data: {
       ...(body.name !== undefined ? { name: body.name } : {}), ...(body.title !== undefined ? { title: body.title || null } : {}), ...(body.phone !== undefined ? { phone: body.phone || null } : {}),
@@ -36,6 +38,7 @@ export async function PATCH(req: Request, { params }: Ctx) {
     // a carta da pessoa neste projeto acompanha
     db.person.update({ where: { id: t.person.id }, data: { ...(body.name !== undefined ? { name: body.name } : {}), ...(body.title !== undefined ? { title: body.title || null } : {}), ...(body.email ? { email: body.email } : {}), ...(body.avatar ? { avatar: body.avatar } : {}) } }),
   ]);
+  if (body.squadId !== undefined) await db.$transaction((tx) => placeInSquad(tx, id, t.person.id, body.squadId ?? null));
   return json({ ok: true });
 }
 

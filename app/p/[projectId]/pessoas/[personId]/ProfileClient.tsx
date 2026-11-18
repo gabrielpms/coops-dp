@@ -9,6 +9,8 @@ import { EmptyDeckCard } from '@/components/person/EmptyDeckCard';
 import { PiBrain, PiEntregas, PiEventos, PiJornada, PiSaude, PiSkills } from '@/components/person/ProfileIcons';
 import { label } from '@/components/ds/tokens';
 import { firstName, plural, tenureLong } from '@/lib/format';
+import { PersonSquadDeck } from '@/components/team/PersonSquadDeck';
+import type { SquadOpt } from '@/components/team/SquadChoice';
 
 const MONTHS_UP = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
 const qOf = (c: string) => c.split('-')[1] ?? c;
@@ -16,7 +18,8 @@ type PU = { id: string; type: string; name: string; skill: string; frequency: st
 const TYPE_LABEL: Record<string, string> = { MENTORIA: 'MENTORIA', CURSO: 'CURSO', PROJETO: 'PROJETO PARALELO' };
 const STUDY_LABEL: Record<string, string> = { CURSO: 'CURSO', LIVRO: 'LIVRO', VIDEO: 'VÍDEO', ARTIGO: 'ARTIGO', PODCAST: 'PODCAST', LINK: 'LINK' };
 
-export function ProfileClient({ user, project, person, champions, isOwn, isManager, powerUps, skillsSummary, studySummary, deliverySummary, journeySummary, healthSummary, eventSummary, draft: d0 }: {
+export function ProfileClient({ user, project, person, champions, isOwn, isManager, powerUps, skillsSummary, studySummary, deliverySummary, journeySummary, healthSummary, eventSummary, squadOptions, draft: d0 }: {
+  /** squads do projeto (só o manager recebe): alimenta o botão de colocar a pessoa em um squad */ squadOptions: SquadOpt[];
   user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; project: { id: string; name: string; skills: string[] };
   person: { id: string; name: string; title: string; avatar: AvatarConfig | null; mainSkill: string; joinedAt: string | null; createdAt: string; squads: { id: string; name: string; color: string; crown: boolean }[] };
   champions: { id: string; title: string; pct: number; squadId: string; squadName: string }[];
@@ -30,6 +33,7 @@ export function ProfileClient({ user, project, person, champions, isOwn, isManag
 }) {
   const { refresh } = useCoopsRouter();
   const [deck, setDeck] = useState(false);
+  const [squadDeck, setSquadDeck] = useState(false);
   const [draft, setDraft] = useState(d0);
   const [sticky, setSticky] = useState(false);
   const decksRef = useRef<HTMLElement>(null);
@@ -107,6 +111,7 @@ export function ProfileClient({ user, project, person, champions, isOwn, isManag
           <div style={{ position: 'relative', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginTop: 4 }}>
             {pillMain && <span className="h06-pill" style={{ fontSize: 14, fontWeight: 600, color: '#0E0E12', background: '#F3D36B', border: '1.5px solid #0E0E12', borderRadius: 999, padding: '7px 14px' }}>{pillMain}</span>}
             {pillTenure && <span className="h06-pill h06-pill2" style={{ fontSize: 14, fontWeight: 600, color: '#F5F2EC', background: '#0E0E12', borderRadius: 999, padding: '8px 14px' }}>{pillTenure}</span>}
+            {asManager && <button type="button" onClick={() => setSquadDeck(true)} className="coops-card" style={{ fontFamily: 'inherit', fontSize: 14, fontWeight: 600, color: '#0E0E12', background: 'transparent', border: '1.5px dashed #0E0E12', borderRadius: 999, minHeight: 44, padding: '0 16px', cursor: 'pointer' }}>{person.squads.length ? 'Mudar de squad' : '+ Colocar em um squad'}</button>}
           </div>
         </section>
 
@@ -183,6 +188,7 @@ export function ProfileClient({ user, project, person, champions, isOwn, isManag
         </section>
       </div>
       {deck && <PowerUpDeck personId={person.id} personName={person.name} skills={project.skills} draft={draft} onDraftChange={setDraft} onClose={() => setDeck(false)} onSaved={() => { setDeck(false); refresh(); }} />}
+      {squadDeck && asManager && <PersonSquadDeck projectId={project.id} person={{ id: person.id, name: person.name }} squads={squadOptions} currentSquadId={person.squads[0]?.id ?? null} onClose={() => setSquadDeck(false)} onSaved={() => { setSquadDeck(false); refresh(); }} />}
     </div>
   );
 }

@@ -9,16 +9,17 @@ import { AvatarEditor, DEFAULT_AVATAR_CFG } from '../avatar/AvatarEditor';
 import { AccessFields, MIN_PASSWORD } from '../team/AccessFields';
 import { cardInput, chipStyle, darkBtn, label } from '../ds/tokens';
 import { EMAIL_RE, LEADER_TITLES } from '@/lib/validation';
+import { SquadChoice, type SquadOpt } from '../team/SquadChoice';
 
-export type ManagedUser = { id: string; name: string; email: string; title: string; phone: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null; blocked: boolean; /** pessoa do projeto que ainda não tem conta: o id é o da pessoa */ pending?: boolean; /** senha criada pela liderança (vazia se foi a própria pessoa quem criou a dela) */ password?: string };
-type Form = { name: string; title: string; avatar: AvatarConfig; email: string; phone: string; role: 'IC' | 'MANAGER' };
-const LAST = 3;
+export type ManagedUser = { id: string; name: string; email: string; title: string; phone: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null; blocked: boolean; /** squad atual (um só por pessoa) */ squadId: string | null; /** pessoa do projeto que ainda não tem conta: o id é o da pessoa */ pending?: boolean; /** senha criada pela liderança (vazia se foi a própria pessoa quem criou a dela) */ password?: string };
+type Form = { name: string; title: string; avatar: AvatarConfig; email: string; phone: string; role: 'IC' | 'MANAGER'; squadId: string | null };
+const LAST = 4;
 const TAG = 'USUÁRIO · EDITAR';
 
 /** Manager edita um usuário do projeto no mesmo fluxo de "Meus dados": uma carta por vez, do nome ao resumo. */
-export function AdminUserDeck({ projectId, user, onClose, onSaved }: { projectId: string; user: ManagedUser; onClose: () => void; onSaved: () => void }) {
+export function AdminUserDeck({ projectId, user, squads, onClose, onSaved }: { projectId: string; user: ManagedUser; squads: SquadOpt[]; onClose: () => void; onSaved: () => void }) {
   const pending = !!user.pending;
-  const start: Form = { name: user.name, title: user.title, avatar: { ...DEFAULT_AVATAR_CFG, ...(user.avatar ?? {}) }, email: user.email, phone: user.phone, role: user.role };
+  const start: Form = { name: user.name, title: user.title, avatar: { ...DEFAULT_AVATAR_CFG, ...(user.avatar ?? {}) }, email: user.email, phone: user.phone, role: user.role, squadId: user.squadId };
   const d = useDeckDraft<Form>({ scope: 'auser', entityId: user.id, empty: start, last: LAST, persist: false });
   const { form, set } = d;
   const [password, setPassword] = useState(user.password ?? ''); // fica só no estado: nunca vai para rascunho
@@ -39,13 +40,13 @@ export function AdminUserDeck({ projectId, user, onClose, onSaved }: { projectId
     } catch { setServerError('Sem conexão. Tente de novo.'); return false; } finally { setBusy(false); }
   };
   const submit = async () => {
-    const body = { name: form.name.trim(), title: form.title.trim(), email: form.email.trim(), role: form.role, avatar: form.avatar, ...(pending ? {} : { phone: form.phone.trim() }), ...(password && password !== (user.password ?? '') ? { password } : {}) };
+    const body = { name: form.name.trim(), title: form.title.trim(), email: form.email.trim(), role: form.role, avatar: form.avatar, ...(form.squadId !== user.squadId ? { squadId: form.squadId } : {}), ...(pending ? {} : { phone: form.phone.trim() }), ...(password && password !== (user.password ?? '') ? { password } : {}) };
     if (await call(pending ? 'POST' : 'PATCH', body)) { d.done(); onSaved(); }
   };
   const validate = (to: number) => {
     if (to > 0 && !form.name.trim()) return { at: 0, flags: { name: true } };
-    if (to > 2 && !EMAIL_RE.test(form.email.trim())) return { at: 2, flags: { email: true } };
-    if (to > 2 && (pending || password) && password.length < MIN_PASSWORD) return { at: 2, flags: { password: true } };
+    if (to > 3 && !EMAIL_RE.test(form.email.trim())) return { at: 3, flags: { email: true } };
+    if (to > 3 && (pending || password) && password.length < MIN_PASSWORD) return { at: 3, flags: { password: true } };
     return null;
   };
   const go = (k: number) => {
@@ -72,7 +73,7 @@ export function AdminUserDeck({ projectId, user, onClose, onSaved }: { projectId
         {([['IC', 'IC'], ['MANAGER', 'Manager']] as const).map(([k, t]) => <button key={k} type="button" role="radio" aria-checked={form.role === k} className="tw-chip" onClick={() => set({ role: k })} style={chipStyle(form.role === k)}>{t}</button>)}
       </div>
       <div style={{ marginTop: 'auto', borderTop: '1.5px solid #0E0E12', paddingTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <span style={label(11, '0.08em')}>{pending ? 'SEM ACESSO · CRIE A SENHA NO PASSO 3' : user.blocked ? 'ACESSO BLOQUEADO' : 'ACESSO LIBERADO'}</span>
+        <span style={label(11, '0.08em')}>{pending ? 'SEM ACESSO · CRIE A SENHA NO PASSO 4' : user.blocked ? 'ACESSO BLOQUEADO' : 'ACESSO LIBERADO'}</span>
         {!confirmDel ? (
           <span style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {!pending && <button type="button" disabled={busy} onClick={toggleBlock} style={{ ...darkBtn, minHeight: 44 }}>{user.blocked ? 'Desbloquear acesso' : 'Bloquear acesso'}</button>}
@@ -90,6 +91,10 @@ export function AdminUserDeck({ projectId, user, onClose, onSaved }: { projectId
       </div>
     </>) },
     { id: 'avatar', bg: '#F5F2EC', node: (<><Title>Monte o avatar</Title><Help>Ele aparece no topo da plataforma, no perfil e nos decks.</Help><AvatarEditor value={form.avatar} onChange={(avatar) => set({ avatar })} /></>) },
+    { id: 'squad', bg: '#8FE3C8', node: (<>
+      <Title>Em qual squad {first} fica?</Title><Help>{squads.length ? 'A pessoa senta à mesa do squad escolhido. Quem já estava em outro squad muda para este.' : 'Ainda não há squads neste projeto. Crie um na tela Time.'}</Help>
+      <SquadChoice squads={squads} value={form.squadId} onChange={(id) => set({ squadId: id })} />
+    </>) },
     { id: 'acesso', bg: '#A9D8F5', node: (<>
       <Title>Qual o acesso de {first}?</Title><Help>{pending ? 'Crie a senha para liberar o login e passe o e-mail e a senha para a pessoa.' : 'A pessoa entra com este e-mail e esta senha. A senha fica registrada aqui; mude para redefinir.'}</Help>
       <input type="email" aria-label="E-mail" autoComplete="off" value={form.email} onChange={(e) => { set({ email: e.target.value }); setErrs((x) => ({ ...x, email: false })); }} style={cardInput} />
@@ -104,7 +109,7 @@ export function AdminUserDeck({ projectId, user, onClose, onSaved }: { projectId
         <span style={{ lineHeight: 0, borderRadius: '50%', border: '2px solid #0E0E12' }} aria-hidden="true"><Avatar {...form.avatar} crown={form.role === 'MANAGER'} size={120} label="" /></span>
         <div style={{ flex: '1 1 220px', display: 'flex', flexDirection: 'column', gap: 8 }}>
           <SummaryRow k="NOME" v={form.name || '—'} /><SummaryRow k="CARGO" v={form.title || 'Sem cargo'} /><SummaryRow k="E-MAIL" v={form.email || '—'} />
-          <SummaryRow k="PAPEL" v={form.role === 'MANAGER' ? 'Manager' : 'IC'} /><SummaryRow k="SENHA" v={!password ? (pending ? '—' : 'Definida pela própria pessoa') : password !== (user.password ?? '') ? 'Será definida ao salvar' : 'Continua a atual'} />
+          <SummaryRow k="SQUAD" v={squads.find((q) => q.id === form.squadId)?.name ?? 'Sem squad'} /><SummaryRow k="PAPEL" v={form.role === 'MANAGER' ? 'Manager' : 'IC'} /><SummaryRow k="SENHA" v={!password ? (pending ? '—' : 'Definida pela própria pessoa') : password !== (user.password ?? '') ? 'Será definida ao salvar' : 'Continua a atual'} />
         </div>
       </div>
     </>) },
