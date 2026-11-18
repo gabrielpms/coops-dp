@@ -1,93 +1,119 @@
 'use client';
 import { useState } from 'react';
 import { BottomSheet } from '../sheet/BottomSheet';
-import { AvatarEditor, DEFAULT_AVATAR_CFG } from '../avatar/AvatarEditor';
+import { QuestionDeck, type DeckCard } from '../wizard/QuestionDeck';
+import { useDeckDraft } from '../wizard/useDeckDraft';
+import { Err, Help, SummaryRow, Title } from '../wizard/parts';
 import { Avatar, type AvatarConfig } from '../avatar/Avatar';
+import { AvatarEditor, DEFAULT_AVATAR_CFG } from '../avatar/AvatarEditor';
 import { AccessFields, MIN_PASSWORD } from '../team/AccessFields';
-import { cardInput, darkBtn, label } from '../ds/tokens';
-import { EMAIL_RE } from '@/lib/validation';
+import { cardInput, chipStyle, darkBtn, label } from '../ds/tokens';
+import { EMAIL_RE, LEADER_TITLES } from '@/lib/validation';
 
 export type ManagedUser = { id: string; name: string; email: string; title: string; phone: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null; blocked: boolean; /** pessoa do projeto que ainda não tem conta: o id é o da pessoa */ pending?: boolean };
+type Form = { name: string; title: string; avatar: AvatarConfig; email: string; phone: string; role: 'IC' | 'MANAGER' };
+const LAST = 5;
+const TAG = 'USUÁRIO · EDITAR';
 
-const field = { ...cardInput, background: '#17171D', color: '#F5F2EC', border: '1.5px solid #2C2C36', minHeight: 48 } as const;
-const sec = { display: 'flex', flexDirection: 'column', gap: 8 } as const;
-
-/** Manager edita tudo de um usuário do projeto: dados, papel, senha, bloqueio de acesso e exclusão. */
+/** Manager edita um usuário do projeto no mesmo fluxo de "Meus dados": uma carta por vez, do nome ao resumo. */
 export function AdminUserDeck({ projectId, user, onClose, onSaved }: { projectId: string; user: ManagedUser; onClose: () => void; onSaved: () => void }) {
-  const [f, setF] = useState({ name: user.name, email: user.email, title: user.title, phone: user.phone, role: user.role, avatar: { ...DEFAULT_AVATAR_CFG, ...(user.avatar ?? {}) } as AvatarConfig });
-  const [password, setPassword] = useState('');
-  const [busy, setBusy] = useState<null | 'save' | 'block' | 'delete'>(null);
-  const [err, setErr] = useState<string | null>(null);
-  const [confirmDel, setConfirmDel] = useState(false);
-  const [pwErr, setPwErr] = useState(false);
   const pending = !!user.pending;
+  const start: Form = { name: user.name, title: user.title, avatar: { ...DEFAULT_AVATAR_CFG, ...(user.avatar ?? {}) }, email: user.email, phone: user.phone, role: user.role };
+  const d = useDeckDraft<Form>({ scope: 'auser', entityId: user.id, empty: start, last: LAST, persist: false });
+  const { form, set } = d;
+  const [password, setPassword] = useState(''); // fica só no estado: nunca vai para rascunho
+  const [errs, setErrs] = useState<{ name?: boolean; email?: boolean; password?: boolean }>({});
+  const [busy, setBusy] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [confirmDel, setConfirmDel] = useState(false);
+  const first = user.name.split(' ')[0];
   const url = pending ? `/api/projects/${projectId}/people/${user.id}/account` : `/api/projects/${projectId}/users/${user.id}`;
-  const call = async (kind: 'save' | 'block' | 'delete', method: 'PATCH' | 'POST' | 'DELETE', body?: object) => {
-    setBusy(kind); setErr(null);
+
+  const call = async (method: 'PATCH' | 'POST' | 'DELETE', body?: object) => {
+    setBusy(true); setServerError(null);
     try {
       const r = await fetch(url, { method, headers: { 'content-type': 'application/json' }, ...(body ? { body: JSON.stringify(body) } : {}) });
-      const d = await r.json().catch(() => ({}));
-      if (!r.ok) { setErr(d.error ?? 'Não deu para salvar. Tente de novo.'); return; }
-      onSaved();
-    } catch { setErr('Sem conexão. Tente de novo.'); } finally { setBusy(null); }
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) { setServerError(data.error ?? 'Não deu para salvar. Tente de novo.'); return false; }
+      return true;
+    } catch { setServerError('Sem conexão. Tente de novo.'); return false; } finally { setBusy(false); }
   };
-  const save = () => {
-    if (!f.name.trim()) { setErr('Escreva o nome.'); return; }
-    if (!EMAIL_RE.test(f.email.trim())) { setErr('Coloque um e-mail válido.'); return; }
-    if ((pending || password) && password.length < MIN_PASSWORD) { setPwErr(true); return; }
-    void call('save', pending ? 'POST' : 'PATCH', { name: f.name.trim(), email: f.email.trim(), title: f.title.trim(), phone: f.phone.trim(), role: f.role, avatar: f.avatar, ...(password ? { password } : {}) });
+  const submit = async () => {
+    const body = { name: form.name.trim(), title: form.title.trim(), email: form.email.trim(), role: form.role, avatar: form.avatar, ...(pending ? {} : { phone: form.phone.trim() }), ...(password ? { password } : {}) };
+    if (await call(pending ? 'POST' : 'PATCH', body)) { d.done(); onSaved(); }
   };
-  return (
-    <BottomSheet tag="DADOS · USUÁRIO" title={user.name} sub={pending ? 'Esta pessoa ainda não tem acesso. Crie uma senha para liberar o login.' : 'Edite tudo, redefina a senha, bloqueie o acesso ou exclua.'} onClose={onClose}>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 28, alignItems: 'flex-start' }}>
-        <div style={{ flex: '1 1 340px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div style={sec}><label htmlFor="au-nome" style={label()}>NOME</label><input id="au-nome" type="text" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} style={field} /></div>
-          <div style={sec}><label htmlFor="au-email" style={label()}>E-MAIL DE ACESSO</label><input id="au-email" type="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} style={field} /></div>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <div style={{ ...sec, flex: '1 1 180px' }}><label htmlFor="au-cargo" style={label()}>CARGO</label><input id="au-cargo" type="text" value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} style={field} /></div>
-            {!pending && <div style={{ ...sec, flex: '1 1 180px' }}><label htmlFor="au-tel" style={label()}>TELEFONE</label><input id="au-tel" type="tel" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} style={field} /></div>}
-          </div>
-          <div style={sec}>
-            <span style={label()}>PAPEL</span>
-            <div role="radiogroup" aria-label="Papel" style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              {([['IC', 'IC', 'Vê e edita os próprios decks'], ['MANAGER', 'Manager', 'Gerencia time, squads e iniciativas']] as const).map(([k, t, h]) => { const on = f.role === k; return (
-                <button key={k} type="button" role="radio" aria-checked={on} onClick={() => setF({ ...f, role: k })} style={{ fontFamily: 'inherit', flex: '1 1 200px', minHeight: 72, boxSizing: 'border-box', borderRadius: 14, padding: '10px 14px', textAlign: 'left', cursor: 'pointer', background: on ? '#8FE3C8' : 'transparent', color: on ? '#0E0E12' : '#F5F2EC', border: `2px solid ${on ? '#0E0E12' : '#4A4858'}`, display: 'flex', flexDirection: 'column', gap: 2 }}><b style={{ fontSize: 17 }}>{t}</b><span style={{ fontSize: 12 }}>{h}</span></button>); })}
-            </div>
-          </div>
-          <div style={{ ...sec, borderRadius: 16, background: '#F5F2EC', color: '#0E0E12', padding: 16 }}>
-            <b style={{ fontSize: 15 }}>{pending ? 'Criar senha de acesso' : 'Redefinir senha'}</b>
-            <span style={{ fontSize: 13, lineHeight: 1.4 }}>{pending ? 'Defina a senha e passe o e-mail e a senha para a pessoa entrar.' : 'Deixe em branco para manter a atual. A pessoa passa a entrar com a nova senha.'}</span>
-            <AccessFields id="au-senha" email={f.email.trim()} password={password} onPassword={(v) => { setPassword(v); setPwErr(false); }} error={pwErr} />
-          </div>
-        </div>
-        <div style={{ flex: '0 1 300px', display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center' }}>
-          <span style={{ lineHeight: 0, borderRadius: '50%', border: '2px solid #0E0E12', background: '#F5F2EC' }}><Avatar {...f.avatar} crown={f.role === 'MANAGER'} size={120} label="" /></span>
-          <div style={{ width: '100%' }}><AvatarEditor value={f.avatar} onChange={(avatar) => setF({ ...f, avatar })} /></div>
-        </div>
+  const validate = (to: number) => {
+    if (to > 0 && !form.name.trim()) return { at: 0, flags: { name: true } };
+    if (to > 2 && !EMAIL_RE.test(form.email.trim())) return { at: 2, flags: { email: true } };
+    if (to > 3 && (pending || password) && password.length < MIN_PASSWORD) return { at: 3, flags: { password: true } };
+    return null;
+  };
+  const go = (k: number) => {
+    const to = Math.max(0, k);
+    const e = validate(to > LAST ? 99 : to);
+    if (e) { setErrs(e.flags); d.goTo(e.at); return; }
+    setErrs({});
+    if (to > LAST) { void submit(); return; }
+    d.goTo(to);
+  };
+  const toggleBlock = async () => { if (await call('PATCH', { blocked: !user.blocked })) onSaved(); };
+  const remove = async () => { if (await call('DELETE')) onSaved(); };
+
+  const cards: DeckCard[] = [
+    { id: 'quem', bg: '#8FE3C8', node: (<>
+      <Title>Como {first} aparece no Coops?</Title><Help>Nome e cargo aparecem no hub e nas cartas de liderança.</Help>
+      <input type="text" aria-label="Nome" autoComplete="off" value={form.name} onChange={(e) => { set({ name: e.target.value }); setErrs((x) => ({ ...x, name: false })); }} style={cardInput} />
+      <Err show={errs.name}>Escreva o nome para seguir.</Err>
+      <label htmlFor="au-cargo" style={label()}>CARGO · OPCIONAL</label>
+      <input id="au-cargo" type="text" value={form.title} placeholder="Ex.: Head de Design" onChange={(e) => set({ title: e.target.value })} style={cardInput} />
+      <div role="group" aria-label="Sugestões de cargo" style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{LEADER_TITLES.map((t) => <button key={t} type="button" aria-pressed={form.title === t} className="tw-chip" onClick={() => set({ title: t })} style={chipStyle(form.title === t)}>{t}</button>)}</div>
+    </>) },
+    { id: 'avatar', bg: '#F5F2EC', node: (<><Title>Monte o avatar</Title><Help>Ele aparece no topo da plataforma, no perfil e nos decks.</Help><AvatarEditor value={form.avatar} onChange={(avatar) => set({ avatar })} /></>) },
+    { id: 'email', bg: '#A9D8F5', node: (<>
+      <Title>Qual é o e-mail de {first}?</Title><Help>É por ele que a pessoa entra e recebe os avisos dos projetos.</Help>
+      <input type="email" aria-label="E-mail" autoComplete="off" value={form.email} onChange={(e) => { set({ email: e.target.value }); setErrs((x) => ({ ...x, email: false })); }} style={cardInput} />
+      <Err show={errs.email}>Coloque um e-mail válido para seguir.</Err>
+      {!pending && <><label htmlFor="au-tel" style={label()}>TELEFONE · OPCIONAL</label>
+      <input id="au-tel" type="tel" autoComplete="off" value={form.phone} onChange={(e) => set({ phone: e.target.value })} style={cardInput} /></>}
+    </>) },
+    { id: 'acesso', bg: '#F3D36B', node: (<>
+      <Title>{pending ? `Qual o acesso de ${first}?` : `Papel e senha de ${first}`}</Title>
+      <Help>{pending ? 'Crie a senha para liberar o login e passe o e-mail e a senha para a pessoa.' : 'Escolha o papel. A senha só muda se você escrever uma nova; em branco, a atual continua.'}</Help>
+      <div role="radiogroup" aria-label="Papel" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        {([['IC', 'IC'], ['MANAGER', 'Manager']] as const).map(([k, t]) => <button key={k} type="button" role="radio" aria-checked={form.role === k} className="tw-chip" onClick={() => set({ role: k })} style={chipStyle(form.role === k)}>{t}</button>)}
       </div>
-
-      {!pending && <div style={{ borderRadius: 16, border: `1.5px ${user.blocked ? 'solid' : 'dashed'} ${user.blocked ? '#FF8A5B' : '#4A4858'}`, padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <span style={{ ...label(11, '0.08em'), color: user.blocked ? '#FF8A5B' : '#A3A1AD' }}>{user.blocked ? 'ACESSO BLOQUEADO' : 'ACESSO LIBERADO'}</span>
-        <span style={{ fontSize: 14, lineHeight: 1.45, color: '#A3A1AD' }}>{user.blocked ? 'Esta pessoa não consegue entrar e qualquer sessão aberta deixa de valer. Os dados dela continuam guardados.' : 'Bloquear impede o login e encerra as sessões abertas, em todos os projetos da conta. Os dados continuam guardados e dá para desbloquear depois.'}</span>
-        <button type="button" disabled={busy !== null} onClick={() => call('block', 'PATCH', { blocked: !user.blocked })} style={{ ...darkBtn, alignSelf: 'flex-start', background: user.blocked ? '#8FE3C8' : 'transparent', color: user.blocked ? '#0E0E12' : '#FF8A5B', border: `1.5px solid ${user.blocked ? '#0E0E12' : '#FF8A5B'}`, minHeight: 48 }}>{busy === 'block' ? 'Salvando…' : user.blocked ? 'Desbloquear acesso' : 'Bloquear acesso'}</button>
-      </div>}
-
-      {err && <span role="alert" style={{ fontSize: 14, fontWeight: 600, color: '#FF8A5B' }}>{err}</span>}
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <button type="button" disabled={busy !== null} onClick={save} style={{ ...darkBtn, background: '#B7A6FF', color: '#0E0E12', minHeight: 48, padding: '0 22px' }}>{busy === 'save' ? 'Salvando…' : pending ? 'Criar acesso' : 'Salvar alterações'}</button>
-          <button type="button" onClick={onClose} style={{ ...darkBtn, background: 'transparent', color: '#F5F2EC', border: '1.5px solid #4A4858', minHeight: 48 }}>Cancelar</button>
-        </div>
-        {!confirmDel ? (
-          <button type="button" onClick={() => setConfirmDel(true)} style={{ ...darkBtn, background: 'transparent', color: '#FF8A5B', border: '1.5px solid #FF8A5B', minHeight: 48 }}>Excluir usuário</button>
-        ) : (
-          <span role="alert" style={{ display: 'inline-flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', fontSize: 14 }}>
-            <span style={{ maxWidth: 320 }}>{pending ? `Isso tira ${user.name.split(' ')[0]} do projeto. Não dá para desfazer.` : `Isso tira ${user.name.split(' ')[0]} do projeto e apaga a conta se ela não estiver em outro projeto. Não dá para desfazer.`}</span>
-            <button type="button" disabled={busy !== null} onClick={() => call('delete', 'DELETE')} style={{ ...darkBtn, background: '#FF8A5B', color: '#0E0E12', minHeight: 48 }}>{busy === 'delete' ? 'Excluindo…' : 'Sim, excluir'}</button>
-            <button type="button" onClick={() => setConfirmDel(false)} style={{ ...darkBtn, background: 'transparent', color: '#F5F2EC', border: '1.5px solid #4A4858', minHeight: 48 }}>Voltar</button>
+      <AccessFields id="au-senha" email={form.email.trim()} password={password} onPassword={(v) => { setPassword(v); setErrs((x) => ({ ...x, password: false })); }} error={errs.password} />
+    </>) },
+    { id: 'situacao', bg: '#F5A9D6', node: (<>
+      <Title>{pending ? 'Esta pessoa ainda não tem acesso' : user.blocked ? 'O acesso está bloqueado' : 'O acesso está liberado'}</Title>
+      <Help>{pending ? 'Ela está no projeto, mas não consegue entrar até você criar a senha.' : user.blocked ? 'Ela não consegue entrar e qualquer sessão aberta deixou de valer. Os dados continuam guardados.' : 'Bloquear impede o login e encerra as sessões abertas, em todos os projetos da conta. Dá para desbloquear depois.'}</Help>
+      {!pending && <button type="button" disabled={busy} onClick={toggleBlock} style={{ ...darkBtn, alignSelf: 'flex-start', minHeight: 48 }}>{user.blocked ? 'Desbloquear acesso' : 'Bloquear acesso'}</button>}
+      {!confirmDel ? (
+        <button type="button" onClick={() => setConfirmDel(true)} style={{ ...darkBtn, alignSelf: 'flex-start', background: 'transparent', color: '#0E0E12', border: '1.5px solid #0E0E12', minHeight: 48 }}>Excluir usuário</button>
+      ) : (
+        <div role="alert" style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 14 }}>
+          <span>{pending ? `Isso tira ${first} do projeto.` : `Isso tira ${first} do projeto e apaga a conta se ela não estiver em outro projeto.`} Não dá para desfazer.</span>
+          <span style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <button type="button" disabled={busy} onClick={remove} style={{ ...darkBtn, minHeight: 48 }}>{busy ? 'Excluindo…' : 'Sim, excluir'}</button>
+            <button type="button" onClick={() => setConfirmDel(false)} style={{ ...darkBtn, background: 'transparent', color: '#0E0E12', border: '1.5px solid #0E0E12', minHeight: 48 }}>Voltar</button>
           </span>
-        )}
+        </div>
+      )}
+    </>) },
+    { id: 'resumo', bg: '#B7A6FF', summary: true, node: (<>
+      <Title>Confere os dados de {first}?</Title><Help>{pending ? 'Ao salvar, a conta é criada e a pessoa já pode entrar.' : 'As mudanças aparecem em todos os projetos da pessoa.'}</Help>
+      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'flex-start' }}>
+        <span style={{ lineHeight: 0, borderRadius: '50%', border: '2px solid #0E0E12' }} aria-hidden="true"><Avatar {...form.avatar} crown={form.role === 'MANAGER'} size={120} label="" /></span>
+        <div style={{ flex: '1 1 220px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <SummaryRow k="NOME" v={form.name || '—'} /><SummaryRow k="CARGO" v={form.title || 'Sem cargo'} /><SummaryRow k="E-MAIL" v={form.email || '—'} />
+          <SummaryRow k="PAPEL" v={form.role === 'MANAGER' ? 'Manager' : 'IC'} /><SummaryRow k="SENHA" v={password ? 'Será definida ao salvar' : pending ? '—' : 'Continua a atual'} />
+        </div>
       </div>
+    </>) },
+  ];
+  return (
+    <BottomSheet tag={TAG} title={`Editar ${user.name}`} onClose={onClose}>
+      <QuestionDeck tag={TAG} cards={cards} step={d.step} onGo={go} busy={busy} busyLabel="Salvando…" error={serverError} nextLabel={d.step === LAST ? (pending ? 'Criar acesso' : 'Salvar dados') : 'Próxima'} />
     </BottomSheet>
   );
 }
