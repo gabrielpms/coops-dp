@@ -3,6 +3,7 @@ import { fail, isResponse, json, parse } from '@/lib/api/http';
 import { adminUserPatchSchema } from '@/lib/validation';
 import { requireManagerOfProject } from '@/lib/team';
 import { hashPassword } from '@/lib/password';
+import { sealSecret } from '@/lib/secret';
 
 type Ctx = { params: Promise<{ id: string; userId: string }> };
 
@@ -30,7 +31,7 @@ export async function PATCH(req: Request, { params }: Ctx) {
     db.user.update({ where: { id: userId }, data: {
       ...(body.name !== undefined ? { name: body.name } : {}), ...(body.title !== undefined ? { title: body.title || null } : {}), ...(body.phone !== undefined ? { phone: body.phone || null } : {}),
       ...(body.email ? { email: body.email } : {}), ...(body.role ? { role: body.role } : {}), ...(body.avatar ? { avatar: body.avatar } : {}),
-      ...(body.password ? { passwordHash: hashPassword(body.password) } : {}), ...(body.blocked !== undefined ? { blockedAt: body.blocked ? new Date() : null } : {}),
+      ...(body.password ? { passwordHash: hashPassword(body.password), accessPassword: sealSecret(body.password) } : {}), ...(body.blocked !== undefined ? { blockedAt: body.blocked ? new Date() : null } : {}),
     } }),
     // a carta da pessoa neste projeto acompanha
     db.person.update({ where: { id: t.person.id }, data: { ...(body.name !== undefined ? { name: body.name } : {}), ...(body.title !== undefined ? { title: body.title || null } : {}), ...(body.email ? { email: body.email } : {}), ...(body.avatar ? { avatar: body.avatar } : {}) } }),
