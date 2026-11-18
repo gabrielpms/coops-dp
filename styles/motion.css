@@ -105,14 +105,12 @@
 @keyframes adKey{0%,100%{transform:rotate(0)}35%,60%{transform:rotate(-35deg)}}
 .ad-back{transition:transform .2s ease}.ad-back:hover{transform:translateX(-4px)}
 .ad-back:focus-visible,.ad-cta:focus-visible{outline:3px solid #B7A6FF;outline-offset:3px}
-/* Usuários: bonequinhos saem de trás do principal, se espalham e somem */
-.ad-u{opacity:0;transform-origin:32px 40px}
-.ad-u1{--ux:-17px;--uy:-4px}.ad-u2{--ux:17px;--uy:-4px}.ad-u3{--ux:-9px;--uy:-12px}.ad-u4{--ux:9px;--uy:-12px}
-.ad-hv:hover .ad-u,.ad-hv:focus-visible .ad-u{animation:adUsr 2s ease-in-out infinite}
-.ad-hv:hover .ad-u2,.ad-hv:focus-visible .ad-u2{animation-delay:.18s}
-.ad-hv:hover .ad-u3,.ad-hv:focus-visible .ad-u3{animation-delay:.5s}
-.ad-hv:hover .ad-u4,.ad-hv:focus-visible .ad-u4{animation-delay:.68s}
-@keyframes adUsr{0%{opacity:0;transform:translate(0,4px) scale(.55)}25%{opacity:1;transform:translate(var(--ux),var(--uy)) scale(.72)}65%{opacity:1;transform:translate(var(--ux),var(--uy)) scale(.72)}100%{opacity:0;transform:translate(calc(var(--ux)*1.25),calc(var(--uy)*1.3)) scale(.6)}}
+/* Usuários: dois bonequinhos saem de trás do principal e somem de volta atrás dele */
+.ad-u{opacity:0;transform-origin:32px 52px}
+.ad-hv:hover .ad-u1,.ad-hv:focus-visible .ad-u1{animation:adU1 2.2s cubic-bezier(.34,1.4,.64,1) infinite}
+.ad-hv:hover .ad-u2,.ad-hv:focus-visible .ad-u2{animation:adU2 2.2s cubic-bezier(.34,1.4,.64,1) .25s infinite}
+@keyframes adU1{0%,100%{opacity:0;transform:translateX(0) scale(.9)}35%,65%{opacity:1;transform:translateX(-19px) scale(.82)}}
+@keyframes adU2{0%,100%{opacity:0;transform:translateX(0) scale(.9)}35%,65%{opacity:1;transform:translateX(19px) scale(.82)}}
 @media (prefers-reduced-motion:reduce){.ad-hv *,.ad-static *{animation:none!important;transition:none!important}}
 .coops-mban svg{overflow:visible}
 .coops-mban-ring{transition:transform .8s cubic-bezier(.22,1,.36,1)}
