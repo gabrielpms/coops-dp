@@ -78,15 +78,12 @@ export function AdminProjectClient({ user, project, categories, looseSkills, lea
           <section aria-label="Usuários da plataforma" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}><h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Usuários</h2><span style={{ fontSize: 14, color: '#A3A1AD' }}>Edite dados e senha, bloqueie o acesso ou exclua</span></div>
             {managedUsers.length === 0 ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
-                {[0, 1].map((i) => (
-                  <div key={i} aria-hidden={i > 0} style={{ minWidth: 0, minHeight: 88, boxSizing: 'border-box', borderRadius: 18, border: '1.5px dashed #2C2C36', padding: 16, display: 'flex', alignItems: 'center', gap: 14, color: '#A3A1AD' }}>
-                    {i === 0 ? (<>
-                      <span aria-hidden="true" style={{ flex: '0 0 52px', height: 52, borderRadius: '50%', border: '1.5px dashed #8FE3C8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8FE3C8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="3.5" /><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" /></svg></span>
-                      <span style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}><span style={{ fontWeight: 600, color: '#F5F2EC' }}>Nenhum outro usuário ainda</span><span style={{ fontSize: 13 }}>Quem você cadastrar no Time ou na Liderança aparece aqui.</span></span>
-                    </>) : <span aria-hidden="true" style={{ flex: '0 0 52px', height: 52, borderRadius: '50%', border: '1.5px dashed #2C2C36' }} />}
-                  </div>
-                ))}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
+                <div style={{ height: 340, boxSizing: 'border-box', borderRadius: 22, border: '1.5px dashed #4A4858', color: '#F5F2EC', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, padding: 20 }}>
+                  <span aria-hidden="true" style={{ width: 52, height: 52, borderRadius: '50%', border: '1.5px solid #4A4858', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="3.5" /><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" /></svg></span>
+                  <span style={{ fontSize: 17, fontWeight: 600 }}>Nenhum outro usuário</span>
+                  <span style={{ fontSize: 13, color: '#A3A1AD', textAlign: 'center' }}>Quem você cadastrar no Time ou na Liderança aparece aqui para editar, bloquear ou excluir</span>
+                </div>
               </div>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
