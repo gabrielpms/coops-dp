@@ -29,6 +29,7 @@ model User {
   email          String   @unique
   phone          String?
   passwordHash   String? // scrypt; nulo em contas antigas, criadas antes da senha
+  blockedAt      DateTime? // acesso bloqueado por um manager: não entra e as sessões abertas deixam de valer
   role           Role
   onboardingStep Int      @default(1) // 1 conta criada · 2 primeiro projeto · 3 time e iniciativas
   title          String?

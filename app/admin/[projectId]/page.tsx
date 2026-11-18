@@ -17,12 +17,13 @@ export default async function AdminProjectPage({ params }: { params: Promise<{ p
     where: { id: projectId, deletedAt: null, OR: [{ ownerId: u.id }, { persons: { some: { userId: u.id, deletedAt: null } } }] },
     include: { indicators: { orderBy: { position: 'asc' } }, competitors: { orderBy: { position: 'asc' } }, skillCategories: { orderBy: { name: 'asc' }, include: { skills: { orderBy: { position: 'asc' } } } }, skills: { orderBy: { position: 'asc' } } },
   });
-  const [project, leaderships, squads, persons, drafts] = await Promise.all([
+  const [project, leaderships, squads, persons, drafts, accounts] = await Promise.all([
     projectQuery,
     db.leadership.findMany({ where: { projectId, deletedAt: null }, orderBy: { createdAt: 'asc' }, include: { person: true, members: true, squads: true } }),
     db.squad.findMany({ where: { projectId, deletedAt: null }, orderBy: { createdAt: 'asc' }, include: { members: true, leaderships: { include: { leadership: { include: { person: true } } } } } }),
     db.person.findMany({ where: { projectId, deletedAt: null }, orderBy: { createdAt: 'asc' }, include: { squads: { include: { squad: true } }, reportsTo: { include: { leadership: { include: { person: true } } } }, leads: true } }),
     readDrafts(u.id, [{ scope: 'leadership', entityId: projectId }, { scope: 'category', entityId: projectId }, { scope: 'pdata', entityId: projectId }, { scope: 'udata', entityId: u.id }]),
+    db.user.findMany({ where: { persons: { some: { projectId, deletedAt: null } } }, orderBy: { createdAt: 'asc' }, select: { id: true, name: true, email: true, title: true, phone: true, role: true, avatar: true, blockedAt: true } }),
   ]);
   if (!project) notFound();
   const active = (l: { leadership: { deletedAt: Date | null } }) => !l.leadership.deletedAt;
@@ -35,6 +36,7 @@ export default async function AdminProjectPage({ params }: { params: Promise<{ p
       leaderships={leaderships.map((l) => ({ id: l.id, personId: l.personId, name: l.person.name, title: l.person.title ?? '', email: l.person.email ?? '', avatar: l.person.avatar as any, squadIds: l.squads.map((s) => s.squadId), memberIds: l.members.map((m) => m.personId), invited: !l.person.userId }))}
       squads={squads.map((s) => ({ id: s.id, name: s.name, color: s.color, personIds: s.members.map((m) => m.personId), leader: s.leaderships.filter(active)[0]?.leadership.person.name ?? null }))}
       people={persons.map((p) => ({ id: p.id, name: p.name, title: p.title ?? '', avatar: p.avatar as any, squadNames: p.squads.filter((m) => !m.squad.deletedAt).map((m) => m.squad.name), leader: p.reportsTo.filter(active)[0]?.leadership.person.name ?? null, isLeaderPerson: !!p.leads && !p.leads.deletedAt, isMe: p.userId === u.id }))}
+      managedUsers={accounts.filter((a) => a.id !== u.id && a.id !== project.ownerId).map((a) => ({ id: a.id, name: a.name, email: a.email, title: a.title ?? '', phone: a.phone ?? '', role: a.role, avatar: a.avatar as any, blocked: !!a.blockedAt }))}
       drafts={{ leadership: drafts[0], category: drafts[1], pdata: drafts[2], udata: drafts[3] }}
     />
   );

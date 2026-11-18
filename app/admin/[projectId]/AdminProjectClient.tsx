@@ -4,6 +4,7 @@ import { AppHeader, DEFAULT_AVATAR } from '@/components/ds/AppHeader';
 import { AdminBanner, AdminCard, AddCard, type BannerView } from '@/components/admin/AdminBanner';
 import { AvatarIcon, IconBars, IconBino, IconBuild, IconCycle, IconDeck } from '@/components/admin/Icons';
 import { CycleDeck } from '@/components/admin/CycleDeck';
+import { AdminUserDeck, type ManagedUser } from '@/components/admin/AdminUserDeck';
 import { CYCLE_NAME, type CycleMonths } from '@/lib/cycles';
 import { UserDeck, type UserData, type UserDraft } from '@/components/admin/UserDeck';
 import { ProjectDataDeck, type ProjectDataDraft } from '@/components/admin/ProjectDataDeck';
@@ -14,11 +15,12 @@ import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
 import { useCoopsRouter } from '@/components/nav/useCoopsRouter';
 
 type Tab = 'lid' | 'hab' | 'dados';
-type Deck = { kind: 'user' } | { kind: 'cycles' } | { kind: 'lead'; editing: LeadershipView | null } | { kind: 'cat'; editing: CategoryView | null } | { kind: 'dados'; step: number };
+type Deck = { kind: 'user' } | { kind: 'muser'; user: ManagedUser } | { kind: 'cycles' } | { kind: 'lead'; editing: LeadershipView | null } | { kind: 'cat'; editing: CategoryView | null } | { kind: 'dados'; step: number };
 const plural = (n: number, a: string, b: string) => (n === 1 ? a : b);
 const pad = (n: number) => String(n).padStart(2, '0');
 
-export function AdminProjectClient({ user, project, categories, looseSkills, leaderships, squads, people, drafts }: {
+export function AdminProjectClient({ user, project, categories, looseSkills, leaderships, squads, people, drafts, managedUsers }: {
+  managedUsers: ManagedUser[];
   user: UserData; project: { id: string; name: string; segment: string; indicators: string[]; competitors: string[]; cycleMonths: CycleMonths }; categories: CategoryView[]; looseSkills: string[];
   leaderships: LeadershipView[]; squads: LeadSquad[]; people: LeadPerson[]; drafts: { leadership: LeadershipDraft | null; category: CategoryDraft | null; pdata: ProjectDataDraft | null; udata: UserDraft | null };
 }) {
@@ -72,11 +74,32 @@ export function AdminProjectClient({ user, project, categories, looseSkills, lea
             <AdminCard bg="#8FE3C8" icon={<IconCycle bg="#8FE3C8" />} big={String(project.cycleMonths).padStart(2, '0')} bigLabel="MESES" kicker="CICLOS" title="Duração dos ciclos" foot={`${CYCLE_NAME[project.cycleMonths]} · o histórico guarda cada ciclo`} aria="Editar a duração dos ciclos" onClick={() => setDeck({ kind: 'cycles' })} />
           </>}
         </div>
+        {tab === 'dados' && (
+          <section aria-label="Usuários da plataforma" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}><h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Usuários</h2><span style={{ fontSize: 14, color: '#A3A1AD' }}>Edite dados e senha, bloqueie o acesso ou exclua</span></div>
+            {managedUsers.length === 0 ? <div style={{ borderRadius: 18, border: '1.5px dashed #4A4858', padding: '16px 18px', color: '#A3A1AD', fontSize: 15 }}>Ainda não há outros usuários com acesso a este projeto. Quem você cadastrar no Time ou na Liderança aparece aqui.</div> : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
+                {managedUsers.map((m) => (
+                  <button key={m.id} type="button" onClick={() => setDeck({ kind: 'muser', user: m })} aria-label={`Editar o usuário ${m.name}`} className="coops-pu" style={{ fontFamily: 'inherit', textAlign: 'left', color: '#F5F2EC', minWidth: 0, borderRadius: 18, background: '#17171D', border: `1px solid ${m.blocked ? '#FF8A5B' : '#2C2C36'}`, padding: 16, display: 'flex', gap: 14, alignItems: 'center', cursor: 'pointer' }}>
+                    <span style={{ lineHeight: 0, borderRadius: '50%', border: '2px solid #0E0E12', flex: 'none', opacity: m.blocked ? 0.5 : 1 }}><Avatar {...DEFAULT_AVATAR_CFG} {...(m.avatar ?? {})} crown={m.role === 'MANAGER'} size={52} label="" /></span>
+                    <span style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 3 }}>
+                      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.08em', color: m.blocked ? '#FF8A5B' : '#8FE3C8' }}>{m.role === 'MANAGER' ? 'MANAGER' : 'IC'} · {m.blocked ? 'BLOQUEADO' : 'ATIVO'}</span>
+                      <b style={{ fontSize: 16, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.name}</b>
+                      <span style={{ fontSize: 13, color: '#A3A1AD', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.email}</span>
+                    </span>
+                    <span aria-hidden="true" style={{ color: '#A3A1AD' }}>→</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
         {tab === 'hab' && looseSkills.length > 0 && (
           <p style={{ margin: 0, fontSize: 14, color: '#A3A1AD', lineHeight: 1.5 }}>{looseSkills.length} {plural(looseSkills.length, 'skill do projeto está', 'skills do projeto estão')} sem categoria: {looseSkills.join(', ')}.</p>
         )}
       </div>
 
+      {deck?.kind === 'muser' && <AdminUserDeck key={deck.user.id} projectId={project.id} user={deck.user} onClose={() => setDeck(null)} onSaved={done} />}
       {deck?.kind === 'cycles' && <CycleDeck projectId={project.id} current={project.cycleMonths} onClose={() => setDeck(null)} onSaved={done} />}
       {deck?.kind === 'user' && <UserDeck user={user} draft={dUser} onDraftChange={setDUser} onClose={() => setDeck(null)} onSaved={done} />}
       {deck?.kind === 'lead' && <LeadershipDeck key={deck.editing?.id ?? 'new'} projectId={project.id} editing={deck.editing} squads={squads} people={people} draft={dLead} onDraftChange={setDLead} onClose={() => setDeck(null)} onSaved={done} />}
