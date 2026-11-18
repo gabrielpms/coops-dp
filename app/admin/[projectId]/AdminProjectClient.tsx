@@ -77,7 +77,13 @@ export function AdminProjectClient({ user, project, categories, looseSkills, lea
         {tab === 'dados' && (
           <section aria-label="Usuários da plataforma" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}><h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Usuários</h2><span style={{ fontSize: 14, color: '#A3A1AD' }}>Edite dados e senha, bloqueie o acesso ou exclua</span></div>
-            {managedUsers.length === 0 ? <div style={{ borderRadius: 18, border: '1.5px dashed #4A4858', padding: '16px 18px', color: '#A3A1AD', fontSize: 15 }}>Ainda não há outros usuários com acesso a este projeto. Quem você cadastrar no Time ou na Liderança aparece aqui.</div> : (
+            {managedUsers.length === 0 ? (
+              <div style={{ boxSizing: 'border-box', minHeight: 200, borderRadius: 22, border: '1.5px dashed #4A4858', color: '#F5F2EC', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, padding: 20, textAlign: 'center' }}>
+                <span style={{ width: 52, height: 52, borderRadius: '50%', border: '1.5px solid #4A4858', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#A3A1AD' }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M17 4.5a3.5 3.5 0 0 1 0 7M21.5 20c0-2.6-1.4-4.6-3.5-5.6" /></svg></span>
+                <span style={{ fontSize: 17, fontWeight: 600 }}>Nenhum outro usuário ainda</span>
+                <span style={{ fontSize: 13, color: '#A3A1AD', maxWidth: 360 }}>Quem você cadastrar no Time ou na Liderança aparece aqui para editar, bloquear ou excluir.</span>
+              </div>
+            ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
                 {managedUsers.map((m) => (
                   <button key={m.id} type="button" onClick={() => setDeck({ kind: 'muser', user: m })} aria-label={`Editar o usuário ${m.name}`} className="coops-pu" style={{ fontFamily: 'inherit', textAlign: 'left', color: '#F5F2EC', minWidth: 0, borderRadius: 18, background: '#17171D', border: `1px solid ${m.blocked ? '#FF8A5B' : '#2C2C36'}`, padding: 16, display: 'flex', gap: 14, alignItems: 'center', cursor: 'pointer' }}>
