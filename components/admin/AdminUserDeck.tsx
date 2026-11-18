@@ -10,9 +10,9 @@ import { AccessFields, MIN_PASSWORD } from '../team/AccessFields';
 import { cardInput, chipStyle, darkBtn, label } from '../ds/tokens';
 import { EMAIL_RE, LEADER_TITLES } from '@/lib/validation';
 
-export type ManagedUser = { id: string; name: string; email: string; title: string; phone: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null; blocked: boolean; /** pessoa do projeto que ainda não tem conta: o id é o da pessoa */ pending?: boolean };
+export type ManagedUser = { id: string; name: string; email: string; title: string; phone: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null; blocked: boolean; /** pessoa do projeto que ainda não tem conta: o id é o da pessoa */ pending?: boolean; /** senha criada pela liderança (vazia se foi a própria pessoa quem criou a dela) */ password?: string };
 type Form = { name: string; title: string; avatar: AvatarConfig; email: string; phone: string; role: 'IC' | 'MANAGER' };
-const LAST = 5;
+const LAST = 3;
 const TAG = 'USUÁRIO · EDITAR';
 
 /** Manager edita um usuário do projeto no mesmo fluxo de "Meus dados": uma carta por vez, do nome ao resumo. */
@@ -21,7 +21,7 @@ export function AdminUserDeck({ projectId, user, onClose, onSaved }: { projectId
   const start: Form = { name: user.name, title: user.title, avatar: { ...DEFAULT_AVATAR_CFG, ...(user.avatar ?? {}) }, email: user.email, phone: user.phone, role: user.role };
   const d = useDeckDraft<Form>({ scope: 'auser', entityId: user.id, empty: start, last: LAST, persist: false });
   const { form, set } = d;
-  const [password, setPassword] = useState(''); // fica só no estado: nunca vai para rascunho
+  const [password, setPassword] = useState(user.password ?? ''); // fica só no estado: nunca vai para rascunho
   const [errs, setErrs] = useState<{ name?: boolean; email?: boolean; password?: boolean }>({});
   const [busy, setBusy] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
@@ -39,13 +39,13 @@ export function AdminUserDeck({ projectId, user, onClose, onSaved }: { projectId
     } catch { setServerError('Sem conexão. Tente de novo.'); return false; } finally { setBusy(false); }
   };
   const submit = async () => {
-    const body = { name: form.name.trim(), title: form.title.trim(), email: form.email.trim(), role: form.role, avatar: form.avatar, ...(pending ? {} : { phone: form.phone.trim() }), ...(password ? { password } : {}) };
+    const body = { name: form.name.trim(), title: form.title.trim(), email: form.email.trim(), role: form.role, avatar: form.avatar, ...(pending ? {} : { phone: form.phone.trim() }), ...(password && password !== (user.password ?? '') ? { password } : {}) };
     if (await call(pending ? 'POST' : 'PATCH', body)) { d.done(); onSaved(); }
   };
   const validate = (to: number) => {
     if (to > 0 && !form.name.trim()) return { at: 0, flags: { name: true } };
     if (to > 2 && !EMAIL_RE.test(form.email.trim())) return { at: 2, flags: { email: true } };
-    if (to > 3 && (pending || password) && password.length < MIN_PASSWORD) return { at: 3, flags: { password: true } };
+    if (to > 2 && (pending || password) && password.length < MIN_PASSWORD) return { at: 2, flags: { password: true } };
     return null;
   };
   const go = (k: number) => {
@@ -67,38 +67,36 @@ export function AdminUserDeck({ projectId, user, onClose, onSaved }: { projectId
       <label htmlFor="au-cargo" style={label()}>CARGO · OPCIONAL</label>
       <input id="au-cargo" type="text" value={form.title} placeholder="Ex.: Head de Design" onChange={(e) => set({ title: e.target.value })} style={cardInput} />
       <div role="group" aria-label="Sugestões de cargo" style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{LEADER_TITLES.map((t) => <button key={t} type="button" aria-pressed={form.title === t} className="tw-chip" onClick={() => set({ title: t })} style={chipStyle(form.title === t)}>{t}</button>)}</div>
-    </>) },
-    { id: 'avatar', bg: '#F5F2EC', node: (<><Title>Monte o avatar</Title><Help>Ele aparece no topo da plataforma, no perfil e nos decks.</Help><AvatarEditor value={form.avatar} onChange={(avatar) => set({ avatar })} /></>) },
-    { id: 'email', bg: '#A9D8F5', node: (<>
-      <Title>Qual é o e-mail de {first}?</Title><Help>É por ele que a pessoa entra e recebe os avisos dos projetos.</Help>
-      <input type="email" aria-label="E-mail" autoComplete="off" value={form.email} onChange={(e) => { set({ email: e.target.value }); setErrs((x) => ({ ...x, email: false })); }} style={cardInput} />
-      <Err show={errs.email}>Coloque um e-mail válido para seguir.</Err>
-      {!pending && <><label htmlFor="au-tel" style={label()}>TELEFONE · OPCIONAL</label>
-      <input id="au-tel" type="tel" autoComplete="off" value={form.phone} onChange={(e) => set({ phone: e.target.value })} style={cardInput} /></>}
-    </>) },
-    { id: 'acesso', bg: '#F3D36B', node: (<>
-      <Title>{pending ? `Qual o acesso de ${first}?` : `Papel e senha de ${first}`}</Title>
-      <Help>{pending ? 'Crie a senha para liberar o login e passe o e-mail e a senha para a pessoa.' : 'Escolha o papel. A senha só muda se você escrever uma nova; em branco, a atual continua.'}</Help>
-      <div role="radiogroup" aria-label="Papel" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      <span style={label()}>PAPEL</span>
+      <div role="radiogroup" aria-label="Papel" style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
         {([['IC', 'IC'], ['MANAGER', 'Manager']] as const).map(([k, t]) => <button key={k} type="button" role="radio" aria-checked={form.role === k} className="tw-chip" onClick={() => set({ role: k })} style={chipStyle(form.role === k)}>{t}</button>)}
       </div>
-      <AccessFields id="au-senha" email={form.email.trim()} password={password} onPassword={(v) => { setPassword(v); setErrs((x) => ({ ...x, password: false })); }} error={errs.password} />
-    </>) },
-    { id: 'situacao', bg: '#F5A9D6', node: (<>
-      <Title>{pending ? 'Esta pessoa ainda não tem acesso' : user.blocked ? 'O acesso está bloqueado' : 'O acesso está liberado'}</Title>
-      <Help>{pending ? 'Ela está no projeto, mas não consegue entrar até você criar a senha.' : user.blocked ? 'Ela não consegue entrar e qualquer sessão aberta deixou de valer. Os dados continuam guardados.' : 'Bloquear impede o login e encerra as sessões abertas, em todos os projetos da conta. Dá para desbloquear depois.'}</Help>
-      {!pending && <button type="button" disabled={busy} onClick={toggleBlock} style={{ ...darkBtn, alignSelf: 'flex-start', minHeight: 48 }}>{user.blocked ? 'Desbloquear acesso' : 'Bloquear acesso'}</button>}
-      {!confirmDel ? (
-        <button type="button" onClick={() => setConfirmDel(true)} style={{ ...darkBtn, alignSelf: 'flex-start', background: 'transparent', color: '#0E0E12', border: '1.5px solid #0E0E12', minHeight: 48 }}>Excluir usuário</button>
-      ) : (
-        <div role="alert" style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 14 }}>
-          <span>{pending ? `Isso tira ${first} do projeto.` : `Isso tira ${first} do projeto e apaga a conta se ela não estiver em outro projeto.`} Não dá para desfazer.</span>
+      <div style={{ marginTop: 'auto', borderTop: '1.5px solid #0E0E12', paddingTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <span style={label(11, '0.08em')}>{pending ? 'SEM ACESSO · CRIE A SENHA NO PASSO 3' : user.blocked ? 'ACESSO BLOQUEADO' : 'ACESSO LIBERADO'}</span>
+        {!confirmDel ? (
           <span style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            <button type="button" disabled={busy} onClick={remove} style={{ ...darkBtn, minHeight: 48 }}>{busy ? 'Excluindo…' : 'Sim, excluir'}</button>
-            <button type="button" onClick={() => setConfirmDel(false)} style={{ ...darkBtn, background: 'transparent', color: '#0E0E12', border: '1.5px solid #0E0E12', minHeight: 48 }}>Voltar</button>
+            {!pending && <button type="button" disabled={busy} onClick={toggleBlock} style={{ ...darkBtn, minHeight: 44 }}>{user.blocked ? 'Desbloquear acesso' : 'Bloquear acesso'}</button>}
+            <button type="button" onClick={() => setConfirmDel(true)} style={{ ...darkBtn, background: 'transparent', color: '#0E0E12', border: '1.5px solid #0E0E12', minHeight: 44 }}>Excluir usuário</button>
           </span>
-        </div>
-      )}
+        ) : (
+          <div role="alert" style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 14 }}>
+            <span>{pending ? `Isso tira ${first} do projeto.` : `Isso tira ${first} do projeto e apaga a conta se ela não estiver em outro projeto.`} Não dá para desfazer.</span>
+            <span style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <button type="button" disabled={busy} onClick={remove} style={{ ...darkBtn, minHeight: 44 }}>{busy ? 'Excluindo…' : 'Sim, excluir'}</button>
+              <button type="button" onClick={() => setConfirmDel(false)} style={{ ...darkBtn, background: 'transparent', color: '#0E0E12', border: '1.5px solid #0E0E12', minHeight: 44 }}>Voltar</button>
+            </span>
+          </div>
+        )}
+      </div>
+    </>) },
+    { id: 'avatar', bg: '#F5F2EC', node: (<><Title>Monte o avatar</Title><Help>Ele aparece no topo da plataforma, no perfil e nos decks.</Help><AvatarEditor value={form.avatar} onChange={(avatar) => set({ avatar })} /></>) },
+    { id: 'acesso', bg: '#A9D8F5', node: (<>
+      <Title>Qual o acesso de {first}?</Title><Help>{pending ? 'Crie a senha para liberar o login e passe o e-mail e a senha para a pessoa.' : 'A pessoa entra com este e-mail e esta senha. A senha fica registrada aqui; mude para redefinir.'}</Help>
+      <input type="email" aria-label="E-mail" autoComplete="off" value={form.email} onChange={(e) => { set({ email: e.target.value }); setErrs((x) => ({ ...x, email: false })); }} style={cardInput} />
+      <Err show={errs.email}>Coloque um e-mail válido para seguir.</Err>
+      <AccessFields id="au-senha" email={form.email.trim()} password={password} onPassword={(v) => { setPassword(v); setErrs((x) => ({ ...x, password: false })); }} error={errs.password} />
+      {!pending && <><label htmlFor="au-tel" style={label()}>TELEFONE · OPCIONAL</label>
+      <input id="au-tel" type="tel" autoComplete="off" value={form.phone} onChange={(e) => set({ phone: e.target.value })} style={cardInput} /></>}
     </>) },
     { id: 'resumo', bg: '#B7A6FF', summary: true, node: (<>
       <Title>Confere os dados de {first}?</Title><Help>{pending ? 'Ao salvar, a conta é criada e a pessoa já pode entrar.' : 'As mudanças aparecem em todos os projetos da pessoa.'}</Help>
@@ -106,7 +104,7 @@ export function AdminUserDeck({ projectId, user, onClose, onSaved }: { projectId
         <span style={{ lineHeight: 0, borderRadius: '50%', border: '2px solid #0E0E12' }} aria-hidden="true"><Avatar {...form.avatar} crown={form.role === 'MANAGER'} size={120} label="" /></span>
         <div style={{ flex: '1 1 220px', display: 'flex', flexDirection: 'column', gap: 8 }}>
           <SummaryRow k="NOME" v={form.name || '—'} /><SummaryRow k="CARGO" v={form.title || 'Sem cargo'} /><SummaryRow k="E-MAIL" v={form.email || '—'} />
-          <SummaryRow k="PAPEL" v={form.role === 'MANAGER' ? 'Manager' : 'IC'} /><SummaryRow k="SENHA" v={password ? 'Será definida ao salvar' : pending ? '—' : 'Continua a atual'} />
+          <SummaryRow k="PAPEL" v={form.role === 'MANAGER' ? 'Manager' : 'IC'} /><SummaryRow k="SENHA" v={!password ? (pending ? '—' : 'Definida pela própria pessoa') : password !== (user.password ?? '') ? 'Será definida ao salvar' : 'Continua a atual'} />
         </div>
       </div>
     </>) },

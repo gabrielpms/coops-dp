@@ -4,6 +4,7 @@ import { leadershipSchema } from '@/lib/validation';
 import { requireManagerOfProject } from '@/lib/team';
 import { setLeadershipLinks } from '@/lib/leadership';
 import { hashPassword } from '@/lib/password';
+import { sealSecret } from '@/lib/secret';
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -50,7 +51,7 @@ export async function POST(req: Request, { params }: Ctx) {
   try {
     const lead = await db.$transaction(async (tx) => {
       const avatar = { ...(body.avatar ?? {}), crown: true };
-      const u = await tx.user.create({ data: { name: body.name, email, passwordHash: hashPassword(password), role: 'MANAGER', onboardingStep: 3, title: body.title || null, avatar } });
+      const u = await tx.user.create({ data: { name: body.name, email, passwordHash: hashPassword(password), accessPassword: sealSecret(password), role: 'MANAGER', onboardingStep: 3, title: body.title || null, avatar } });
       const person = await tx.person.create({ data: { projectId: id, userId: u.id, name: body.name, title: body.title || null, email, avatar } });
       await tx.invite.updateMany({ where: { projectId: id, email, status: 'PENDING' }, data: { status: 'ACCEPTED' } });
       const l = await tx.leadership.create({ data: { projectId: id, personId: person.id } });
