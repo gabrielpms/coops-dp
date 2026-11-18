@@ -93,8 +93,7 @@ export function TimeClient({ user, project, persons, squads, memberDraft: md0, s
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(196px, 1fr))', gap: 20 }}>
           {squads.filter((s) => s.id === filter).map((s) => (
             <SquadTableCard key={s.id} href={`/p/${project.id}/squads/${s.id}`} squad={s}
-              seats={[...[...s.members].sort((x, y) => Number(y.crown) - Number(x.crown)).map((m) => ({ avatar: persons.find((p) => p.id === m.personId)?.avatar ?? null, crown: m.crown })), ...(user.role === 'MANAGER' && !persons.some((p) => p.isMe && s.members.some((m) => m.personId === p.id)) ? [{ avatar: user.avatar ?? null, crown: false }] : [])]}
-              people={s.members.length} extra={user.role === 'MANAGER' && !persons.some((p) => p.isMe && s.members.some((m) => m.personId === p.id))} />
+              seats={[...s.members].sort((x, y) => Number(y.crown) - Number(x.crown)).map((m) => ({ avatar: persons.find((p) => p.id === m.personId)?.avatar ?? null, crown: m.crown }))} />
           ))}
           {shown.map((p) => {
             const cfg = p.isMe ? { ...DEFAULT_AVATAR_CFG, ...(user.avatar ?? DEFAULT_AVATAR) } : { ...DEFAULT_AVATAR_CFG, ...(p.avatar ?? {}) }; // o dono usa o mesmo avatar do cabeçalho
