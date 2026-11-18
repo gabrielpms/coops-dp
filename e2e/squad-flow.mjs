@@ -17,7 +17,7 @@ const ids = await p.evaluate(async (ic) => {
   const other = (await j(`/api/projects/${pr}/squads`, { name: 'Pagamentos', color: '#F3D36B', members: [] })).squad.id;
   return { pr, joana, sq, other };
 }, icEmail);
-await p.goto(`${BASE}/p/${ids.pr}/time`); await p.click('a[aria-label="Abrir a mesa do time Onboarding"]'); await p.waitForURL(`**/squads/${ids.sq}`); await p.waitForSelector('h1:has-text("Onboarding")');
+await p.goto(`${BASE}/p/${ids.pr}/time`); await p.click('button[role="tab"]:has-text("Onboarding")'); await p.click('a[aria-label="Abrir a mesa do time Onboarding"]'); await p.waitForURL(`**/squads/${ids.sq}`); await p.waitForSelector('h1:has-text("Onboarding")');
 console.log('mesa do time com os 6 decks:', await p.locator('section[aria-label="Decks do squad"] a').count());
 await p.screenshot({ path: S + '1-mesa.png' });
 // ---- desafios
