@@ -41,6 +41,13 @@ export const isFinSegment = (segment: string) => /financ|banc|pagament|fintech|s
 export const IconCycle = ({ bg }: { bg: string }) => (
   <svg className="ad-ic" {...base}><rect x="10" y="14" width="44" height="40" rx="4" fill={bg} /><path d="M10 26h44M22 8v10M42 8v10" /><path className="ad-pl" d="M32 34a8 8 0 1 0 8 8M40 36v6h-6" /></svg>
 );
-export const IconUsers = ({ bg }: { bg: string }) => (
-  <svg className="ad-ic" {...base}><circle cx="24" cy="24" r="8" fill={bg} /><path d="M10 52c0-9 6-14 14-14s14 5 14 14z" fill={bg} /><circle className="ad-pl" cx="42" cy="26" r="6" fill={bg} /><path d="M42 38c7 0 12 4 12 11h-12" /></svg>
-);
+/** Usuários: bonequinhos se multiplicam atrás do principal e somem (classes `ad-u*` em styles/motion.css). */
+export const IconUsers = ({ bg }: { bg: string }) => {
+  const person = (<><circle cx="32" cy="22" r="8" fill={bg} /><path d="M17 52c0-10 6.5-16 15-16s15 6 15 16z" fill={bg} /></>);
+  return (
+    <svg className="ad-ic" {...base}>
+      {['ad-u1', 'ad-u2', 'ad-u3', 'ad-u4'].map((c) => <g key={c} className={`ad-u ${c}`}>{person}</g>)}
+      <g>{person}</g>
+    </svg>
+  );
+};
