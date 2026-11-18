@@ -4,8 +4,8 @@ import { Avatar, type AvatarConfig } from '../avatar/Avatar';
 import { CoopsLink } from '../nav/useCoopsRouter';
 import { BannerIcon } from './Icons';
 
-export type BannerView = 'admin' | 'me' | 'lid' | 'hab' | 'dados';
-export const BANNER_BG: Record<BannerView, string> = { admin: '#B7A6FF', me: '#8FE3C8', lid: '#F3D36B', hab: '#F5A9D6', dados: '#A9D8F5' };
+export type BannerView = 'admin' | 'me' | 'lid' | 'hab' | 'dados' | 'usr';
+export const BANNER_BG: Record<BannerView, string> = { usr: '#B7A6FF', admin: '#B7A6FF', me: '#8FE3C8', lid: '#F3D36B', hab: '#F5A9D6', dados: '#A9D8F5' };
 
 /** Banner de deck aberto (`coops-mban`): caixa de ícone, link "← voltar", H1, avatar do usuário e ação. */
 export function AdminBanner({ view, title, desc, back, meAvatar, onMe, cta }: {

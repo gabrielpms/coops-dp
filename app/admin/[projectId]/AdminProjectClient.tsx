@@ -4,8 +4,7 @@ import { AppHeader, DEFAULT_AVATAR } from '@/components/ds/AppHeader';
 import { AdminBanner, AdminCard, AddCard, type BannerView } from '@/components/admin/AdminBanner';
 import { AvatarIcon, IconBars, IconBino, IconBuild, IconCycle, IconDeck, IconUsers } from '@/components/admin/Icons';
 import { CycleDeck } from '@/components/admin/CycleDeck';
-import { AdminUserDeck, type ManagedUser } from '@/components/admin/AdminUserDeck';
-import { UsersDeck } from '@/components/admin/UsersDeck';
+import type { ManagedUser } from '@/components/admin/AdminUserDeck';
 import { CYCLE_NAME, type CycleMonths } from '@/lib/cycles';
 import { UserDeck, type UserData, type UserDraft } from '@/components/admin/UserDeck';
 import { ProjectDataDeck, type ProjectDataDraft } from '@/components/admin/ProjectDataDeck';
@@ -16,7 +15,7 @@ import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
 import { useCoopsRouter } from '@/components/nav/useCoopsRouter';
 
 type Tab = 'lid' | 'hab' | 'dados';
-type Deck = { kind: 'user' } | { kind: 'users' } | { kind: 'muser'; user: ManagedUser } | { kind: 'cycles' } | { kind: 'lead'; editing: LeadershipView | null } | { kind: 'cat'; editing: CategoryView | null } | { kind: 'dados'; step: number };
+type Deck = { kind: 'user' } | { kind: 'cycles' } | { kind: 'lead'; editing: LeadershipView | null } | { kind: 'cat'; editing: CategoryView | null } | { kind: 'dados'; step: number };
 const plural = (n: number, a: string, b: string) => (n === 1 ? a : b);
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -25,7 +24,7 @@ export function AdminProjectClient({ user, project, categories, looseSkills, lea
   user: UserData; project: { id: string; name: string; segment: string; indicators: string[]; competitors: string[]; cycleMonths: CycleMonths }; categories: CategoryView[]; looseSkills: string[];
   leaderships: LeadershipView[]; squads: LeadSquad[]; people: LeadPerson[]; drafts: { leadership: LeadershipDraft | null; category: CategoryDraft | null; pdata: ProjectDataDraft | null; udata: UserDraft | null };
 }) {
-  const { refresh } = useCoopsRouter();
+  const { go, refresh } = useCoopsRouter();
   const [tab, setTab] = useState<Tab>('lid');
   const [deck, setDeck] = useState<Deck | null>(null);
   const [dLead, setDLead] = useState(drafts.leadership);
@@ -73,7 +72,7 @@ export function AdminProjectClient({ user, project, categories, looseSkills, lea
             <AdminCard bg="#F3D36B" icon={<IconBars />} big={pad(project.indicators.length)} bigLabel={project.indicators.length === 1 ? 'INDICADOR' : 'INDICADORES'} kicker="INDICADORES-CHAVE" title="Indicadores-chave" foot={project.indicators.join(', ') || 'Nenhum ainda'} aria="Editar indicadores-chave" onClick={() => setDeck({ kind: 'dados', step: 1 })} />
             <AdminCard bg="#F5A9D6" icon={<IconBino bg="#F5A9D6" />} big={pad(project.competitors.length)} bigLabel={project.competitors.length === 1 ? 'CONCORRENTE' : 'CONCORRENTES'} kicker="MERCADO" title="Concorrentes" foot={project.competitors.join(', ') || 'Nenhum ainda'} aria="Editar concorrentes" onClick={() => setDeck({ kind: 'dados', step: 2 })} />
             <AdminCard bg="#8FE3C8" icon={<IconCycle bg="#8FE3C8" />} big={String(project.cycleMonths).padStart(2, '0')} bigLabel="MESES" kicker="CICLOS" title="Duração dos ciclos" foot={`${CYCLE_NAME[project.cycleMonths]} · o histórico guarda cada ciclo`} aria="Editar a duração dos ciclos" onClick={() => setDeck({ kind: 'cycles' })} />
-            <AdminCard bg="#B7A6FF" icon={<IconUsers bg="#B7A6FF" />} big={pad(managedUsers.length)} bigLabel={managedUsers.length === 1 ? 'USUÁRIO' : 'USUÁRIOS'} kicker="ACESSOS" title="Usuários" foot={managedUsers.map((m) => m.name).join(', ') || 'Edite dados e senha, bloqueie o acesso ou exclua'} aria="Abrir o deck de usuários" onClick={() => setDeck({ kind: 'users' })} />
+            <AdminCard bg="#B7A6FF" icon={<IconUsers bg="#B7A6FF" />} big={pad(managedUsers.length)} bigLabel={managedUsers.length === 1 ? 'USUÁRIO' : 'USUÁRIOS'} kicker="ACESSOS" title="Usuários" foot={managedUsers.map((m) => m.name).join(', ') || 'Edite dados e senha, bloqueie o acesso ou exclua'} aria="Abrir o deck de usuários" onClick={() => go(`/admin/${project.id}/usuarios`)} />
           </>}
         </div>
         {tab === 'hab' && looseSkills.length > 0 && (
@@ -81,8 +80,6 @@ export function AdminProjectClient({ user, project, categories, looseSkills, lea
         )}
       </div>
 
-      {deck?.kind === 'users' && <UsersDeck users={managedUsers} onOpen={(u) => setDeck({ kind: 'muser', user: u })} onClose={() => setDeck(null)} />}
-      {deck?.kind === 'muser' && <AdminUserDeck key={deck.user.id} projectId={project.id} user={deck.user} onClose={() => setDeck({ kind: 'users' })} onSaved={done} />}
       {deck?.kind === 'cycles' && <CycleDeck projectId={project.id} current={project.cycleMonths} onClose={() => setDeck(null)} onSaved={done} />}
       {deck?.kind === 'user' && <UserDeck user={user} draft={dUser} onDraftChange={setDUser} onClose={() => setDeck(null)} onSaved={done} />}
       {deck?.kind === 'lead' && <LeadershipDeck key={deck.editing?.id ?? 'new'} projectId={project.id} editing={deck.editing} squads={squads} people={people} draft={dLead} onDraftChange={setDLead} onClose={() => setDeck(null)} onSaved={done} />}
