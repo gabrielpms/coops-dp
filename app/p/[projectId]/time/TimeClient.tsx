@@ -9,6 +9,7 @@ import { SquadDeck, type SquadDraft } from '@/components/team/SquadDeck';
 import { label } from '@/components/ds/tokens';
 import { SquadTableCard } from '@/components/team/SquadTableCard';
 import { PersonCard } from '@/components/team/PersonCard';
+import { AddToSquadSheet } from '@/components/team/AddToSquadSheet';
 
 export type TimePerson = { id: string; name: string; title: string; avatar: AvatarConfig | null; mainSkill: string; joinedAt: string | null; isMe: boolean; invited: boolean; squadIds: string[] };
 export type TimeSquad = { id: string; name: string; color: string; description?: string; members: { personId: string; crown: boolean }[] };
@@ -27,12 +28,16 @@ export function TimeClient({ user, project, persons, squads, memberDraft: md0, s
 }) {
   const { refresh } = useCoopsRouter();
   const [filter, setFilter] = useState<string>('todos');
-  const [deck, setDeck] = useState<'member' | 'squad' | null>(null);
+  const [deck, setDeck] = useState<'member' | 'squad' | 'pick' | 'memberIn' | null>(null);
   const [memberDraft, setMemberDraft] = useState(md0);
   const [squadDraft, setSquadDraft] = useState(sd0);
 
   const hasOthers = persons.some((p) => !p.isMe);
   const noSquads = squads.length === 0;
+  const curSquad = squads.find((q) => q.id === filter) ?? null;
+  const inSquad = !!curSquad;
+  // com a aba de um squad aberta, adicionar pergunta primeiro: pessoa nova ou usuário já criado
+  const openAdd = () => setDeck(inSquad ? 'pick' : 'member');
   const shown = filter === 'todos' ? persons : persons.filter((p) => p.squadIds.includes(filter));
   const squadName = (id: string) => squads.find((s) => s.id === id)?.name ?? '';
   const closeAndRefresh = () => { setDeck(null); refresh(); };
@@ -63,7 +68,7 @@ export function TimeClient({ user, project, persons, squads, memberDraft: md0, s
           </div>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             <button type="button" onClick={() => setDeck('squad')} style={{ ...btnPrimary, color: '#F5F2EC', background: 'transparent', border: '1.5px solid #4A4858' }}>+ Squad</button>
-            <button type="button" onClick={() => setDeck('member')} style={btnPrimary}>+ Membro</button>
+            <button type="button" onClick={openAdd} style={btnPrimary}>+ Membro</button>
           </div>
         </div>
 
@@ -101,13 +106,16 @@ export function TimeClient({ user, project, persons, squads, memberDraft: md0, s
               person={{ id: p.id, name: p.name, title: p.title, mainSkill: p.mainSkill, invited: p.invited, avatar: p.isMe ? { ...DEFAULT_AVATAR_CFG, ...(user.avatar ?? DEFAULT_AVATAR) } : p.avatar }} // o dono usa o mesmo avatar do cabeçalho
               top={(p.squadIds[0] ? squadName(p.squadIds[0]) : 'SEM SQUAD').toUpperCase()} topRight={p.isMe ? 'VOCÊ' : tenure(p.joinedAt)} />
           ))}
-          <button type="button" onClick={() => setDeck('member')} className="tw-add" style={{ fontFamily: 'inherit', minHeight: 360, borderRadius: 24, background: 'transparent', border: '1.5px dashed #4A4858', color: '#F5F2EC', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, cursor: 'pointer' }}>
+          <button type="button" onClick={openAdd} className="tw-add" style={{ fontFamily: 'inherit', minHeight: 360, borderRadius: 24, background: 'transparent', border: '1.5px dashed #4A4858', color: '#F5F2EC', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, cursor: 'pointer' }}>
             <span style={{ width: 52, height: 52, borderRadius: '50%', border: '1.5px solid #4A4858', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></span>
             <span style={{ fontSize: 17, fontWeight: 600 }}>Adicionar membro</span>
-            <span style={{ fontSize: 13, color: '#A3A1AD' }}>Monte o avatar e envie o convite</span>
+            <span style={{ fontSize: 13, color: '#A3A1AD' }}>{inSquad ? 'Cadastre uma pessoa nova ou escolha um usuário já criado' : 'Monte o avatar e crie o acesso da pessoa'}</span>
           </button>
         </div>
       </div>
+      {deck === 'pick' && curSquad && <AddToSquadSheet projectId={project.id} squad={curSquad} onNew={() => setDeck('memberIn')} onClose={() => setDeck(null)} onSaved={closeAndRefresh}
+        candidates={persons.filter((p) => !curSquad.members.some((m) => m.personId === p.id)).map((p) => ({ id: p.id, name: p.name, title: p.title, avatar: p.isMe ? { ...DEFAULT_AVATAR_CFG, ...(user.avatar ?? DEFAULT_AVATAR) } : p.avatar, mainSkill: p.mainSkill, invited: p.invited, squadName: p.squadIds[0] ? squadName(p.squadIds[0]) : null }))} />}
+      {deck === 'memberIn' && curSquad && <MemberDeck projectId={project.id} skills={project.skills} lockedSquad={{ id: curSquad.id, name: curSquad.name }} draft={memberDraft} onDraftChange={setMemberDraft} onClose={() => setDeck(null)} onSaved={closeAndRefresh} />}
       {deck === 'member' && <MemberDeck projectId={project.id} skills={project.skills} squads={squads.map((q) => ({ id: q.id, name: q.name, color: q.color }))} defaultSquadId={filter !== 'todos' ? filter : null} draft={memberDraft} onDraftChange={setMemberDraft} onClose={() => setDeck(null)} onSaved={closeAndRefresh} />}
       {deck === 'squad' && <SquadDeck projectId={project.id} persons={persons.map((p) => ({ id: p.id, name: p.name, title: p.title, avatar: p.avatar }))} draft={squadDraft} onDraftChange={setSquadDraft} onClose={() => setDeck(null)} onSaved={closeAndRefresh} />}
     </div>
