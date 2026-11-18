@@ -21,7 +21,8 @@ export async function currentUser() {
   try {
     const { payload } = await jwtVerify(token, key());
     if (!payload.sub) return null;
-    return await db.user.findUnique({ where: { id: payload.sub } });
+    const u = await db.user.findUnique({ where: { id: payload.sub } });
+    return u && !u.blockedAt ? u : null; // conta bloqueada: a sessão deixa de valer
   } catch {
     return null;
   }

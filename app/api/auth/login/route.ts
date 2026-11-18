@@ -11,6 +11,7 @@ export async function POST(req: Request) {
   // Mesma resposta (e mesmo custo de tempo) para e-mail inexistente e senha errada.
   const ok = verifyPassword(body.password, user?.passwordHash);
   if (!user || !ok) return fail(401, 'E-mail ou senha incorretos.');
+  if (user.blockedAt) return fail(403, 'Seu acesso está bloqueado. Fale com a liderança do projeto.');
   await createSession(user.id);
   return json({ ok: true, next: '/hub' });
 }
