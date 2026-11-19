@@ -48,7 +48,7 @@ export function UserDeck({ user, draft, onDraftChange, onClose, onSaved }: { use
   };
 
   const cards: DeckCard[] = [
-    { id: 'quem', bg: '#8FE3C8', node: (<>
+    { id: 'quem', size: 'sm', bg: '#8FE3C8', node: (<>
       <Title>Como você aparece no Coops?</Title><Help>Nome e cargo aparecem no hub e nas cartas de liderança.</Help>
       <input type="text" aria-label="Seu nome" autoComplete="name" value={form.name} onChange={(e) => { set({ name: e.target.value }); setErrs((x) => ({ ...x, name: false })); }} style={cardInput} />
       <Err show={errs.name}>Escreva seu nome para seguir.</Err>
@@ -56,8 +56,8 @@ export function UserDeck({ user, draft, onDraftChange, onClose, onSaved }: { use
       <input id="uw-cargo" type="text" value={form.title} placeholder="Ex.: Head de Design" onChange={(e) => set({ title: e.target.value })} style={cardInput} />
       <div role="group" aria-label="Sugestões de cargo" style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{LEADER_TITLES.map((t) => <button key={t} type="button" aria-pressed={form.title === t} className="tw-chip" onClick={() => set({ title: t })} style={chipStyle(form.title === t)}>{t}</button>)}</div>
     </>) },
-    { id: 'avatar', bg: '#F5F2EC', node: (<><Title>Monte o avatar</Title><Help>Ele aparece no topo da plataforma, no seu perfil e nos decks.</Help><AvatarEditor value={form.avatar} onChange={(avatar) => set({ avatar })} /></>) },
-    { id: 'email', bg: '#A9D8F5', node: (<>
+    { id: 'avatar', size: 'lg', bg: '#F5F2EC', node: (<><Title>Monte o avatar</Title><Help>Ele aparece no topo da plataforma, no seu perfil e nos decks.</Help><AvatarEditor value={form.avatar} onChange={(avatar) => set({ avatar })} /></>) },
+    { id: 'email', size: 'sm', bg: '#A9D8F5', node: (<>
       <Title>Qual é o seu e-mail?</Title><Help>É por ele que você entra e recebe os avisos dos projetos.</Help>
       <input type="email" aria-label="Seu e-mail" autoComplete="email" value={form.email} onChange={(e) => { set({ email: e.target.value }); setErrs((x) => ({ ...x, email: false })); }} style={cardInput} />
       <Err show={errs.email}>Coloque um e-mail válido para seguir.</Err>
@@ -65,7 +65,7 @@ export function UserDeck({ user, draft, onDraftChange, onClose, onSaved }: { use
       <label htmlFor="uw-tel" style={label()}>TELEFONE · OPCIONAL</label>
       <input id="uw-tel" type="tel" autoComplete="tel" value={form.phone} onChange={(e) => set({ phone: e.target.value })} style={cardInput} />
     </>) },
-    { id: 'resumo', bg: '#B7A6FF', summary: true, node: (<>
+    { id: 'resumo', size: 'sm', bg: '#B7A6FF', summary: true, node: (<>
       <Title>Confere seus dados?</Title><Help>As mudanças aparecem em todos os projetos.</Help>
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'flex-start' }}>
         <span style={{ lineHeight: 0, borderRadius: '50%', border: '2px solid #0E0E12' }} aria-hidden="true"><Avatar {...form.avatar} size={120} label="" /></span>
