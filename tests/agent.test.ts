@@ -63,6 +63,9 @@ describe('skills do motor', () => {
     const st0 = await skillStatuses(null);
     expect(st0.every((s) => s.status === 'PENDENTE')).toBe(true);
     const h = (await readSkill(ENGINE_SKILLS[0].dir)).hash;
+    const off = await skillStatuses(null, ['metricas']);
+    expect(off.find((s) => s.key === 'metricas')!.enabled).toBe(false);
+    expect(off.find((s) => s.key === 'estrategia')!.enabled).toBe(true);
     const st1 = await skillStatuses({ integrada: { skillId: 'skill_1', displayTitle: 'x', hash: h, uploadedAt: '2026-01-01' }, estrategia: { skillId: 'skill_2', displayTitle: 'y', hash: 'velho', uploadedAt: '2026-01-01' } });
     expect(st1.find((s) => s.key === 'integrada')!.status).toBe('ENVIADA');
     expect(st1.find((s) => s.key === 'estrategia')!.status).toBe('DESATUALIZADA');

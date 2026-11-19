@@ -2,25 +2,27 @@ import { Prisma } from '@prisma/client';
 import { db } from '@/lib/db';
 import { openSecret } from '@/lib/secret';
 import { presignDownload, storageConfigured } from '@/lib/storage';
-import { DEFAULT_MODEL, ENGINE_SKILLS, type StoredSkills } from './catalog';
+import { DEFAULT_MODEL, ENGINE_SKILLS, FRONT_KEYS, type EngineSkillKey, type StoredSkills } from './catalog';
 import { loadRunInput, type RunInput } from './context';
 import { advance, initialState, progress, tokensOf, type Deps, type RunState } from './orchestrator';
 
 export const STEP_LOCK_MS = 320_000;
 const STEP_BUDGET_MS = 290_000;
 
-type Engine = { ok: true; deps: Omit<Deps, 'deadline'> } | { ok: false; code: 'NO_KEY' | 'NO_SKILLS'; message: string };
+type Engine = { ok: true; deps: Omit<Deps, 'deadline'> } | { ok: false; code: 'NO_KEY' | 'NO_SKILLS' | 'NO_FRONTS'; message: string };
 
 /** O motor da iniciativa usa a chave, o modelo e as skills de quem é dono do projeto. */
 export async function engineFor(projectId: string): Promise<Engine> {
-  const project = await db.project.findUnique({ where: { id: projectId }, select: { owner: { select: { anthropicKey: true, anthropicModel: true, anthropicSkills: true } } } });
+  const project = await db.project.findUnique({ where: { id: projectId }, select: { owner: { select: { anthropicKey: true, anthropicModel: true, anthropicSkills: true, anthropicSkillsOff: true } } } });
   const owner = project?.owner;
   const key = openSecret(owner?.anthropicKey);
   if (!owner || !key) return { ok: false, code: 'NO_KEY', message: 'Conecte a chave da Anthropic em Administração › Integrações para o agente analisar.' };
   const stored = (owner.anthropicSkills as StoredSkills | null) ?? {};
-  if (ENGINE_SKILLS.some((s) => !stored[s.key])) return { ok: false, code: 'NO_SKILLS', message: 'Envie as 4 skills do motor em Administração › Integrações.' };
-  const skills = Object.fromEntries(ENGINE_SKILLS.map((s) => [s.key, { skillId: stored[s.key]!.skillId }])) as Deps['skills'];
-  return { ok: true, deps: { key, model: owner.anthropicModel ?? DEFAULT_MODEL, skills, loadFile: loadAttachment } };
+  const off = owner.anthropicSkillsOff;
+  if (FRONT_KEYS.every((k) => off.includes(k))) return { ok: false, code: 'NO_FRONTS', message: 'Ligue ao menos uma frente (heurística, métricas ou estratégia) em Administração › Integrações.' };
+  if (ENGINE_SKILLS.some((s) => !off.includes(s.key) && !stored[s.key])) return { ok: false, code: 'NO_SKILLS', message: 'Envie as skills ligadas do motor em Administração › Integrações.' };
+  const skills = Object.fromEntries(ENGINE_SKILLS.filter((s) => stored[s.key]).map((s) => [s.key, { skillId: stored[s.key]!.skillId }])) as Deps['skills'];
+  return { ok: true, deps: { key, model: owner.anthropicModel ?? DEFAULT_MODEL, skills, off: off.filter((k): k is EngineSkillKey => ENGINE_SKILLS.some((s) => s.key === k)), loadFile: loadAttachment } };
 }
 
 async function loadAttachment(id: string) {

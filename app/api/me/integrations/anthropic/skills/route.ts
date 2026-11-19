@@ -2,7 +2,7 @@ import { db } from '@/lib/db';
 import { fail, isResponse, json, requireUser } from '@/lib/api/http';
 import { openSecret } from '@/lib/secret';
 import { uploadSkill } from '@/lib/agent/anthropic';
-import { ENGINE_SKILLS, isSkillKey, type StoredSkills } from '@/lib/agent/catalog';
+import { ENGINE_SKILLS, FRONT_KEYS, isSkillKey, type StoredSkills } from '@/lib/agent/catalog';
 import { readSkill } from '@/lib/agent/catalog.server';
 import { integrationState } from '@/lib/agent/settings';
 
@@ -31,5 +31,19 @@ export async function POST(req: Request) {
     stored[s.key] = { skillId: r.data.skillId, displayTitle: s.display, hash: file.hash, uploadedAt: new Date().toISOString() };
   }
   const next = await db.user.update({ where: { id: u.id }, data: { anthropicSkills: stored as object } });
+  return json(await integrationState(next));
+}
+
+// Liga ou desliga uma skill do motor (a desligada fica enviada, mas não entra nas análises).
+export async function PATCH(req: Request) {
+  const u = await requireUser();
+  if (isResponse(u)) return u;
+  if (u.role !== 'MANAGER') return fail(403, 'Só managers configuram a integração.');
+  const body = (await req.json().catch(() => null)) as { key?: unknown; enabled?: unknown } | null;
+  if (!body || typeof body.key !== 'string' || !isSkillKey(body.key) || typeof body.enabled !== 'boolean') return fail(400, 'Escolha a skill e se ela fica ligada ou desligada.');
+  const off = new Set(u.anthropicSkillsOff);
+  if (body.enabled) off.delete(body.key); else off.add(body.key);
+  if (FRONT_KEYS.every((k) => off.has(k))) return fail(409, 'Deixe ao menos uma frente ligada: heurística, métricas ou estratégia.');
+  const next = await db.user.update({ where: { id: u.id }, data: { anthropicSkillsOff: [...off] } });
   return json(await integrationState(next));
 }
