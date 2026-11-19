@@ -10,6 +10,10 @@ export default async function MesaPage({ params }: { params: Promise<{ projectId
   const { projectId, id } = await params;
   const u = await currentUser();
   if (!u) redirect('/cadastro');
+  const [done, project] = await Promise.all([
+    db.agentRun.findFirst({ where: { initiativeId: id, status: 'DONE' }, select: { id: true } }),
+    db.project.findUnique({ where: { id: projectId }, select: { ownerId: true } }),
+  ]);
   const i = await db.initiative.findFirst({
     where: { id, projectId, project: accessibleWhere(u.id) },
     include: { contextCards: true, attachments: { where: { uploaded: true }, orderBy: { createdAt: 'asc' } }, doubts: { where: { resolved: true }, orderBy: { position: 'asc' } } },
@@ -20,6 +24,7 @@ export default async function MesaPage({ params }: { params: Promise<{ projectId
     <MesaClient
       user={{ name: u.name, email: u.email, role: u.role, avatar: u.avatar as any }} projectId={projectId}
       initiative={{ id: i.id, product: i.product, problem: i.problem ?? '', need: i.need || i.deducedNeed || '', status: i.status, moment: i.moment, momentReason: i.momentReason ?? '', closeOutcome: i.closeOutcome, closeNote: i.closeNote ?? '' }}
+      hasAnalysis={!!done} isOwner={project?.ownerId === u.id}
       cards={i.contextCards.map((c) => ({ kind: c.kind, text: c.text, links: c.links }))}
       attachments={i.attachments.map((a) => ({ id: a.id, kind: a.kind, name: a.name, size: a.size }))}
       resolved={i.doubts.map((d) => ({ question: d.question, summary: d.summary ?? '' }))}

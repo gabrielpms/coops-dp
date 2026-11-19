@@ -229,6 +229,7 @@ model Initiative {
   contextCards  ContextCard[]
   attachments   Attachment[]
   plays         ToolPlay[]
+  runs          AgentRun[]
   momentReason  String?
   closeOutcome  String? // como terminou (M8.3)
   closeNote     String?
@@ -586,4 +587,25 @@ model ResponseCard {
   updatedAt   DateTime @updatedAt
 
   @@index([playId])
+}
+
+// ---------- Motor de IA das iniciativas (M9): uma execução = uma análise com as skills ----------
+model AgentRun {
+  id           String     @id @default(uuid())
+  initiativeId String
+  initiative   Initiative @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  kind         String     @default("ANALISE")
+  status       String     @default("QUEUED") // QUEUED · RUNNING · DONE · FAILED
+  state        Json // { steps, files, results }: passos, arquivos já enviados à Anthropic e a saída validada de cada passo
+  input        Json? // retrato do contexto no momento da execução (auditoria)
+  model        String?
+  tokensIn     Int        @default(0)
+  tokensOut    Int        @default(0)
+  error        String?
+  lockedAt     DateTime? // evita dois passos ao mesmo tempo na mesma execução
+  createdById  String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([initiativeId, createdAt])
 }
