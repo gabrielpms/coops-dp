@@ -9,11 +9,11 @@ export async function readSkill(dir: string): Promise<{ content: string; hash: s
   return { content, hash: createHash('sha256').update(content).digest('hex').slice(0, 16) };
 }
 
-export async function skillStatuses(stored: StoredSkills | null | undefined) {
+export async function skillStatuses(stored: StoredSkills | null | undefined, off: readonly string[] = []) {
   return Promise.all(ENGINE_SKILLS.map(async (s) => {
     const cur = await readSkill(s.dir).catch(() => null);
     const st = stored?.[s.key];
     const status: SkillStatus = !st ? 'PENDENTE' : cur && cur.hash !== st.hash ? 'DESATUALIZADA' : 'ENVIADA';
-    return { key: s.key, title: s.title, sub: s.sub, status, uploadedAt: st?.uploadedAt ?? null };
+    return { key: s.key, title: s.title, sub: s.sub, status, uploadedAt: st?.uploadedAt ?? null, enabled: !off.includes(s.key) };
   }));
 }

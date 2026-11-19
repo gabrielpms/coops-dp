@@ -18,4 +18,6 @@ export const isModel = (m: string) => MODELS.some((x) => x.id === m);
 
 export type StoredSkill = { skillId: string; displayTitle: string; hash: string; uploadedAt: string };
 export type StoredSkills = Partial<Record<EngineSkillKey, StoredSkill>>;
+/** As frentes de análise (o orquestrador não é uma frente). */
+export const FRONT_KEYS = ['heuristica', 'metricas', 'estrategia'] as const;
 export type SkillStatus = 'ENVIADA' | 'PENDENTE' | 'DESATUALIZADA';

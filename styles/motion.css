@@ -261,3 +261,9 @@
 72%,100%{transform:rotate(0) scale(1,1)}}
 @keyframes zsSp{0%,74%{opacity:0;transform:scale(.5)}82%{opacity:1;transform:scale(1)}94%,100%{opacity:0;transform:scale(1.2)}}
 @media (prefers-reduced-motion:reduce){.zs-t,.zs-m,.zs-b,.zs-sp{animation:none!important}.zs-sp{opacity:0}}
+
+/* chave liga/desliga das skills (Administração › Integrações) */
+.coops-tg:focus-visible{outline:3px solid #0E0E12;outline-offset:3px}
+.coops-tg:not(:disabled):hover{transform:scale(1.06)}
+.coops-tg{transition:transform .18s cubic-bezier(.34,1.56,.64,1),background-color .2s ease}
+@media (prefers-reduced-motion:reduce){.coops-tg{transition:none}}
