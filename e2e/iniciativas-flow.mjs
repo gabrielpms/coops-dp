@@ -47,7 +47,7 @@ await p.click('button:text-is("Editar")'); await p.waitForSelector('[role=dialog
 await p.setInputFiles('input[type=file]', { name: 'a.png', mimeType: 'image/png', buffer: Buffer.from('x') }); await p.waitForSelector('span[role=alert]', { timeout: 15000 });
 console.log('anexo sem S3:', (await p.locator('span[role=alert]').allInnerTexts()).join(' | ')); await p.keyboard.press('Escape'); await p.waitForTimeout(600);
 // momento + deck de ferramentas
-await p.click('button:text-is("Identificar o momento")'); await p.waitForURL('**/momento', { timeout: 10000 }); await p.waitForSelector('h1:has-text("Sua iniciativa está em")');
+await p.click('button:text-is("Analisar com o agente")'); await p.waitForURL('**/momento', { timeout: 10000 }); await p.waitForSelector('h1:has-text("Sua iniciativa está em")');
 console.log('momento:', await p.locator('h1').innerText());
 await p.locator('button[aria-label^="Jogar"]').first().click(); await p.waitForSelector('[role=dialog]');
 await p.waitForSelector('text=0 DE 3 REVISADAS'); ok('deck de resposta abre com 3 cartas', true);

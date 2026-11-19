@@ -1,5 +1,5 @@
 'use client';
-import type { ReactNode } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 import { Avatar, type AvatarConfig } from '../avatar/Avatar';
 import { CoopsLink } from '../nav/useCoopsRouter';
 import { BannerIcon } from './Icons';
@@ -35,7 +35,7 @@ export function AdminBanner({ view, title, desc, back, meAvatar, onMe, cta }: {
 
 /** Carta do deck aberto (340 px): ícone, número grande, rótulo mono, kicker, título e rodapé. */
 export function AdminCard({ bg, icon, big, bigLabel, tag, kicker, title, foot, onClick, aria }: {
-  bg: string; icon: ReactNode; big: string; bigLabel: string; tag?: string; kicker: string; title: string; foot: string; onClick: () => void; aria: string;
+  bg: string; icon: ReactNode; big: string; bigLabel: string; tag?: string; kicker: string; title: string; foot: string; onClick: (e: MouseEvent<HTMLButtonElement>) => void; aria: string;
 }) {
   return (
     <button type="button" onClick={onClick} aria-label={aria} className="coops-card ad-hv" style={{ fontFamily: 'inherit', textAlign: 'left', height: 340, boxSizing: 'border-box', borderRadius: 22, background: bg, color: '#0E0E12', border: '2px solid #0E0E12', padding: 20, display: 'flex', flexDirection: 'column', gap: 10, cursor: 'pointer', boxShadow: '0 16px 36px rgba(0,0,0,0.45)' }}>
