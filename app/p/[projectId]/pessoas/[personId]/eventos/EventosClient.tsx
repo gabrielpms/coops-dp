@@ -23,8 +23,8 @@ const HINT: Record<EventKind, string> = { CHECKIN: 'Conversa 1:1 com resumo, ped
 const longDate = (iso: string) => { const [y, m, d] = iso.split('-').map(Number); return `${d} de ${MONTHS_LONG[m - 1]} de ${y}`; };
 const LS = 'coops.filter.eventos';
 
-export function EventosClient({ user, person, projectId, isOwn, isManager, events, drafts }: {
-  user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; person: { id: string; name: string; avatar: AvatarConfig | null }; projectId: string; isOwn: boolean; isManager: boolean; events: EventView[]; drafts: Record<string, EventDraft | null>;
+export function EventosClient({ user, person, leaderAvatar, projectId, isOwn, isManager, events, drafts }: {
+  user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; person: { id: string; name: string; avatar: AvatarConfig | null }; /** avatar do líder da pessoa (sem líder, o dela mesma) */ leaderAvatar: AvatarConfig | null; projectId: string; isOwn: boolean; isManager: boolean; events: EventView[]; drafts: Record<string, EventDraft | null>;
 }) {
   const { refresh } = useCoopsRouter();
   const [filter, setFilter] = useState<string>('todos');
@@ -102,7 +102,7 @@ export function EventosClient({ user, person, projectId, isOwn, isManager, event
             <FocusClose onClick={() => { setFocus(null); lastEl.current?.focus?.(); }} />
           </div>
           <h2 style={{ margin: 0, fontSize: 30, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }}>{cur.title}</h2>
-          {(cur.type === 'PROMOCAO' || cur.type === 'MERITO') && <CelebrationStage kind={cur.type} person={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} other={{ ...DEFAULT_AVATAR_CFG, ...(isManager && !isOwn && user.avatar ? user.avatar : { skin: '#E0B08A', hairStyle: 'longo' }) }} />}
+          {(cur.type === 'PROMOCAO' || cur.type === 'MERITO') && <CelebrationStage kind={cur.type} person={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} other={{ ...DEFAULT_AVATAR_CFG, ...(leaderAvatar ?? person.avatar ?? {}) }} />}
           <span style={{ fontSize: 13 }}>{longDate(cur.date)}</span>
           {cur.data.body && <p style={{ margin: 0, fontSize: 15, lineHeight: 1.5 }}>{cur.type === 'CHECKIN' ? <><b style={label(10)}>RESUMO DA CONVERSA</b><br /></> : null}{cur.data.body}</p>}
           {(cur.type === 'PROMOCAO' || cur.type === 'MUDANCA_TIME') && (cur.data.de || cur.data.para) && <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, fontSize: 14 }}><span><b style={label(10)}>DE </b>{cur.data.de || '—'}</span><span><b style={label(10)}>PARA </b>{cur.data.para || '—'}</span></div>}
@@ -122,7 +122,7 @@ export function EventosClient({ user, person, projectId, isOwn, isManager, event
               <textarea aria-label="Adicionar comentário" value={com} onChange={(e) => { setCom(e.target.value); setComErr(''); }} placeholder="Adicionar comentário" style={{ fontFamily: 'inherit', fontSize: 15, borderRadius: 10, border: '1.5px solid rgba(14,14,18,0.3)', background: '#F5F2EC', padding: '10px 12px', minHeight: 70, resize: 'vertical', boxSizing: 'border-box', width: '100%' }} />
               {comErr && <span role="alert" style={{ fontSize: 13, fontWeight: 600 }}>{comErr}</span>}
               </div>}
-              <div className="coops-fx-foot" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              <div className="coops-fx-foot" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, paddingTop: 14, paddingBottom: 16 }}>
                 {comOpen && <button type="button" disabled={comBusy} onClick={() => publish(cur)} style={{ fontFamily: 'inherit', fontWeight: 600, fontSize: 14, color: '#F5F2EC', background: '#0E0E12', border: 0, borderRadius: 12, minHeight: 44, padding: '0 16px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8 }}>{comBusy && <Spinner />}Publicar</button>}
                 {(isManager || cur.mine) && (cur.archived ? <button type="button" onClick={() => archive(cur, false)} style={{ fontFamily: 'inherit', fontWeight: 600, fontSize: 14, color: '#0E0E12', background: 'transparent', border: '1.5px solid #0E0E12', borderRadius: 12, minHeight: 44, padding: '0 16px', cursor: 'pointer' }}>Desarquivar</button> : <button type="button" onClick={() => archive(cur, true)} style={{ fontFamily: 'inherit', fontWeight: 600, fontSize: 14, color: '#0E0E12', background: 'transparent', border: '1.5px solid #0E0E12', borderRadius: 12, minHeight: 44, padding: '0 16px', cursor: 'pointer' }}>Arquivar</button>)}
               </div>

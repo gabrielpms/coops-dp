@@ -61,7 +61,7 @@ export function AdminUserDeck({ projectId, user, squads, onClose, onSaved }: { p
   const remove = async () => { if (await call('DELETE')) onSaved(); };
 
   const cards: DeckCard[] = [
-    { id: 'quem', bg: '#8FE3C8', node: (<>
+    { id: 'quem', size: 'sm', bg: '#8FE3C8', node: (<>
       <Title>Como {first} aparece no Coops?</Title><Help>Nome e cargo aparecem no hub e nas cartas de liderança.</Help>
       <input type="text" aria-label="Nome" autoComplete="off" value={form.name} onChange={(e) => { set({ name: e.target.value }); setErrs((x) => ({ ...x, name: false })); }} style={cardInput} />
       <Err show={errs.name}>Escreva o nome para seguir.</Err>
@@ -72,7 +72,7 @@ export function AdminUserDeck({ projectId, user, squads, onClose, onSaved }: { p
       <div role="radiogroup" aria-label="Papel" style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
         {([['IC', 'IC'], ['MANAGER', 'Manager']] as const).map(([k, t]) => <button key={k} type="button" role="radio" aria-checked={form.role === k} className="tw-chip" onClick={() => set({ role: k })} style={chipStyle(form.role === k)}>{t}</button>)}
       </div>
-      <div style={{ marginTop: 'auto', borderTop: '1.5px solid #0E0E12', paddingTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ marginTop: 8, borderTop: '1.5px solid #0E0E12', paddingTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
         <span style={label(11, '0.08em')}>{pending ? 'SEM ACESSO · CRIE A SENHA NO PASSO 4' : user.blocked ? 'ACESSO BLOQUEADO' : 'ACESSO LIBERADO'}</span>
         {!confirmDel ? (
           <span style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -90,12 +90,12 @@ export function AdminUserDeck({ projectId, user, squads, onClose, onSaved }: { p
         )}
       </div>
     </>) },
-    { id: 'avatar', bg: '#F5F2EC', node: (<><Title>Monte o avatar</Title><Help>Ele aparece no topo da plataforma, no perfil e nos decks.</Help><AvatarEditor value={form.avatar} onChange={(avatar) => set({ avatar })} /></>) },
-    { id: 'squad', bg: '#8FE3C8', node: (<>
+    { id: 'avatar', size: 'lg', bg: '#F5F2EC', node: (<><Title>Monte o avatar</Title><Help>Ele aparece no topo da plataforma, no perfil e nos decks.</Help><AvatarEditor value={form.avatar} onChange={(avatar) => set({ avatar })} /></>) },
+    { id: 'squad', size: 'sm', bg: '#8FE3C8', node: (<>
       <Title>Em qual squad {first} fica?</Title><Help>{squads.length ? 'A pessoa senta à mesa do squad escolhido. Quem já estava em outro squad muda para este.' : 'Ainda não há squads neste projeto. Crie um na tela Time.'}</Help>
       <SquadChoice squads={squads} value={form.squadId} onChange={(id) => set({ squadId: id })} />
     </>) },
-    { id: 'acesso', bg: '#A9D8F5', node: (<>
+    { id: 'acesso', size: 'sm', bg: '#A9D8F5', node: (<>
       <Title>Qual o acesso de {first}?</Title><Help>{pending ? 'Crie a senha para liberar o login e passe o e-mail e a senha para a pessoa.' : 'A pessoa entra com este e-mail e esta senha. A senha fica registrada aqui; mude para redefinir.'}</Help>
       <input type="email" aria-label="E-mail" autoComplete="off" value={form.email} onChange={(e) => { set({ email: e.target.value }); setErrs((x) => ({ ...x, email: false })); }} style={cardInput} />
       <Err show={errs.email}>Coloque um e-mail válido para seguir.</Err>
@@ -103,7 +103,7 @@ export function AdminUserDeck({ projectId, user, squads, onClose, onSaved }: { p
       {!pending && <><label htmlFor="au-tel" style={label()}>TELEFONE · OPCIONAL</label>
       <input id="au-tel" type="tel" autoComplete="off" value={form.phone} onChange={(e) => set({ phone: e.target.value })} style={cardInput} /></>}
     </>) },
-    { id: 'resumo', bg: '#B7A6FF', summary: true, node: (<>
+    { id: 'resumo', size: 'sm', bg: '#B7A6FF', summary: true, node: (<>
       <Title>Confere os dados de {first}?</Title><Help>{pending ? 'Ao salvar, a conta é criada e a pessoa já pode entrar.' : 'As mudanças aparecem em todos os projetos da pessoa.'}</Help>
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'flex-start' }}>
         <span style={{ lineHeight: 0, borderRadius: '50%', border: '2px solid #0E0E12' }} aria-hidden="true"><Avatar {...form.avatar} crown={form.role === 'MANAGER'} size={120} label="" /></span>
