@@ -13,9 +13,10 @@ export async function POST() {
   const key = openSecret(u.anthropicKey);
   if (!key) return fail(409, 'Cadastre a chave da Anthropic antes de testar.');
   const stored = (u.anthropicSkills as StoredSkills | null) ?? {};
-  const missing = ENGINE_SKILLS.filter((s) => !stored[s.key]);
-  if (missing.length) return fail(409, `Envie as skills antes de testar (faltam: ${missing.map((m) => m.title).join(', ')}).`);
-  const r = await ping(key, u.anthropicModel ?? DEFAULT_MODEL, ENGINE_SKILLS.map((s) => ({ skillId: stored[s.key]!.skillId })));
+  const on = ENGINE_SKILLS.filter((s) => !u.anthropicSkillsOff.includes(s.key));
+  const missing = on.filter((s) => !stored[s.key]);
+  if (missing.length) return fail(409, `Envie as skills ligadas antes de testar (faltam: ${missing.map((m) => m.title).join(', ')}).`);
+  const r = await ping(key, u.anthropicModel ?? DEFAULT_MODEL, on.map((s) => ({ skillId: stored[s.key]!.skillId })));
   if (!r.ok) return fail(502, r.message);
-  return json({ ok: true, reply: r.data.text.slice(0, 80) });
+  return json({ ok: true, reply: r.data.text.slice(0, 80), skills: on.length });
 }

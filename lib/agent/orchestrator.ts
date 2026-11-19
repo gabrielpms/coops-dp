@@ -19,14 +19,16 @@ export const initialState = (): RunState => ({ steps: [step('rotear')], files: {
 
 const FRENTES: Frente[] = ['heuristica', 'metricas', 'estrategia'];
 /** A estratégia roda sempre e por último; heurística e métricas só existem com telas. */
-export function planFronts(router: Router, input: RunInput): Frente[] {
+export function planFronts(router: Router, input: RunInput, off: readonly string[] = []): Frente[] {
   const wanted = new Set<Frente>(router.frentes);
   wanted.add('estrategia');
-  return FRENTES.filter((f) => wanted.has(f) && (f === 'estrategia' || hasScreens(input)));
+  return FRENTES.filter((f) => wanted.has(f) && !off.includes(f) && (f === 'estrategia' || hasScreens(input)));
 }
 
 export type Deps = {
-  key: string; model: string; skills: Record<EngineSkillKey, SkillRef>;
+  key: string; model: string; skills: Partial<Record<EngineSkillKey, SkillRef>>;
+  /** Skills desligadas pelo dono: a frente não roda; sem o orquestrador, o roteamento é por regra e a consolidação é uma chamada sem skill. */
+  off?: readonly EngineSkillKey[];
   /** Lê o arquivo anexado (do bucket) para enviá-lo à Anthropic. */
   loadFile: (attachmentId: string) => Promise<{ name: string; mime: string; bytes: Uint8Array }>;
   /** Prazo (ms epoch) para a etapa terminar. */
@@ -50,7 +52,8 @@ async function ensureFiles(state: RunState, input: RunInput, deps: Deps): Promis
 /** Chama o agente e valida a saída; se o JSON vier inválido, pede uma vez para refazer só o formato. */
 async function ask<T>(deps: Deps, id: StepId, prompt: string, files: string[], schema: ZodType<T>): Promise<{ ok: true; value: T; tin: number; tout: number } | { ok: false; message: string; tin: number; tout: number }> {
   const content: unknown[] = [{ type: 'text', text: prompt }, ...files.map((file_id) => ({ type: 'container_upload', file_id }))];
-  const skills = [deps.skills[STEP_SKILL[id]]];
+  const skill = deps.skills[STEP_SKILL[id]];
+  const skills = skill && !deps.off?.includes(STEP_SKILL[id]) ? [skill] : [];
   let tin = 0, tout = 0, problem = '';
   for (let attempt = 0; attempt < 2; attempt++) {
     const r = await converse(deps.key, { model: deps.model, system: SYSTEM, content: attempt ? [...content, { type: 'text', text: `Sua resposta anterior não passou na validação (${problem}). Refaça e responda SÓ com o bloco json no formato pedido.` }] : content, skills, deadline: deps.deadline });
@@ -77,12 +80,19 @@ export async function advance(prev: RunState, input: RunInput, deps: Deps): Prom
   delete cur.error;
 
   if (cur.id === 'rotear') {
+    if (deps.off?.includes('integrada')) {
+      // sem o orquestrador, a regra por tipo de material decide as frentes
+      state.results.rotear = fallbackRouter(input);
+      cur.status = 'DONE';
+      state.steps.push(...planFronts(state.results.rotear, input, deps.off).map(step), step('consolidar'));
+      return { state, finished: false, failed: false };
+    }
     const r = await ask(deps, 'rotear', routerPrompt(input), [], routerSchema);
     cur.tokensIn += r.tin; cur.tokensOut += r.tout;
     if (!r.ok && /Tempo|tempo|demorou|Sem conexão|Limite|chave|permissão|indispon/.test(r.message)) return fail(r.message);
     state.results.rotear = r.ok ? r.value : fallbackRouter(input);
     cur.status = 'DONE';
-    state.steps.push(...planFronts(state.results.rotear, input).map(step), step('consolidar'));
+    state.steps.push(...planFronts(state.results.rotear, input, deps.off).map(step), step('consolidar'));
     return { state, finished: false, failed: false };
   }
 

@@ -23,7 +23,7 @@ export default async function AdminPage() {
   return (
     <AdminClient
       user={{ id: u.id, name: u.name, email: u.email, title: u.title ?? '', phone: u.phone ?? '', avatar: u.avatar as any, role: u.role }}
-      integration={integ ? { configured: integ.configured, ready: integ.configured && integ.skills.every((s) => s.status === 'ENVIADA') } : null} projects={projects} projectDraft={projectDraft} userDraft={userDraft as UserDraft | null}
+      integration={integ ? { configured: integ.configured, ready: integ.configured && integ.skills.filter((s) => s.enabled).every((s) => s.status === 'ENVIADA') } : null} projects={projects} projectDraft={projectDraft} userDraft={userDraft as UserDraft | null}
     />
   );
 }

@@ -13,7 +13,7 @@ export async function GET(_: Request, { params }: Ctx) {
   return json({ run: run ? publicRun(run) : null });
 }
 
-/** Cria uma análise com as skills. Sem chave ou sem skills (409 com `code`), a tela cai no agente fixo de antes. */
+/** Cria uma análise com as skills. Sem chave, sem skills ligadas ou sem frente ligada (409 com `code`), a tela cai no agente fixo de antes. */
 export async function POST(_: Request, { params }: Ctx) {
   const { id } = await params;
   const ctx = await initiativeAccess(id, true);

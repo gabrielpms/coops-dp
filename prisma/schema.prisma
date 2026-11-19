@@ -32,6 +32,7 @@ model User {
   accessPassword String? // senha criada pela liderança, cifrada (lib/secret.ts); só a liderança do projeto a consulta
   anthropicKey    String? // chave da API da Anthropic do dono da conta, cifrada (lib/secret.ts); nunca volta ao navegador
   anthropicModel  String? // modelo usado pelo agente das iniciativas
+  anthropicSkillsOff String[] @default([]) // skills do motor desligadas pelo dono (não entram nas análises)
   anthropicSkills Json? // skills do motor enviadas ao workspace da API: { [chave]: { skillId, displayTitle, hash, uploadedAt } }
   blockedAt      DateTime? // acesso bloqueado por um manager: não entra e as sessões abertas deixam de valer
   role           Role

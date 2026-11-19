@@ -71,6 +71,29 @@ describe('roteamento', () => {
   });
 });
 
+describe('skills desligadas', () => {
+  it('frente desligada não entra no plano; a estratégia também pode ser desligada', () => {
+    const r = routerSchema.parse({ frentes: ['heuristica', 'metricas', 'estrategia'] });
+    expect(planFronts(r, withScreens, ['metricas'])).toEqual(['heuristica', 'estrategia']);
+    expect(planFronts(r, withScreens, ['estrategia'])).toEqual(['heuristica', 'metricas']);
+  });
+  it('sem o orquestrador: roteamento por regra (sem chamada) e consolidação sem skill', async () => {
+    const calls = mockAnthropic([estr, cons]);
+    const off = ['integrada' as const];
+    const d = (): Deps => ({ ...deps(), off });
+    let state: RunState = initialState();
+    const r0 = await advance(state, base, d());
+    expect(calls).toHaveLength(0); // roteou por regra, sem falar com a Anthropic
+    expect(r0.state.steps.map((s) => s.id)).toEqual(['rotear', 'estrategia', 'consolidar']);
+    const r1 = await advance(r0.state, base, d());
+    const r2 = await advance(r1.state, base, d());
+    expect(r2.finished).toBe(true);
+    expect(calls).toHaveLength(2);
+    expect(calls[0].body.container.skills[0].skill_id).toBe('s_e'); // a frente continua com a skill dela
+    expect(calls[1].body.container).toBeUndefined(); // consolidação sem skill
+  });
+});
+
 describe('JSON do agente', () => {
   it('extrai o último bloco json e tolera texto em volta', () => {
     expect(extractJson('texto\n```json\n{"a":1}\n```\nfim')).toEqual({ a: 1 });
