@@ -261,3 +261,10 @@ export const closeSchema = z.object({ outcome: z.enum(['ENTREGUE', 'PARCIAL', 'C
 export const attachmentRequestSchema = z.object({
   kind: z.enum(CONTEXT_KINDS), name: text(200).min(1), mime: text(120).min(1), size: z.number().int().positive(),
 });
+
+// ---------- Integração com a Anthropic (Administração › Integrações) ----------
+/** Chave da API (formato sk-ant-…) e modelo do agente; os dois são opcionais para dar para trocar um sem o outro. */
+export const anthropicSettingsSchema = z.object({
+  apiKey: z.string().trim().regex(/^sk-ant-[A-Za-z0-9_-]{20,300}$/, 'Essa não parece uma chave da Anthropic (ela começa com sk-ant-)').optional(),
+  model: z.enum(['claude-sonnet-5-5', 'claude-opus-5-5', 'claude-fable-5-2']).optional(),
+});
