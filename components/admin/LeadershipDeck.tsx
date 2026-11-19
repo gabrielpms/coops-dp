@@ -77,7 +77,7 @@ export function LeadershipDeck({ projectId, editing, squads, people, draft, onDr
   const pillOn = (on: boolean, t: string) => <span style={{ marginLeft: 'auto', ...label(10), border: '1.5px solid #0E0E12', borderRadius: 999, padding: '3px 8px', background: on ? '#0E0E12' : 'transparent', color: on ? '#F5F2EC' : '#0E0E12', whiteSpace: 'nowrap' }}>{t}</span>;
 
   const cards: DeckCard[] = [
-    { id: 'quem', bg: '#F3D36B', node: (<>
+    { id: 'quem', size: 'sm', bg: '#F3D36B', node: (<>
       <Title>Quem vai liderar?</Title><Help>{editing ? 'Dá para ajustar nome, cargo, avatar, squads e pessoas.' : self ? 'Você usa a sua própria carta do Time. Não precisa de convite.' : 'A pessoa recebe um convite para entrar como manager deste projeto.'}</Help>
       {canBeSelf && <button type="button" aria-pressed={self} onClick={toggleSelf} style={{ ...chipStyle(self), alignSelf: 'flex-start', minHeight: 44, padding: '0 16px' }}>{self ? '✓ Eu serei a liderança' : 'Eu serei a liderança'}</button>}
       <input type="text" aria-label="Nome da liderança" placeholder="Ex.: Marina Lopes" value={form.name} onChange={(e) => { set({ name: e.target.value }); setErrs((x) => ({ ...x, name: false })); }} style={cardInput} />
@@ -92,8 +92,8 @@ export function LeadershipDeck({ projectId, editing, squads, people, draft, onDr
       {!editing && <AccessFields id="lw-senha" email={form.email.trim()} password={password} onPassword={(v) => { setPassword(v); setErrs((x) => ({ ...x, password: false })); }} error={errs.password} />}
       </>}
     </>) },
-    { id: 'avatar', bg: '#F5F2EC', node: (<><Title>Monte o avatar</Title><Help>Ele aparece na carta de liderança e no topo da plataforma para essa pessoa.</Help><AvatarEditor value={form.avatar} onChange={(avatar) => set({ avatar: { ...avatar, crown: true } })} /></>) },
-    { id: 'squads', bg: '#8FE3C8', optional: true, node: (<>
+    { id: 'avatar', size: 'lg', bg: '#F5F2EC', node: (<><Title>Monte o avatar</Title><Help>Ele aparece na carta de liderança e no topo da plataforma para essa pessoa.</Help><AvatarEditor value={form.avatar} onChange={(avatar) => set({ avatar: { ...avatar, crown: true } })} /></>) },
+    { id: 'squads', size: 'sm', bg: '#8FE3C8', optional: true, node: (<>
       <Title>Quais squads ficam com essa liderança?</Title><Help>Toque para incluir. As pessoas do squad entram junto e dá para ajustar na próxima carta.</Help>
       {squads.length === 0 && <span style={{ fontSize: 14 }}>Ainda não há squads neste projeto. Crie na Gestão de time.</span>}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>{squads.map((s) => { const on = form.squadIds.includes(s.id); return (
@@ -103,7 +103,7 @@ export function LeadershipDeck({ projectId, editing, squads, people, draft, onDr
           {pillOn(on, on ? 'INCLUÍDO' : 'INCLUIR')}
         </button>); })}</div>
     </>) },
-    { id: 'pessoas', bg: '#A9D8F5', optional: true, node: (<>
+    { id: 'pessoas', size: 'sm', bg: '#A9D8F5', optional: true, node: (<>
       <Title>Quem reporta para essa liderança?</Title><Help>As pessoas dos squads escolhidos já vêm marcadas. Toque para tirar ou incluir alguém.</Help>
       {reports.length === 0 && <span style={{ fontSize: 14 }}>Ainda não há outras pessoas no time.</span>}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>{reports.map((p) => { const on = form.memberIds.includes(p.id); return (
@@ -113,7 +113,7 @@ export function LeadershipDeck({ projectId, editing, squads, people, draft, onDr
           {pillOn(on, on ? 'REPORTA' : 'INCLUIR')}
         </button>); })}</div>
     </>) },
-    { id: 'resumo', bg: '#B7A6FF', summary: true, node: (<>
+    { id: 'resumo', size: 'sm', bg: '#B7A6FF', summary: true, node: (<>
       <Title>Confere a liderança?</Title>
       <Help>{editing ? 'Squads e pessoas escolhidos saem da liderança anterior.' : self ? 'Squads e pessoas escolhidos saem da liderança anterior.' : `Ao confirmar, a pessoa já pode entrar com ${form.email.trim() || 'o e-mail informado'} e a senha que você criou. Squads e pessoas escolhidos saem da liderança anterior.`}</Help>
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'flex-start' }}>
