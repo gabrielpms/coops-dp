@@ -30,6 +30,9 @@ model User {
   phone          String?
   passwordHash   String? // scrypt; nulo em contas antigas, criadas antes da senha
   accessPassword String? // senha criada pela liderança, cifrada (lib/secret.ts); só a liderança do projeto a consulta
+  anthropicKey    String? // chave da API da Anthropic do dono da conta, cifrada (lib/secret.ts); nunca volta ao navegador
+  anthropicModel  String? // modelo usado pelo agente das iniciativas
+  anthropicSkills Json? // skills do motor enviadas ao workspace da API: { [chave]: { skillId, displayTitle, hash, uploadedAt } }
   blockedAt      DateTime? // acesso bloqueado por um manager: não entra e as sessões abertas deixam de valer
   role           Role
   onboardingStep Int      @default(1) // 1 conta criada · 2 primeiro projeto · 3 time e iniciativas

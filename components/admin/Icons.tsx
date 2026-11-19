@@ -15,10 +15,11 @@ export const IconBars = () => (
 );
 
 /** Ícone grande do banner. */
-export function BannerIcon({ kind, bg }: { kind: 'admin' | 'me' | 'lid' | 'hab' | 'dados' | 'usr'; bg: string }) {
+export function BannerIcon({ kind, bg }: { kind: 'admin' | 'me' | 'lid' | 'hab' | 'dados' | 'usr' | 'int'; bg: string }) {
   const p = { width: 84, height: 84, viewBox: '0 0 64 64', fill: 'none', stroke: '#0E0E12', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true } as const;
   if (kind === 'admin') return <svg {...p}><path d="M10 18h44M10 32h44M10 46h44" /><g className="ad-k1"><circle cx="20" cy="18" r="5" fill={bg} /></g><g className="ad-k2"><circle cx="42" cy="32" r="5" fill={bg} /></g><g className="ad-k3"><circle cx="26" cy="46" r="5" fill={bg} /></g></svg>;
   if (kind === 'me') return <svg {...p}><rect x="10" y="14" width="44" height="36" rx="5" fill={bg} /><path d="M26 14v-4h12v4" /><circle cx="23" cy="28" r="5" /><path d="M15 42c1.5-4 4.5-6 8-6s6.5 2 8 6" /><path className="ad-id" d="M36 26h12" /><path className="ad-id ad-id2" d="M36 34h8" /></svg>;
+  if (kind === 'int') return <svg {...p}><path d="M24 8v14M40 8v14" /><rect x="14" y="22" width="36" height="18" rx="6" fill={bg} /><path d="M32 40v6c0 6 5 8 10 8h8" /><path className="ad-tr" d="M52 8l-5 8h8l-5 8" /></svg>;
   if (kind === 'usr') return <svg {...p}><circle cx="24" cy="24" r="9" fill={bg} /><path d="M8 54c0-11 7-17 16-17s16 6 16 17z" fill={bg} /><circle cx="44" cy="27" r="7" fill={bg} /><path d="M44 40c8 0 12 5 12 14H44" /></svg>;
   if (kind === 'lid') return <svg {...p}><g className="ad-cr"><path d="M12 46l-2-26 12 11 10-17 10 17 12-11-2 26z" fill={bg} /><path d="M14 52h36" /><circle cx="32" cy="38" r="3" /><path className="ad-gem" d="M50 8v6M47 11h6" /></g></svg>;
   if (kind === 'hab') return <svg {...p}><g className="ad-f1"><rect x="20" y="12" width="24" height="34" rx="4" fill={bg} /></g><g className="ad-f2"><rect x="20" y="12" width="24" height="34" rx="4" fill={bg} /></g><g className="ad-f3"><rect x="20" y="12" width="24" height="34" rx="4" fill={bg} /><path d="M26 22h12M26 28h8" /></g><path d="M14 54h36" /></svg>;
@@ -53,3 +54,8 @@ export const IconUsers = ({ bg }: { bg: string }) => {
     </svg>
   );
 };
+
+/** Integrações: tomada com faísca (a faísca se desenha no hover). */
+export const IconPlug = ({ bg }: { bg: string }) => (
+  <svg className="ad-ic" {...base}><path d="M22 8v14M38 8v14" /><rect x="12" y="22" width="36" height="18" rx="6" fill={bg} /><path d="M30 40v6c0 6 5 8 10 8h8" /><path className="ad-tr" d="M52 10l-5 8h8l-5 8" /></svg>
+);

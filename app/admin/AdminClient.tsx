@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { AppHeader, DEFAULT_AVATAR } from '@/components/ds/AppHeader';
 import { AdminBanner, AdminCard, AddCard } from '@/components/admin/AdminBanner';
-import { AvatarIcon, IconBrief, IconHeart, isFinSegment } from '@/components/admin/Icons';
+import { AvatarIcon, IconBrief, IconHeart, IconPlug, isFinSegment } from '@/components/admin/Icons';
 import { UserDeck, type UserData, type UserDraft } from '@/components/admin/UserDeck';
 import { ProjectDeck, type ProjectDraft } from '@/components/wizard/ProjectDeck';
 import { Avatar } from '@/components/avatar/Avatar';
@@ -13,7 +13,7 @@ type AdminProject = { id: string; name: string; segment: string; tagline: string
 const plural = (n: number, a: string, b: string) => (n === 1 ? a : b);
 const pad = (n: number) => String(n).padStart(2, '0');
 
-export function AdminClient({ user, projects, projectDraft: pd0, userDraft: ud0 }: { user: UserData; projects: AdminProject[]; projectDraft: ProjectDraft | null; userDraft: UserDraft | null }) {
+export function AdminClient({ user, projects, integration, projectDraft: pd0, userDraft: ud0 }: { user: UserData; projects: AdminProject[]; integration: { configured: boolean; ready: boolean } | null; projectDraft: ProjectDraft | null; userDraft: UserDraft | null }) {
   const { go, refresh } = useCoopsRouter();
   const isManager = user.role === 'MANAGER';
   const [tab, setTab] = useState<'projetos' | 'meus-dados'>(isManager ? 'projetos' : 'meus-dados');
@@ -48,10 +48,11 @@ export function AdminClient({ user, projects, projectDraft: pd0, userDraft: ud0 
                 onClick={() => go(`/admin/${p.id}`)} />
             ))}
             <AddCard title="Novo projeto" sub="Empresa, estratégia, skills e mercado em um só deck" onClick={() => setDeck('project')} />
-          </> : (
+          </> : (<>
             <AdminCard bg="#8FE3C8" icon={<AvatarIcon bg={meAvatar.bg ?? '#B7A6FF'}><Avatar {...meAvatar} crown={false} size={52} label="" /></AvatarIcon>} big={pad(isManager ? projects.length : 1)} bigLabel={isManager ? (projects.length === 1 ? 'PROJETO' : 'PROJETOS') : 'PERFIL'}
               kicker={user.role === 'MANAGER' ? 'MANAGER' : 'IC'} title={user.name} foot={`${user.title || 'Sem cargo'} · ${user.email}`} aria="Editar meus dados" onClick={() => setDeck('user')} />
-          )}
+            {integration && <AdminCard bg="#A9D8F5" icon={<IconPlug bg="#A9D8F5" />} big={integration.ready ? 'ON' : 'OFF'} bigLabel="AGENTE" kicker="INTEGRAÇÕES" title="Chave da Anthropic e skills" foot={integration.ready ? 'Motor das iniciativas conectado' : integration.configured ? 'Chave cadastrada; falta enviar as skills' : 'Conecte a chave para o agente analisar as iniciativas'} aria="Abrir as integrações" onClick={() => go('/admin/integracoes')} />}
+          </>)}
         </div>
       </div>
       {deck === 'user' && <UserDeck user={user} draft={userDraft} onDraftChange={setUserDraft} onClose={() => setDeck(null)} onSaved={done} />}
