@@ -4,6 +4,7 @@ const BASE = 'https://api.anthropic.com';
 const VERSION = '2023-06-01';
 const BETA_SKILLS = 'skills-2025-10-02';
 const BETA_CODE = 'code-execution-2025-08-25';
+const BETA_FILES = 'files-api-2025-04-14';
 
 export type ApiResult<T> = { ok: true; data: T } | { ok: false; status: number; message: string };
 
@@ -71,18 +72,19 @@ export type Block = { type: string; text?: string; [k: string]: unknown };
 export type MessageResult = { id: string; stop_reason: string | null; content: Block[]; container?: { id: string } | null; usage?: { input_tokens?: number; output_tokens?: number } };
 
 /** Uma chamada à Messages API, opcionalmente com skills no container de execução de código. */
-export function message(key: string, body: { model?: string; system?: string; maxTokens?: number; prompt: unknown; skills?: SkillRef[]; containerId?: string | null }) {
+export type Msg = { role: 'user' | 'assistant'; content: unknown };
+export function message(key: string, body: { model?: string; system?: string; maxTokens?: number; prompt?: unknown; messages?: Msg[]; skills?: SkillRef[]; containerId?: string | null }) {
   const payload: Record<string, unknown> = {
     model: body.model || DEFAULT_MODEL,
     max_tokens: body.maxTokens ?? 4096,
     ...(body.system ? { system: body.system } : {}),
-    messages: [{ role: 'user', content: body.prompt }],
+    messages: body.messages ?? [{ role: 'user', content: body.prompt }],
   };
   if (body.skills?.length) {
     payload.container = { ...(body.containerId ? { id: body.containerId } : {}), skills: body.skills.map((k) => ({ type: 'custom', skill_id: k.skillId, version: 'latest' })) };
     payload.tools = [{ type: 'code_execution_20250825', name: 'code_execution' }];
   }
-  return request<MessageResult>(key, '/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload), beta: body.skills?.length ? [BETA_CODE, BETA_SKILLS] : [] });
+  return request<MessageResult>(key, '/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload), beta: body.skills?.length ? [BETA_CODE, BETA_SKILLS, BETA_FILES] : [] });
 }
 
 /** Chamada mínima de ponta a ponta: chave, modelo e skills carregadas no container. */
@@ -91,4 +93,39 @@ export async function ping(key: string, model: string, skills: SkillRef[]): Prom
   if (!r.ok) return r;
   const text = r.data.content.filter((b) => b.type === 'text').map((b) => b.text ?? '').join('').trim();
   return { ok: true, data: { text } };
+}
+
+/** Envia um arquivo à Files API da Anthropic para usá-lo no container (bloco `container_upload`). */
+export async function uploadFile(key: string, f: { name: string; mime: string; bytes: Uint8Array }): Promise<ApiResult<{ fileId: string }>> {
+  const form = new FormData();
+  form.append('file', new Blob([f.bytes as BlobPart], { type: f.mime }), f.name);
+  const r = await request<{ id: string }>(key, '/v1/files', { method: 'POST', body: form, beta: [BETA_FILES] });
+  return r.ok ? { ok: true, data: { fileId: r.data.id } } : r;
+}
+
+export type Converse = { text: string; tokensIn: number; tokensOut: number };
+/**
+ * Uma "rodada" do agente: manda o conteúdo e, enquanto a Anthropic pausar o turno (`pause_turn`, comum quando a skill roda código por
+ * muito tempo), continua a conversa no mesmo container até ela concluir ou o prazo acabar.
+ */
+export async function converse(key: string, body: { model?: string; system?: string; maxTokens?: number; content: unknown[]; skills?: SkillRef[]; deadline: number }): Promise<ApiResult<Converse>> {
+  const messages: Msg[] = [{ role: 'user', content: body.content }];
+  let containerId: string | null = null;
+  let tokensIn = 0, tokensOut = 0, text = '';
+  for (let i = 0; i < 8; i++) {
+    if (Date.now() > body.deadline) return { ok: false, status: 504, message: 'O tempo desta etapa esgotou. Tente de novo.' };
+    const r = await message(key, { model: body.model, system: body.system, maxTokens: body.maxTokens ?? 16000, messages, skills: body.skills, containerId });
+    if (!r.ok) return r;
+    tokensIn += r.data.usage?.input_tokens ?? 0;
+    tokensOut += r.data.usage?.output_tokens ?? 0;
+    const t = r.data.content.filter((b) => b.type === 'text').map((b) => b.text ?? '').join('\n');
+    if (r.data.stop_reason === 'pause_turn') {
+      containerId = r.data.container?.id ?? containerId;
+      messages.push({ role: 'assistant', content: r.data.content });
+      continue;
+    }
+    text = t;
+    return { ok: true, data: { text, tokensIn, tokensOut } };
+  }
+  return { ok: false, status: 504, message: 'A skill demorou demais para concluir esta etapa. Tente de novo.' };
 }

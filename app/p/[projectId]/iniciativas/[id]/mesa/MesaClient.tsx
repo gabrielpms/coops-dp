@@ -1,6 +1,6 @@
 'use client';
 import { AnalysisOverlay } from '@/components/initiative/AnalysisOverlay';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
 import type { AvatarConfig } from '@/components/avatar/Avatar';
 import { CoopsLink, useCoopsRouter } from '@/components/nav/useCoopsRouter';
@@ -15,7 +15,8 @@ type Card = { kind: string; text: string; links: string[] };
 const MOMENTS = ['', 'Entendimento do desafio', 'Soft prepare', 'Explore the solutions', 'Risk mitigation', 'Articulando decisões'];
 const OUTCOMES = { ENTREGUE: 'Entregue', PARCIAL: 'Entregue em parte', CANCELADA: 'Cancelada' } as const;
 
-export function MesaClient({ user, projectId, initiative, cards, attachments, resolved }: {
+export function MesaClient({ user, projectId, initiative, cards, attachments, resolved, hasAnalysis, isOwner }: {
+  /** já existe uma análise concluída do agente para esta iniciativa */ hasAnalysis: boolean; /** quem vê é o dono do projeto (cuida da chave da Anthropic) */ isOwner: boolean;
   user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; projectId: string;
   initiative: { id: string; product: string; problem: string; need: string; status: 'ABERTA' | 'ENCERRADA'; moment: number | null; momentReason: string; closeOutcome: string | null; closeNote: string };
   cards: Card[]; attachments: Att[]; resolved: { question: string; summary: string }[];
@@ -70,7 +71,42 @@ export function MesaClient({ user, projectId, initiative, cards, attachments, re
   const removeFile = async (id: string) => { if (await call(`/api/attachments/${id}`, 'DELETE')) refresh(); };
   const [analysing, setAnalysing] = useState<'off' | 'running' | 'ready'>('off');
   // O agente analisa com animação (Coops10b) enquanto a identificação do momento roda no servidor.
-  const identify = async () => { setAnalysing('running'); if (await call(`${api}/moment`, 'POST')) setAnalysing((a) => (a === 'running' ? 'ready' : a)); else setAnalysing('off'); };
+  // Com a chave e as skills configuradas, a análise é real: cada passo roda numa requisição e a tela acompanha. Sem elas, cai no agente fixo.
+  const [live, setLive] = useState<{ labels: string[]; done: number; error: string | null } | null>(null);
+  const [via, setVia] = useState<'engine' | 'stub'>('stub');
+  const [engineNote, setEngineNote] = useState<string | null>(null);
+  const runId = useRef<string | null>(null);
+  const cancelled = useRef(false);
+  const drive = async () => {
+    cancelled.current = false;
+    setLive((l) => (l ? { ...l, error: null } : l));
+    while (!cancelled.current && runId.current) {
+      let data: any = {};
+      try {
+        const res = await fetch(`${api}/analysis/${runId.current}/advance`, { method: 'POST' });
+        data = await res.json().catch(() => ({}));
+        if (!res.ok) { setLive((l) => (l ? { ...l, error: data.error ?? 'Não deu certo. Tente de novo.' } : l)); return; }
+      } catch { setLive((l) => (l ? { ...l, error: 'Sem conexão. Tente de novo.' } : l)); return; }
+      const run = data.run;
+      setLive({ labels: run.steps.map((s: { label: string }) => s.label), done: run.progress.done, error: run.status === 'FAILED' ? (run.error ?? 'Não deu certo. Tente de novo.') : null });
+      if (run.status === 'FAILED') return;
+      if (run.status === 'DONE') { setAnalysing((a) => (a === 'running' ? 'ready' : a)); return; }
+    }
+  };
+  const identify = async () => {
+    setAnalysing('running'); setLive(null); setEngineNote(null); setError(null);
+    try {
+      const res = await fetch(`${api}/analysis`, { method: 'POST' });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) { runId.current = data.id; setVia('engine'); setLive({ labels: [], done: 0, error: null }); void drive(); return; }
+      if (res.status === 409 && (data.code === 'NO_KEY' || data.code === 'NO_SKILLS')) {
+        setVia('stub'); setEngineNote(data.message);
+        if (await call(`${api}/moment`, 'POST')) setAnalysing((a) => (a === 'running' ? 'ready' : a)); else setAnalysing('off');
+        return;
+      }
+      setError(data.error ?? 'Não deu certo. Tente de novo.'); setAnalysing('off');
+    } catch { setError('Sem conexão. Tente de novo.'); setAnalysing('off'); }
+  };
   const finish = async () => { if (await call(`${api}/close`, 'POST', { outcome, note })) { setClosing(false); refresh(); } };
   const reopen = async () => { if (await call(`${api}/close`, 'DELETE')) refresh(); };
 
@@ -88,9 +124,11 @@ export function MesaClient({ user, projectId, initiative, cards, attachments, re
           <h1 style={{ margin: 0, fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 800, letterSpacing: '-0.035em', lineHeight: 1.05 }}>Dê profundidade com cartas de contexto</h1>
           {closed && <span style={{ ...label(12, '0.08em'), color: '#F3D36B' }}>ENCERRADA · {OUTCOMES[initiative.closeOutcome as keyof typeof OUTCOMES]?.toUpperCase()}{initiative.closeNote ? ` · ${initiative.closeNote}` : ''}</span>}
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 8 }}>
-            {canEdit && <button type="button" disabled={busy} onClick={identify} style={primary}>Identificar o momento</button>}
+            {canEdit && <button type="button" disabled={busy} onClick={identify} style={primary}>{initiative.moment ? 'Analisar de novo' : 'Analisar com o agente'}</button>}
             {isManager && (closed ? <button type="button" disabled={busy} onClick={reopen} style={ghost}>Reabrir</button> : <button type="button" onClick={() => { setNote(''); setError(null); setClosing(true); }} style={ghost}>Finalizar iniciativa</button>)}
           </div>
+          {hasAnalysis && <CoopsLink href={`/p/${projectId}/iniciativas/${initiative.id}/analise`} style={{ fontWeight: 600, fontSize: 15, minHeight: 44, display: 'inline-flex', alignItems: 'center', alignSelf: 'flex-start' }}>Ver a análise do agente →</CoopsLink>}
+          {engineNote && <span role="status" style={{ fontSize: 14, color: '#A3A1AD' }}>{engineNote}{isOwner && <> <CoopsLink href="/admin/integracoes" style={{ fontWeight: 600 }}>Abrir Integrações</CoopsLink></>}</span>}
           {initiative.moment && <CoopsLink href={`/p/${projectId}/iniciativas/${initiative.id}/momento`} style={{ fontWeight: 600, fontSize: 15, minHeight: 44, display: 'inline-flex', alignItems: 'center', alignSelf: 'flex-start' }}>Ver ferramentas do momento →</CoopsLink>}
           {initiative.moment && <p style={{ margin: '8px 0 0', fontSize: 15, lineHeight: 1.45 }}><b>Momento {initiative.moment} · {MOMENTS[initiative.moment]}.</b> <span style={{ color: '#A3A1AD' }}>{initiative.momentReason}</span></p>}
           {error && !editing && !closing && <span role="alert" style={{ fontSize: 14, fontWeight: 600, color: '#FF8A5B' }}>{error}</span>}
@@ -171,7 +209,7 @@ export function MesaClient({ user, projectId, initiative, cards, attachments, re
           <button type="button" disabled={busy} onClick={finish} style={{ ...primary, alignSelf: 'flex-start' }}>{busy ? 'Salvando…' : 'Finalizar e registrar no perfil'}</button>
         </BottomSheet>
       )}
-      {analysing !== 'off' && <AnalysisOverlay contextCount={cards.length} resolvedCount={resolved.length} ready={analysing === 'ready'} onDone={() => go(`/p/${projectId}/iniciativas/${initiative.id}/momento`)} onCancel={() => setAnalysing('off')} />}
+      {analysing !== 'off' && <AnalysisOverlay contextCount={cards.length} resolvedCount={resolved.length} ready={analysing === 'ready'} onDone={() => go(`/p/${projectId}/iniciativas/${initiative.id}/${via === 'engine' ? 'analise' : 'momento'}`)} onCancel={() => { cancelled.current = true; setAnalysing('off'); }} live={via === 'engine' && live ? { labels: live.labels, done: live.done, error: live.error, onRetry: () => void drive() } : undefined} />}
     </div>
   );
 }
