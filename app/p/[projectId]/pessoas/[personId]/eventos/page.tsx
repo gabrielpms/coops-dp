@@ -14,6 +14,9 @@ export default async function EventosPage({ params }: { params: Promise<{ projec
     db.delivery.findMany({ where: { personId, deletedAt: null, status: 'ENTREGUE' }, orderBy: { date: 'desc' }, select: { id: true, title: true, description: true, date: true } }),
     isManager ? Promise.all(KINDS.map((k) => readDraft<any>(user.id, `event:${k}`, personId))) : isOwn ? Promise.all([null, null, null, null, null].map((_, i) => (i === 1 ? readDraft<any>(user.id, 'event:FEEDBACK', personId) : null))) : [null, null, null, null, null],
   ]);
+  // O líder da pessoa: quem lidera quem ela reporta; sem isso, quem lidera o squad dela; sem líder, ela mesma (quem lidera a si).
+  const leaderRow = (await db.leadershipMember.findFirst({ where: { personId, leadership: { deletedAt: null, person: { deletedAt: null } } }, orderBy: { leadership: { createdAt: 'asc' } }, select: { leadership: { select: { person: { select: { avatar: true } } } } } }))?.leadership.person
+    ?? (await db.leadershipSquad.findFirst({ where: { squad: { deletedAt: null, members: { some: { personId } } }, leadership: { deletedAt: null, person: { deletedAt: null } } }, orderBy: { leadership: { createdAt: 'asc' } }, select: { leadership: { select: { person: { select: { avatar: true } } } } } }))?.leadership.person;
   const authors = await db.user.findMany({ where: { id: { in: [...new Set(events.map((e) => e.createdById).filter((x): x is string => !!x))] } }, select: { id: true, name: true, role: true } });
   // Entregas aparecem como eventos (derivados: não são gravados aqui)
   const list: EventView[] = [
@@ -23,7 +26,7 @@ export default async function EventosPage({ params }: { params: Promise<{ projec
   return (
     <EventosClient
       user={{ name: user.name, email: user.email, role: user.role, avatar: user.avatar as any }}
-      person={{ id: person.id, name: person.name, avatar: (person.avatar as any) ?? null }} projectId={projectId} isOwn={isOwn} isManager={isManager} events={list}
+      person={{ id: person.id, name: person.name, avatar: (person.avatar as any) ?? null }} leaderAvatar={(leaderRow?.avatar as any) ?? null} projectId={projectId} isOwn={isOwn} isManager={isManager} events={list}
       drafts={Object.fromEntries(KINDS.map((k, i) => [k, (drafts as any[])[i] ?? null]))}
     />
   );
