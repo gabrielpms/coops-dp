@@ -12,6 +12,9 @@ export const avatarSchema = z.object({
   skin: z.string().optional(), bg: z.string().optional(), hairStyle: z.string().optional(), shirtStyle: z.string().optional(),
   facialHair: z.string().optional(), glasses: z.boolean().optional(), glassesShape: z.string().optional(),
   earrings: z.boolean().optional(), lashes: z.boolean().optional(), crown: z.boolean().optional(),
+  hairColor: z.string().max(9).optional(), eyes: z.string().max(20).optional(), brows: z.string().max(20).optional(), mouth: z.string().max(20).optional(),
+  headwear: z.string().max(20).optional(), earringStyle: z.string().max(20).optional(), accessoryColor: z.string().max(9).optional(),
+  freckles: z.boolean().optional(), blush: z.boolean().optional(), beautyMark: z.boolean().optional(),
 });
 
 export const signupSchema = z.object({
