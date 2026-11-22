@@ -2,6 +2,7 @@ import { Avatar, BGS, HAIRS, SHIRTS, SKINS } from '@/components/avatar/Avatar';
 import { label, mono, chipStyle } from '@/components/ds/tokens';
 import { OpenDeckBanner } from '@/components/ds/OpenDeckBanner';
 import { DsDemos } from './DsDemos';
+import { InfoTip } from '@/components/ds/InfoTip';
 import { BannerBrain, BannerDelivery, BannerEvents, BannerJourney, BannerStar, DeliveryCardIcon } from '@/components/person/BannerIcons';
 import { BannerHeart, DimIcon } from '@/components/person/HealthIcons';
 import { StudyTypeIcon } from '@/components/person/StudyTypeIcon';
@@ -39,6 +40,7 @@ export default function DS() {
         <button className="coops-mban-btn" style={{ fontFamily: 'inherit', fontWeight: 600, fontSize: 14, color: '#F5F2EC', background: '#0E0E12', border: '2px solid #F5F2EC', borderRadius: 12, minHeight: 48, padding: '0 18px' }}>+ Ação do banner</button>
         <button className="coops-x" aria-label="Fechar" style={{ width: 44, height: 44, borderRadius: 14, background: '#F5F2EC', border: '1.5px solid #0E0E12', color: '#0E0E12', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg></button>
       </div></Sec>
+      <Sec t="Mais informação" d="Ícone ao lado do título de uma área; o balão abre ao clicar, focar ou passar o mouse. Fecha com Esc."><div style={{ ...row, alignItems: 'center' }}><h3 style={{ margin: 0, fontSize: 24, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 6 }}>Título da área<InfoTip label="Mais informação sobre a área">Texto de apoio curto que explica a área sem ocupar espaço na tela.</InfoTip></h3></div></Sec>
       <Sec t="Seleção e campos"><div style={{ display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 560 }}>
         <div style={row}>{['Um', 'Dois', 'Três'].map((t, i) => <button key={t} type="button" className="tw-chip" aria-pressed={i === 0} style={chipStyle(i === 0)}>{t}</button>)}</div>
         <div role="tablist" aria-label="Exemplo de abas" style={row}>{['Todas', 'Ativas', 'Encerradas'].map((t, i) => <button key={t} type="button" role="tab" aria-selected={i === 0} style={{ fontFamily: 'inherit', fontWeight: i === 0 ? 600 : 400, fontSize: 14, color: i === 0 ? '#0E0E12' : '#F5F2EC', background: i === 0 ? '#F5F2EC' : 'transparent', border: i === 0 ? 0 : '1px solid #4A4858', borderRadius: 999, minHeight: 44, padding: '0 16px' }}>{t}</button>)}</div>
