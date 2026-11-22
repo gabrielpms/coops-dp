@@ -276,3 +276,13 @@
 .coops-back:hover svg{transform:translateX(-3px)}
 .coops-back:focus-visible{outline:3px solid #B7A6FF;outline-offset:3px}
 @media (prefers-reduced-motion:reduce){.coops-back,.coops-back svg{transition:none}.coops-back:hover svg{transform:none}}
+
+/* Ícone de mais informação (components/ds/InfoTip): alvo de toque de 44 px com círculo visual de 28 px */
+.coops-info{position:relative;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin:-8px 0;padding:0;border:0;background:transparent;color:#A3A1AD;cursor:pointer;border-radius:50%;transition:color .2s ease}
+.coops-info::before{content:"";position:absolute;width:28px;height:28px;border-radius:50%;border:1.5px solid #3A3846;transition:border-color .2s ease,background .2s ease}
+.coops-info svg{position:relative}
+.coops-info:hover,.coops-info[aria-expanded="true"]{color:#F5F2EC}
+.coops-info:hover::before,.coops-info[aria-expanded="true"]::before{border-color:#B7A6FF;background:rgba(183,166,255,0.12)}
+.coops-info:focus-visible{outline:3px solid #B7A6FF;outline-offset:-2px}
+.coops-info-pop{animation:hbPop 200ms cubic-bezier(.34,1.4,.64,1) both;transform-origin:top left}
+@media (prefers-reduced-motion:reduce){.coops-info,.coops-info::before{transition:none}.coops-info-pop{animation:none}}

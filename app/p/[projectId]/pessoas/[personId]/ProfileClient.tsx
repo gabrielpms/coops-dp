@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
+import { InfoTip } from '@/components/ds/InfoTip';
 import { BackLink } from '@/components/nav/BackLink';
 import { Avatar, type AvatarConfig } from '@/components/avatar/Avatar';
 import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
@@ -128,7 +129,7 @@ export function ProfileClient({ user, project, person, champions, isOwn, isManag
 
 
         <section aria-label="Power ups" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}><h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Power ups</h2><span style={{ fontSize: 14, color: '#A3A1AD', maxWidth: 560 }}>Ações para acelerar o desenvolvimento: mentorias, cursos e projetos paralelos. Cursos aqui também entram no Brain gym, com o mesmo progresso.</span></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}><h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 6 }}>Power ups<InfoTip label="O que são power ups">Ações para acelerar o desenvolvimento: mentorias, cursos e projetos paralelos. Cursos aqui também entram no Brain gym, com o mesmo progresso.</InfoTip></h2></div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
             {powerUps.map((u) => (
               <div key={u.id} className="coops-pu" tabIndex={0} style={{ ...slot, borderRadius: 18, background: '#17171D', border: '1px solid #2C2C36', padding: 16, display: 'flex', gap: 14, alignItems: 'center' }}>
