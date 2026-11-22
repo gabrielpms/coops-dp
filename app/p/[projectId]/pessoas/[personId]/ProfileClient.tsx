@@ -117,15 +117,15 @@ export function ProfileClient({ user, project, person, champions, isOwn, isManag
             {pillTenure && <span className="h06-pill h06-pill2" style={{ fontSize: 14, fontWeight: 600, color: '#F5F2EC', background: '#0E0E12', borderRadius: 999, padding: '8px 14px' }}>{pillTenure}</span>}
             {asManager && <button type="button" onClick={() => setSquadDeck(true)} className="coops-card" style={{ fontFamily: 'inherit', fontSize: 14, fontWeight: 600, color: '#0E0E12', background: 'transparent', border: '1.5px dashed #0E0E12', borderRadius: 999, minHeight: 44, padding: '0 16px', cursor: 'pointer' }}>{person.squads.length ? 'Mudar de squad' : '+ Colocar em um squad'}</button>}
           </div>
+          {champions.map((c) => (
+            <CoopsLink key={c.id} href={`/p/${project.id}/squads/${c.squadId}/frentes`} className="coops-card" aria-label={`Ver a frente ${c.title}`} style={{ position: 'relative', marginTop: 12, width: '100%', maxWidth: 620, boxSizing: 'border-box', borderRadius: 22, background: '#F5A9D6', color: '#0E0E12', border: '2px solid #0E0E12', padding: '14px 16px', textDecoration: 'none', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 14, textAlign: 'left' }}>
+              <span aria-hidden="true" style={{ flex: '0 0 44px', height: 44, borderRadius: 12, border: '1.5px solid currentColor', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"><path d="M3 18 5 7l5 5 2-7 2 7 5-5 2 11z" /></svg></span>
+              <span style={{ flex: '1 1 260px', display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}><span style={{ ...mono(11, '0.08em') }}>CHAMPION DA FRENTE · {c.squadName.toUpperCase()}</span><span style={{ fontSize: 17, fontWeight: 700, lineHeight: 1.25 }}>{c.title} · {c.pct}%</span></span>
+              <span style={{ fontWeight: 600, fontSize: 14, display: 'inline-flex', alignItems: 'center', gap: 6, padding: '0 6px' }}>Ver frente <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
+            </CoopsLink>
+          ))}
         </section>
 
-        {champions.map((c) => (
-          <CoopsLink key={c.id} href={`/p/${project.id}/squads/${c.squadId}/frentes`} className="coops-card" aria-label={`Ver a frente ${c.title}`} style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', borderRadius: 22, background: '#F5A9D6', color: '#0E0E12', border: '2px solid #0E0E12', padding: '14px 18px', textDecoration: 'none', boxShadow: '0 12px 28px rgba(0,0,0,0.4)' }}>
-            <span aria-hidden="true" style={{ flex: '0 0 44px', height: 44, borderRadius: 12, border: '1.5px solid #0E0E12', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0E0E12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 8l4 4 5-7 5 7 4-4-2 10H5z" /></svg></span>
-            <span style={{ flex: '1 1 220px', display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}><span style={{ ...mono(11, '0.08em') }}>CHAMPION DA FRENTE · {c.squadName.toUpperCase()}</span><span style={{ fontSize: 20, fontWeight: 700, lineHeight: 1.2 }}>{c.title} · {c.pct}%</span></span>
-            <span style={{ fontWeight: 600, fontSize: 15 }}>Ver frente →</span>
-          </CoopsLink>
-        ))}
 
         <section aria-label="Power ups" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}><h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Power ups</h2><span style={{ fontSize: 14, color: '#A3A1AD', maxWidth: 560 }}>Ações para acelerar o desenvolvimento: mentorias, cursos e projetos paralelos. Cursos aqui também entram no Brain gym, com o mesmo progresso.</span></div>
