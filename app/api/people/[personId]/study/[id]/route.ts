@@ -15,9 +15,11 @@ export async function PATCH(req: Request, { params }: Ctx) {
   const body = await parse(req, studyPatchSchema);
   if (isResponse(body)) return body;
   const progress = body.progress !== undefined ? Math.min(body.progress, cur.total) : undefined;
-  await db.studyItem.update({ where: { id }, data: { ...(progress !== undefined ? { progress } : {}), ...(body.notes !== undefined ? { notes: body.notes || null } : {}) } });
-  // conteúdo que veio de um power up: o power up acompanha o progresso (em %)
-  if (progress !== undefined && cur.powerUpId) await db.powerUp.updateMany({ where: { id: cur.powerUpId, deletedAt: null }, data: { progress: Math.round((progress / cur.total) * 100) } });
+  await db.$transaction(async (tx) => {
+    await tx.studyItem.update({ where: { id }, data: { ...(progress !== undefined ? { progress } : {}), ...(body.notes !== undefined ? { notes: body.notes || null } : {}) } });
+    // conteúdo que veio de um power up: o power up acompanha o progresso (em %)
+    if (progress !== undefined && cur.powerUpId) await tx.powerUp.updateMany({ where: { id: cur.powerUpId, deletedAt: null }, data: { progress: Math.round((progress / cur.total) * 100) } });
+  });
   return json({ ok: true });
 }
 
@@ -28,7 +30,10 @@ export async function DELETE(_: Request, { params }: Ctx) {
   if (isResponse(ctx)) return ctx;
   const now = new Date();
   const item = await db.studyItem.findFirst({ where: { id, personId, deletedAt: null }, select: { powerUpId: true } });
-  const r = await db.studyItem.updateMany({ where: { id, personId, deletedAt: null }, data: { deletedAt: now } });
-  if (r.count && item?.powerUpId) await db.powerUp.updateMany({ where: { id: item.powerUpId, personId, deletedAt: null }, data: { deletedAt: now } });
+  const r = await db.$transaction(async (tx) => {
+    const x = await tx.studyItem.updateMany({ where: { id, personId, deletedAt: null }, data: { deletedAt: now } });
+    if (x.count && item?.powerUpId) await tx.powerUp.updateMany({ where: { id: item.powerUpId, personId, deletedAt: null }, data: { deletedAt: now } });
+    return x;
+  });
   return r.count ? json({ ok: true }) : fail(404, 'Conteúdo não encontrado');
 }
