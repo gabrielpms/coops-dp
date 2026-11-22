@@ -404,12 +404,13 @@ model StudyItem {
   progress  Int       @default(0) // blocos concluídos
   total     Int       @default(10)
   notes     String?
-  powerUpId String?   @unique // power up do tipo CURSO que originou este conteúdo (os dois andam juntos: progresso e remoção)
+  powerUpId String?   // power up do tipo CURSO que originou este conteúdo (os dois andam juntos: progresso e remoção)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
   @@index([personId])
+  @@index([powerUpId])
 }
 
 // ---------- Jornada e Saúde (M6) ----------
