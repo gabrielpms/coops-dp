@@ -28,7 +28,7 @@ export function AdminClient({ user, projects, integration, projectDraft: pd0, us
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <AdminBanner view={view} meAvatar={meAvatar} onMe={() => setTab('meus-dados')} back={{ href: '/hub', label: '← Hub de projetos' }}
+        <AdminBanner view={view} meAvatar={meAvatar} onMe={() => setTab('meus-dados')} back={{ href: '/hub', label: 'Hub de projetos' }}
           title={view === 'admin' ? 'Administração' : 'Meus dados'}
           desc={view === 'admin' ? 'Seus projetos, quem lidera cada time, as skills que o time desenvolve e os dados da empresa.' : 'Como você aparece no Coops: nome, cargo, e-mail e avatar.'}
           cta={view === 'admin' ? { label: '+ Novo projeto', onClick: () => setDeck('project') } : { label: 'Editar meus dados', onClick: () => setDeck('user') }} />

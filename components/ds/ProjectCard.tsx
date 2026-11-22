@@ -1,10 +1,10 @@
 import { CoopsLink } from '../nav/useCoopsRouter';
 import { label, segmentIcon } from './tokens';
 
-export type ProjectView = { id: string; name: string; segment: string; tagline: string; counts: { squads: number; people: number; initiatives: number } };
+export type ProjectView = { id: string; name: string; segment: string; tagline: string; counts: { squads: number; people: number; initiatives: number }; manager?: { name: string; isMe: boolean } | null };
 
 /** Carta de projeto: com 2+ projetos empilha camadas (depth) */
-export function ProjectCard({ p, depth = 2, badge, tone = 'default' }: { p: ProjectView; depth?: 0 | 1 | 2; badge?: string; tone?: 'default' }) {
+export function ProjectCard({ p, depth = 2, badge, tone = 'default', role = 'MANAGER' }: { p: ProjectView; depth?: 0 | 1 | 2; badge?: string; tone?: 'default'; role?: 'IC' | 'MANAGER' }) {
   const c = p.counts;
   const btn = { display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 48, textDecoration: 'none', fontWeight: 600, fontSize: 14, borderRadius: 12 } as const;
   return (
@@ -22,6 +22,7 @@ export function ProjectCard({ p, depth = 2, badge, tone = 'default' }: { p: Proj
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <h2 style={{ margin: 0, fontSize: 30, fontWeight: 800, letterSpacing: '-0.03em' }}>{p.name}</h2>
           <span style={{ fontSize: 14 }}>{p.tagline || 'Projeto novo'}</span>
+          {p.manager && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 6, fontSize: 13, fontWeight: 600 }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 8l4 4 5-7 5 7 4-4-2 10H5z" /></svg>Manager: {p.manager.isMe ? `${p.manager.name} (você)` : p.manager.name}</span>}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8, borderTop: '1.5px solid #0E0E12', paddingTop: 14 }}>
           {[[c.squads, c.squads === 1 ? 'squad' : 'squads'], [c.people, c.people === 1 ? 'pessoa' : 'pessoas'], [c.initiatives, c.initiatives === 1 ? 'iniciativa' : 'iniciativas']].map(([v, l]) => (
@@ -29,7 +30,7 @@ export function ProjectCard({ p, depth = 2, badge, tone = 'default' }: { p: Proj
           ))}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 8 }}>
-          <CoopsLink href={`/p/${p.id}/time`} style={{ ...btn, color: '#F5F2EC', background: '#0E0E12' }}>Gestão de time</CoopsLink>
+          <CoopsLink href={`/p/${p.id}/time`} style={{ ...btn, color: '#F5F2EC', background: '#0E0E12' }}>{role === 'MANAGER' ? 'Gestão de time' : 'Meu perfil'}</CoopsLink>
           <CoopsLink href={`/p/${p.id}/iniciativas`} style={{ ...btn, color: '#0E0E12', border: '1.5px solid #0E0E12' }}>Iniciativas</CoopsLink>
         </div>
       </article>

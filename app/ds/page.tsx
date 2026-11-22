@@ -49,14 +49,14 @@ export default function DS() {
       <Sec t="Avatar"><div style={row}>
         {HAIRS.map((h, i) => <Avatar key={h} hairStyle={h} skin={SKINS[i % SKINS.length]} bg={BGS[i % BGS.length]} shirtStyle={SHIRTS[i % SHIRTS.length]} crown={i % 4 === 0} glasses={i % 3 === 0} size={96} label={h} />)}
       </div></Sec>
-      <Sec t="Banner do deck" d="Ícone animado no hover ou foco do banner; o avatar leva de volta ao perfil."><OpenDeckBanner bg="#F3D36B" icon={<BannerStar />} back={{ href: '/ds', label: '← Voltar' }} title="Título do deck" desc="Descrição curta do que mora nesse deck." chip="Só você e seu manager veem" avatar={{ hairStyle: 'coque', skin: SKINS[4] }} avatarBg="#D9B84B" avatarCrown cta={{ label: '+ Carta', onClick: () => {} }} /></Sec>
-      <Sec t="Ícones de banner" d="Um por deck: Skills, Brain gym, Jornada, Entregas, Eventos e Saúde."><div style={row}>
+      <Sec t="Banner do deck" d="Ícone animado no hover ou foco do banner; o avatar leva de volta ao perfil."><OpenDeckBanner bg="#F3D36B" icon={<BannerStar />} back={{ href: '/ds', label: 'Voltar' }} title="Título do deck" desc="Descrição curta do que mora nesse deck." chip="Só você e seu manager veem" avatar={{ hairStyle: 'coque', skin: SKINS[4] }} avatarBg="#D9B84B" avatarCrown cta={{ label: '+ Carta', onClick: () => {} }} /></Sec>
+      <Sec t="Ícones de banner" d="Um por deck: Skills, Brain gym, Jornada, Entregas, Registros e Saúde."><div style={row}>
         {[['skills', '#F3D36B', <BannerStar key="a" size={56} />], ['brain gym', '#F5A9D6', <BannerBrain key="b" size={56} />], ['jornada', '#FF8A5B', <BannerJourney key="c" size={56} />], ['entregas', '#8FE3C8', <BannerDelivery key="d" size={56} />], ['eventos', '#B7A6FF', <BannerEvents key="e" size={56} />]].map(([n, bg, ic]) => <Cell key={String(n)} bg={String(bg)} name={String(n)}>{ic}</Cell>)}
         <Cell bg="#A9D8F5" name="saúde"><BannerHeart /></Cell>
       </div></Sec>
       <Sec t="Saúde · um ícone por pergunta"><div style={row}>{(['saude', 'design', 'produto', 'negocio'] as const).map((k) => <Cell key={k} bg="#A9D8F5" name={k}><DimIcon id={k} ink="#0E0E12" bg="#A9D8F5" /></Cell>)}</div></Sec>
       <Sec t="Brain gym · tipos de estudo"><div style={row}>{study.map((t) => <Cell key={t} bg="#F5A9D6" name={t.toLowerCase()}><StudyTypeIcon type={t} /></Cell>)}</div></Sec>
-      <Sec t="Deck de eventos · tipos de carta"><div style={row}>{events.map((t) => <Cell key={t} bg="#B7A6FF" name={t.toLowerCase()}><EventTypeIcon type={t} /></Cell>)}</div></Sec>
+      <Sec t="Deck de registros · tipos de carta"><div style={row}>{events.map((t) => <Cell key={t} bg="#B7A6FF" name={t.toLowerCase()}><EventTypeIcon type={t} /></Cell>)}</div></Sec>
       <Sec t="Entregas · carta de entrega"><div style={row}><Cell bg="#8FE3C8" name="entrega"><DeliveryCardIcon bg="#8FE3C8" /></Cell></div></Sec>
       <Sec t="Jornada · objetivo e foco"><div style={row}>{(['prog', 'goal', 'foco', 'past'] as const).map((k) => <Cell key={k} bg="#FF8A5B" name={k}><JourneyCardIcon kind={k} /></Cell>)}</div></Sec>
       <Sec t="Mesa do time · decks do squad"><div style={row}>{Object.entries(ICP).map(([k, parts]) => <Cell key={k} bg="#B7A6FF" name={k}><svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ overflow: 'visible' }}>{parts.map(([c, d], i) => <path key={i} className={c || undefined} d={d} />)}</svg></Cell>)}</div></Sec>

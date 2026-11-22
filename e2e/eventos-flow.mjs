@@ -16,7 +16,7 @@ const ids = await p.evaluate(async (ic) => {
   return { pr, joana };
 }, icEmail);
 const ev = `${BASE}/p/${ids.pr}/pessoas/${ids.joana}/eventos`;
-await p.goto(ev); await p.waitForSelector('h1:text-is("Eventos")');
+await p.goto(ev); await p.waitForSelector('h1:text-is("Registros")');
 await p.click('button:text-is("+ Evento")'); console.log('picker com 5 tipos:', await p.locator('[role=dialog] button.coops-card').count());
 await p.click('[role=dialog] button.coops-card:has-text("Check-in")'); await p.waitForSelector('input[aria-label="Título do evento"]');
 await next(p); console.log('título obrigatório:', await p.locator('span[role=alert]').first().innerText());

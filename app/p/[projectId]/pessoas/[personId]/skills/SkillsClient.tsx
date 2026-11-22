@@ -52,7 +52,7 @@ export function SkillsClient({ user, person, projectId, cycle, isOwn, canGrade, 
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
         <OpenDeckBanner bg={YEL} icon={<BannerStar />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} avatarBg="#D9B84B" avatarCrown avatarHref={`/p/${projectId}/pessoas/${person.id}`}
-          back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `← ${isOwn ? 'Meu perfil' : person.name}` }}
+          back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `${isOwn ? 'Meu perfil' : person.name}` }}
           title={isOwn ? 'Autoavaliação de skills' : `Skills ${fn.endsWith('a') ? 'da' : 'do'} ${fn}`}
           desc={isOwn ? 'Dê sua nota de 1 a 5 em cada carta. Toque no nome da skill para ver o que cada nível significa e as evidências do ciclo.' : `Nota de 1 a 5 por skill, lado a lado com a nota do manager.${canGrade ? ' Você dá a nota do manager.' : ''}`} />
         {warn && <div role="alert" style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', borderRadius: 14, border: '1.5px solid #FF8A5B', padding: '10px 14px', fontSize: 14 }}>{warn.msg}<button type="button" onClick={warn.retry} style={{ fontFamily: 'inherit', fontWeight: 600, color: '#0E0E12', background: '#FF8A5B', border: 0, borderRadius: 10, minHeight: 36, padding: '0 14px', cursor: 'pointer' }}>Tentar de novo</button></div>}
@@ -136,7 +136,7 @@ export function SkillsClient({ user, person, projectId, cycle, isOwn, canGrade, 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               <span style={{ ...mono, fontSize: 11, color: 'rgba(14,14,18,0.68)' }}>EVIDÊNCIAS NO CICLO</span>
               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                <CoopsLink href={`/p/${projectId}/pessoas/${person.id}/eventos`} style={{ flex: '1 1 140px', textDecoration: 'none', color: '#0E0E12', borderRadius: 16, background: '#B7A6FF', border: '2px solid #0E0E12', padding: 12, display: 'flex', flexDirection: 'column', gap: 4 }}><span style={{ ...mono, fontSize: 10 }}>EVENTOS</span><span style={{ fontSize: 14, fontWeight: 600 }}>Ver eventos</span></CoopsLink>
+                <CoopsLink href={`/p/${projectId}/pessoas/${person.id}/eventos`} style={{ flex: '1 1 140px', textDecoration: 'none', color: '#0E0E12', borderRadius: 16, background: '#B7A6FF', border: '2px solid #0E0E12', padding: 12, display: 'flex', flexDirection: 'column', gap: 4 }}><span style={{ ...mono, fontSize: 10 }}>REGISTROS</span><span style={{ fontSize: 14, fontWeight: 600 }}>Ver eventos</span></CoopsLink>
                 <CoopsLink href={`/p/${projectId}/pessoas/${person.id}/brain-gym`} style={{ flex: '1 1 140px', textDecoration: 'none', color: '#0E0E12', borderRadius: 16, background: '#F5A9D6', border: '2px solid #0E0E12', padding: 12, display: 'flex', flexDirection: 'column', gap: 4 }}><span style={{ ...mono, fontSize: 10 }}>BRAIN GYM</span><span style={{ fontSize: 14, fontWeight: 600 }}>{cur.gym ? `${cur.gym} ${cur.gym === 1 ? 'estudo ligado' : 'estudos ligados'}` : 'Nenhum estudo ligado'}</span></CoopsLink>
               </div>
             </div>

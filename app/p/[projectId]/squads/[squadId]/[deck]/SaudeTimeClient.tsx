@@ -35,7 +35,7 @@ export function SaudeTimeClient({ user, projectId, squad, total, answers, enough
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <OpenDeckBanner bg="#A9D8F5" icon={<BannerHeart />} back={{ href: back, label: `← ${squad.name}` }} title="Saúde do time"
+        <OpenDeckBanner bg="#A9D8F5" icon={<BannerHeart />} back={{ href: back, label: `${squad.name}` }} title="Saúde do time"
           desc="A média do que o squad respondeu no período. Ninguém aparece individualmente: as notas de cada pessoa ficam no deck dela."
           chip="Só a média do time, sem respostas individuais"
           tile={<><span style={{ fontSize: 28, fontWeight: 700, lineHeight: 1 }}>{answers}/{total}</span><span style={{ ...mono, fontSize: 10 }}>RESPONDERAM</span></>} />

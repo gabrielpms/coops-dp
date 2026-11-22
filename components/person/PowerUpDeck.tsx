@@ -13,7 +13,7 @@ const LAST = 4;
 const TAG = 'POWER UPS · NOVO';
 const TYPES = [
   { id: 'MENTORIA', label: 'Mentoria', hint: 'Conversas regulares com um profissional que te ajuda a evoluir.', bg: '#8FE3C8' },
-  { id: 'CURSO', label: 'Curso', hint: 'Um curso sobre algum assunto, com módulos e progresso.', bg: '#F3D36B' },
+  { id: 'CURSO', label: 'Curso', hint: 'Um curso sobre algum assunto, com módulos e progresso. Também aparece no Brain gym.', bg: '#F3D36B' },
   { id: 'PROJETO', label: 'Projeto paralelo', hint: 'Algo que você constrói fora do dia a dia para praticar.', bg: '#F5A9D6' },
 ] as const;
 const FREQS = ['Semanal', 'Quinzenal', 'Mensal'];

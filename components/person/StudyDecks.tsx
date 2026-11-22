@@ -15,7 +15,7 @@ export const STUDY_META: Record<StudyType, { label: string; hint: string; q: str
   PODCAST: { label: 'Podcast', hint: 'Episódios para ouvir no seu ritmo.', q: 'Qual é o podcast?', unit: 'episódios' },
   LINK: { label: 'Link', hint: 'Qualquer outro material que você quer guardar.', q: 'Qual é o material?', unit: 'blocos' },
 };
-export type StudyView = { id: string; type: StudyType; title: string; url: string; skillId: string; skillName: string; progress: number; total: number; notes: string };
+export type StudyView = { id: string; type: StudyType; title: string; url: string; skillId: string; skillName: string; progress: number; total: number; notes: string; fromPowerUp?: boolean };
 export type StudyForm = { title: string; total: number; url: string; skillId: string };
 export type StudyDraft = Draft<StudyForm>;
 const SIZES = [5, 10, 20];

@@ -51,7 +51,7 @@ export function EntregasClient({ user, person, projectId, isOwn, initiatives, de
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <OpenDeckBanner bg="#8FE3C8" icon={<BannerDelivery />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} avatarBg="#5FC4A6" avatarCrown avatarHref={`/p/${projectId}/pessoas/${person.id}`} back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `← ${isOwn ? 'Meu perfil' : person.name}` }}
+        <OpenDeckBanner bg="#8FE3C8" icon={<BannerDelivery />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} avatarBg="#5FC4A6" avatarCrown avatarHref={`/p/${projectId}/pessoas/${person.id}`} back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `${isOwn ? 'Meu perfil' : person.name}` }}
           title={isOwn ? 'Suas entregas' : `Entregas ${fn.endsWith('a') ? 'da' : 'do'} ${fn}`} desc={isOwn ? 'O que você entregou nas iniciativas do squad, com o impacto de cada entrega.' : `O que ${fn} entregou nas iniciativas do squad, com o impacto de cada entrega.`}
           cta={isOwn ? { label: '+ Nova entrega', onClick: () => setDeck({ editing: null }) } : null} />
         <div role="tablist" aria-label="Filtrar entregas" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>

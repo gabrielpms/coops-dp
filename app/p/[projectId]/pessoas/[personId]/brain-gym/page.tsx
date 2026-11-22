@@ -17,7 +17,7 @@ export default async function BrainGymPage({ params }: { params: Promise<{ proje
     <BrainGymClient
       user={{ name: user.name, email: user.email, role: user.role, avatar: user.avatar as any }}
       person={{ id: person.id, name: person.name, avatar: (person.avatar as any) ?? null }} projectId={projectId} isOwn={isOwn} skills={skills}
-      items={items.map((i) => ({ id: i.id, type: i.type, title: i.title, url: i.url ?? '', skillId: i.skillId ?? '', skillName: i.skill?.name ?? '', progress: i.progress, total: i.total, notes: i.notes ?? '' }))}
+      items={items.map((i) => ({ id: i.id, type: i.type, title: i.title, url: i.url ?? '', skillId: i.skillId ?? '', skillName: i.skill?.name ?? '', progress: i.progress, total: i.total, notes: i.notes ?? '', fromPowerUp: !!i.powerUpId }))}
       draft={draft}
     />
   );

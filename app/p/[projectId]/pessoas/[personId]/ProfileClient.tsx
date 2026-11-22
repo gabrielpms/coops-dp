@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
+import { BackLink } from '@/components/nav/BackLink';
 import { Avatar, type AvatarConfig } from '@/components/avatar/Avatar';
 import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
 import { CoopsLink, useCoopsRouter } from '@/components/nav/useCoopsRouter';
@@ -77,8 +78,11 @@ export function ProfileClient({ user, project, person, champions, isOwn, isManag
   const pillTenure = person.joinedAt ? tenureLong(person.joinedAt) : tenureLong(person.createdAt).replace(/ de casa$/, ' no Coops');
   const leads = person.squads.some((q) => q.crown);
   const pillMain = person.mainSkill ? `Skill principal · ${person.mainSkill}` : null;
-  const back = isManager && !isOwn ? { href: `/p/${project.id}/time`, text: '← Time' } : { href: '/hub', text: '← Hub de projetos' };
-  const barCta = isOwn ? { href: `${base}/saude`, text: 'Fazer check-in' } : { href: `${base}/eventos`, text: '+ Check-in' };
+  const back = isManager && !isOwn ? { href: `/p/${project.id}/time`, text: 'Gestão de time' } : { href: '/hub', text: 'Hub de projetos' };
+  // Ação do header fixo: só aparece quando há algo a fazer. Para a própria pessoa, o check-in de saúde do ciclo (se ainda não respondido);
+  // para o manager, registrar um novo item (check-in 1:1, feedback…). Os rótulos dizem exatamente o que abre.
+  const healthPending = !healthSummary || !healthSummary.current;
+  const barCta = isOwn ? (healthPending ? { href: `${base}/saude`, text: `Check-in de saúde · ${qOf(curCycle)}` } : null) : { href: `${base}/eventos`, text: '+ Novo registro' };
 
   return (
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 56px' }}>
@@ -91,12 +95,12 @@ export function ProfileClient({ user, project, person, champions, isOwn, isManag
             {pillTenure && <span style={{ fontSize: 12, fontWeight: 600, color: '#F5F2EC', background: '#0E0E12', borderRadius: 999, padding: '5px 10px' }}>{pillTenure}</span>}
           </span>
           <span aria-hidden="true" style={{ flex: '1 1 auto' }} />
-          <CoopsLink href={barCta.href} className="coops-card mb-btn" style={{ flex: 'none', display: 'inline-flex', alignItems: 'center', fontWeight: 600, fontSize: 14, color: '#F5F2EC', background: '#0E0E12', borderRadius: 12, minHeight: 44, boxSizing: 'border-box', padding: '0 16px', textDecoration: 'none' }}>{barCta.text}</CoopsLink>
+          {barCta && <CoopsLink href={barCta.href} className="coops-card mb-btn" style={{ flex: 'none', display: 'inline-flex', alignItems: 'center', fontWeight: 600, fontSize: 14, color: '#F5F2EC', background: '#0E0E12', borderRadius: 12, minHeight: 44, boxSizing: 'border-box', padding: '0 16px', textDecoration: 'none' }}>{barCta.text}</CoopsLink>}
         </div>
       </div>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <CoopsLink href={back.href} style={{ fontSize: 14, color: '#A3A1AD', textDecoration: 'none', alignSelf: 'flex-start', minHeight: 44, display: 'inline-flex', alignItems: 'center' }}>{back.text}</CoopsLink>
+        <BackLink href={back.href} label={back.text} />
 
         <section className="h06" aria-label={`Perfil de ${person.name}`} style={{ position: 'relative', overflow: 'hidden', borderRadius: 36, background: '#B7A6FF', color: '#0E0E12', border: '2px solid #0E0E12', padding: '44px 28px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14 }}>
           <div className="h06-ring" aria-hidden="true" style={{ position: 'absolute', left: -60, top: -60, width: 220, height: 220, borderRadius: '50%', border: '1.5px solid rgba(14,14,18,0.25)' }} />
@@ -124,7 +128,7 @@ export function ProfileClient({ user, project, person, champions, isOwn, isManag
         ))}
 
         <section aria-label="Power ups" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}><h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Power ups</h2><span style={{ fontSize: 14, color: '#A3A1AD' }}>Mentorias, cursos e projetos paralelos</span></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}><h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Power ups</h2><span style={{ fontSize: 14, color: '#A3A1AD', maxWidth: 560 }}>Ações para acelerar o desenvolvimento: mentorias, cursos e projetos paralelos. Cursos aqui também entram no Brain gym, com o mesmo progresso.</span></div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
             {powerUps.map((u) => (
               <div key={u.id} className="coops-pu" tabIndex={0} style={{ ...slot, borderRadius: 18, background: '#17171D', border: '1px solid #2C2C36', padding: 16, display: 'flex', gap: 14, alignItems: 'center' }}>
@@ -161,8 +165,8 @@ export function ProfileClient({ user, project, person, champions, isOwn, isManag
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, lineHeight: 1.45 }}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>Só a pessoa e o manager veem</span>
               {rule(healthSummary ? `Respondido no ${qOf(healthSummary.cycle)}${healthSummary.delta !== null ? ` · ${healthSummary.delta > 0 ? '+' : healthSummary.delta < 0 ? '−' : ''}${Math.abs(healthSummary.delta).toFixed(1).replace('.', ',')} vs ${qOf(healthSummary.prevCycle!)}` : ''}` : 'Quatro perguntas, uma por dimensão')}
             </>)}
-            {eventSummary.total === 0 ? <EmptyDeckCard kind="eventos" asManager={asManager} skillCount={nSkills} href={`${base}/eventos`} /> : pile(`${base}/eventos`, 'Abrir o deck de Eventos', '#B7A6FF', { b2: '#4B36B0', b1: '#8B74F2' }, <PiEventos />, eventSummary.last ? eventSummary.last.date.slice(8, 10) : String(eventSummary.total), eventSummary.last ? MONTHS_UP[Number(eventSummary.last.date.slice(5, 7)) - 1] : plural(eventSummary.total, 'CARTA', 'CARTAS'), <>
-              {kicker(eventSummary.last ? `EVENTOS · ${eventSummary.last.type.replace('_', ' ')}` : 'EVENTOS')}{title(eventSummary.last?.title ?? 'Nenhum evento ainda')}
+            {eventSummary.total === 0 ? <EmptyDeckCard kind="eventos" asManager={asManager} skillCount={nSkills} href={`${base}/eventos`} /> : pile(`${base}/eventos`, 'Abrir o deck de Registros', '#B7A6FF', { b2: '#4B36B0', b1: '#8B74F2' }, <PiEventos />, eventSummary.last ? eventSummary.last.date.slice(8, 10) : String(eventSummary.total), eventSummary.last ? MONTHS_UP[Number(eventSummary.last.date.slice(5, 7)) - 1] : plural(eventSummary.total, 'CARTA', 'CARTAS'), <>
+              {kicker(eventSummary.last ? `REGISTROS · ${eventSummary.last.type.replace('_', ' ')}` : 'REGISTROS')}{title(eventSummary.last?.title ?? 'Nenhum registro ainda')}
               {rule(`${eventSummary.total} ${plural(eventSummary.total, 'carta', 'cartas')} · ${eventSummary.checkins} ${plural(eventSummary.checkins, 'check-in', 'check-ins')} · ${eventSummary.feedbacks} ${plural(eventSummary.feedbacks, 'feedback', 'feedbacks')}`)}
             </>)}
             {skillsSummary.rated === 0 ? <EmptyDeckCard kind="skills" asManager={asManager} skillCount={nSkills} href={`${base}/skills`} /> : pile(`${base}/skills`, 'Abrir o deck de Skills', '#F3D36B', { b2: '#B8962F', b1: '#D9B84B' }, <PiSkills />, skillsSummary.rated ? dec(skillsSummary.avg) : '—', 'MÉDIA / 5', <>

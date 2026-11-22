@@ -54,7 +54,7 @@ export function ConfereClient({ user, projectId, initiative, doubts }: {
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <OpenDeckBanner bg="#8FE3C8" icon={<BannerAgent />} back={{ href: `/p/${projectId}/iniciativas`, label: '← Iniciativas' }} title="Confere se entendi?" desc={missing > 0 ? `${initiative.product}: o agente tem ${missing} ${plural(missing, 'dúvida', 'dúvidas')} para o manager resolver antes de abrir a mesa.` : `${initiative.product}: tudo entendido. ${initiative.tableOpened ? 'A mesa já está aberta.' : 'Falta confirmar para abrir a mesa.'}`} />
+        <OpenDeckBanner bg="#8FE3C8" icon={<BannerAgent />} back={{ href: `/p/${projectId}/iniciativas`, label: 'Iniciativas' }} title="Confere se entendi?" desc={missing > 0 ? `${initiative.product}: o agente tem ${missing} ${plural(missing, 'dúvida', 'dúvidas')} para o manager resolver antes de abrir a mesa.` : `${initiative.product}: tudo entendido. ${initiative.tableOpened ? 'A mesa já está aberta.' : 'Falta confirmar para abrir a mesa.'}`} />
 
         <section aria-label="O que o agente entendeu" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
           {info('PRODUTO', '#B7A6FF', initiative.product, 'prod')}

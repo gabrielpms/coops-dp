@@ -1,6 +1,7 @@
 'use client';
 import { useState, type CSSProperties, type ReactNode } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
+import { BackLink } from '@/components/nav/BackLink';
 import { Avatar, type AvatarConfig } from '@/components/avatar/Avatar';
 import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
 import { CoopsLink, useCoopsRouter } from '@/components/nav/useCoopsRouter';
@@ -38,7 +39,7 @@ export function SquadHomeClient({ user, projectId, squad, isManager, people, cou
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <CoopsLink href={isManager ? `/p/${projectId}/time` : '/hub'} style={{ fontSize: 14, color: '#A3A1AD', textDecoration: 'none', alignSelf: 'flex-start', minHeight: 44, display: 'inline-flex', alignItems: 'center' }}>{isManager ? '← Seu time' : '← Hub de projetos'}</CoopsLink>
+        <BackLink href={isManager ? `/p/${projectId}/time` : '/hub'} label={isManager ? 'Gestão de time' : 'Hub de projetos'} />
         <section className="h17" aria-label={squad.name} style={{ position: 'relative', overflow: 'hidden', borderRadius: 36, background: '#B7A6FF', color: '#0E0E12', border: '2px solid #0E0E12', padding: '44px 28px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14 }}>
           <div className="h17-ring" aria-hidden="true" style={{ position: 'absolute', left: -60, top: -60, width: 220, height: 220, borderRadius: '50%', border: '1.5px solid rgba(14,14,18,0.25)' }} />
           <div className="h17-ring h17-ring2" aria-hidden="true" style={{ position: 'absolute', right: -80, bottom: -90, width: 280, height: 280, borderRadius: '50%', border: '1.5px solid rgba(14,14,18,0.25)' }} />

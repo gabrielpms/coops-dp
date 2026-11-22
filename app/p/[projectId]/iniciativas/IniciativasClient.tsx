@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
+import { BackLink } from '@/components/nav/BackLink';
 import type { AvatarConfig } from '@/components/avatar/Avatar';
 import { CoopsLink, useCoopsRouter } from '@/components/nav/useCoopsRouter';
 import { InitiativeDeck, type InitiativeDraft } from '@/components/initiative/InitiativeDeck';
@@ -27,8 +28,8 @@ export function IniciativasClient({ user, project, items, draft: d0 }: {
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
+        <BackLink href="/hub" label="Hub de projetos" />
         <section style={{ display: 'flex', flexDirection: 'column', gap: 8, borderRadius: 32, background: '#17171D', border: '1px solid #2C2C36', padding: 'clamp(20px, 4vw, 36px)' }}>
-          <CoopsLink href="/hub" style={{ fontSize: 14, minHeight: 44, display: 'inline-flex', alignItems: 'center', alignSelf: 'flex-start' }}>← Hub de projetos</CoopsLink>
           <span style={{ ...label(12, '0.1em'), color: '#B7A6FF' }}>{project.name.toUpperCase()}</span>
           <h1 style={{ margin: 0, fontSize: 'clamp(36px, 6vw, 52px)', fontWeight: 800, letterSpacing: '-0.035em', lineHeight: 1 }}>Iniciativas</h1>
           <div role="tablist" aria-label="Filtrar iniciativas" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>

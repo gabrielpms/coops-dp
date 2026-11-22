@@ -267,3 +267,12 @@
 .coops-tg:not(:disabled):hover{transform:scale(1.06)}
 .coops-tg{transition:transform .18s cubic-bezier(.34,1.56,.64,1),background-color .2s ease}
 @media (prefers-reduced-motion:reduce){.coops-tg{transition:none}}
+
+/* Botão "Voltar" padrão (components/nav/BackLink): pílula visível, sempre acima do banner, à esquerda */
+.coops-back{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;min-height:44px;box-sizing:border-box;padding:0 18px 0 14px;border-radius:999px;border:1.5px solid #4A4858;background:#17171D;color:#F5F2EC;font-size:15px;text-decoration:none;transition:background .2s ease,border-color .2s ease,transform .2s ease}
+.coops-back b{font-weight:600}
+.coops-back svg{flex:none;transition:transform .2s ease}
+.coops-back:hover{background:#22222B;border-color:#B7A6FF}
+.coops-back:hover svg{transform:translateX(-3px)}
+.coops-back:focus-visible{outline:3px solid #B7A6FF;outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.coops-back,.coops-back svg{transition:none}.coops-back:hover svg{transform:none}}

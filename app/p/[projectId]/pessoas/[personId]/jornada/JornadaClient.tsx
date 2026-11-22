@@ -65,7 +65,7 @@ export function JornadaClient({ user, person, projectId, isOwn, cycle, skills, g
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <OpenDeckBanner bg="#FF8A5B" icon={<BannerJourney />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} avatarBg="#E06A3C" avatarCrown avatarHref={`/p/${projectId}/pessoas/${person.id}`} back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `← ${isOwn ? 'Meu perfil' : person.name}` }}
+        <OpenDeckBanner bg="#FF8A5B" icon={<BannerJourney />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} avatarBg="#E06A3C" avatarCrown avatarHref={`/p/${projectId}/pessoas/${person.id}`} back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `${isOwn ? 'Meu perfil' : person.name}` }}
           title="Jornada" desc={isOwn ? `Para onde você está indo no ciclo ${cycleLabel(cycle)}: objetivos com sinal, focos de desenvolvimento e os ciclos anteriores.` : `Para onde ${fn} está indo no ciclo ${cycleLabel(cycle)}.`} cta={isOwn ? { label: '+ Carta', onClick: () => setSheet({ k: 'pick' }) } : null} />
         {warn && <div role="alert" style={{ borderRadius: 14, border: '1.5px solid #FF8A5B', padding: '10px 14px', fontSize: 14 }}>{warn}</div>}
         <div role="tablist" aria-label="Filtrar a jornada" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
