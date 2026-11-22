@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
+import { BackLink } from '@/components/nav/BackLink';
 import { CoopsLink } from '@/components/nav/useCoopsRouter';
 import { ICP } from '@/components/squad/deckIcons';
 import { FocusCard } from '@/components/ds/FocusCard';
@@ -67,13 +68,13 @@ export function SquadDeckClient({ user, projectId, squad, deck, isManager, cards
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
+        <BackLink href={`/p/${projectId}/squads/${squad.id}`} label={squad.name} />
         <section className="coops-icdemo coops-dkban" aria-labelledby="dk-title" style={{ position: 'relative', borderRadius: 28, border: '2px solid #0E0E12', background: meta.color, color: '#0E0E12', padding: '26px 30px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '24px 28px', overflow: 'hidden', boxShadow: '0 18px 40px rgba(0,0,0,0.45)' }}>
           <span aria-hidden="true" className="coops-dkban-ring" style={{ position: 'absolute', right: -70, bottom: -110, width: 320, height: 320, borderRadius: '50%', border: '2px solid rgba(14,14,18,0.18)', boxShadow: '0 0 0 44px rgba(14,14,18,0.04)', pointerEvents: 'none' }} />
           <div aria-hidden="true" className="coops-dkban-ic" style={{ position: 'relative', flex: 'none', width: 116, height: 116, boxSizing: 'border-box', borderRadius: 24, border: '2px solid #0E0E12', background: 'rgba(245,242,236,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="84" height="84" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ overflow: 'visible' }}>{(ICP[meta.slug] ?? []).map(([c, d], i) => <path key={i} className={c || undefined} d={d} />)}</svg>
           </div>
           <div style={{ position: 'relative', flex: '1 1 380px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <CoopsLink href={`/p/${projectId}/squads/${squad.id}`} className="coops-dkban-back" style={{ alignSelf: 'flex-start', fontSize: 14, color: 'rgba(14,14,18,0.72)', textDecoration: 'none', minHeight: 44, display: 'inline-flex', alignItems: 'center' }}>← {squad.name}</CoopsLink>
             <h1 id="dk-title" style={{ margin: 0, fontSize: 'clamp(34px, 6vw, 52px)', fontWeight: 800, letterSpacing: '-0.035em', lineHeight: 1 }}>{meta.title}</h1>
             <p style={{ margin: '0 0 8px', fontSize: 17, lineHeight: 1.4 }}>{meta.desc}</p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>

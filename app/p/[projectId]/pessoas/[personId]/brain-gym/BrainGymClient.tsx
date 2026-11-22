@@ -47,7 +47,7 @@ export function BrainGymClient({ user, person, projectId, isOwn, skills, items: 
     catch { latest.current = latest.current.map((x) => (x.id === it.id ? { ...x, progress: prev.find((y) => y.id === it.id)?.progress ?? x.progress } : x)); setItems(latest.current); setWarn('Não deu para salvar o progresso.'); }
   };
   const saveNotes = async () => { if (!cur) return; await fetch(`/api/people/${person.id}/study/${cur.id}`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ notes }) }); setItems((all) => all.map((x) => (x.id === cur.id ? { ...x, notes } : x))); setSheet(null); };
-  const remove = async () => { if (!cur || !window.confirm('Remover este conteúdo do deck?')) return; await fetch(`/api/people/${person.id}/study/${cur.id}`, { method: 'DELETE' }); setSheet(null); refresh(); };
+  const remove = async () => { if (!cur || !window.confirm(cur.fromPowerUp ? 'Este curso vem de um power up: remover aqui também remove o power up. Continuar?' : 'Remover este conteúdo do deck?')) return; await fetch(`/api/people/${person.id}/study/${cur.id}`, { method: 'DELETE' }); setSheet(null); refresh(); };
   const setTo = (it: StudyView, n: number) => { const c = latest.current.find((x) => x.id === it.id) ?? it; void step(it, (c.progress === n ? n - 1 : n) - c.progress); };
   const Controls = ({ it, onCard }: { it: StudyView; onCard?: boolean }) => {
     const stepTxt = `${it.progress} de ${it.total} ${STUDY_META[it.type].unit}`;
@@ -73,8 +73,8 @@ export function BrainGymClient({ user, person, projectId, isOwn, skills, items: 
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <OpenDeckBanner bg="#F5A9D6" icon={<BannerBrain />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} avatarBg="#D987B8" avatarCrown avatarHref={`/p/${projectId}/pessoas/${person.id}`} back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `← ${isOwn ? 'Meu perfil' : person.name}` }}
-          title="Brain gym" desc={isOwn ? 'Livros, cursos e vídeos ligados às skills que você quer subir. Avance em blocos.' : `O que ${fn} está estudando, com o progresso de cada conteúdo.`} cta={isOwn ? { label: '+ Conteúdo', onClick: () => setSheet({ k: 'pick' }) } : null} />
+        <OpenDeckBanner bg="#F5A9D6" icon={<BannerBrain />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} avatarBg="#D987B8" avatarCrown avatarHref={`/p/${projectId}/pessoas/${person.id}`} back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `${isOwn ? 'Meu perfil' : person.name}` }}
+          title="Brain gym" desc={isOwn ? 'Livros, cursos e vídeos ligados às skills que você quer subir. Avance em blocos. Cursos criados como power up aparecem aqui sozinhos.' : `O que ${fn} está estudando, com o progresso de cada conteúdo.`} cta={isOwn ? { label: '+ Conteúdo', onClick: () => setSheet({ k: 'pick' }) } : null} />
         {warn && <div role="alert" style={{ borderRadius: 14, border: '1.5px solid #FF8A5B', padding: '10px 14px', fontSize: 14 }}>{warn}</div>}
         <div role="tablist" aria-label="Filtrar conteúdos" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
           {FILTERS.map(([f, text]) => { const on = filter === f; return <button key={f} type="button" role="tab" aria-selected={on} onClick={() => pick(f)} style={{ fontFamily: 'inherit', fontWeight: on ? 600 : 400, fontSize: 14, color: on ? '#0E0E12' : '#F5F2EC', background: on ? '#F5F2EC' : 'transparent', border: on ? 0 : '1px solid #4A4858', borderRadius: 999, minHeight: 44, padding: '0 16px', cursor: 'pointer' }}>{text} · {count(f)}</button>; })}
@@ -91,6 +91,7 @@ export function BrainGymClient({ user, person, projectId, isOwn, skills, items: 
                 <button type="button" onClick={(e) => { setNotes(it.notes); setSheet({ k: 'detail', id: it.id, rect: (e.currentTarget.closest('.coops-card') ?? e.currentTarget).getBoundingClientRect() }); }} aria-label={`Abrir ${it.title}`} style={{ fontFamily: 'inherit', textAlign: 'left', background: 'transparent', border: 0, color: '#0E0E12', padding: 0, display: 'flex', flexDirection: 'column', gap: 6, cursor: 'pointer', marginTop: 'auto' }}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 21, fontWeight: 700, lineHeight: 1.15 }}>{it.title}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6" /></svg></span>
                   <span style={{ fontSize: 13, lineHeight: 1.45, opacity: 0.85 }}>{STUDY_META[it.type].label}{it.skillName ? ` · ${it.skillName}` : ''}</span>
+                  {it.fromPowerUp && <span style={{ alignSelf: 'flex-start', ...mono, fontSize: 10, letterSpacing: '0.06em', border: '1.5px dashed #0E0E12', borderRadius: 999, padding: '2px 8px' }}>VEM DE UM POWER UP</span>}
                 </button>
                 <Controls it={it} onCard />
               </article>
@@ -125,7 +126,7 @@ export function BrainGymClient({ user, person, projectId, isOwn, skills, items: 
             <label htmlFor="bg-notas" style={{ ...mono, fontSize: 11, color: 'rgba(14,14,18,0.68)' }}>ANOTAÇÕES</label>
             <textarea id="bg-notas" rows={4} readOnly={!isOwn} value={notes} onChange={(e) => setNotes(e.target.value)} style={{ fontFamily: 'inherit', fontSize: 16, lineHeight: 1.5, color: '#0E0E12', background: 'rgba(245,242,236,0.65)', border: '1.5px solid rgba(14,14,18,0.3)', borderRadius: 12, padding: '12px 14px', resize: 'vertical', boxSizing: 'border-box', width: '100%' }} />
             {isOwn && <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, justifyContent: 'space-between' }}>
-              <button type="button" onClick={remove} style={{ fontFamily: 'inherit', fontWeight: 600, fontSize: 14, color: '#0E0E12', background: 'transparent', border: '1.5px solid #0E0E12', borderRadius: 12, minHeight: 48, padding: '0 16px', cursor: 'pointer' }}>Remover do deck</button>
+              <button type="button" onClick={remove} style={{ fontFamily: 'inherit', fontWeight: 600, fontSize: 14, color: '#0E0E12', background: 'transparent', border: '1.5px solid #0E0E12', borderRadius: 12, minHeight: 48, padding: '0 16px', cursor: 'pointer' }}>{cur.fromPowerUp ? 'Remover curso e power up' : 'Remover do deck'}</button>
               <button type="button" onClick={saveNotes} style={{ fontFamily: 'inherit', fontWeight: 600, fontSize: 15, color: '#F5F2EC', background: '#0E0E12', border: 0, borderRadius: 14, minHeight: 48, padding: '0 22px', cursor: 'pointer' }}>Salvar</button>
             </div>}
           </div>

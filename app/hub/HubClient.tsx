@@ -25,7 +25,7 @@ export function HubClient({ user, projects, draft: initialDraft }: { user: { nam
           {isManager && <button type="button" className="hb-new" onClick={() => setDeck(true)} style={{ color: '#0E0E12', background: '#B7A6FF', border: 0, fontWeight: 600, fontSize: 15, borderRadius: 14, padding: '14px 20px', minHeight: 48, cursor: 'pointer' }}>+ Novo projeto</button>}
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, alignItems: 'stretch' }}>
-          {projects.map((p, i) => <ProjectCard key={p.id} p={p} depth={i === 0 ? 2 : 1} />)}
+          {projects.map((p, i) => <ProjectCard key={p.id} p={p} role={user.role} depth={i === 0 ? 2 : 1} />)}
           {isManager && (
             <div style={{ flex: '0 1 360px', display: 'flex', padding: '14px 18px 0 0' }}>
             <button type="button" className="hb-add" onClick={() => setDeck(true)} style={{ cursor: 'pointer', background: 'transparent', flex: 1, minHeight: 330, boxSizing: 'border-box', borderRadius: 26, border: '1.5px dashed #4A4858', color: '#F5F2EC', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14, padding: 24 }}>

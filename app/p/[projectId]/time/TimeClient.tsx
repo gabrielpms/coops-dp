@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { AppHeader, DEFAULT_AVATAR } from '@/components/ds/AppHeader';
+import { BackLink } from '@/components/nav/BackLink';
 import { Avatar, type AvatarConfig } from '@/components/avatar/Avatar';
 import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
 import { CoopsLink, useCoopsRouter } from '@/components/nav/useCoopsRouter';
@@ -60,11 +61,11 @@ export function TimeClient({ user, project, persons, squads, memberDraft: md0, s
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
+        <BackLink href="/hub" label="Hub de projetos" />
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-end', gap: 16 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <CoopsLink href="/hub" style={{ fontSize: 14, minHeight: 44, display: 'inline-flex', alignItems: 'center' }}>← Todos os projetos</CoopsLink>
-            <span style={{ ...label(12, '0.1em'), color: '#B7A6FF' }}>GESTÃO DE TIME · {project.name.toUpperCase()}</span>
-            <h1 style={{ margin: 0, fontSize: 'clamp(36px, 6vw, 48px)', fontWeight: 800, letterSpacing: '-0.035em', lineHeight: 1 }}>Seu time, em cartas</h1>
+            <span style={{ ...label(12, '0.1em'), color: '#B7A6FF' }}>{project.name.toUpperCase()} · SEU TIME EM CARTAS</span>
+            <h1 style={{ margin: 0, fontSize: 'clamp(36px, 6vw, 48px)', fontWeight: 800, letterSpacing: '-0.035em', lineHeight: 1 }}>Gestão de time</h1>
           </div>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             <button type="button" onClick={() => setDeck('squad')} style={{ ...btnPrimary, color: '#F5F2EC', background: 'transparent', border: '1.5px solid #4A4858' }}>+ Squad</button>

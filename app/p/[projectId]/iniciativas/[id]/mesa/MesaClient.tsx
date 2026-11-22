@@ -2,6 +2,7 @@
 import { AnalysisOverlay } from '@/components/initiative/AnalysisOverlay';
 import { useRef, useState } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
+import { BackLink } from '@/components/nav/BackLink';
 import type { AvatarConfig } from '@/components/avatar/Avatar';
 import { CoopsLink, useCoopsRouter } from '@/components/nav/useCoopsRouter';
 import { BottomSheet } from '@/components/sheet/BottomSheet';
@@ -118,8 +119,8 @@ export function MesaClient({ user, projectId, initiative, cards, attachments, re
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
+        <BackLink href={`/p/${projectId}/iniciativas`} label="Iniciativas" />
         <section style={{ display: 'flex', flexDirection: 'column', gap: 8, borderRadius: 32, background: '#17171D', border: '1px solid #2C2C36', padding: 'clamp(20px, 4vw, 36px)' }}>
-          <CoopsLink href={`/p/${projectId}/iniciativas`} style={{ fontSize: 14, minHeight: 44, display: 'inline-flex', alignItems: 'center', alignSelf: 'flex-start' }}>← Iniciativas</CoopsLink>
           <span style={{ ...label(12, '0.1em'), color: '#B7A6FF' }}>{initiative.product.toUpperCase()} · MESA DA INICIATIVA</span>
           <h1 style={{ margin: 0, fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 800, letterSpacing: '-0.035em', lineHeight: 1.05 }}>Dê profundidade com cartas de contexto</h1>
           {closed && <span style={{ ...label(12, '0.08em'), color: '#F3D36B' }}>ENCERRADA · {OUTCOMES[initiative.closeOutcome as keyof typeof OUTCOMES]?.toUpperCase()}{initiative.closeNote ? ` · ${initiative.closeNote}` : ''}</span>}

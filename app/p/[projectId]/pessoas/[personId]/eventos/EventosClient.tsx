@@ -59,18 +59,18 @@ export function EventosClient({ user, person, leaderAvatar, projectId, isOwn, is
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <OpenDeckBanner bg="#B7A6FF" icon={<BannerEvents />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} avatarBg="#8B74F2" avatarCrown avatarHref={`/p/${projectId}/pessoas/${person.id}`} back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `← ${isOwn ? 'Meu perfil' : person.name}` }}
-          title="Eventos" desc={isOwn ? 'Check-ins, feedbacks, entregas, promoções e méritos do seu caminho.' : `O caminho de ${fn}: check-ins, feedbacks, entregas, promoções e méritos.`} cta={canNew ? { label: '+ Evento', onClick: open } : null} />
-        <div role="tablist" aria-label="Filtrar eventos" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        <OpenDeckBanner bg="#B7A6FF" icon={<BannerEvents />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} avatarBg="#8B74F2" avatarCrown avatarHref={`/p/${projectId}/pessoas/${person.id}`} back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `${isOwn ? 'Meu perfil' : person.name}` }}
+          title="Registros" desc={isOwn ? 'Check-ins, feedbacks, entregas, promoções e méritos do seu caminho.' : `O caminho de ${fn}: check-ins, feedbacks, entregas, promoções e méritos.`} cta={canNew ? { label: '+ Registro', onClick: open } : null} />
+        <div role="tablist" aria-label="Filtrar registros" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
           {types.map(([f, t, n]) => { const on = filter === f; return <button key={f} type="button" role="tab" aria-selected={on} onClick={() => pick(f)} style={{ fontFamily: 'inherit', fontWeight: on ? 600 : 400, fontSize: 14, color: on ? '#0E0E12' : '#F5F2EC', background: on ? '#F5F2EC' : 'transparent', border: on ? 0 : '1px solid #4A4858', borderRadius: 999, minHeight: 44, padding: '0 16px', cursor: 'pointer' }}>{t} · {n}</button>; })}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 28 }}>
           {base.map((e) => (
             <div key={e.id} className="coops-pile" style={{ position: 'relative', height: 380 }}>
-            <button type="button" className={`coops-front${e.type === 'PROMOCAO' ? ' ev-promo' : ''}`} aria-label={`Abrir o evento ${e.title}`} onClick={(ev) => { lastEl.current = ev.currentTarget; setCom(''); setComErr(''); setComOpen(false); setFocus({ id: e.id, rect: ev.currentTarget.getBoundingClientRect() }); }}
+            <button type="button" className={`coops-front${e.type === 'PROMOCAO' ? ' ev-promo' : ''}`} aria-label={`Abrir o registro ${e.title}`} onClick={(ev) => { lastEl.current = ev.currentTarget; setCom(''); setComErr(''); setComOpen(false); setFocus({ id: e.id, rect: ev.currentTarget.getBoundingClientRect() }); }}
               style={{ position: 'absolute', left: 0, top: 24, right: 22, fontFamily: 'inherit', textAlign: 'left', height: 340, boxSizing: 'border-box', borderRadius: 22, background: e.archived ? '#A3A1AD' : COLOR[e.type], color: '#0E0E12', border: '2px solid #0E0E12', padding: 20, display: 'flex', flexDirection: 'column', gap: 10, cursor: 'pointer', boxShadow: '0 16px 36px rgba(0,0,0,0.45)' }}>
               <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}><EventTypeIcon type={e.type} /><span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}><span style={{ fontSize: 44, fontWeight: 600, lineHeight: 1 }}>{e.date.slice(8, 10)}</span><span style={label(11, '0')}>{MONTHS[Number(e.date.slice(5, 7)) - 1]}</span></span></span>
-              <span style={{ marginTop: 'auto', ...label(11, '0.08em') }}>EVENTOS · {EVENT_TYPE_LABEL[e.type].toUpperCase()}{e.archived ? ' · ARQUIVADO' : ''}</span>
+              <span style={{ marginTop: 'auto', ...label(11, '0.08em') }}>REGISTROS · {EVENT_TYPE_LABEL[e.type].toUpperCase()}{e.archived ? ' · ARQUIVADO' : ''}</span>
               <span style={{ fontSize: 21, fontWeight: 600, lineHeight: 1.2, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{e.title}</span>
               <span style={{ width: '100%', boxSizing: 'border-box', fontSize: 13, borderTop: '1.5px solid #0E0E12', paddingTop: 10 }}>{e.type === 'FEEDBACK' ? (e.data.autor || 'Sem autor') : e.type === 'ENTREGA' ? 'Registrada em Entregas' : `${(e.comments.length + (local[e.id]?.length ?? 0))} comentário(s)`}</span>
             </button>
@@ -78,14 +78,14 @@ export function EventosClient({ user, person, leaderAvatar, projectId, isOwn, is
           ))}
           {canNew && filter !== 'arquivados' && <button type="button" onClick={open} className="tw-add" style={{ fontFamily: 'inherit', height: 340, boxSizing: 'border-box', borderRadius: 22, background: 'transparent', border: '1.5px dashed #4A4858', color: '#F5F2EC', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, cursor: 'pointer', padding: 20 }}>
             <span style={{ width: 52, height: 52, borderRadius: '50%', border: '1.5px solid #4A4858', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></span>
-            <span style={{ fontSize: 17, fontWeight: 600 }}>{events.length ? 'Novo evento' : 'Registrar o primeiro evento'}</span><span style={{ fontSize: 13, color: '#A3A1AD', textAlign: 'center' }}>{isManager ? 'Check-in, feedback, promoção, mérito ou mudança' : 'Registre um feedback que recebeu'}</span>
+            <span style={{ fontSize: 17, fontWeight: 600 }}>{events.length ? 'Novo registro' : 'Registrar o primeiro registro'}</span><span style={{ fontSize: 13, color: '#A3A1AD', textAlign: 'center' }}>{isManager ? 'Check-in, feedback, promoção, mérito ou mudança' : 'Registre um feedback que recebeu'}</span>
           </button>}
         </div>
-        {base.length === 0 && !canNew && <p style={{ margin: 0, color: '#A3A1AD' }}>Nenhum evento registrado ainda.</p>}
+        {base.length === 0 && !canNew && <p style={{ margin: 0, color: '#A3A1AD' }}>Nenhum registro ainda.</p>}
       </div>
 
       {sheet?.k === 'pick' && (
-        <BottomSheet tag="DECK DE EVENTOS · NOVO EVENTO" title="Que tipo de evento você quer registrar?" onClose={() => setSheet(null)}>
+        <BottomSheet tag="DECK DE REGISTROS · NOVO REGISTRO" title="Que tipo de registro você quer fazer?" onClose={() => setSheet(null)}>
           <p style={{ margin: 0, fontSize: 14, color: '#A3A1AD' }}>Escolha uma carta. Depois vêm as perguntas, uma por carta.</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
             {(['CHECKIN', 'FEEDBACK', 'PROMOCAO', 'MERITO', 'MUDANCA_TIME'] as EventKind[]).map((k) => <button key={k} type="button" onClick={() => setSheet({ k: 'new', kind: k })} className="coops-card ev-opt" style={{ fontFamily: 'inherit', textAlign: 'left', minHeight: 140, borderRadius: 18, background: COLOR[k], color: '#0E0E12', border: '2px solid #0E0E12', padding: 16, display: 'flex', flexDirection: 'column', gap: 6, cursor: 'pointer' }}><EventTypeIcon type={k} /><span style={{ fontSize: 20, fontWeight: 700 }}>{EVENT_TYPE_LABEL[k]}</span><span style={{ fontSize: 13, lineHeight: 1.4 }}>{HINT[k]}</span></button>)}
@@ -98,7 +98,7 @@ export function EventosClient({ user, person, leaderAvatar, projectId, isOwn, is
         <FocusCard origin={focus.rect} bg={cur.archived ? '#A3A1AD' : COLOR[cur.type]} ariaLabel={cur.title} extraClass={cur.type === 'PROMOCAO' ? 'ev-promo' : undefined} onClose={() => { setFocus(null); lastEl.current?.focus?.(); }}>
           <div className="coops-fx-body" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
-            <span style={label(11, '0.08em')}>DECK DE EVENTOS › {EVENT_TYPE_LABEL[cur.type].toUpperCase()} · {cur.date.slice(8, 10)} {MONTHS[Number(cur.date.slice(5, 7)) - 1]}</span>
+            <span style={label(11, '0.08em')}>DECK DE REGISTROS › {EVENT_TYPE_LABEL[cur.type].toUpperCase()} · {cur.date.slice(8, 10)} {MONTHS[Number(cur.date.slice(5, 7)) - 1]}</span>
             <FocusClose onClick={() => { setFocus(null); lastEl.current?.focus?.(); }} />
           </div>
           <h2 style={{ margin: 0, fontSize: 30, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }}>{cur.title}</h2>

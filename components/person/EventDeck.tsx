@@ -36,7 +36,7 @@ export function EventDeck({ personId, personName, kind, draft, onDraftChange, on
   const [serverError, setServerError] = useState<string | null>(null);
   const date = todayIso();
   const lbl = EVENT_TYPE_LABEL[kind];
-  const TAG = `DECK DE EVENTOS · NOVO EVENTO · ${lbl.toUpperCase()}`;
+  const TAG = `DECK DE REGISTROS · NOVO REGISTRO · ${lbl.toUpperCase()}`;
 
   const submit = async () => {
     setBusy(true); setServerError(null);
@@ -60,13 +60,13 @@ export function EventDeck({ personId, personName, kind, draft, onDraftChange, on
   const first: DeckCard = { id: 'titulo', bg: '#B7A6FF', node: (<>
     <Title>{kind === 'CHECKIN' ? T.check : kind === 'FEEDBACK' ? T.fb : T.other}</Title><Help>Vira o título da carta no deck.{kind === 'FEEDBACK' ? ' Pode ser uma frase marcante do feedback.' : ''}</Help>
     <span style={label(11)}>{longDate(date)} · registrado automaticamente</span>
-    <input type="text" aria-label="Título do evento" value={form.title} onChange={(e) => { set({ title: e.target.value }); setErr(false); }} style={cardInput} />
-    <Err show={err}>Dê um título ao evento para seguir.</Err>
+    <input type="text" aria-label="Título do registro" value={form.title} onChange={(e) => { set({ title: e.target.value }); setErr(false); }} style={cardInput} />
+    <Err show={err}>Dê um título ao registro para seguir.</Err>
   </>) };
   const text = (id: string, bg: string, q: string, help: string, key: 'body' | 'msg', aria: string, optional = true): DeckCard => ({ id, bg, optional, node: (<><Title>{q}</Title><Help>{help}</Help><textarea aria-label={aria} value={form[key]} onChange={(e) => set({ [key]: e.target.value })} style={{ ...cardInput, minHeight: 170, resize: 'vertical' }} /></>) });
   const list = (id: string, bg: string, q: string, help: string, key: 'pedidos' | 'radar' | 'combinados' | 'proximo', aria: string): DeckCard => ({ id, bg, optional: true, node: (<><Title>{q}</Title><Help>{help}</Help><ListEditor items={form[key]} onChange={(v) => set({ [key]: v })} aria={aria} ph="Escreva e adicione" /></>) });
   const dePara = (q: string, help: string, a: string, b: string): DeckCard => ({ id: 'depara', bg: '#F3D36B', optional: true, node: (<><Title>{q}</Title><Help>{help}</Help><label htmlFor="ev-de" style={label()}>DE</label><input id="ev-de" type="text" placeholder={a} value={form.de} onChange={(e) => set({ de: e.target.value })} style={cardInput} /><label htmlFor="ev-para" style={label()}>PARA</label><input id="ev-para" type="text" placeholder={b} value={form.para} onChange={(e) => set({ para: e.target.value })} style={cardInput} /></>) });
-  const summary = (rows: [string, string][]): DeckCard => ({ id: 'resumo', bg: '#B7A6FF', summary: true, node: (<><Title>Confere {kind === 'CHECKIN' ? 'o check-in' : kind === 'FEEDBACK' ? 'o feedback' : 'o evento'}?</Title><Help>Ele entra no deck de Eventos de {personName} como uma carta de {lbl.toLowerCase()}.</Help><div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>{rows.map(([k, v]) => <SummaryRow key={k} k={k} v={v} />)}</div></>) });
+  const summary = (rows: [string, string][]): DeckCard => ({ id: 'resumo', bg: '#B7A6FF', summary: true, node: (<><Title>Confere {kind === 'CHECKIN' ? 'o check-in' : kind === 'FEEDBACK' ? 'o feedback' : 'o registro'}?</Title><Help>Ele entra no deck de Registros de {personName} como uma carta de {lbl.toLowerCase()}.</Help><div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>{rows.map(([k, v]) => <SummaryRow key={k} k={k} v={v} />)}</div></>) });
 
   let cards: DeckCard[] = [];
   if (kind === 'CHECKIN') cards = [first, text('conv', '#F5F2EC', 'Como foi a conversa?', 'Um resumo curto para lembrar do contexto depois.', 'body', 'Resumo da conversa'),
@@ -89,7 +89,7 @@ export function EventDeck({ personId, personName, kind, draft, onDraftChange, on
   return (
     <BottomSheet tag={TAG} title={`Novo ${lbl.toLowerCase()}`} onClose={onClose}>
       <button type="button" onClick={onChangeType} style={{ alignSelf: 'flex-start', fontFamily: 'inherit', fontSize: 14, color: '#B7A6FF', background: 'none', border: 0, minHeight: 44, cursor: 'pointer', padding: 0 }}>Trocar o tipo</button>
-      <QuestionDeck tag={TAG} cards={cards} step={d.step} onGo={go} busy={busy} busyLabel="Registrando…" error={serverError} nextLabel={d.step === LAST ? 'Registrar evento' : 'Próxima'} />
+      <QuestionDeck tag={TAG} cards={cards} step={d.step} onGo={go} busy={busy} busyLabel="Registrando…" error={serverError} nextLabel={d.step === LAST ? 'Registrar' : 'Próxima'} />
     </BottomSheet>
   );
 }

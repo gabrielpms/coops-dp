@@ -9,7 +9,7 @@ const stamp = Date.now(); const manager = `mgr${stamp}@x.com`, convidado = `joan
 await p.goto(BASE + '/cadastro'); await p.fill('#cad-nome', 'Marina Gestora'); await p.fill('#cad-email', manager); await p.fill('#cad-senha', 'senha-forte-123');
 await p.click('button[type=submit]'); await p.waitForURL('**/primeiro-acesso'); await p.waitForLoadState('networkidle');
 const id = await p.evaluate(async () => { const r = await fetch('/api/projects', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name: 'Nimbo Pay', segment: 'Fintech', skills: ['Pesquisa com usuários', 'Facilitação'] }) }); return (await r.json()).project.id; });
-await p.goto(`${BASE}/p/${id}/time`); await p.waitForSelector('h1:text-is("Seu time, em cartas")');
+await p.goto(`${BASE}/p/${id}/time`); await p.waitForSelector('h1:text-is("Gestão de time")');
 console.log('vazio: chamada p/ convidar:', await p.locator('button:text-is("+ Adicionar primeira pessoa")').isVisible());
 console.log('vazio: chamada p/ criar squad:', await p.locator('button:text-is("+ Criar primeiro squad")').isVisible());
 await p.screenshot({ path: S + '1-vazio.png' });

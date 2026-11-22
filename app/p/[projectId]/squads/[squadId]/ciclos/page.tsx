@@ -52,7 +52,7 @@ export default async function SquadCiclos({ params, searchParams }: { params: Pr
   return (
     <CycleHistory user={{ name: user.name, email: user.email, role: user.role, avatar: user.avatar as any }} title="Histórico de ciclos"
       desc={`O que o ${squad.name} tinha em cada ciclo: desafios, frentes, estratégia, indicadores, alavancas e a saúde do time. Só para consulta.`}
-      back={{ href: base, label: `← ${squad.name}` }} cycles={cycles} current={current} selected={selected} hrefFor={(x) => `${base}/ciclos?c=${x}`} sections={sections} accent="#B7A6FF"
+      back={{ href: base, label: `${squad.name}` }} cycles={cycles} current={current} selected={selected} hrefFor={(x) => `${base}/ciclos?c=${x}`} sections={sections} accent="#B7A6FF"
       note={<span style={{ color: '#A3A1AD', fontSize: 14 }}>As cartas aparecem no ciclo em que existiam. A saúde é a média das respostas do ciclo, só com 3 ou mais respostas.</span>} />
   );
 }

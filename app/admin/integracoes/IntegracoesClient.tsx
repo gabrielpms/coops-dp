@@ -63,7 +63,7 @@ export function IntegracoesClient({ user, state, }: { user: { name: string; emai
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <AdminBanner view="int" title="Integrações" desc="A chave da Anthropic e as 4 skills que são o motor da análise das iniciativas. A chave é cifrada e só você a gerencia." meAvatar={meAvatar} back={{ href: '/admin', label: '← Administração' }}
+        <AdminBanner view="int" title="Integrações" desc="A chave da Anthropic e as 4 skills que são o motor da análise das iniciativas. A chave é cifrada e só você a gerencia." meAvatar={meAvatar} back={{ href: '/admin', label: 'Administração' }}
           cta={state.configured ? { label: busy === 'skills' ? 'Enviando…' : allSent ? 'Atualizar as 4 skills' : 'Enviar as 4 skills', onClick: () => busy === null && call('skills') } : { label: 'Cadastrar a chave', onClick: () => setDeck(true) }} />
         {msg && <div role="status" style={{ borderRadius: 16, padding: '12px 16px', fontSize: 15, fontWeight: 600, background: msg.ok ? '#8FE3C8' : '#FF8A5B', color: '#0E0E12', border: '2px solid #0E0E12' }}>{msg.text}</div>}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>

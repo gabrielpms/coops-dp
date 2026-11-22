@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState, type CSSProperties } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
+import { BackLink } from '@/components/nav/BackLink';
 import type { AvatarConfig } from '@/components/avatar/Avatar';
 import { CoopsLink, useCoopsRouter } from '@/components/nav/useCoopsRouter';
 import { TOOL_ICON_PARTS } from '@/lib/toolIcons';
@@ -97,6 +98,7 @@ export function MomentoClient({ user, projectId, initiative, tools, plays }: {
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
+        <BackLink href={`/p/${projectId}/iniciativas/${initiative.id}/mesa`} label="Mesa da iniciativa" />
         <section style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'stretch' }}>
           <CoopsLink href={`/p/${projectId}/iniciativas/${initiative.id}/mesa`} className="coops-card" style={{ flex: '0 0 240px', minHeight: 220, boxSizing: 'border-box', borderRadius: 22, background: '#B7A6FF', color: '#0E0E12', border: '2px solid #0E0E12', padding: 18, display: 'flex', flexDirection: 'column', gap: 10, textDecoration: 'none', boxShadow: '0 16px 36px rgba(0,0,0,0.45)' }}>
             <span style={{ display: 'flex', justifyContent: 'space-between', ...label(11, '0.08em') }}><span>INICIATIVA</span><span>MESA</span></span>

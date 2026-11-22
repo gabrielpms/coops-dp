@@ -1,6 +1,7 @@
 'use client';
 import { useRef, useState, type MouseEvent, type ReactNode } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
+import { BackLink } from '@/components/nav/BackLink';
 import { AdminCard } from '@/components/admin/AdminBanner';
 import { IconBars, IconBino, IconCycle, IconDeck } from '@/components/admin/Icons';
 import { FocusCard, FocusClose } from '@/components/ds/FocusCard';
@@ -67,7 +68,7 @@ export function AnaliseClient({ user, projectId, initiative, results, when, mode
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <CoopsLink href={back} style={{ fontSize: 14, minHeight: 44, display: 'inline-flex', alignItems: 'center', alignSelf: 'flex-start' }}>← Mesa da iniciativa</CoopsLink>
+        <BackLink href={back} label="Mesa da iniciativa" />
         <section aria-label="Parecer do agente" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <span style={{ ...label(12, '0.1em'), color: '#8FE3C8' }}>{initiative.product.toUpperCase()} · ANÁLISE DO AGENTE</span>
           <h1 style={{ margin: 0, fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 800, letterSpacing: '-0.035em', lineHeight: 1.05 }}>Parecer da iniciativa</h1>

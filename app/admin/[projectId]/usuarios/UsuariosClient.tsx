@@ -20,7 +20,7 @@ export function UsuariosClient({ user, project, users, squads }: { user: { name:
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <AdminBanner view="usr" title="Usuários" desc={`${project.name} · Toque numa carta para editar os dados, redefinir a senha, bloquear o acesso ou excluir.`} meAvatar={meAvatar} back={{ href: `/admin/${project.id}`, label: '← Administração do projeto' }} />
+        <AdminBanner view="usr" title="Usuários" desc={`${project.name} · Toque numa carta para editar os dados, redefinir a senha, bloquear o acesso ou excluir.`} meAvatar={meAvatar} back={{ href: `/admin/${project.id}`, label: 'Administração do projeto' }} />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
           {users.map((m) => (
             <AdminCard key={m.id} bg={bgOf(m)} icon={<AvatarIcon bg={(m.avatar as AvatarConfig | null)?.bg ?? '#F5F2EC'}><Avatar {...DEFAULT_AVATAR_CFG} {...(m.avatar ?? {})} crown={m.role === 'MANAGER'} size={52} label="" /></AvatarIcon>}

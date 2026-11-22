@@ -76,7 +76,7 @@ export function SaudeClient({ user, person, projectId, isOwn, history, draft, cy
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
         <OpenDeckBanner bg="#A9D8F5" icon={<BannerHeart />} avatar={{ ...DEFAULT_AVATAR_CFG, ...(person.avatar ?? {}) }} avatarBg="#7FB8DD" avatarCrown avatarHref={`/p/${projectId}/pessoas/${person.id}`}
-          back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `← ${isOwn ? 'Meu perfil' : person.name}` }}
+          back={{ href: `/p/${projectId}/pessoas/${person.id}`, label: `${isOwn ? 'Meu perfil' : person.name}` }}
           title={isOwn ? 'Check-in de saúde' : `Saúde de ${fn}`}
           desc={isOwn ? 'Dê sua nota de 1 a 5 em cada carta. Só você e seu manager veem as respostas.' : `O que ${fn} respondeu no período. Use como ponto de partida do próximo 1:1, não como avaliação.`}
           chip={isOwn ? 'Só você e seu manager veem' : `Só ${fn} e você veem`} />

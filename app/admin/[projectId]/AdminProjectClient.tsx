@@ -48,7 +48,7 @@ export function AdminProjectClient({ user, project, categories, looseSkills, lea
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <AdminBanner view={b.view} title={b.title} desc={`${project.name} · ${b.desc}`} meAvatar={meAvatar} onMe={() => setDeck({ kind: 'user' })} back={{ href: '/admin', label: '← Todos os projetos' }} cta={b.cta} />
+        <AdminBanner view={b.view} title={b.title} desc={`${project.name} · ${b.desc}`} meAvatar={meAvatar} onMe={() => setDeck({ kind: 'user' })} back={{ href: '/admin', label: 'Todos os projetos' }} cta={b.cta} />
         <div role="tablist" aria-label="Administração do projeto" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
           {tabs.map(([id, text]) => { const on = tab === id; return <button key={id} type="button" role="tab" aria-selected={on} onClick={() => setTab(id)} style={{ fontFamily: 'inherit', fontWeight: on ? 600 : 400, fontSize: 14, color: on ? '#0E0E12' : '#F5F2EC', background: on ? '#F5F2EC' : 'transparent', border: on ? 0 : '1px solid #4A4858', borderRadius: 999, minHeight: 44, padding: '0 16px', cursor: 'pointer' }}>{text}</button>; })}
         </div>

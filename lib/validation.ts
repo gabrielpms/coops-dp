@@ -218,9 +218,9 @@ export type SquadCardInput = z.infer<typeof squadCardSchema>;
 export const cardStatusSchema = z.object({ status: z.enum(['ABERTA', 'ENCERRADA']) });
 export const SQUAD_DECK_SLUGS = { desafios: 'DESAFIO', frentes: 'FRENTE', estrategia: 'ESTRATEGIA', indicadores: 'INDICADOR', alavancas: 'ALAVANCA' } as const;
 
-// ---------- Eventos da pessoa (M6) ----------
+// ---------- Registros da pessoa (M6) ----------
 const items = z.array(text(300).min(1)).max(20).default([]);
-const evBase = { title: text(160).min(1, 'Dê um título ao evento para seguir.'), date: day.optional(), body: text(2000).optional().default('') };
+const evBase = { title: text(160).min(1, 'Dê um título ao registro para seguir.'), date: day.optional(), body: text(2000).optional().default('') };
 export const eventSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('CHECKIN'), ...evBase, pedidos: items, radar: items, combinados: items, proximo: items }),
   z.object({ type: z.literal('FEEDBACK'), ...evBase, autor: text(120).optional().default(''), anexos: z.array(text(300).min(1)).max(10).default([]) }),

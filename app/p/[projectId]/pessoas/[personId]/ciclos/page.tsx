@@ -50,7 +50,7 @@ export default async function PessoaCiclos({ params, searchParams }: { params: P
       items: rated.map(({ s, r }) => ({ title: s.name, big: r!.selfScore ? String(r!.selfScore) : '—', bigLabel: isOwn ? 'SUA NOTA' : `NOTA DE ${fn.toUpperCase()}`, foot: `Manager: ${r!.managerScore ?? '—'}` })) },
     { id: 'jornada', title: 'Jornada', kicker: 'JORNADA', bg: '#FF8A5B', href: `${base}/jornada`, empty: 'Nenhum objetivo ou foco neste ciclo.',
       items: goals.map((g) => ({ title: g.title, big: g.kind === 'OBJETIVO' ? `${g.progress}/5` : `${g.levelFrom ?? 0}→${g.levelTo ?? 0}`, bigLabel: g.kind === 'OBJETIVO' ? (g.progress >= 5 ? 'ATINGIDO' : 'PROGRESSO') : 'NÍVEL', meta: g.kind === 'OBJETIVO' ? g.signal ?? undefined : g.practice ?? undefined, foot: g.kind === 'OBJETIVO' ? 'Objetivo' : 'Foco de desenvolvimento' })) },
-    { id: 'eventos', title: 'Eventos', kicker: 'EVENTO', bg: '#B7A6FF', href: `${base}/eventos`, empty: 'Nenhum evento neste ciclo.',
+    { id: 'eventos', title: 'Registros', kicker: 'REGISTRO', bg: '#B7A6FF', href: `${base}/eventos`, empty: 'Nenhum registro neste ciclo.',
       items: events.map((e) => ({ title: e.title, big: day(e.date), bigLabel: EVENT_TYPE_LABEL[e.type as keyof typeof EVENT_TYPE_LABEL]?.toUpperCase() })) },
     { id: 'entregas', title: 'Entregas', kicker: 'ENTREGA', bg: '#8FE3C8', href: `${base}/entregas`, empty: 'Nenhuma entrega neste ciclo.',
       items: deliveries.map((d) => ({ title: d.title, big: day(d.date), bigLabel: STATUS[d.status as keyof typeof STATUS]?.toUpperCase(), meta: d.description ?? undefined, foot: d.impact ? `Impacto: ${d.impact}` : 'Impacto pendente' })) },
@@ -59,8 +59,8 @@ export default async function PessoaCiclos({ params, searchParams }: { params: P
   ];
   return (
     <CycleHistory user={{ name: user.name, email: user.email, role: user.role, avatar: user.avatar as any }} title="Histórico de ciclos"
-      desc={`Tudo o que ${isOwn ? 'você registrou' : `${fn} registrou`} em cada ciclo, só para consulta: saúde, skills, jornada, eventos, entregas e estudos.`}
-      back={{ href: base, label: `← ${isOwn ? 'Meu perfil' : person.name}` }} avatar={{ ...DEFAULT_AVATAR_CFG, ...((person.avatar as any) ?? {}) }}
+      desc={`Tudo o que ${isOwn ? 'você registrou' : `${fn} registrou`} em cada ciclo, só para consulta: saúde, skills, jornada, registros, entregas e estudos.`}
+      back={{ href: base, label: `${isOwn ? 'Meu perfil' : person.name}` }} avatar={{ ...DEFAULT_AVATAR_CFG, ...((person.avatar as any) ?? {}) }}
       cycles={cycles} current={current} selected={selected} hrefFor={(x) => `${base}/ciclos?c=${x}`} sections={sections} />
   );
 }
