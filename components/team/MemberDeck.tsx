@@ -61,36 +61,36 @@ export function MemberDeck({ projectId, skills, squads = [], defaultSquadId = nu
   };
 
   const cards: DeckCard[] = [
-    { id: 'quem', bg: '#B7A6FF', node: (<>
+    { id: 'quem', size: 'sm', bg: '#B7A6FF', node: (<>
       <Title>Quem está chegando?</Title><Help>Nome e cargo aparecem na carta da pessoa.</Help>
       <input type="text" aria-label="Nome da pessoa" placeholder="Ex.: Joana Reis" value={form.name} onChange={(e) => { set({ name: e.target.value }); setErrs((x) => ({ ...x, name: false })); }} style={cardInput} />
       <Err show={errs.name}>Escreva o nome da pessoa para seguir.</Err>
       <label htmlFor="mw-cargo" style={label()}>CARGO · OPCIONAL</label>
       <input id="mw-cargo" type="text" placeholder="Ex.: Senior Product Designer" value={form.title} onChange={(e) => set({ title: e.target.value })} style={cardInput} />
     </>) },
-    { id: 'avatar', bg: '#F5F2EC', node: (<><Title>Monte o avatar</Title><Help>Ele aparece na carta, na mesa do squad e nos decks.</Help><AvatarEditor value={form.avatar} onChange={(avatar) => set({ avatar })} /></>) },
-    { id: 'skill', bg: '#F3D36B', optional: true, node: (<>
+    { id: 'avatar', size: 'lg', bg: '#F5F2EC', node: (<><Title>Monte o avatar</Title><Help>Ele aparece na carta, na mesa do squad e nos decks.</Help><AvatarEditor value={form.avatar} onChange={(avatar) => set({ avatar })} /></>) },
+    { id: 'skill', size: 'sm', bg: '#F3D36B', optional: true, node: (<>
       <Title>Qual é a skill principal?</Title><Help>Escreva com as suas palavras ou use uma sugestão. Vira o selo amarelo da carta.</Help>
       <input type="text" aria-label="Skill principal" placeholder="Ex.: Pesquisa" value={form.mainSkill} onChange={(e) => set({ mainSkill: e.target.value })} style={cardInput} />
       {skills.length > 0 && <><span style={label()}>SUGESTÕES DO PROJETO</span>
         <div role="group" aria-label="Sugestões de skill" style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{skills.map((s) => <button key={s} type="button" aria-pressed={form.mainSkill === s} className="tw-chip" onClick={() => set({ mainSkill: s })} style={chipStyle(form.mainSkill === s)}>{s}</button>)}</div></>}
     </>) },
-    { id: 'entrada', bg: '#F5A9D6', optional: true, node: (<>
+    { id: 'entrada', size: 'sm', bg: '#F5A9D6', optional: true, node: (<>
       <Title>Quando a pessoa entrou?</Title><Help>Escolha o dia no calendário. A data calcula o tempo de casa na carta.</Help>
       <DateCalendar value={form.joinedAt} onChange={(iso) => set({ joinedAt: iso })} max={new Date().toISOString().slice(0, 10)} />
       <span style={{ fontSize: 14, fontWeight: 600 }}>{form.joinedAt ? `Tempo de casa: ${tenureLong(form.joinedAt).replace(' de casa', '')}` : 'Escolha a data para calcular o tempo de casa.'}</span>
     </>) },
-    ...(askSquad ? [{ id: 'squad', bg: '#8FE3C8', optional: true, node: (<>
+    ...(askSquad ? [{ id: 'squad', size: 'sm' as const, bg: '#8FE3C8', optional: true, node: (<>
       <Title>Em qual squad entra?</Title><Help>A pessoa senta à mesa do squad escolhido. Quem já estava em outro squad muda para este. Dá para mudar depois.</Help>
       <SquadChoice squads={squads} value={form.squadId} onChange={(id) => set({ squadId: id })} />
     </>) } as DeckCard] : []),
-    { id: 'email', bg: '#A9D8F5', node: (<>
+    { id: 'email', size: 'sm', bg: '#A9D8F5', node: (<>
       <Title>Qual o acesso da pessoa?</Title><Help>Ela entra no Coops com este e-mail e a senha que você criar aqui. Passe os dois para ela.</Help>
       <input type="email" aria-label="E-mail da pessoa" placeholder="nome@empresa.com" value={form.email} onChange={(e) => { set({ email: e.target.value }); setErrs((x) => ({ ...x, email: false })); }} style={cardInput} />
       <Err show={errs.email}>Coloque um e-mail válido para o acesso.</Err>
       <AccessFields id="mb-senha" email={form.email.trim()} password={password} onPassword={(v) => { setPassword(v); setErrs((x) => ({ ...x, password: false })); }} error={errs.password} />
     </>) },
-    { id: 'resumo', bg: '#B7A6FF', summary: true, node: (<>
+    { id: 'resumo', size: 'sm', bg: '#B7A6FF', summary: true, node: (<>
       <Title>Confere a carta?</Title><Help>Ao criar, a carta entra no time e a pessoa já pode entrar com {form.email.trim() || 'o e-mail informado'} e a senha <b style={{ fontFamily: "'JetBrains Mono', monospace" }}>{password || 'definida'}</b>.</Help>
       <div aria-hidden="true" style={{ alignSelf: 'flex-start', width: 220, borderRadius: 20, background: '#17171D', color: '#F5F2EC', border: '2px solid #0E0E12', overflow: 'hidden' }}>
         <div style={{ background: form.avatar.bg ?? '#B7A6FF', padding: '14px 14px 0', display: 'flex', justifyContent: 'center', borderBottom: '1.5px solid #0E0E12' }}><Avatar {...form.avatar} size={120} label="" /></div>
