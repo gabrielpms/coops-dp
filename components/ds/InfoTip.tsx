@@ -11,14 +11,15 @@ export function InfoTip({ label, children, align = 'left' }: { label: string; ch
   const [hover, setHover] = useState(false);
   const box = useRef<HTMLSpanElement>(null);
   const id = useId();
+  const shown = open || hover;
   useEffect(() => {
-    if (!open) return;
-    const away = (e: MouseEvent | TouchEvent) => { if (!box.current?.contains(e.target as Node)) setOpen(false); };
-    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    if (!shown) return;
+    const away = (e: MouseEvent | TouchEvent) => { if (!box.current?.contains(e.target as Node)) { setOpen(false); setHover(false); } };
+    // Esc fecha mesmo com o mouse em cima (balão dispensável sem mover o ponteiro)
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') { setOpen(false); setHover(false); } };
     document.addEventListener('mousedown', away); document.addEventListener('touchstart', away); document.addEventListener('keydown', esc);
     return () => { document.removeEventListener('mousedown', away); document.removeEventListener('touchstart', away); document.removeEventListener('keydown', esc); };
-  }, [open]);
-  const shown = open || hover;
+  }, [shown]);
   return (
     <span ref={box} style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <button type="button" className="coops-info" aria-label={label} aria-expanded={shown} aria-controls={id} onClick={() => setOpen((o) => !o)}>

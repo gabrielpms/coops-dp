@@ -78,7 +78,7 @@ export function EventosClient({ user, person, leaderAvatar, projectId, isOwn, is
           ))}
           {canNew && filter !== 'arquivados' && <button type="button" onClick={open} className="tw-add" style={{ fontFamily: 'inherit', height: 340, boxSizing: 'border-box', borderRadius: 22, background: 'transparent', border: '1.5px dashed #4A4858', color: '#F5F2EC', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, cursor: 'pointer', padding: 20 }}>
             <span style={{ width: 52, height: 52, borderRadius: '50%', border: '1.5px solid #4A4858', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></span>
-            <span style={{ fontSize: 17, fontWeight: 600 }}>{events.length ? 'Novo registro' : 'Registrar o primeiro registro'}</span><span style={{ fontSize: 13, color: '#A3A1AD', textAlign: 'center' }}>{isManager ? 'Check-in, feedback, promoção, mérito ou mudança' : 'Registre um feedback que recebeu'}</span>
+            <span style={{ fontSize: 17, fontWeight: 600 }}>{events.length ? 'Novo registro' : 'Fazer o primeiro registro'}</span><span style={{ fontSize: 13, color: '#A3A1AD', textAlign: 'center' }}>{isManager ? 'Check-in, feedback, promoção, mérito ou mudança' : 'Registre um feedback que recebeu'}</span>
           </button>}
         </div>
         {base.length === 0 && !canNew && <p style={{ margin: 0, color: '#A3A1AD' }}>Nenhum registro ainda.</p>}
