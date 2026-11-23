@@ -7,14 +7,12 @@ import { ICP } from '@/components/squad/deckIcons';
 import { FocusCard } from '@/components/ds/FocusCard';
 import { Avatar, type AvatarConfig } from '@/components/avatar/Avatar';
 import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
-import { DiFlag, DiRocket, DiStar } from '@/components/person/DeckIcons';
 import { SquadCardDeck, formOf, type CardDraft } from '@/components/squad/SquadCardDeck';
 import { DECK_META, type Action, type SquadCardView, type SquadDeckId, type SquadPerson } from '@/components/squad/types';
 import { useCoopsRouter } from '@/components/nav/useCoopsRouter';
 import { label } from '@/components/ds/tokens';
 import { MONTHS } from '@/lib/format';
 
-const ICON: Record<SquadDeckId, () => React.ReactElement> = { DESAFIO: DiRocket, FRENTE: DiFlag, ESTRATEGIA: DiStar, INDICADOR: DiStar, ALAVANCA: DiRocket };
 const TREND = { sobe: '▲ SOBE', desce: '▼ DESCE', estavel: '● ESTÁVEL' } as const;
 type Filter = 'ABERTA' | 'ENCERRADA';
 
@@ -22,7 +20,7 @@ export function SquadDeckClient({ user, projectId, squad, deck, isManager, cards
   user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; projectId: string; squad: { id: string; name: string }; deck: SquadDeckId; isManager: boolean;
   cards: SquadCardView[]; people: SquadPerson[]; challenges: { id: string; title: string }[]; draft: CardDraft | null;
 }) {
-  const meta = DECK_META[deck]; const Icon = ICON[deck];
+  const meta = DECK_META[deck];
   const fem = meta.one === 'frente' || meta.one === 'alavanca';
   const { refresh } = useCoopsRouter();
   const [cards, setCards] = useState(initial);
@@ -108,7 +106,7 @@ export function SquadDeckClient({ user, projectId, squad, deck, isManager, cards
             <button key={c.id} type="button" className="coops-card" aria-label={`Abrir ${c.title}`} onClick={(e) => { lastEl.current = e.currentTarget; setFocus({ id: c.id, rect: e.currentTarget.getBoundingClientRect() }); }}
               style={{ fontFamily: 'inherit', textAlign: 'left', height: 340, boxSizing: 'border-box', borderRadius: 22, background: closedCard ? '#A3A1AD' : meta.color, color: '#0E0E12', border: '2px solid #0E0E12', padding: 20, display: 'flex', flexDirection: 'column', gap: 10, cursor: 'pointer', boxShadow: '0 16px 36px rgba(0,0,0,0.45)' }}>
               <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>
-                {f.champ ? <span style={{ lineHeight: 0, borderRadius: '50%', border: '2px solid #0E0E12', background: '#F5F2EC' }}><Avatar {...DEFAULT_AVATAR_CFG} {...(f.champ.avatar ?? {})} crown size={52} label={`Champion ${f.champ.name}`} /></span> : <Icon />}
+                {f.champ ? <span style={{ lineHeight: 0, borderRadius: '50%', border: '2px solid #0E0E12', background: '#F5F2EC' }}><Avatar {...DEFAULT_AVATAR_CFG} {...(f.champ.avatar ?? {})} crown size={52} label={`Champion ${f.champ.name}`} /></span> : <svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="#0E0E12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{(ICP[meta.slug] ?? []).map(([c, d], i) => <path key={i} className={c || undefined} d={d} />)}</svg>}
                 <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}><span style={{ fontSize: 44, fontWeight: 600, lineHeight: 1, letterSpacing: '-0.03em' }}>{f.big}</span><span style={label(11, '0')}>{f.bigLabel}</span></span>
               </span>
               <span style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-start' }}>
