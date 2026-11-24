@@ -2,7 +2,8 @@ import { z } from 'zod';
 import { TOOLS } from '@/lib/tools';
 
 // Saída de cada passo do motor. Tudo é validado antes de ser guardado; o que falta vira texto "[CONFIRMAR …]", nunca número inventado.
-const txt = (n = 600) => z.string().trim().max(n);
+// Texto do modelo: se passar do limite, corta em vez de rejeitar o parecer inteiro.
+const txt = (n = 600) => z.string().trim().transform((s) => (s.length > n ? `${s.slice(0, n - 1).trimEnd()}…` : s));
 const score = z.coerce.number().min(0).max(100).transform((n) => Math.round(n));
 const sev = z.enum(['CRITICO', 'ALTO', 'MEDIO', 'BAIXO']).catch('MEDIO');
 const lvl = z.enum(['ALTO', 'MEDIO', 'BAIXO']).catch('MEDIO');
