@@ -257,6 +257,9 @@ export const contextCardSchema = z.object({ text: text(2000).optional().default(
   .refine((v) => v.text || v.links.length, 'Escreva algo ou adicione um link.');
 export const closeSchema = z.object({ outcome: z.enum(['ENTREGUE', 'PARCIAL', 'CANCELADA']), note: text(1000).optional().default('') });
 
+export const figmaTokenSchema = z.object({ token: z.string().trim().min(20, 'Cole o token inteiro').max(300).regex(/^[A-Za-z0-9_.-]+$/, 'Esse token tem caracteres que o Figma não usa') });
+export const figmaImportSchema = z.object({ kind: z.enum(CONTEXT_KINDS), url: z.string().trim().min(1, 'Cole o link do Figma').max(500) });
+
 // ---------- Anexos (M8.3) ----------
 export const attachmentRequestSchema = z.object({
   kind: z.enum(CONTEXT_KINDS), name: text(200).min(1), mime: text(120).min(1), size: z.number().int().positive(),

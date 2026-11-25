@@ -4,6 +4,7 @@ import { AppHeader, DEFAULT_AVATAR } from '@/components/ds/AppHeader';
 import { AdminBanner, AdminCard } from '@/components/admin/AdminBanner';
 import { IconDeck, IconPlug } from '@/components/admin/Icons';
 import { ApiKeyDeck } from '@/components/admin/ApiKeyDeck';
+import { FigmaTokenDeck } from '@/components/admin/FigmaTokenDeck';
 import { Spinner } from '@/components/ds/ScreenLoader';
 import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
 import { label } from '@/components/ds/tokens';
@@ -29,6 +30,7 @@ function Toggle({ on, label, busy, onChange }: { on: boolean; label: string; bus
 export function IntegracoesClient({ user, state, }: { user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; state: IntegrationState }) {
   const { refresh } = useCoopsRouter();
   const [deck, setDeck] = useState(false);
+  const [figmaDeck, setFigmaDeck] = useState(false);
   const [busy, setBusy] = useState<null | 'skills' | 'test'>(null);
   const [toggling, setToggling] = useState<string | null>(null);
   const [test, setTest] = useState<{ ok: boolean; text: string } | null>(null);
@@ -78,6 +80,7 @@ export function IntegracoesClient({ user, state, }: { user: { name: string; emai
               </div>
             );
           })}
+          <AdminCard bg="#F5A9D6" icon={<IconPlug bg="#F5A9D6" />} big={state.figma.configured ? 'ON' : 'OFF'} bigLabel="TOKEN" kicker="FIGMA" title="Importar telas por link" foot={state.figma.configured ? `Conectado · •••• ${state.figma.last4}` : 'Opcional. Cole um token para o agente ler telas de um link do Figma'} aria="Cadastrar ou trocar o token do Figma" onClick={() => setFigmaDeck(true)} />
           <button type="button" onClick={() => busy === null && call('test')} className={test ? 'coops-card' : 'tw-add'} aria-live="polite" style={{ fontFamily: 'inherit', height: 340, boxSizing: 'border-box', borderRadius: 22, background: test ? (test.ok ? '#8FE3C8' : '#FF8A5B') : 'transparent', border: test ? '2px solid #0E0E12' : '1.5px dashed #4A4858', color: test ? '#0E0E12' : '#F5F2EC', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, cursor: 'pointer', padding: 20, boxShadow: test ? '0 16px 36px rgba(0,0,0,0.45)' : undefined }}>
             <span style={{ width: 52, height: 52, borderRadius: '50%', border: `1.5px solid ${test ? '#0E0E12' : '#4A4858'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {busy === 'test' ? <Spinner /> : test ? (test.ok
@@ -91,6 +94,7 @@ export function IntegracoesClient({ user, state, }: { user: { name: string; emai
           </button>
         </div>
       </div>
+      {figmaDeck && <FigmaTokenDeck configured={state.figma.configured} last4={state.figma.last4} onClose={() => setFigmaDeck(false)} onSaved={(text) => { setFigmaDeck(false); setMsg({ ok: true, text }); refresh(); }} />}
       {deck && <ApiKeyDeck configured={state.configured} last4={state.last4} model={state.model} onClose={() => setDeck(false)} onSaved={() => { setDeck(false); setMsg({ ok: true, text: 'Integração salva. Envie as skills para o motor funcionar.' }); refresh(); }} />}
     </div>
   );

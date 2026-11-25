@@ -40,3 +40,5 @@ export const presignDownload = (key: string, name: string) =>
   getSignedUrl(s3(), new GetObjectCommand({ Bucket: bucket(), Key: key, ResponseContentDisposition: `inline; filename*=UTF-8''${encodeURIComponent(name)}` }), { expiresIn: TTL });
 export const objectSize = async (key: string) => (await s3().send(new HeadObjectCommand({ Bucket: bucket(), Key: key }))).ContentLength ?? 0;
 export const removeObject = (key: string) => s3().send(new DeleteObjectCommand({ Bucket: bucket(), Key: key }));
+/** Grava um objeto direto pelo servidor (usado na importação de telas do Figma). */
+export const putObject = (key: string, mime: string, body: Uint8Array) => s3().send(new PutObjectCommand({ Bucket: bucket(), Key: key, ContentType: mime, Body: body }));

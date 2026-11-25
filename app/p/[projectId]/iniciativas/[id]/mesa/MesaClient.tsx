@@ -39,6 +39,9 @@ export function MesaClient({ user, projectId, initiative, cards, attachments, re
   const filesOf = (k: string) => attachments.filter((a) => a.kind === k);
   const onTable = (k: string): Card | undefined => cards.find((c) => c.kind === k) ?? (filesOf(k).length ? { kind: k, text: '', links: [] } : undefined);
   const [uploading, setUploading] = useState(false);
+  const [figmaUrl, setFigmaUrl] = useState('');
+  const [importing, setImporting] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
 
   const call = async (url: string, method: string, body?: object) => {
     setBusy(true); setError(null);
@@ -49,7 +52,7 @@ export function MesaClient({ user, projectId, initiative, cards, attachments, re
       return data;
     } catch { setError('Sem conexão. Tente de novo.'); return null; } finally { setBusy(false); }
   };
-  const open = (k: Kind) => { const c = onTable(k); setText(c?.text ?? ''); setLinks(c?.links ?? []); setLink(''); setError(null); setEditing(k); };
+  const open = (k: Kind) => { const c = onTable(k); setText(c?.text ?? ''); setLinks(c?.links ?? []); setLink(''); setError(null); setNotice(null); setFigmaUrl(''); setEditing(k); };
   const addLink = () => { const v = link.trim(); if (v && !links.includes(v)) setLinks([...links, v]); setLink(''); };
   const saveCard = async () => { const pending = link.trim(); const all = pending && !links.includes(pending) ? [...links, pending] : links; if (!text.trim() && !all.length && filesOf(editing!).length) { setEditing(null); return; } if (await call(`${api}/context/${editing}`, 'PUT', { text, links: all })) { setEditing(null); refresh(); } };
   const remove = async () => { if (await call(`${api}/context/${editing}`, 'DELETE')) { setEditing(null); refresh(); } };
@@ -68,6 +71,19 @@ export function MesaClient({ user, projectId, initiative, cards, attachments, re
       if (!ok.ok) { setError((await ok.json().catch(() => ({}))).error ?? 'O envio não foi confirmado.'); return; }
       refresh();
     } catch { setError('Sem conexão. Tente de novo.'); } finally { setUploading(false); }
+  };
+  /** Importa as telas de um link do Figma: o servidor baixa os frames como PNG e os anexa à carta. */
+  const importFigma = async (url: string) => {
+    if (!editing || !url.trim()) return;
+    setImporting(true); setError(null); setNotice(null);
+    try {
+      const res = await fetch(`${api}/figma`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ kind: editing, url: url.trim() }) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { setError(data.error ?? 'Não deu para importar do Figma. Tente de novo.'); return; }
+      setFigmaUrl('');
+      setNotice(data.imported ? `${data.imported} ${data.imported === 1 ? 'tela importada' : 'telas importadas'} do Figma${data.truncated ? ' (o limite é de 20 arquivos por mesa; o resto ficou de fora)' : ''}.` : 'Essas telas já estavam na mesa.');
+      refresh();
+    } catch { setError('Sem conexão. Tente de novo.'); } finally { setImporting(false); }
   };
   const removeFile = async (id: string) => { if (await call(`/api/attachments/${id}`, 'DELETE')) refresh(); };
   const [analysing, setAnalysing] = useState<'off' | 'running' | 'ready'>('off');
@@ -185,11 +201,19 @@ export function MesaClient({ user, projectId, initiative, cards, attachments, re
                 <button type="button" aria-label={`Remover ${f.name}`} onClick={() => removeFile(f.id)} style={{ width: 44, height: 44, border: 0, background: 'transparent', color: '#F5F2EC', cursor: 'pointer' }}>✕</button>
               </div>
             ))}
+            <span style={{ fontSize: 12, color: '#A3A1AD', marginTop: 4 }}>TELAS DO MATERIAL · escolha como enviar</span>
             <label style={{ ...ghost, display: 'inline-flex', alignItems: 'center', alignSelf: 'flex-start', cursor: uploading ? 'wait' : 'pointer', boxSizing: 'border-box', fontWeight: 600, fontSize: 14, padding: '0 16px', borderRadius: 14 }}>
-              {uploading ? 'Enviando…' : '+ Anexar arquivo'}
-              <input type="file" disabled={uploading} style={{ position: 'absolute', width: 1, height: 1, opacity: 0 }} onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) void upload(f); }} />
+              {uploading ? 'Enviando…' : '+ Subir PNG, PDF ou outro arquivo'}
+              <input type="file" disabled={uploading || importing} style={{ position: 'absolute', width: 1, height: 1, opacity: 0 }} onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) void upload(f); }} />
             </label>
             <span style={{ fontSize: 12, color: '#A3A1AD' }}>Imagem, PDF, Office, texto ou vídeo, até 25 MB.</span>
+            <form onSubmit={(e) => { e.preventDefault(); void importFigma(figmaUrl); }} style={{ display: 'flex', gap: 8, marginTop: 6 }}>
+              <input type="text" aria-label="Link do Figma" placeholder="Ou cole um link do Figma (arquivo, página ou frame)" value={figmaUrl} onChange={(e) => setFigmaUrl(e.target.value)} disabled={importing} style={{ ...cardInput, flex: '1 1 auto' }} />
+              <button type="submit" disabled={importing || !figmaUrl.trim()} style={{ ...darkBtn, opacity: figmaUrl.trim() ? 1 : 0.5, cursor: importing ? 'wait' : 'pointer' }}>{importing ? 'Importando…' : 'Importar telas'}</button>
+            </form>
+            {!figmaUrl.trim() && links.filter((l) => /figma\.com\//i.test(l)).slice(0, 2).map((l) => <button key={l} type="button" disabled={importing} onClick={() => void importFigma(l)} style={{ ...ghost, minHeight: 40, fontSize: 13, alignSelf: 'flex-start', overflowWrap: 'anywhere', textAlign: 'left' }}>Importar telas do link já adicionado · {l.replace(/^https?:\/\//, '').slice(0, 48)}</button>)}
+            {importing && <span style={{ fontSize: 12, color: '#A3A1AD' }}>Buscando os frames no Figma… pode levar até um minuto.</span>}
+            {notice && <span role="status" style={{ fontSize: 13, fontWeight: 600, color: '#8FE3C8' }}>{notice}</span>}
           </div>
           {error && <span role="alert" style={{ fontSize: 14, fontWeight: 600, color: '#FF8A5B' }}>{error}</span>}
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'space-between' }}>
