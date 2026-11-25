@@ -4,7 +4,6 @@ import { AppHeader, DEFAULT_AVATAR } from '@/components/ds/AppHeader';
 import { AdminBanner, AdminCard } from '@/components/admin/AdminBanner';
 import { IconDeck, IconPlug } from '@/components/admin/Icons';
 import { ApiKeyDeck } from '@/components/admin/ApiKeyDeck';
-import { IntegrationGuides } from '@/components/admin/IntegrationGuide';
 import { FigmaTokenDeck } from '@/components/admin/FigmaTokenDeck';
 import { Spinner } from '@/components/ds/ScreenLoader';
 import { DEFAULT_AVATAR_CFG } from '@/components/avatar/AvatarEditor';
@@ -66,12 +65,11 @@ export function IntegracoesClient({ user, state, }: { user: { name: string; emai
     <div style={{ minHeight: '100vh', boxSizing: 'border-box', padding: '24px 32px 64px' }}>
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 28 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
-        <AdminBanner view="int" title="Integrações" desc="A chave da Anthropic e as 4 skills que são o motor da análise das iniciativas, mais o token do Figma para importar telas por link. As chaves são cifradas e só você as gerencia. O passo a passo está logo abaixo." meAvatar={meAvatar} back={{ href: '/admin', label: 'Administração' }}
+        <AdminBanner view="int" title="Integrações" desc="A chave da Anthropic e as 4 skills que são o motor da análise das iniciativas, mais o token do Figma para importar telas por link. As chaves são cifradas e só você as gerencia. O passo a passo de onde achar cada chave está dentro do cadastro, na primeira carta." meAvatar={meAvatar} back={{ href: '/admin', label: 'Administração' }}
           cta={state.configured ? { label: busy === 'skills' ? 'Enviando…' : allSent ? 'Atualizar as 4 skills' : 'Enviar as 4 skills', onClick: () => busy === null && call('skills') } : { label: 'Cadastrar a chave', onClick: () => setDeck(true) }} />
-        <IntegrationGuides anthropicOk={state.configured} figmaOk={state.figma.configured} />
         {msg && <div role="status" style={{ borderRadius: 16, padding: '12px 16px', fontSize: 15, fontWeight: 600, background: msg.ok ? '#8FE3C8' : '#FF8A5B', color: '#0E0E12', border: '2px solid #0E0E12' }}>{msg.text}</div>}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
-          <AdminCard bg="#A9D8F5" icon={<IconPlug bg="#A9D8F5" />} big={state.configured ? 'ON' : 'OFF'} bigLabel="CHAVE" kicker="ANTHROPIC" title="Chave da API" foot={state.configured ? `Conectada · •••• ${state.last4} · modelo ${modelName}` : 'Não configurada. Cole a chave para começar'} aria="Cadastrar ou trocar a chave da Anthropic" onClick={() => setDeck(true)} />
+          <AdminCard bg="#A9D8F5" icon={<IconPlug bg="#A9D8F5" />} big={state.configured ? 'ON' : 'OFF'} bigLabel="CHAVE" kicker="ANTHROPIC" title="Chave da API" foot={state.configured ? `Conectada · •••• ${state.last4} · modelo ${modelName}` : 'Não configurada. Toque para ver onde achar a chave e cadastrar'} aria="Cadastrar ou trocar a chave da Anthropic" onClick={() => setDeck(true)} />
           {state.skills.map((s, i) => {
             const bg = s.enabled ? STATUS_BG[s.status] : OFF_BG;
             return (
@@ -82,7 +80,7 @@ export function IntegracoesClient({ user, state, }: { user: { name: string; emai
               </div>
             );
           })}
-          <AdminCard bg="#F5A9D6" icon={<IconPlug bg="#F5A9D6" />} big={state.figma.configured ? 'ON' : 'OFF'} bigLabel="TOKEN" kicker="FIGMA" title="Importar telas por link" foot={state.figma.configured ? `Conectado · •••• ${state.figma.last4}` : 'Opcional. Cole um token para o agente ler telas de um link do Figma'} aria="Cadastrar ou trocar o token do Figma" onClick={() => setFigmaDeck(true)} />
+          <AdminCard bg="#F5A9D6" icon={<IconPlug bg="#F5A9D6" />} big={state.figma.configured ? 'ON' : 'OFF'} bigLabel="TOKEN" kicker="FIGMA" title="Importar telas por link" foot={state.figma.configured ? `Conectado · •••• ${state.figma.last4}` : 'Opcional. Toque para ver onde achar o token e importar telas por link'} aria="Cadastrar ou trocar o token do Figma" onClick={() => setFigmaDeck(true)} />
           <button type="button" onClick={() => busy === null && call('test')} className={test ? 'coops-card' : 'tw-add'} aria-live="polite" style={{ fontFamily: 'inherit', height: 340, boxSizing: 'border-box', borderRadius: 22, background: test ? (test.ok ? '#8FE3C8' : '#FF8A5B') : 'transparent', border: test ? '2px solid #0E0E12' : '1.5px dashed #4A4858', color: test ? '#0E0E12' : '#F5F2EC', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, cursor: 'pointer', padding: 20, boxShadow: test ? '0 16px 36px rgba(0,0,0,0.45)' : undefined }}>
             <span style={{ width: 52, height: 52, borderRadius: '50%', border: `1.5px solid ${test ? '#0E0E12' : '#4A4858'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {busy === 'test' ? <Spinner /> : test ? (test.ok

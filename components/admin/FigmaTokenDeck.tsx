@@ -1,38 +1,58 @@
 'use client';
 import { useState } from 'react';
 import { BottomSheet } from '../sheet/BottomSheet';
+import { QuestionDeck, type DeckCard } from '../wizard/QuestionDeck';
+import { Err, Help, SummaryRow, Title } from '../wizard/parts';
 import { cardInput, darkBtn } from '../ds/tokens';
-import { GuideSteps } from './IntegrationGuide';
+import { GuideCard } from './IntegrationGuide';
 
-/** Cadastro do token pessoal do Figma (cifrado no servidor). Com ele o Coops importa as telas de um link do Figma para a análise. */
+const TAG = 'INTEGRAÇÕES · FIGMA';
+const TOKEN_RE = /^[A-Za-z0-9_.-]{20,300}$/;
+
+/** Cadastro do token pessoal do Figma (cifrado no servidor), uma carta por vez: onde achar, colar e conferir. */
 export function FigmaTokenDeck({ configured, last4, onClose, onSaved }: { configured: boolean; last4: string | null; onClose: () => void; onSaved: (text: string) => void }) {
-  const [token, setToken] = useState(''); // fica só no estado
+  const [step, setStep] = useState(0);
+  const [token, setToken] = useState(''); // fica só no estado: nunca vai para rascunho
+  const [errToken, setErrToken] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const tokenOk = TOKEN_RE.test(token.trim());
 
   const call = async (method: 'PUT' | 'DELETE') => {
-    setBusy(true); setError(null);
+    setBusy(true); setServerError(null);
     try {
       const r = await fetch('/api/me/integrations/figma', { method, headers: { 'content-type': 'application/json' }, body: method === 'PUT' ? JSON.stringify({ token: token.trim() }) : undefined });
       const d = await r.json().catch(() => ({}));
-      if (!r.ok) { setError(d.error ?? 'Não deu para salvar. Tente de novo.'); return; }
+      if (!r.ok) { setServerError(d.error ?? 'Não deu para salvar. Tente de novo.'); return; }
       onSaved(method === 'PUT' ? 'Figma conectado. Agora dá para importar telas por link nas iniciativas.' : 'Figma desconectado.');
-    } catch { setError('Sem conexão. Tente de novo.'); } finally { setBusy(false); }
+    } catch { setServerError('Sem conexão. Tente de novo.'); } finally { setBusy(false); }
   };
-  const ghost = { ...darkBtn, background: 'transparent', color: '#F5F2EC', border: '1.5px solid #4A4858', minHeight: 48 } as const;
-  const primary = { fontFamily: 'inherit', fontWeight: 600, fontSize: 15, color: '#0E0E12', background: '#8FE3C8', border: '2px solid #0E0E12', borderRadius: 14, minHeight: 48, padding: '0 20px', cursor: busy ? 'wait' : 'pointer' } as const;
+  const go = (k: number) => {
+    const to = Math.max(0, k);
+    if (to > 1 && !tokenOk && (!configured || token.trim())) { setErrToken('Cole o token inteiro (ele começa com figd_).'); setStep(1); return; }
+    if (to > 1 && !configured && !token.trim()) { setErrToken('Cole o token inteiro (ele começa com figd_).'); setStep(1); return; }
+    setErrToken(null);
+    if (to > 2) { if (token.trim()) void call('PUT'); else onClose(); return; }
+    setStep(to);
+  };
+  const cards: DeckCard[] = [
+    { id: 'guia', size: 'sm', bg: '#F5A9D6', node: <GuideCard guide="figma" /> },
+    { id: 'token', size: 'sm', bg: '#F3D36B', node: (<>
+      <Title>{configured ? 'Trocar o token do Figma?' : 'Cole o token pessoal do Figma'}</Title>
+      <Help>{configured ? `Hoje o token termina em ${last4}. Deixe em branco para manter.` : 'Ele é cifrado e só os 4 últimos caracteres aparecem aqui. A carta anterior mostra onde achar.'}</Help>
+      <input type="password" aria-label="Token pessoal do Figma" autoComplete="off" spellCheck={false} placeholder="figd_…" value={token} onChange={(e) => { setToken(e.target.value); setErrToken(null); }} style={cardInput} />
+      <Err show={!!errToken}>{errToken}</Err>
+      {configured && <button type="button" disabled={busy} onClick={() => void call('DELETE')} style={{ ...darkBtn, alignSelf: 'flex-start' }}>Desconectar o Figma</button>}
+    </>) },
+    { id: 'resumo', size: 'sm', bg: '#B7A6FF', summary: true, node: (<>
+      <Title>Confere?</Title><Help>Ao salvar, o Coops testa o token no Figma antes de guardá-lo.</Help>
+      <SummaryRow k="TOKEN" v={token.trim() ? 'Novo token (será testado)' : configured ? `Mantido · •••• ${last4}` : '—'} />
+      <SummaryRow k="PARA QUE SERVE" v="Importar as telas de um link do Figma para a análise da iniciativa" />
+    </>) },
+  ];
   return (
-    <BottomSheet tag="INTEGRAÇÕES · FIGMA" title="Token do Figma" sub="Para importar telas por link." onClose={onClose}>
-      <form onSubmit={(e) => { e.preventDefault(); if (token.trim()) void call('PUT'); }} style={{ display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 560 }}>
-        {configured && <p style={{ margin: 0, fontSize: 15, color: '#C9C7D1' }}>Hoje o token termina em {last4}. Cole outro para trocar.</p>}
-        <GuideSteps guide="figma" />
-        <input type="password" aria-label="Token pessoal do Figma" autoComplete="off" spellCheck={false} placeholder="figd_…" value={token} onChange={(e) => { setToken(e.target.value); setError(null); }} style={cardInput} />
-        {error && <span role="alert" style={{ fontSize: 14, fontWeight: 600, color: '#FF8A5B' }}>{error}</span>}
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'space-between' }}>
-          {configured ? <button type="button" disabled={busy} onClick={() => call('DELETE')} style={ghost}>Desconectar</button> : <span />}
-          <button type="submit" disabled={busy || !token.trim()} style={{ ...primary, opacity: token.trim() ? 1 : 0.5 }}>{busy ? 'Testando e salvando…' : 'Salvar token'}</button>
-        </div>
-      </form>
+    <BottomSheet tag={TAG} title="Token do Figma" sub="Uma pergunta por carta." onClose={onClose}>
+      <QuestionDeck tag={TAG} cards={cards} step={step} onGo={go} busy={busy} busyLabel="Testando e salvando…" error={serverError} nextLabel={step === 2 ? 'Salvar integração' : 'Próxima'} />
     </BottomSheet>
   );
 }

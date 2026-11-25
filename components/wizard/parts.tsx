@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 export const Title = ({ children }: { children: ReactNode }) => <span style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.15 }}>{children}</span>;
 export const Help = ({ children }: { children: ReactNode }) => <span style={{ fontSize: 14, lineHeight: 1.45 }}>{children}</span>;
 export const Err = ({ show, children }: { show?: boolean; children: ReactNode }) => (show ? <span role="alert" style={{ fontSize: 14, fontWeight: 600 }}>{children}</span> : null);
-export const SummaryRow = ({ k, v }: { k: string; v: string }) => (
+export const SummaryRow = ({ k, v }: { k: string; v: ReactNode }) => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: 2, borderRadius: 12, background: 'rgba(245,242,236,0.6)', border: '1.5px solid #0E0E12', padding: '10px 12px' }}>
     <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.06em' }}>{k}</span><span style={{ fontSize: 14, lineHeight: 1.4 }}>{v}</span>
   </div>
