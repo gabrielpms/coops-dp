@@ -76,10 +76,10 @@ export function AnaliseClient({ user, projectId, initiative, results, when, mode
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {c?.scoreUsabilidade != null && <span style={{ fontSize: 14, fontWeight: 600, color: '#0E0E12', background: '#F3D36B', borderRadius: 999, padding: '8px 14px' }}>Usabilidade {c.scoreUsabilidade}/100</span>}
             {c?.scoreEstrategico != null && <span style={{ fontSize: 14, fontWeight: 600, color: '#0E0E12', background: '#F5A9D6', borderRadius: 999, padding: '8px 14px' }}>Maturidade estratégica {c.scoreEstrategico}/100</span>}
-            {c?.coreAction && <span style={{ fontSize: 14, fontWeight: 600, color: '#F5F2EC', border: '1.5px solid #4A4858', borderRadius: 999, padding: '7px 14px' }}>Core action: {c.coreAction}</span>}
             {c && <span style={{ fontSize: 14, fontWeight: 600, color: '#0E0E12', background: '#8FE3C8', borderRadius: 999, padding: '8px 14px' }}>Momento {c.momento} · {MOMENTS[c.momento]}</span>}
           </div>
-          {results.rotear?.suposicoes?.length ? <p style={{ margin: 0, fontSize: 13, color: '#A3A1AD', maxWidth: 760 }}>Suposições do agente: {results.rotear.suposicoes.join(' · ')}</p> : null}
+          {c?.coreAction && <div style={{ maxWidth: 760, borderRadius: 16, border: '1.5px solid #4A4858', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 4 }}><span style={{ ...label(11, '0.08em'), color: '#A3A1AD' }}>CORE ACTION</span><span style={{ fontSize: 15, lineHeight: 1.45 }}>{c.coreAction}</span></div>}
+          {results.rotear?.suposicoes?.length ? <details style={{ maxWidth: 760, borderRadius: 16, border: '1.5px solid #4A4858', padding: '12px 16px' }}><summary style={{ cursor: 'pointer', fontWeight: 600, fontSize: 14, minHeight: 28 }}>Suposições do agente · {results.rotear.suposicoes.length}</summary><ul style={{ margin: '10px 0 0', paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 8, fontSize: 14, lineHeight: 1.5, color: '#C9C7D1' }}>{results.rotear.suposicoes.map((t, i) => <li key={i}>{t}</li>)}</ul></details> : null}
           <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
             <CoopsLink href={`/p/${projectId}/iniciativas/${initiative.id}/momento`} style={{ fontWeight: 600, fontSize: 15, minHeight: 44, display: 'inline-flex', alignItems: 'center' }}>Ver ferramentas do momento →</CoopsLink>
             <span style={{ fontSize: 13, color: '#A3A1AD' }}>Gerada em {date}{model ? ` · ${model}` : ''}</span>
