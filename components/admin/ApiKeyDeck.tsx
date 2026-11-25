@@ -4,7 +4,7 @@ import { BottomSheet } from '../sheet/BottomSheet';
 import { QuestionDeck, type DeckCard } from '../wizard/QuestionDeck';
 import { Err, Help, SummaryRow, Title } from '../wizard/parts';
 import { cardInput, chipStyle, label } from '../ds/tokens';
-import { GuideCard } from './IntegrationGuide';
+import { GUIDES, GuideSteps } from './IntegrationGuide';
 import { MODELS } from '@/lib/agent/catalog';
 
 const TAG = 'INTEGRAÇÕES · ANTHROPIC';
@@ -31,17 +31,17 @@ export function ApiKeyDeck({ configured, last4, model: model0, onClose, onSaved 
   };
   const go = (k: number) => {
     const to = Math.max(0, k);
-    if (to > 1 && !configured && !keyOk) { setErrKey('Cole a chave inteira (ela começa com sk-ant-).'); setStep(1); return; }
-    if (to > 1 && apiKey.trim() && !keyOk) { setErrKey('Essa não parece uma chave da Anthropic (ela começa com sk-ant-).'); setStep(1); return; }
+    if (to > 0 && !configured && !keyOk) { setErrKey('Cole a chave inteira (ela começa com sk-ant-).'); setStep(0); return; }
+    if (to > 0 && apiKey.trim() && !keyOk) { setErrKey('Essa não parece uma chave da Anthropic (ela começa com sk-ant-).'); setStep(0); return; }
     setErrKey(null);
-    if (to > 3) { void submit(); return; }
+    if (to > 2) { void submit(); return; }
     setStep(to);
   };
   const cards: DeckCard[] = [
-    { id: 'guia', size: 'sm', bg: '#8FE3C8', node: <GuideCard guide="anthropic" /> },
-    { id: 'chave', size: 'sm', bg: '#A9D8F5', node: (<>
+    { id: 'chave', size: 'lg', bg: '#A9D8F5', node: (<>
       <Title>{configured ? 'Trocar a chave da Anthropic?' : 'Cole a chave da API da Anthropic'}</Title>
-      <Help>{configured ? `Hoje a chave termina em ${last4}. Deixe em branco para manter e só mudar o modelo.` : 'Ela é cifrada e só os 4 últimos caracteres aparecem aqui. Na carta anterior está onde achar.'}</Help>
+      <Help>{configured ? `Hoje a chave termina em ${last4}. Deixe em branco para manter e só mudar o modelo.` : 'Ela é cifrada e só os 4 últimos caracteres aparecem aqui. ' + GUIDES.anthropic.why}</Help>
+      <GuideSteps guide="anthropic" />
       <input type="password" aria-label="Chave da API da Anthropic" autoComplete="off" spellCheck={false} placeholder="sk-ant-…" value={apiKey} onChange={(e) => { setApiKey(e.target.value); setErrKey(null); }} style={cardInput} />
       <Err show={!!errKey}>{errKey}</Err>
     </>) },
@@ -63,7 +63,7 @@ export function ApiKeyDeck({ configured, last4, model: model0, onClose, onSaved 
   ];
   return (
     <BottomSheet tag={TAG} title="Chave da Anthropic" sub="Uma pergunta por carta." onClose={onClose}>
-      <QuestionDeck tag={TAG} cards={cards} step={step} onGo={go} busy={busy} busyLabel="Testando e salvando…" error={serverError} nextLabel={step === 3 ? 'Salvar integração' : 'Próxima'} />
+      <QuestionDeck tag={TAG} cards={cards} step={step} onGo={go} busy={busy} busyLabel="Testando e salvando…" error={serverError} nextLabel={step === 2 ? 'Salvar integração' : 'Próxima'} />
     </BottomSheet>
   );
 }

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Help, SummaryRow, Title } from '../wizard/parts';
+import { SummaryRow } from '../wizard/parts';
 
 const A = ({ href, children }: { href: string; children: ReactNode }) => <a href={href} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', fontWeight: 700, textDecoration: 'underline' }}>{children}</a>;
 
@@ -25,14 +25,8 @@ export const GUIDES = {
   },
 } as const;
 
-/** Conteúdo da carta-guia do deck: título, para que serve e um passo por linha, no mesmo padrão das cartas de resumo. */
-export function GuideCard({ guide }: { guide: keyof typeof GUIDES }) {
+/** Passos de onde achar a credencial: ficam na mesma carta do campo, um por linha, no padrão das cartas de resumo. */
+export function GuideSteps({ guide }: { guide: keyof typeof GUIDES }) {
   const g = GUIDES[guide];
-  return (
-    <>
-      <Title>{g.title}</Title>
-      <Help>{g.why}</Help>
-      {g.steps.map((t, i) => <SummaryRow key={i} k={`PASSO ${i + 1}`} v={t} />)}
-    </>
-  );
+  return <>{g.steps.map((t, i) => <SummaryRow key={i} k={`PASSO ${i + 1}`} v={t} />)}</>;
 }
