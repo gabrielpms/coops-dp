@@ -25,7 +25,14 @@ export async function PATCH(req: Request) {
   const next = await db.$transaction(async (tx) => {
     const n = await tx.user.update({ where: { id: u.id }, data });
     // "As mudanças aparecem em todos os projetos": cartas ligadas a esta conta acompanham
-    await tx.person.updateMany({ where: { userId: u.id }, data: { ...(body.name ? { name: body.name } : {}), ...(body.title !== undefined ? { title: body.title || null } : {}), ...(body.avatar ? { avatar: body.avatar } : {}), ...(data.email ? { email: data.email as string } : {}) } });
+    await tx.person.updateMany({ where: { userId: u.id }, data: { ...(body.name ? { name: body.name } : {}), ...(body.title !== undefined ? { title: body.title || null } : {}), ...(data.email ? { email: data.email as string } : {}) } });
+    if (body.avatar) {
+      // Cartas de liderança mantêm a coroa; as demais recebem o avatar como veio
+      const leaders = await tx.person.findMany({ where: { userId: u.id, deletedAt: null, leads: { is: { deletedAt: null } } }, select: { id: true } });
+      const ids = leaders.map((l) => l.id);
+      await tx.person.updateMany({ where: { userId: u.id, id: { notIn: ids } }, data: { avatar: body.avatar } });
+      if (ids.length) await tx.person.updateMany({ where: { id: { in: ids } }, data: { avatar: { ...body.avatar, crown: true } } });
+    }
     return n;
   });
   return json({ id: next.id, name: next.name, title: next.title, email: next.email, avatar: next.avatar });

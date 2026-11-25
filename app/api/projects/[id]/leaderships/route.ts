@@ -17,6 +17,7 @@ async function createSelfLeadership(projectId: string, ctx: { user: { id: string
       const person = mine
         ? await tx.person.update({ where: { id: mine.id }, data })
         : await tx.person.create({ data: { ...data, projectId, userId: ctx.user.id, email: ctx.user.email } });
+      if (body.avatar) await tx.user.update({ where: { id: ctx.user.id }, data: { avatar: data.avatar } });
       const existing = await tx.leadership.findUnique({ where: { personId: person.id } });
       if (existing && !existing.deletedAt) throw new Error('ALREADY_LEADER');
       const l = existing

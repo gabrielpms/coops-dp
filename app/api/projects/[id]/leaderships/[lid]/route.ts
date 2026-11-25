@@ -16,7 +16,9 @@ export async function PATCH(req: Request, { params }: Ctx) {
   if (isResponse(body)) return body;
   try {
     await db.$transaction(async (tx) => {
-      await tx.person.update({ where: { id: lead.personId }, data: { name: body.name, title: body.title || null, ...(body.avatar ? { avatar: { ...body.avatar, crown: true } } : {}) } });
+      const p = await tx.person.update({ where: { id: lead.personId }, data: { name: body.name, title: body.title || null, ...(body.avatar ? { avatar: { ...body.avatar, crown: true } } : {}) } });
+      // O avatar da conta (cabeçalho) acompanha a carta, senão os dois ficam diferentes
+      if (body.avatar && p.userId) await tx.user.update({ where: { id: p.userId }, data: { avatar: { ...body.avatar, crown: true } } });
       await setLeadershipLinks(tx, lid, id, body.squadIds, body.memberIds.filter((m) => m !== lead.personId));
     });
   } catch (e) {
