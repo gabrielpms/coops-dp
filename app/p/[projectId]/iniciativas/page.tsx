@@ -3,6 +3,7 @@ import { currentUser } from '@/lib/session';
 import { db } from '@/lib/db';
 import { accessibleWhere } from '@/lib/projects';
 import { readDraft } from '@/lib/drafts';
+import { projectReadiness } from '@/lib/agent/readiness';
 import { IniciativasClient } from './IniciativasClient';
 import type { InitiativeDraft } from '@/components/initiative/InitiativeDeck';
 
@@ -14,7 +15,8 @@ export default async function IniciativasPage({ params }: { params: Promise<{ pr
   if (!u) redirect('/cadastro');
   const project = await db.project.findFirst({ where: { id: projectId, ...accessibleWhere(u.id) }, select: { id: true, name: true } });
   if (!project) notFound();
-  const [items, draft] = await Promise.all([
+  const [readiness, items, draft] = await Promise.all([
+    projectReadiness(projectId, u.id),
     db.initiative.findMany({ where: { projectId }, orderBy: { createdAt: 'desc' } }),
     u.role === 'MANAGER' ? readDraft<InitiativeDraft['form']>(u.id, 'initiative', projectId) : null,
   ]);
@@ -22,7 +24,7 @@ export default async function IniciativasPage({ params }: { params: Promise<{ pr
     <IniciativasClient
       user={{ name: u.name, email: u.email, role: u.role, avatar: u.avatar as any }} project={project}
       items={items.map((i) => ({ id: i.id, product: i.product, problem: i.problem ?? '', status: i.status, moment: i.moment, createdAt: i.createdAt.toISOString() }))}
-      draft={draft as InitiativeDraft | null}
+      draft={draft as InitiativeDraft | null} readiness={readiness}
     />
   );
 }

@@ -33,11 +33,16 @@ async function figma<T>(token: string, path: string): Promise<Res<T>> {
   } catch { return { ok: false, status: 504, message: 'Sem resposta do Figma. Tente de novo.' }; }
 }
 
-/** Valida o token (usado ao salvar na tela de Integrações). */
+/** Valida o token (tela de Integrações). Token só com leitura de arquivos não enxerga /me: o Figma responde 403 "Invalid scope", e isso conta como token válido. */
 export async function checkFigmaToken(token: string): Promise<Res<{ handle: string }>> {
-  const r = await figma<{ handle?: string; email?: string }>(token, '/me');
-  if (!r.ok) return { ok: false, status: r.status, message: r.status === 403 || r.status === 401 ? 'O Figma não aceitou esse token.' : r.message };
-  return { ok: true, data: { handle: r.data.handle ?? '' } };
+  try {
+    const r = await fetch(`${API}/me`, { headers: { 'X-Figma-Token': token }, signal: AbortSignal.timeout(30_000) });
+    if (r.ok) return { ok: true, data: { handle: ((await r.json()) as { handle?: string }).handle ?? '' } };
+    const body = (await r.json().catch(() => ({}))) as { err?: string; message?: string };
+    if (r.status === 403 && /scope/i.test(`${body.err ?? ''} ${body.message ?? ''}`)) return { ok: true, data: { handle: '' } };
+    if (r.status === 401 || r.status === 403) return { ok: false, status: r.status, message: 'O Figma não aceitou esse token. Gere outro e cole inteiro.' };
+    return { ok: false, status: r.status, message: msg(r.status) };
+  } catch { return { ok: false, status: 504, message: 'Sem resposta do Figma. Tente de novo.' }; }
 }
 
 type Node = { id: string; name: string; type: string; visible?: boolean; children?: Node[] };

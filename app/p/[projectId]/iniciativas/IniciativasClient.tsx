@@ -6,13 +6,15 @@ import type { AvatarConfig } from '@/components/avatar/Avatar';
 import { CoopsLink, useCoopsRouter } from '@/components/nav/useCoopsRouter';
 import { InitiativeDeck, type InitiativeDraft } from '@/components/initiative/InitiativeDeck';
 import { label } from '@/components/ds/tokens';
+import { IntegrationNotice } from '@/components/initiative/IntegrationNotice';
+import type { Readiness } from '@/lib/agent/readiness';
 import { plural } from '@/lib/format';
 
 export type InitiativeItem = { id: string; product: string; problem: string; status: 'ABERTA' | 'ENCERRADA'; moment: number | null; createdAt: string };
 const MOMENTS = ['', 'Entendimento do desafio', 'Soft prepare', 'Explore the solutions', 'Risk mitigation', 'Articulando decisões'];
 
-export function IniciativasClient({ user, project, items, draft: d0 }: {
-  user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; project: { id: string; name: string }; items: InitiativeItem[]; draft: InitiativeDraft | null;
+export function IniciativasClient({ user, project, items, draft: d0, readiness }: {
+  user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; project: { id: string; name: string }; items: InitiativeItem[]; draft: InitiativeDraft | null; readiness: Readiness;
 }) {
   const { go: push } = useCoopsRouter();
   const [tab, setTab] = useState<'ABERTA' | 'ENCERRADA'>('ABERTA');
@@ -29,6 +31,7 @@ export function IniciativasClient({ user, project, items, draft: d0 }: {
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
         <BackLink href="/hub" label="Hub de projetos" />
+        <IntegrationNotice readiness={readiness} />
         <section style={{ display: 'flex', flexDirection: 'column', gap: 8, borderRadius: 32, background: '#17171D', border: '1px solid #2C2C36', padding: 'clamp(20px, 4vw, 36px)' }}>
           <span style={{ ...label(12, '0.1em'), color: '#B7A6FF' }}>{project.name.toUpperCase()}</span>
           <h1 style={{ margin: 0, fontSize: 'clamp(36px, 6vw, 52px)', fontWeight: 800, letterSpacing: '-0.035em', lineHeight: 1 }}>Iniciativas</h1>

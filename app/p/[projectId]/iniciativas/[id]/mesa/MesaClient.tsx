@@ -1,5 +1,7 @@
 'use client';
 import { AnalysisOverlay } from '@/components/initiative/AnalysisOverlay';
+import { IntegrationNotice } from '@/components/initiative/IntegrationNotice';
+import type { Readiness } from '@/lib/agent/readiness';
 import { useRef, useState } from 'react';
 import { AppHeader } from '@/components/ds/AppHeader';
 import { BackLink } from '@/components/nav/BackLink';
@@ -16,7 +18,8 @@ type Card = { kind: string; text: string; links: string[] };
 const MOMENTS = ['', 'Entendimento do desafio', 'Soft prepare', 'Explore the solutions', 'Risk mitigation', 'Articulando decisões'];
 const OUTCOMES = { ENTREGUE: 'Entregue', PARCIAL: 'Entregue em parte', CANCELADA: 'Cancelada' } as const;
 
-export function MesaClient({ user, projectId, initiative, cards, attachments, resolved, hasAnalysis, isOwner }: {
+export function MesaClient({ user, projectId, initiative, cards, attachments, resolved, hasAnalysis, isOwner, readiness }: {
+  readiness: Readiness;
   /** já existe uma análise concluída do agente para esta iniciativa */ hasAnalysis: boolean; /** quem vê é o dono do projeto (cuida da chave da Anthropic) */ isOwner: boolean;
   user: { name: string; email: string; role: 'IC' | 'MANAGER'; avatar: AvatarConfig | null }; projectId: string;
   initiative: { id: string; product: string; problem: string; need: string; status: 'ABERTA' | 'ENCERRADA'; moment: number | null; momentReason: string; closeOutcome: string | null; closeNote: string };
@@ -136,6 +139,7 @@ export function MesaClient({ user, projectId, initiative, cards, attachments, re
       <div style={{ maxWidth: 1216, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
         <AppHeader name={user.name} email={user.email} role={user.role} avatar={user.avatar} />
         <BackLink href={`/p/${projectId}/iniciativas`} label="Iniciativas" />
+        <IntegrationNotice readiness={readiness} compact />
         <section style={{ display: 'flex', flexDirection: 'column', gap: 8, borderRadius: 32, background: '#17171D', border: '1px solid #2C2C36', padding: 'clamp(20px, 4vw, 36px)' }}>
           <span style={{ ...label(12, '0.1em'), color: '#B7A6FF' }}>{initiative.product.toUpperCase()} · MESA DA INICIATIVA</span>
           <h1 style={{ margin: 0, fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 800, letterSpacing: '-0.035em', lineHeight: 1.05 }}>Dê profundidade com cartas de contexto</h1>
